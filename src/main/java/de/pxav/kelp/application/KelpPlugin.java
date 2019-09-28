@@ -1,4 +1,4 @@
-package de.pxav.nitron.application;
+package de.pxav.kelp.application;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

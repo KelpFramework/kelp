@@ -1,14 +1,11 @@
-package de.pxav.nitron.reflect;
+package de.pxav.kelp.reflect;
 
 import com.google.common.reflect.ClassPath;
 import com.google.inject.Inject;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

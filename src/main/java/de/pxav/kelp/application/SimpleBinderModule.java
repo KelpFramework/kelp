@@ -1,9 +1,9 @@
-package de.pxav.nitron.application;
+package de.pxav.kelp.application;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.pxav.nitron.KelpPlugin;
+import de.pxav.kelp.KelpPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.ExecutorService;

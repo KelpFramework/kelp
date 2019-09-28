@@ -1,11 +1,11 @@
-package de.pxav.nitron.listener;
+package de.pxav.kelp.listener;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import de.pxav.nitron.reflect.MethodCriterion;
-import de.pxav.nitron.reflect.MethodFinder;
+import de.pxav.kelp.reflect.MethodCriterion;
+import de.pxav.kelp.reflect.MethodFinder;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;

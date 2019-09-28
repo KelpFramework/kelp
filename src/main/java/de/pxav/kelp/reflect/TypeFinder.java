@@ -1,14 +1,13 @@
-package de.pxav.nitron.reflect;
+package de.pxav.kelp.reflect;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.ClassPath;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import de.pxav.nitron.KelpPlugin;
+import de.pxav.kelp.KelpPlugin;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

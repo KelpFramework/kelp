@@ -1,4 +1,4 @@
-package de.pxav.nitron.application;
+package de.pxav.kelp.application;
 
 import com.google.inject.Injector;
 

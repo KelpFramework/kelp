@@ -1,8 +1,8 @@
-package de.pxav.nitron;
+package de.pxav.kelp;
 
 import com.google.inject.Injector;
-import de.pxav.nitron.application.KelpApplicationRepository;
-import de.pxav.nitron.application.SimpleBinderModule;
+import de.pxav.kelp.application.KelpApplicationRepository;
+import de.pxav.kelp.application.SimpleBinderModule;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.plugin.Description;

@@ -1,4 +1,4 @@
-package de.pxav.nitron.application;
+package de.pxav.kelp.application;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import de.pxav.nitron.listener.EventRegistration;
+import de.pxav.kelp.listener.EventRegistration;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
