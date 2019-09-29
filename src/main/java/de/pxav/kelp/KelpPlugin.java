@@ -29,7 +29,7 @@ public class KelpPlugin extends JavaPlugin {
     injector = simpleBinderModule.createInjector();
     injector.injectMembers(this);
     injector.getInstance(KelpApplicationRepository.class)
-            .detectGamePlugins(new File(Bukkit.getWorldContainer(), "nitron_plugins"))
+            .detectGamePlugins(new File(Bukkit.getWorldContainer(), "kelp_plugins"))
             .load()
             .enable();
   }
