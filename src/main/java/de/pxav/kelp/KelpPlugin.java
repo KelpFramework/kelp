@@ -5,7 +5,9 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.application.KelpApplicationRepository;
 import de.pxav.kelp.application.SimpleBinderModule;
 import de.pxav.kelp.configuration.ConfigurationRepository;
+import de.pxav.kelp.logger.KelpLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.plugin.Description;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
@@ -31,16 +33,71 @@ public class KelpPlugin extends JavaPlugin {
     SimpleBinderModule simpleBinderModule = new SimpleBinderModule(this);
     injector = simpleBinderModule.createInjector();
     injector.injectMembers(this);
+
+    injector.getInstance(ConfigurationRepository.class).loadAll(this.getClass().getPackage().getName());
+    injector.getInstance(KelpLogger.class).loadLoggerFiles();
+
+    injector.getInstance(KelpLogger.class).log(
+            "Loading Kelp Framework, begin logging...",
+            "[OK] Successfully loaded internal configurations!",
+            "[OK] Successfully loaded logger files!",
+            "Begin loading plugins from /kelp_plugins/..."
+    );
+
     injector.getInstance(KelpApplicationRepository.class)
             .detectGamePlugins(new File(Bukkit.getWorldContainer(), "kelp_plugins"))
             .load()
             .enable();
+
+    injector.getInstance(KelpLogger.class).log(
+            "[OK] Plugins loaded successfully!",
+            "Loading sequence completed"
+    );
   }
 
   @Override
   public void onEnable() {
-    injector.getInstance(ConfigurationRepository.class).loadAll(this.getClass().getPackage().getName());
+    injector.getInstance(KelpLogger.class).log(
+            " _   __       _    ",
+            "| | / /      | |        __  __  ",
+            "| |/ /   ___ | | _ __   \\ \\ \\ \\ ",
+            "|    \\  / _ \\| || '_ \\   \\ \\ \\ \\",
+            "| |\\  \\|  __/| || |_) |  / / / /",
+            "\\_| \\_/ \\___||_|| .__/  /_/ /_/ ",
+            "                | |            ",
+            "                |_|          ",
+            "",
+            "Enabling KelpFramework, running version " + this.getDescription().getVersion(),
+            "Developed & maintained by pxav with love <3",
+            "",
+            "Enabling plugins...."
+    );
+
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
+  }
+
+  @Override
+  public void onDisable() {
+    injector.getInstance(KelpLogger.class).log("Disabling plugins....");
+    injector.getInstance(KelpApplicationRepository.class).disablePlugins();
+    injector.getInstance(KelpLogger.class).log("[OK] Disabled plugins!");
+
+    injector.getInstance(KelpLogger.class).log(
+            " _   __       _    ",
+            "| | / /      | |        __  __  ",
+            "| |/ /   ___ | | _ __   \\ \\ \\ \\ ",
+            "|    \\  / _ \\| || '_ \\   \\ \\ \\ \\",
+            "| |\\  \\|  __/| || |_) |  / / / /",
+            "\\_| \\_/ \\___||_|| .__/  /_/ /_/ ",
+            "                | |            ",
+            "                |_|          ",
+            "",
+            "Successfully shut down Kelp services.",
+            "Thanks for using Kelp and goodbye."
+    );
+
+    injector.getInstance(KelpLogger.class).archiveLog();
+    injector.getInstance(KelpLogger.class).log("Saved log in archive. Disabling logger service.");
   }
 
   public static Injector getInjector() {
