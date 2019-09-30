@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author pxav
  */
 @Singleton
-public class FileUtils {
+public class KelpFileUtils {
 
   /**
    * Checks if the given file exists and creates it

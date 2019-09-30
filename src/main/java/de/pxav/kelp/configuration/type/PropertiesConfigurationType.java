@@ -19,11 +19,11 @@ import java.util.Properties;
 public class PropertiesConfigurationType implements ConfigurationType {
 
   private final Injector injector;
-  private final FileUtils fileUtils;
+  private final KelpFileUtils fileUtils;
 
   @Inject
   public PropertiesConfigurationType(Injector injector,
-                                     FileUtils fileUtils) {
+                                     KelpFileUtils fileUtils) {
     this.injector = injector;
     this.fileUtils = fileUtils;
   }
