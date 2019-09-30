@@ -5,7 +5,9 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.application.KelpApplicationRepository;
 import de.pxav.kelp.application.SimpleBinderModule;
 import de.pxav.kelp.configuration.ConfigurationRepository;
+import de.pxav.kelp.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.logger.KelpLogger;
+import de.pxav.kelp.logger.LogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,6 +59,18 @@ public class KelpPlugin extends JavaPlugin {
 
   @Override
   public void onEnable() {
+    String[] developmentMode = injector.getInstance(KelpDefaultConfiguration.class)
+            .getBooleanValue(injector.getInstance(KelpDefaultConfiguration.class)
+                    .developmentMode())
+            ? new String[] {
+                "System is running in development mode.",
+                "=> Logging messages with DEBUG level as well."
+              }
+            : new String[] {
+                "System is running in production mode.",
+                "=> Messages with DEBUG level are not logged."
+              };
+
     injector.getInstance(KelpLogger.class).log(
             " _   __       _    ",
             "| | / /      | |        __  __  ",
@@ -68,10 +82,13 @@ public class KelpPlugin extends JavaPlugin {
             "                |_|          ",
             "",
             "Enabling KelpFramework, running version " + this.getDescription().getVersion(),
-            "Developed & maintained by pxav with love <3",
-            "",
-            "Enabling plugins...."
+            "Developed & maintained by pxav with love <3"
     );
+    injector.getInstance(KelpLogger.class).log(developmentMode);
+
+    injector.getInstance(KelpLogger.class).log(LogLevel.DEBUG, "debug log");
+    injector.getInstance(KelpLogger.class).consoleLog(LogLevel.DEBUG, "debug log");
+    injector.getInstance(KelpLogger.class).writeLog(LogLevel.DEBUG, "debug log");
 
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
   }

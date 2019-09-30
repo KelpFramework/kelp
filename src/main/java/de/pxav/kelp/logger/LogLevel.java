@@ -11,7 +11,8 @@ public enum LogLevel {
 
   INFO(Level.INFO),
   WARNING(Level.WARNING),
-  ERROR(Level.SEVERE);
+  ERROR(Level.SEVERE),
+  DEBUG(Level.INFO);
 
   private Level javaLogLevel;
 
