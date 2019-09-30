@@ -1,6 +1,7 @@
 package de.pxav.kelp;
 
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import de.pxav.kelp.application.KelpApplicationRepository;
 import de.pxav.kelp.application.SimpleBinderModule;
 import de.pxav.kelp.configuration.ConfigurationRepository;
@@ -20,6 +21,7 @@ import java.io.File;
 @Plugin(name = "Kelp", version = "0.1-SNAPSHOT")
 @Author("pxav")
 @Description("A cross version spigot framework.")
+@Singleton
 public class KelpPlugin extends JavaPlugin {
 
   private static Injector injector;
