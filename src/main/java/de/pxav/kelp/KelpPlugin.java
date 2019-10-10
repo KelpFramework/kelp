@@ -8,8 +8,10 @@ import de.pxav.kelp.configuration.ConfigurationRepository;
 import de.pxav.kelp.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.logger.KelpLogger;
 import de.pxav.kelp.logger.LogLevel;
+import de.pxav.kelp.version.KelpVersion;
+import de.pxav.kelp.version.ServerInformation;
+import de.pxav.kelp.version.material.VersionedMaterialRepository;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.plugin.Description;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
@@ -86,9 +88,21 @@ public class KelpPlugin extends JavaPlugin {
     );
     injector.getInstance(KelpLogger.class).log(developmentMode);
 
-    injector.getInstance(KelpLogger.class).log(LogLevel.DEBUG, "debug log");
-    injector.getInstance(KelpLogger.class).consoleLog(LogLevel.DEBUG, "debug log");
-    injector.getInstance(KelpLogger.class).writeLog(LogLevel.DEBUG, "debug log");
+    injector.getInstance(KelpLogger.class).log("Checking environment...");
+
+    KelpVersion kelpVersion = KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
+    if (kelpVersion == null) {
+      injector.getInstance(KelpLogger.class).log(LogLevel.WARNING, "=> This version is not supported by Kelp.");
+      Bukkit.getPluginManager().disablePlugin(this);
+      return;
+    }
+    injector.getInstance(ServerInformation.class)
+            .setKelpVersion(kelpVersion)
+            .setServerVersion(Bukkit.getBukkitVersion());
+
+
+    System.out.println("loading versioned materials:");
+    injector.getInstance(VersionedMaterialRepository.class).loadAll(this.getClass().getPackage().getName());
 
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
   }
