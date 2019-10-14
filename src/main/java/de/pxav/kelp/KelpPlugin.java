@@ -6,8 +6,10 @@ import de.pxav.kelp.application.KelpApplicationRepository;
 import de.pxav.kelp.application.SimpleBinderModule;
 import de.pxav.kelp.configuration.ConfigurationRepository;
 import de.pxav.kelp.configuration.internal.KelpDefaultConfiguration;
+import de.pxav.kelp.listener.EventRegistration;
 import de.pxav.kelp.logger.KelpLogger;
 import de.pxav.kelp.logger.LogLevel;
+import de.pxav.kelp.sidebar.SidebarRepository;
 import de.pxav.kelp.version.KelpVersion;
 import de.pxav.kelp.version.ServerInformation;
 import de.pxav.kelp.version.material.VersionedMaterialRepository;
@@ -105,7 +107,7 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(VersionedMaterialRepository.class).loadAll(this.getClass().getPackage().getName());
 
     injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
-
+    injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
 
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
   }
