@@ -104,6 +104,9 @@ public class KelpPlugin extends JavaPlugin {
     System.out.println("loading versioned materials:");
     injector.getInstance(VersionedMaterialRepository.class).loadAll(this.getClass().getPackage().getName());
 
+    injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
+
+
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
   }
 
