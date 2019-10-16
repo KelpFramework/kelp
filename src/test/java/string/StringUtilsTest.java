@@ -11,6 +11,7 @@ import org.junit.Test;
  */
 public final class StringUtilsTest {
 
+  // the string utils to check inside this unit test
   private StringUtils stringUtils = new StringUtils();
 
   /**
