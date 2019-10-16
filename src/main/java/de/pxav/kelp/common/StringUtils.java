@@ -3,13 +3,11 @@ package de.pxav.kelp.common;
 import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * A class description goes here.
+ * This class contains useful methods to process color codes
  *
  * @author pxav
  */
@@ -27,6 +25,22 @@ public class StringUtils {
 
   public String removeLastChar(String text) {
     return text.substring(0, text.length() - 1);
+  }
+
+  /**
+   * Searches for all formatting codes inside the given
+   * string and removes them so that you only
+   * have the raw text without any formatting left.
+   *
+   * @param text The text you want to remove the color codes of.
+   * @return The final string without color codes.
+   */
+  public String removeFormattingCodes(String text) {
+    List<String> codes = extractFormattingCodes(text);
+    for (String current : codes) {
+      text = text.replace(current, "");
+    }
+    return text;
   }
 
   public List<String> extractColorCodes(String text) {
@@ -94,6 +108,14 @@ public class StringUtils {
             .replace("]", "")
             .replace(",", "")
             .replace(" ", "");
+  }
+
+  public String lastFullFormattingCodesOf(String text) {
+    if (this.lastFormattingCodesOf(text).endsWith("§")) {
+      String colorCodes = this.lastFormattingCodesOf(text);
+      return this.removeLastChar(colorCodes);
+    }
+    return lastFormattingCodesOf(text);
   }
 
   public boolean isColorCode(char indicator) {

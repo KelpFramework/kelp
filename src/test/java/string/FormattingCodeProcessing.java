@@ -42,4 +42,15 @@ public final class FormattingCodeProcessing {
     Assert.assertEquals("§b§o", stringUtils.lastFullFormattingCodesOf(cutText));
   }
 
+  /**
+   * This test tests the functionality of extracting
+   * color codes from a string and remove them so you
+   * only have the raw text left.
+   */
+  @Test
+  public void testColorCodeReplacement() {
+    String text = "§aWelcome §eto §7our §6Server§9!";
+    Assert.assertEquals("Welcome to our Server!", stringUtils.removeFormattingCodes(text));
+  }
+
 }
