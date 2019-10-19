@@ -241,4 +241,12 @@ public class StringUtils {
     return false;
   }
 
+  /**
+   * @param indicator The indicator of the code you want to check.
+   * @return {@code true} if the either a color code or a style code.
+   */
+  public boolean isFormattingCode(char indicator) {
+    return isColorCode(indicator) || isStyleCode(indicator);
+  }
+
 }
