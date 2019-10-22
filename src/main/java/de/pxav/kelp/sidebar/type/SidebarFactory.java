@@ -35,4 +35,8 @@ public class SidebarFactory {
     return new SimpleSidebar(logger, javaPlugin, versionedSidebar, sidebarComponentFactory);
   }
 
+  public AnimatedSidebar newAnimatedSidebar() {
+    return new AnimatedSidebar(versionedSidebar);
+  }
+
 }

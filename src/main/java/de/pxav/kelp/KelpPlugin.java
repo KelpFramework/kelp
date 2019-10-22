@@ -108,6 +108,7 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
+    injector.getInstance(SidebarRepository.class).schedule();
 
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
   }
@@ -132,6 +133,7 @@ public class KelpPlugin extends JavaPlugin {
             "Thanks for using Kelp and goodbye."
     );
 
+    injector.getInstance(SidebarRepository.class).interruptAnimations();
     injector.getInstance(KelpLogger.class).archiveLog();
     injector.getInstance(KelpLogger.class).log("Saved log in archive. Disabling logger service.");
   }

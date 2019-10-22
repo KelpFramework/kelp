@@ -9,7 +9,9 @@ import de.pxav.kelp.logger.KelpLogger;
 import de.pxav.kelp.logger.LogLevel;
 import de.pxav.kelp.reflect.MethodCriterion;
 import de.pxav.kelp.reflect.MethodFinder;
+import de.pxav.kelp.sidebar.type.AnimatedSidebar;
 import de.pxav.kelp.sidebar.type.KelpSidebar;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +19,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A class description goes here.
@@ -29,6 +34,9 @@ public class SidebarRepository {
   private final Map<String, Method> methods = Maps.newHashMap();
   private final Map<String, Boolean> asyncMode = Maps.newHashMap();
   private final Map<Player, String> playerSidebars = Maps.newHashMap();
+  private final Map<String, ScheduledExecutorService> titleScheduler = Maps.newHashMap();
+  private final Map<Player, Integer> animationStates = Maps.newHashMap();
+  private final Map<String, Integer> titleAnimationInterval = Maps.newHashMap();
 
   private MethodFinder methodFinder;
   private KelpLogger kelpLogger;
@@ -62,9 +70,56 @@ public class SidebarRepository {
 
               methods.put(identifier, method);
               asyncMode.put(identifier, annotation.async());
+              titleAnimationInterval.put(identifier, annotation.titleAnimationInterval());
               kelpLogger.log("Sidebar " + identifier + " successfully loaded!");
             });
     kelpLogger.log("Loaded " + methods.size() + " in total so far.");
+  }
+
+  public void schedule() {
+    for (Map.Entry<String, Integer> entry : this.titleAnimationInterval.entrySet()) {
+      ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+      String identifier = entry.getKey();
+
+      scheduledExecutorService.scheduleAtFixedRate(() -> {
+        try {
+          for (Player player : Bukkit.getOnlinePlayers()) {
+            int state = this.animationStates.get(player);
+            if (this.playerSidebars.containsKey(player)
+                    && !this.playerSidebars.get(player).equalsIgnoreCase(identifier))
+              return;
+
+            KelpSidebar rawSidebar = getSidebar(identifier, player);
+            AnimatedSidebar sidebar;
+            if (!(rawSidebar instanceof AnimatedSidebar)) {
+              break;
+            }
+
+            sidebar = (AnimatedSidebar) getSidebar(identifier, player);
+            Preconditions.checkNotNull(sidebar);
+
+            animationStates.put(player, animationStates.get(player) + 1);
+            if (state >= sidebar.maxStates() - 1) {
+              this.animationStates.put(player, 0);
+            }
+
+            sidebar.updateTitleOnly(player, state);
+
+          }
+
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }, 200L, titleAnimationInterval.get(identifier), TimeUnit.MILLISECONDS);
+
+      this.titleScheduler.put(identifier, scheduledExecutorService);
+    }
+  }
+
+  public void interruptAnimations() {
+    for (Map.Entry<String, ScheduledExecutorService> entry : this.titleScheduler.entrySet()) {
+      entry.getValue().shutdown();
+    }
   }
 
   public void openSidebar(String identifier, Player player) {
@@ -74,6 +129,7 @@ public class SidebarRepository {
     Preconditions.checkNotNull(sidebar);
 
     playerSidebars.put(player, identifier);
+    animationStates.put(player, 0);
     sidebar.renderAndOpenSidebar(player);
   }
 

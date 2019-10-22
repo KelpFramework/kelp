@@ -16,6 +16,11 @@ public @interface CreateSidebar {
 
   String identifier();
 
+  int switchInterval() default 100;
+
+  // in millis
+  int titleAnimationInterval() default 5;
+
   boolean async() default true;
 
 }
