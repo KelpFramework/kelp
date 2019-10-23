@@ -8,7 +8,17 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 /**
- * A class description goes here.
+ * This scoreboard component is used to easily create line separators.
+ * With these you can simply create separators between paragraphs of your
+ * sidebar, which might be helpful to express paragraphs.
+ *
+ * You could create separators manually by using a text component,
+ * but this might get unmaintainable over time, because you cannot
+ * simply change the char type, color or amount. So instead of doing
+ * this yourself every time, you can use this component.
+ *
+ * By default the char type is set to '-' which is repeated for 30 times.
+ * THe default color codes are §8§m to create a straight horizontal line.
  *
  * @author pxav
  */
@@ -21,7 +31,7 @@ public class LineSeparatorComponent implements SimpleSidebarComponent {
 
   private SidebarUtils sidebarUtils;
 
-  public LineSeparatorComponent(SidebarUtils sidebarUtils) {
+  LineSeparatorComponent(SidebarUtils sidebarUtils) {
     this.sidebarUtils = sidebarUtils;
 
     this.length = SeparatorLength.FULL;

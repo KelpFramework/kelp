@@ -6,7 +6,11 @@ import de.pxav.kelp.logger.KelpLogger;
 import de.pxav.kelp.sidebar.SidebarUtils;
 
 /**
- * A class description goes here.
+ * This class is used to easily create sidebar components.
+ * These depend on certain classes that have to be injected
+ * each time you call the constructor.
+ *
+ * To avoid these redundant code snippets, use this factory class.
  *
  * @author pxav
  */

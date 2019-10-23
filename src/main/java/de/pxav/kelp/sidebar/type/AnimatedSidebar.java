@@ -13,7 +13,10 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import java.util.List;
 
 /**
- * A class description goes here.
+ * This is a more complex type of sidebar which can
+ * hold animations like an animated title.
+ *
+ * Furthermore you can add simple components.
  *
  * @author pxav
  */

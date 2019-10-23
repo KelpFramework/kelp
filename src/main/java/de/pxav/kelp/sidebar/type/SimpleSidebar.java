@@ -11,17 +11,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 /**
- * A class description goes here.
+ * This class represents the most simple type
+ * of a sidebar implementation.
+ *
+ * It can basically hold simple components without animation
+ * as well as a static title.
  *
  * @author pxav
  */
 public class SimpleSidebar extends KelpSidebar {
 
+  // the title of the scoreboard (cannot be animated)
   private String title;
+
+  // the components that should be displayed.
   private Collection<SimpleSidebarComponent> components;
 
   private KelpLogger logger;

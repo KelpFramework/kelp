@@ -8,7 +8,14 @@ import de.pxav.kelp.sidebar.version.VersionedSidebar;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * A class description goes here.
+ * This class can be used to easily build
+ * sidebar objects of the requested type.
+ *
+ * The sidebars depend on certain classes and
+ * in can be messy if you inject these dependencies
+ * each time you create a new sidebar, so this class
+ * injects them automatically each time you call
+ * one of the {@code #new...} methods.
  *
  * @author pxav
  */
