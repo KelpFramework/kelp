@@ -52,6 +52,9 @@ public class SidebarRepository {
   // When should the next animation state be called? Identifier -> Time in millis
   private final Map<String, Integer> titleAnimationInterval = Maps.newHashMap();
 
+  // the identifier of the scoreboard which should be set on join.
+  private String defaultScoreboard = "NONE";
+
   private MethodFinder methodFinder;
   private KelpLogger kelpLogger;
   private Injector injector;
@@ -81,6 +84,11 @@ public class SidebarRepository {
             .forEach(method -> {
               CreateSidebar annotation = method.getAnnotation(CreateSidebar.class);
               String identifier = annotation.identifier();
+              if (identifier.equalsIgnoreCase("NONE")) {
+                kelpLogger.log(LogLevel.ERROR, "Sidebar identifier 'NONE' is not allowed, " +
+                        "because it's reserved for the system. Please choose another name.");
+                return;
+              }
 
               if (!identifierAvailable(identifier)) {
                 kelpLogger.log(LogLevel.ERROR, "Sidebar identifier " + identifier
@@ -97,6 +105,11 @@ public class SidebarRepository {
                 return;
               }
               titleAnimationInterval.put(identifier, annotation.titleAnimationInterval());
+
+              if (defaultScoreboard.equalsIgnoreCase("NONE")) {
+                defaultScoreboard = annotation.identifier();
+              }
+
               kelpLogger.log("Sidebar " + identifier + " successfully loaded!");
             });
     kelpLogger.log("Loaded " + methods.size() + " in total so far.");
@@ -305,4 +318,7 @@ public class SidebarRepository {
     return this.asyncMode.get(identifier);
   }
 
+  public String getDefaultScoreboard() {
+    return defaultScoreboard;
+  }
 }

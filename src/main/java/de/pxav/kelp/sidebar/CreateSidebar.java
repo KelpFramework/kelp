@@ -46,4 +46,12 @@ public @interface CreateSidebar {
    */
   boolean async() default true;
 
+  /**
+   * This attribute describes whether the scoreboard
+   * should be displayed automatically when a player
+   * joins the server.
+   * @return {@code true} if it should be the default scoreboard.
+   */
+  boolean setOnJoin() default false;
+
 }
