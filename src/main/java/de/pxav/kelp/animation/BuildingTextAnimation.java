@@ -17,21 +17,34 @@ import java.util.List;
 public final class BuildingTextAnimation implements TextAnimation {
 
   // the actual text you want to animate
-  private String text; // §aTest
+  private String text;
+
+  // should spaces be skipped when building the animation states?
+  private boolean ignoreSpaces = false;
 
   private StringUtils stringUtils;
 
-  BuildingTextAnimation(StringUtils stringUtils, String text) {
+  public BuildingTextAnimation(StringUtils stringUtils, String text) {
     this.stringUtils = stringUtils;
     this.text = text;
   }
 
-  BuildingTextAnimation(StringUtils stringUtils) {
+  public BuildingTextAnimation(StringUtils stringUtils) {
     this.stringUtils = stringUtils;
   }
 
   public BuildingTextAnimation text(String text) {
     this.text = text;
+    return this;
+  }
+
+  public BuildingTextAnimation ignoreSpaces() {
+    this.ignoreSpaces = true;
+    return this;
+  }
+
+  public BuildingTextAnimation useSpaces() {
+    this.ignoreSpaces = false;
     return this;
   }
 
@@ -43,7 +56,13 @@ public final class BuildingTextAnimation implements TextAnimation {
 
     int colorCodeState = -1;
     int stateCursor = -1;
+
     for (char c : text.toCharArray()) {
+
+      if (c == ' ' && this.ignoreSpaces) {
+        currentState.append(c);
+        continue;
+      }
 
       if (c == '§') {
         currentState.append(c);
