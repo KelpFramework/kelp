@@ -3,7 +3,6 @@ package de.pxav.kelp.sidebar.type;
 import com.google.common.collect.Lists;
 import de.pxav.kelp.animation.TextAnimation;
 import de.pxav.kelp.sidebar.component.SimpleSidebarComponent;
-import de.pxav.kelp.sidebar.component.SwitchingSidebarComponent;
 import de.pxav.kelp.sidebar.version.VersionedSidebar;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -24,7 +23,6 @@ public class AnimatedSidebar extends KelpSidebar {
 
   private TextAnimation titleAnimation;
   private List<SimpleSidebarComponent> simpleComponents;
-  private List<SwitchingSidebarComponent> switchingComponents;
 
   private ScoreboardManager scoreboardManager;
   private VersionedSidebar versionedSidebar;
@@ -33,17 +31,10 @@ public class AnimatedSidebar extends KelpSidebar {
     this.scoreboardManager = Bukkit.getScoreboardManager();
     this.versionedSidebar = versionedSidebar;
     this.simpleComponents = Lists.newArrayList();
-    this.switchingComponents = Lists.newArrayList();
   }
 
   public AnimatedSidebar addComponent(SimpleSidebarComponent components) {
     this.simpleComponents.add(components);
-    return this;
-  }
-
-
-  public AnimatedSidebar addComponent(SwitchingSidebarComponent components) {
-    this.switchingComponents.add(components);
     return this;
   }
 
