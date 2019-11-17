@@ -14,13 +14,6 @@
         <module>v1_8_implementation</module>
     </modules>
 
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <dependency>
@@ -41,8 +34,6 @@
             <version>2.6</version>
         </dependency>
 
-
-
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>plugin-annotations</artifactId>
@@ -56,6 +47,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
+        </dependency>
 
     </dependencies>
 
