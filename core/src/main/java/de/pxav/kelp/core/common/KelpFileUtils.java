@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.configuration;
+package de.pxav.kelp.core.common;
 
 import com.google.inject.Singleton;
 
