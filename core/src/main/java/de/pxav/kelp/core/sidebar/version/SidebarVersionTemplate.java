@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.sidebar.version;
 
+import de.pxav.kelp.core.application.KelpVersionTemplate;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -17,7 +18,8 @@ import org.bukkit.scoreboard.Scoreboard;
  *
  * @author pxav
  */
-public abstract class VersionedSidebar {
+@KelpVersionTemplate
+public abstract class SidebarVersionTemplate {
 
   /**
    * @return A new, empty scoreboard.

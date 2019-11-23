@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.sidebar.component.SidebarComponentFactory;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.sidebar.version.VersionedSidebar;
+import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -24,26 +24,26 @@ public class SidebarFactory {
 
   private KelpLogger logger;
   private JavaPlugin javaPlugin;
-  private VersionedSidebar versionedSidebar;
+  private SidebarVersionTemplate sidebarVersionTemplate;
   private SidebarComponentFactory sidebarComponentFactory;
 
   @Inject
   public SidebarFactory(KelpLogger logger,
                         JavaPlugin javaPlugin,
-                        VersionedSidebar versionedSidebar,
+                        SidebarVersionTemplate sidebarVersionTemplate,
                         SidebarComponentFactory sidebarComponentFactory) {
     this.logger = logger;
     this.javaPlugin = javaPlugin;
-    this.versionedSidebar = versionedSidebar;
+    this.sidebarVersionTemplate = sidebarVersionTemplate;
     this.sidebarComponentFactory = sidebarComponentFactory;
   }
 
   public SimpleSidebar newSimpleSidebar() {
-    return new SimpleSidebar(logger, javaPlugin, versionedSidebar, sidebarComponentFactory);
+    return new SimpleSidebar(logger, javaPlugin, sidebarVersionTemplate, sidebarComponentFactory);
   }
 
   public AnimatedSidebar newAnimatedSidebar() {
-    return new AnimatedSidebar(versionedSidebar);
+    return new AnimatedSidebar(sidebarVersionTemplate);
   }
 
 }

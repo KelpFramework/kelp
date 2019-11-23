@@ -3,7 +3,7 @@ package de.pxav.kelp.core.sidebar.type;
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.sidebar.component.SimpleSidebarComponent;
-import de.pxav.kelp.core.sidebar.version.VersionedSidebar;
+import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -25,11 +25,11 @@ public class AnimatedSidebar extends KelpSidebar {
   private List<SimpleSidebarComponent> simpleComponents;
 
   private ScoreboardManager scoreboardManager;
-  private VersionedSidebar versionedSidebar;
+  private SidebarVersionTemplate sidebarVersionTemplate;
 
-  AnimatedSidebar(VersionedSidebar versionedSidebar) {
+  AnimatedSidebar(SidebarVersionTemplate sidebarVersionTemplate) {
     this.scoreboardManager = Bukkit.getScoreboardManager();
-    this.versionedSidebar = versionedSidebar;
+    this.sidebarVersionTemplate = sidebarVersionTemplate;
     this.simpleComponents = Lists.newArrayList();
   }
 
@@ -59,7 +59,7 @@ public class AnimatedSidebar extends KelpSidebar {
     });
 
     if (scoreboard.getObjective("main") == null) {
-      versionedSidebar.createObjective(scoreboard, "main", titleAnimation.states().get(0));
+      sidebarVersionTemplate.createObjective(scoreboard, "main", titleAnimation.states().get(0));
     }
 
     for (SimpleSidebarComponent component : this.simpleComponents) {

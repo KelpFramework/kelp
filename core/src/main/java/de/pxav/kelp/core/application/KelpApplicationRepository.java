@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import de.pxav.kelp.core.common.KelpFileUtils;
 import de.pxav.kelp.core.listener.EventRegistration;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -25,14 +26,16 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.ArrayMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
+import org.bukkit.entity.Skeleton;
 
 /**
- * A class description goes here.
+ * This repository class is used to load and manage
+ * the different kelp applications.
  *
  * @author pxav
  */
 @Singleton
-public class KelpApplicationRepository {
+public final class KelpApplicationRepository {
 
   private final Map<String, KelpInformation> pluginsToLoad = Maps.newHashMap();
   private final Map<String, KelpApplication> pluginsToEnable = Maps.newHashMap();
@@ -42,19 +45,28 @@ public class KelpApplicationRepository {
           pluginsToEnableAfterLoadInClassPath = Maps.newHashMap();
 
   private final Injector injector;
+  private final KelpFileUtils kelpFileUtils;
 
   @Inject
-  public KelpApplicationRepository(Injector injector) {
+  public KelpApplicationRepository(Injector injector, KelpFileUtils kelpFileUtils) {
     this.injector = injector;
+    this.kelpFileUtils = kelpFileUtils;
   }
-  
+
+  /**
+   * Iterates all {@code .jar} files in a certain directory and
+   * checks whether they are valid kelp applications.
+   * If so they will be added to the list so that they can
+   * be loaded later.
+   *
+   * @param kelpApplicationDirectory The directory whose files should be iterated.
+   * @return The {@code KelpApplicationRepository} object.
+   */
   public KelpApplicationRepository detectGamePlugins(File kelpApplicationDirectory) {
     Preconditions.checkNotNull(kelpApplicationDirectory);
+    kelpFileUtils.createIfNotExists(kelpApplicationDirectory);
 
-    if (!kelpApplicationDirectory.exists()) {
-      kelpApplicationDirectory.mkdir();
-    }
-
+    // get a list of all files in the directory.
     File[] filesToLoad = kelpApplicationDirectory.listFiles();
     if (filesToLoad != null && filesToLoad.length <= 0) return this;
     Preconditions.checkNotNull(filesToLoad);
@@ -64,7 +76,7 @@ public class KelpApplicationRepository {
             .map(
                     file -> {
                       try {
-                        return new ModuleInfo(file, new JarFile(file));
+                        return new TemporaryApplicationInfo(file, new JarFile(file));
                       } catch (IOException e) {
                         System.out.println("Couldn't load module from file " + file.getName());
                         return null;
@@ -73,21 +85,25 @@ public class KelpApplicationRepository {
             .filter(Objects::nonNull)
             .forEach(
                     moduleInfo -> {
-                      KelpInformation nitronInformation = checkPlugin(moduleInfo.getJarFile());
-                      pluginInfo.put(nitronInformation.getApplicationName(), nitronInformation);
-                      if (nitronInformation == null) {
+                      KelpInformation kelpInformation = checkPlugin(moduleInfo.getJarFile());
+                      pluginInfo.put(kelpInformation.getApplicationName(), kelpInformation);
+                      if (kelpInformation == null) {
                         System.out.println("Can't load module from file " + moduleInfo.getFile().getName());
                         return;
                       }
 
-                      if (!enabledPlugins.containsKey(nitronInformation.getApplicationName())) {
-                        nitronInformation.file(moduleInfo.getFile());
-                        pluginsToLoad.put(nitronInformation.getApplicationName(), nitronInformation);
+                      if (!enabledPlugins.containsKey(kelpInformation.getApplicationName())) {
+                        kelpInformation.file(moduleInfo.getFile());
+                        pluginsToLoad.put(kelpInformation.getApplicationName(), kelpInformation);
                       }
                     });
     return this;
   }
 
+  /**
+   *
+   * @return
+   */
   public KelpApplicationRepository load() {
     Map<KelpInformation, Boolean> moduleStatuses2 = Maps.newHashMap();
     for (Map.Entry<String, KelpInformation> entry : pluginsToLoad.entrySet()) {
@@ -103,6 +119,19 @@ public class KelpApplicationRepository {
     return this;
   }
 
+  /**
+   * Check whether the given {@code .jar} file contains a
+   * valid kelp application.
+   *
+   * If so the classes will be analyzed and information about
+   * the application will be collected and saved as a {@code KelpInformation}
+   * object.
+   *
+   * @param jarFile The {@code .jar} file you want to search in.
+   * @return        The final information object.
+   *                {@code null} if the {@code jar} file is no valid kelp application.
+   * @see KelpInformation
+   */
   private KelpInformation checkPlugin(JarFile jarFile) {
     Enumeration<JarEntry> jarEntries = jarFile.entries();
 
@@ -119,7 +148,7 @@ public class KelpApplicationRepository {
                           ((AnnotationsAttribute)
                                   classFile.getAttribute(AnnotationsAttribute.invisibleTag))
                                   .getAnnotations())
-                          .filter(annotation -> annotation.getTypeName().equals(KelpPlugin.class.getName()))
+                          .filter(annotation -> annotation.getTypeName().equals(NewKelpApplication.class.getName()))
                           .findFirst()
                           .orElse(null);
 
@@ -134,8 +163,8 @@ public class KelpApplicationRepository {
           ArrayMemberValue descriptionSoftDepends =
                   ((ArrayMemberValue) descriptionAnnotation.getMemberValue("softDependencies"));
 
-          KelpInformation NitronInformation = new KelpInformation();
-          NitronInformation
+          KelpInformation kelpInformation = new KelpInformation();
+          kelpInformation
                   .applicationName(descriptionName)
                   .version(descriptionVersion == null ? "1.0.0" : descriptionVersion.getValue())
                   .hardDependencies(
@@ -144,8 +173,8 @@ public class KelpApplicationRepository {
                           (descriptionSoftDepends == null
                                   ? Sets.newHashSet()
                                   : newHashSet(descriptionSoftDepends)));
-          NitronInformation.main(classFile.getName());
-          return NitronInformation;
+          kelpInformation.main(classFile.getName());
+          return kelpInformation;
         } catch (IOException ignored) {
           break;
         }
@@ -154,6 +183,15 @@ public class KelpApplicationRepository {
     return null;
   }
 
+  /**
+   * Loads the given plugins into the {@code classpath} of
+   * the main plugin.
+   *
+   * @param moduleStatuses
+   * @param dependStack
+   * @param module
+   * @return
+   */
   private boolean loadPluginsInClassPath(
           Map<KelpInformation, Boolean> moduleStatuses,
           Stack<KelpInformation> dependStack,
@@ -270,6 +308,11 @@ public class KelpApplicationRepository {
     pluginsToLoad.clear();
   }
 
+  /**
+   * @return  A collection of all main classes of all kelp applications
+   *          as {@code Class<? extends KelpApplication>}
+   * @see     KelpApplication
+   */
   public Collection<Class<? extends KelpApplication>> getAllPluginClasses() {
     return pluginsToEnableAfterLoadInClassPath.values();
   }
@@ -325,6 +368,13 @@ public class KelpApplicationRepository {
     return Lists.newArrayList(this.enabledPlugins.values());
   }
 
+  /**
+   * Takes an {@code ArrayMemberValue} and converts
+   * it to a set which contains all its elements.
+   *
+   * @param depend The input array
+   * @return A {@code Set} containing all elements of the given array.
+   */
   private Set<String> newHashSet(ArrayMemberValue depend) {
     MemberValue[] values = depend.getValue();
     String[] depends = new String[values.length];
@@ -336,17 +386,31 @@ public class KelpApplicationRepository {
     return newHashSet(depends);
   }
 
+  /**
+   * Takes an array of strings and converts it
+   * to a {@code Set} of all elements of the array.
+   *
+   * @param depends The string array you want to convert.
+   * @return The final {@code Set}.
+   */
   private Set<String> newHashSet(String[] depends) {
     Set<String> set = new HashSet<>();
     Collections.addAll(set, depends);
     return set;
   }
 
-  protected class ModuleInfo {
+  /**
+   * This class is a temporary application object
+   * which holds basic information like the {@code jar}
+   * file and the raw file.
+   *
+   * @author pxav
+   */
+  protected static class TemporaryApplicationInfo {
     private final File file;
     private final JarFile jarFile;
 
-    ModuleInfo(File file, JarFile jarFile) {
+    TemporaryApplicationInfo(File file, JarFile jarFile) {
       this.file = file;
       this.jarFile = jarFile;
     }

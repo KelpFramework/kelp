@@ -1,28 +1,25 @@
-package de.pxav.kelp.core.sidebar;
+package de.pxav.kelp.implementation1_8.sidebar;
 
 import com.google.common.base.Preconditions;
-import de.pxav.kelp.core.sidebar.version.VersionedSidebar;
+import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
+import de.pxav.kelp.core.version.Versioned;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 /**
  * A class description goes here.
  *
  * @author pxav
  */
-public class Sidebar18 extends VersionedSidebar {
-
-  private JavaPlugin javaPlugin;
-
-  public Sidebar18(JavaPlugin javaPlugin) {
-    this.javaPlugin = javaPlugin;
-  }
+@Versioned
+public class SidebarVersion extends SidebarVersionTemplate {
 
   @Override
   public Scoreboard createScoreboard() {
-    Preconditions.checkNotNull(Bukkit.getScoreboardManager());
     return Bukkit.getScoreboardManager().getNewScoreboard();
   }
 

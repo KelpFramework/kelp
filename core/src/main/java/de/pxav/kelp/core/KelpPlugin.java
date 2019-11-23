@@ -1,14 +1,16 @@
 package de.pxav.kelp.core;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.application.KelpApplicationRepository;
+import de.pxav.kelp.core.application.inject.VersionBinderModule;
 import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.listener.EventRegistration;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.version.material.VersionedMaterialRepository;
-import de.pxav.kelp.core.application.SimpleBinderModule;
+import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.version.KelpVersion;
@@ -37,7 +39,8 @@ public class KelpPlugin extends JavaPlugin {
   @Override
   public void onLoad() {
     SimpleBinderModule simpleBinderModule = new SimpleBinderModule(this);
-    injector = simpleBinderModule.createInjector();
+    VersionBinderModule versionBinderModule = new VersionBinderModule(this, new File(Bukkit.getWorldContainer(),"kelp_versions"));
+    injector = Guice.createInjector(simpleBinderModule, versionBinderModule);
     injector.injectMembers(this);
 
     injector.getInstance(ConfigurationRepository.class).loadAll(this.getClass().getPackage().getName());

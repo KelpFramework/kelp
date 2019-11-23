@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
-import de.pxav.kelp.core.configuration.KelpFileUtils;
+import de.pxav.kelp.core.common.KelpFileUtils;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import org.apache.commons.io.FileUtils;
 
