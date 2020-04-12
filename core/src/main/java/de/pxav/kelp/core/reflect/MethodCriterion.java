@@ -4,8 +4,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * A class description goes here.
+ * This class contains all criteria you can use for searching/filtering
+ * a method using the {@code MethodFinder}.
  *
+ * @see MethodFinder
  * @author pxav
  */
 public interface MethodCriterion {

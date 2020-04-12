@@ -10,14 +10,26 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
+ * This class is used to find classes with certain criteria.
  *
- *
+ * @see TypeCriterion
  * @author pxav
  */
 @Singleton
 public class TypeFinder {
 
+  /**
+   * Searches for all classes fulfilling the given criteria in the
+   * given packages.
+   *
+   * @param packageNames  The names of the packages the algorithm should search for.
+   *                      If you pass a package, which has subpackages, those will be
+   *                      scanned as well.
+   * @param typeCriteria  The criteria for the classes you want to find.
+   * @return              A {@code Stream} containing the classes.
+   */
   public Stream<Class<?>> filter(String[] packageNames, TypeCriterion... typeCriteria) {
+    // validate given parameters
     Preconditions.checkNotNull(packageNames);
     Preconditions.checkNotNull(typeCriteria);
 
@@ -30,6 +42,8 @@ public class TypeFinder {
 
       ClassInfoList allClasses = scanResult.getAllClasses();
 
+      // iterate all classes in the packages and check if they
+      // math the criteria
       for (ClassInfo current : allClasses) {
         Class<?> c = current.loadClass();
         boolean allMatch = true;
