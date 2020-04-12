@@ -16,6 +16,10 @@ public interface MethodCriterion {
     return method -> method.isAnnotationPresent(annotation);
   }
 
+  static MethodCriterion hasParameters(int parameterAmount) {
+    return method -> method.getParameters().length == parameterAmount;
+  }
+
   static MethodCriterion locatedIn(Class<?> clazz) {
     return method -> method
             .getDeclaringClass()

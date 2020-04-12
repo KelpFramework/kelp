@@ -1,57 +1,51 @@
 package de.pxav.kelp.core.reflect;
 
 import com.google.common.base.Preconditions;
-import com.google.common.reflect.ClassPath;
-import com.google.inject.Inject;
+import com.google.common.collect.Sets;
 import com.google.inject.Singleton;
-import de.pxav.kelp.core.KelpPlugin;
+import io.github.classgraph.*;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * A class description goes here.
+ *
  *
  * @author pxav
  */
 @Singleton
 public class TypeFinder {
 
-  private ClassPath classPath;
-
-  @Inject
-  public TypeFinder() {
-    try {
-      this.classPath = ClassPath.from(KelpPlugin.class.getClassLoader());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public Stream<? extends Class<?>> filter(String[] packageNames, TypeCriterion... typeCriteria) {
+  public Stream<Class<?>> filter(String[] packageNames, TypeCriterion... typeCriteria) {
     Preconditions.checkNotNull(packageNames);
     Preconditions.checkNotNull(typeCriteria);
-    return (packageNames.length == 0
-            ? this.classPath.getAllClasses()
-            : Arrays.stream(packageNames)
-            .flatMap(
-                    packageName -> this.classPath.getTopLevelClassesRecursive(packageName).stream())
-            .collect(Collectors.toList()))
-            .stream()
-            .map(
-                    classInfo -> {
-                      try {
-                        return classInfo.load();
-                      } catch (Throwable ignore) {}
-                      return null;
-                    })
-            .filter(Objects::nonNull)
-            .filter(
-                    clazz ->
-                            Arrays.stream(typeCriteria).allMatch(typeFilter -> typeFilter.matches(clazz)));
+
+    Set<Class<?>> output = Sets.newHashSet();
+
+    try (ScanResult scanResult = new ClassGraph()
+            .enableAllInfo()
+            .whitelistPackages(packageNames)
+            .scan()) {
+
+      ClassInfoList allClasses = scanResult.getAllClasses();
+
+      for (ClassInfo current : allClasses) {
+        Class<?> c = current.loadClass();
+        boolean allMatch = true;
+        for (TypeCriterion typeCriterion : typeCriteria) {
+          if (!typeCriterion.matches(c)) {
+            allMatch = false;
+            break;
+          }
+        }
+        if (allMatch) {
+          output.add(c);
+        }
+      }
+    }
+
+    return output.stream().filter(Objects::nonNull);
   }
 
 }

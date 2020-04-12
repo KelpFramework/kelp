@@ -1,13 +1,11 @@
 package de.pxav.kelp.core.reflect;
 
-import com.google.common.reflect.ClassPath;
-import com.google.inject.Inject;
+import com.google.common.collect.Sets;
+import io.github.classgraph.*;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -17,39 +15,37 @@ import java.util.stream.Stream;
  */
 public class MethodFinder {
 
-  private ClassPath classPath;
-
-  @Inject
-  public MethodFinder(ClassLoader classLoader) {
-    try {
-      this.classPath = ClassPath.from(classLoader);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
   public Stream<Method> filter(String[] packageNames, MethodCriterion... methodCriteria) {
-    return (packageNames.length == 0
-            ? this.classPath.getAllClasses()
-            : Arrays.stream(packageNames)
-            .flatMap(
-                    packageName -> this.classPath.getTopLevelClassesRecursive(packageName).stream())
-            .collect(Collectors.toList()))
-            .stream()
-            .map(
-                    classInfo -> {
-                      try {
-                        return classInfo.load();
-                      } catch (Throwable ignored) {
-                      }
-                      return null;
-                    })
-            .filter(Objects::nonNull)
-            .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))
-            .filter(
-                    method ->
-                            Arrays.stream(methodCriteria)
-                                    .allMatch(methodFilter -> methodFilter.matches(method)));
+
+    Set<Method> output = Sets.newHashSet();
+
+    try (ScanResult scanResult = new ClassGraph()
+            .enableAllInfo()
+            .whitelistPackages(packageNames)
+            .scan()) {
+
+      ClassInfoList allClasses = scanResult.getAllClasses();
+
+      for (ClassInfo current : allClasses) {
+        MethodInfoList methodInfos = current.getMethodInfo();
+        for (MethodInfo methodInfo : methodInfos) {
+          Method method = methodInfo.loadClassAndGetMethod();
+          boolean allMatch = true;
+          for (MethodCriterion methodCriterion : methodCriteria) {
+            if (!methodCriterion.matches(method)) {
+              allMatch = false;
+              break;
+            }
+          }
+
+          if (allMatch) {
+            output.add(method);
+          }
+        }
+      }
+    }
+
+    return output.stream().filter(Objects::nonNull);
   }
 
 }
