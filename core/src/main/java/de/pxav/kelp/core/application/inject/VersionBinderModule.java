@@ -160,27 +160,30 @@ public final class VersionBinderModule extends AbstractModule {
    *                  a collection of all the classes which are an implementation of
    *                  a version template.
    *                  If the versions don't match you will get back an empty list.
-   * @throws IOException
-   * @throws ClassNotFoundException
-   * @throws NoSuchMethodException      This exception is thrown when the code tries
-   *                                    to invoke a non-existent method.
-   * @throws InvocationTargetException
-   * @throws IllegalAccessException
    * @see KelpVersion
    */
-  private Collection<Class<?>> implementationsOf(String path, KelpVersion required) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+  private Collection<Class<?>> implementationsOf(String path, KelpVersion required) throws IOException,
+          ClassNotFoundException,
+          NoSuchMethodException,
+          InvocationTargetException,
+          IllegalAccessException {
     Collection<Class<?>> output = Lists.newArrayList();
     JarFile jarFile = new JarFile(path);
     Enumeration<JarEntry> jarEntries = jarFile.entries();
 
     URL[] urls = { new URL("jar:file:" + path + "!/") };
-    URLClassLoader classLoader = URLClassLoader.newInstance(urls);
 
+    // build up the class loader based on the new jar file and the current one.
+    // Including the current classloader is important, because it ensures that there
+    // will be no errors loading classes depending on classes from the core module.
+    URLClassLoader classLoader = URLClassLoader.newInstance(urls, this.getClass().getClassLoader());
+
+    // iterate all jar entries
     while (jarEntries.hasMoreElements()) {
       JarEntry jarEntry = jarEntries.nextElement();
       if(jarEntry == null
               || jarEntry.isDirectory()
-              || !jarEntry.getName().endsWith(".class")){
+              || !jarEntry.getName().endsWith(".class")) {
         continue;
       }
 
@@ -188,34 +191,46 @@ public final class VersionBinderModule extends AbstractModule {
               new ClassFile(new DataInputStream(jarFile.getInputStream(jarEntry)));
 
       AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
+
+      // if the class does not have any annotations, it is no class handling any
+      // version-specific stuff, so we can continue.
       if (annotationsAttribute == null || annotationsAttribute.getAnnotations() == null) {
         continue;
       }
 
-      Annotation descriptionAnnotation = Arrays.stream(annotationsAttribute.getAnnotations())
+      // classes with this annotation are main classes of a version implementation module.
+      // So they do not handle version-specific stuff directly.
+      Annotation mainClassAnnotation = Arrays.stream(annotationsAttribute.getAnnotations())
               .filter(annotation -> annotation.getTypeName().equals(VersionImplementation.class.getName()))
               .findFirst()
               .orElse(null);
 
+      // classes with this annotations are classes extending a version template,
+      // so they directly handle version-specific stuff.
       Annotation versionedAnnotation = Arrays.stream(annotationsAttribute.getAnnotations())
               .filter(annotation -> annotation.getTypeName().equals(Versioned.class.getName()))
               .findFirst()
               .orElse(null);
 
+      // if the class handles version-specific stuff, it has to be loaded
+      // to the main class path.
       if (versionedAnnotation != null) {
 
         int ignoreClass = ".class".length();
-        String className = jarEntry.getName().substring(0,jarEntry.getName().length()-ignoreClass);
+        String className = jarEntry.getName().substring(0, jarEntry.getName().length() - ignoreClass);
         className = className.replace('/', '.');
 
         Class implementationClass = classLoader.loadClass(className);
+
         Class<?> outputClass = this.loadToClassPath(path, implementationClass);
         output.add(outputClass);
         continue;
       }
 
-      if (descriptionAnnotation != null) {
-        ArrayMemberValue versionArray = (ArrayMemberValue) descriptionAnnotation.getMemberValue("value");
+      // check if the current implementation module matches the version
+      // requirements, otherwise stop the process.
+      if (mainClassAnnotation != null) {
+        ArrayMemberValue versionArray = (ArrayMemberValue) mainClassAnnotation.getMemberValue("value");
         MemberValue[] memberValues = versionArray.getValue();
 
         Collection<KelpVersion> versions = Lists.newArrayList();
