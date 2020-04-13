@@ -147,10 +147,15 @@ public class SidebarRepository {
 
           // iterate all players on the server.
           for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!animationStates.containsKey(player)) {
+              continue;
+            }
+
             int state = this.animationStates.get(player);
+
             if (this.playerSidebars.containsKey(player)
                     && !this.playerSidebars.get(player).equalsIgnoreCase(identifier))
-              return;
+              continue;
 
             // load the sidebar for the player
             AnimatedSidebar sidebar = (AnimatedSidebar) getSidebar(identifier, player);
@@ -251,6 +256,17 @@ public class SidebarRepository {
       Preconditions.checkNotNull(kelpSidebar);
       kelpSidebar.update(player);
     });
+  }
+
+  /**
+   * Removes a player from all lists in the cache and clears
+   * its sidebar.
+   *
+   * @param player The player whose sidebar should be removed.
+   */
+  public void removeSidebar(Player player) {
+    this.playerSidebars.remove(player);
+    this.animationStates.remove(player);
   }
 
   /**
