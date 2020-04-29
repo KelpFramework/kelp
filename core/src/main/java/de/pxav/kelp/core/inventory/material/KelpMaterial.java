@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.version.material;
+package de.pxav.kelp.core.inventory.material;
 
 import de.pxav.kelp.core.version.KelpVersion;
 
@@ -12,19 +12,28 @@ import java.util.Collection;
  */
 public enum KelpMaterial {
 
-  STONE(KelpVersion.MC_1_8_0),
-  DIRT(KelpVersion.MC_1_8_0),
-  BARREL(KelpVersion.MC_1_14_0)
+  STONE(0, KelpVersion.MC_1_8_0),
+  DIRT(0, KelpVersion.MC_1_8_0),
+  APPLE(0, KelpVersion.MC_1_8_0),
+
+  WHITE_WOOL(0, KelpVersion.MC_1_8_0),
+  ORANGE_WOOL(1, KelpVersion.MC_1_8_0)
   ;
 
   private KelpVersion since;
+  private int bukkitSubId;
 
-  KelpMaterial(KelpVersion since) {
+  KelpMaterial(int bukkitSubId, KelpVersion since) {
     this.since = since;
+    this.bukkitSubId = bukkitSubId;
   }
 
   public KelpVersion since() {
     return since;
+  }
+
+  public int bukkitSubId() {
+    return bukkitSubId;
   }
 
   public static Collection<KelpMaterial> aboveVersion(KelpVersion version) {
@@ -79,4 +88,8 @@ public enum KelpMaterial {
     return output;
   }
 
+  @Override
+  public String toString() {
+    return super.toString() + ":" + bukkitSubId;
+  }
 }

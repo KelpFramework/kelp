@@ -5,5 +5,5 @@ package de.pxav.kelp.core.inventory.type;
  *
  * @author pxav
  */
-public class SimpleInventory {
+public class SimpleStatelessInventory {
 }

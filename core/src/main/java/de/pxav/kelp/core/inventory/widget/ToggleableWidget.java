@@ -1,19 +1,24 @@
 package de.pxav.kelp.core.inventory.widget;
 
-import de.pxav.kelp.core.inventory.LocatableItem;
-import org.bukkit.inventory.ItemStack;
+import de.pxav.kelp.core.inventory.item.KelpItem;
 
 /**
  * A class description goes here.
  *
  * @author pxav
  */
-public class ToggleableWidget implements InventoryWidget {
+public class ToggleableWidget implements SimpleWidget {
 
   private boolean condition;
   private int slot;
-  private ItemStack whenTrue;
-  private ItemStack whenFalse;
+
+  private KelpItem whenTrue;
+  private KelpItem whenFalse;
+
+  private Runnable whenTrueAction;
+  private Runnable whenFalseAction;
+
+  ToggleableWidget() {}
 
   public ToggleableWidget slot(int slot) {
     this.slot = slot;
@@ -25,28 +30,22 @@ public class ToggleableWidget implements InventoryWidget {
     return this;
   }
 
-  public ToggleableWidget whenTrue(ItemStack itemStack) {
-    this.whenTrue = itemStack;
+  public ToggleableWidget whenTrue(KelpItem kelpItem) {
+    this.whenTrue = kelpItem;
     return this;
   }
 
-  public ToggleableWidget whenFalse(ItemStack itemStack) {
-    this.whenFalse = itemStack;
+  public ToggleableWidget whenFalse(KelpItem kelpItem) {
+    this.whenFalse = kelpItem;
     return this;
   }
 
   @Override
-  public LocatableItem item() {
+  public KelpItem render() {
     if (condition) {
-      return new LocatableItem(whenTrue, slot);
+      return this.whenTrue.slot(slot);
     } else {
-      return new LocatableItem(whenFalse, slot);
+      return this.whenFalse.slot(slot);
     }
   }
-
-  @Override
-  public Runnable onClick() {
-    return null;
-  }
-
 }

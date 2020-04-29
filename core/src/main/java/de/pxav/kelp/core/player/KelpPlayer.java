@@ -6,6 +6,8 @@ import de.pxav.kelp.core.sidebar.SidebarRepository;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
  * A class description goes here.
  *
@@ -21,10 +23,12 @@ public class KelpPlayer {
 
   public KelpPlayer(Player bukkitPlayer,
                     PlayerVersionTemplate playerVersionTemplate,
-                    SidebarRepository sidebarRepository) {
+                    SidebarRepository sidebarRepository,
+                    KelpInventoryRepository inventoryRepository) {
     this.bukkitPlayer = bukkitPlayer;
     this.playerVersionTemplate = playerVersionTemplate;
     this.sidebarRepository = sidebarRepository;
+    this.inventoryRepository = inventoryRepository;
   }
 
   public KelpPlayer openKelpSidebar(String identifier) {
@@ -37,6 +41,20 @@ public class KelpPlayer {
     return this;
   }
 
+  public KelpPlayer openInventory(KelpInventory inventory) {
+    this.inventoryRepository.openInventory(inventory, this);
+    return this;
+  }
+
+  public KelpPlayer closeInventory() {
+    this.inventoryRepository.closeInventory(this);
+    return this;
+  }
+
+  public KelpPlayer forceInventoryClose() {
+    bukkitPlayer.closeInventory();
+    return this;
+  }
 
   public KelpPlayer sendTitle(String title, String subTitle) {
     playerVersionTemplate.sendTitle(bukkitPlayer, title, subTitle, 20, 60, 20);
@@ -52,6 +70,10 @@ public class KelpPlayer {
   public KelpPlayer sendActionbar(String message) {
     playerVersionTemplate.sendActionBar(bukkitPlayer, message);
     return this;
+  }
+
+  public UUID getUUID() {
+    return playerVersionTemplate.getUniqueId(bukkitPlayer);
   }
 
   public KelpPlayer teleport(Location location) {

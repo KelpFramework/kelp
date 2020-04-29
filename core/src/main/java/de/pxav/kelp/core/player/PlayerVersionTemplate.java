@@ -4,6 +4,8 @@ import de.pxav.kelp.core.application.KelpVersionTemplate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
  * A class description goes here.
  *
@@ -19,6 +21,8 @@ public abstract class PlayerVersionTemplate {
   public abstract void sendTabHeaderAndFooter(Player player, String header, String footer);
 
   public abstract void setHealth(Player player, int health);
+
+  public abstract UUID getUniqueId(Player player);
 
   public abstract void teleport(Player player, Location location);
 
