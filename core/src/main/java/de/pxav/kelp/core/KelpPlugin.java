@@ -7,14 +7,13 @@ import de.pxav.kelp.core.application.KelpApplicationRepository;
 import de.pxav.kelp.core.application.inject.VersionBinderModule;
 import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
+import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.listener.EventRegistration;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
-import de.pxav.kelp.core.version.material.VersionedMaterialRepository;
 import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.version.KelpVersion;
-import de.pxav.kelp.core.version.ServerInformation;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.plugin.Description;
@@ -97,21 +96,16 @@ public class KelpPlugin extends JavaPlugin {
 
     KelpVersion kelpVersion = KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
     if (kelpVersion == null) {
-      injector.getInstance(KelpLogger.class).log(LogLevel.WARNING, "=> This version is not supported by Kelp.");
+      injector.getInstance(KelpLogger.class).log(LogLevel.WARNING, "=> The current server version is not supported by Kelp.");
       Bukkit.getPluginManager().disablePlugin(this);
       return;
     }
-    injector.getInstance(ServerInformation.class)
-            .setKelpVersion(kelpVersion)
-            .setServerVersion(Bukkit.getBukkitVersion());
-
-
-    System.out.println("loading versioned materials:");
-    injector.getInstance(VersionedMaterialRepository.class).loadAll(this.getClass().getPackage().getName());
 
     injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).schedule();
+
+    injector.getInstance(KelpInventoryRepository.class).loadMaterials();
 
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
   }
@@ -138,7 +132,7 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(SidebarRepository.class).interruptAnimations();
     injector.getInstance(KelpLogger.class).archiveLog();
-    injector.getInstance(KelpLogger.class).log("Saved log in archive. Disabling logger service.");
+    injector.getInstance(KelpLogger.class).log("Saved log to archive. Disabling logger service.");
   }
 
   public static Injector getInjector() {
