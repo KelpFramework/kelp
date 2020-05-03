@@ -84,6 +84,16 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc skinTexture(String skinTexture) {
+    this.skinTexture = skinTexture;
+    return this;
+  }
+
+  public KelpNpc skinSignature(String skinSignature) {
+    this.skinSignature = skinSignature;
+    return this;
+  }
+
   public void spawn(Player player) {
     if (this.uuid == null) {
       this.uuid = UUID.randomUUID();
@@ -140,12 +150,6 @@ public class KelpNpc {
       yAxis += .25;
       output.put(i, yAxis);
     }
-//    output.put(1, -0.3);
-//    output.put(2, -0.05);
-//    output.put(3, .2);
-//    output.put(4, .45);
-//    output.put(5, .70);
-//    output.put(6, .95);
 
     return output;
   }
