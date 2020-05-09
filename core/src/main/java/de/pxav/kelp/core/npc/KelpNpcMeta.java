@@ -2,6 +2,8 @@ package de.pxav.kelp.core.npc;
 
 import com.mojang.authlib.GameProfile;
 
+import java.util.Collection;
+
 /**
  * A class description goes here.
  *
@@ -12,11 +14,16 @@ public class KelpNpcMeta {
   private int entityId;
   private GameProfile gameProfile;
   private String overHeadDisplayName;
+  private Collection<Integer> armorStandEntityIds;
 
-  public KelpNpcMeta(int entityId, GameProfile gameProfile, String overHeadDisplayName) {
+  public KelpNpcMeta(int entityId,
+                     GameProfile gameProfile,
+                     String overHeadDisplayName,
+                     Collection<Integer> armorStandEntityIds) {
     this.entityId = entityId;
     this.gameProfile = gameProfile;
     this.overHeadDisplayName = overHeadDisplayName;
+    this.armorStandEntityIds = armorStandEntityIds;
   }
 
   public int getEntityId() {
@@ -30,4 +37,9 @@ public class KelpNpcMeta {
   public String getOverHeadDisplayName() {
     return overHeadDisplayName;
   }
+
+  public Collection<Integer> getArmorStandEntityIds() {
+    return armorStandEntityIds;
+  }
+
 }

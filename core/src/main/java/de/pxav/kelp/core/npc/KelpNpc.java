@@ -8,6 +8,7 @@ import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,10 +25,11 @@ public class KelpNpc {
 
   private int entityId;
   private UUID uuid;
-  private String overHeadDisplayName;
+  private String customName;
   private GameProfile gameProfile;
 
   private List<String> titles;
+  private Collection<Integer> armorStandEntityIds;
   private String skinSignature;
   private String skinTexture;
 
@@ -38,6 +40,7 @@ public class KelpNpc {
   private boolean isInvisible;
   private boolean isSneaking;
 
+  private boolean showCustomName = false;
   private boolean showInTab = false;
   private String tabListName;
   // armor, ...
@@ -66,8 +69,8 @@ public class KelpNpc {
     return this;
   }
 
-  public KelpNpc overHeadDisplayName(String overHeadDisplayName) {
-    this.overHeadDisplayName = overHeadDisplayName;
+  public KelpNpc customName(String customName) {
+    this.customName = customName;
     return this;
   }
 
@@ -151,6 +154,16 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc showCustomName() {
+    this.showCustomName = true;
+    return this;
+  }
+
+  public KelpNpc hideCustomName() {
+    this.showCustomName = false;
+    return this;
+  }
+
   public KelpNpc lookTo(Location target) {
     double xDiff = target.getX() - location.getX();
     double yDiff = target.getY() - location.getY();
@@ -174,14 +187,15 @@ public class KelpNpc {
       this.uuid = UUID.randomUUID();
     }
 
-    if (this.overHeadDisplayName == null) {
-      this.overHeadDisplayName = " ";
+    if (this.customName == null) {
+      this.customName = " ";
     }
 
     this.npcMeta = npcVersionTemplate.spawnNpc(this, player);
     gameProfile = npcMeta.getGameProfile();
     entityId = npcMeta.getEntityId();
-    overHeadDisplayName = npcMeta.getOverHeadDisplayName();
+    customName = npcMeta.getOverHeadDisplayName();
+    armorStandEntityIds = npcMeta.getArmorStandEntityIds();
 
     this.kelpNpcRepository.addNpc(this, player);
     return this;
@@ -190,6 +204,7 @@ public class KelpNpc {
   public KelpNpc deSpawn(Player player) {
     npcVersionTemplate.deSpawn(this, player);
     this.npcMeta = null;
+    this.kelpNpcRepository.removeNpc(this, player);
     return this;
   }
 
@@ -220,8 +235,8 @@ public class KelpNpc {
     return uuid;
   }
 
-  public String getOverHeadDisplayName() {
-    return overHeadDisplayName;
+  public String getCustomName() {
+    return customName;
   }
 
   public Location getLocation() {
@@ -274,6 +289,10 @@ public class KelpNpc {
 
   public int getEntityId() {
     return entityId;
+  }
+
+  public Collection<Integer> getArmorStandEntityIds() {
+    return armorStandEntityIds;
   }
 
   public KelpNpcMeta getNpcMeta() {

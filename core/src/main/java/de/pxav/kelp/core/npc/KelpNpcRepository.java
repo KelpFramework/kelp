@@ -45,8 +45,13 @@ public class KelpNpcRepository {
     spawnedNpcs.put(player.getUniqueId(), npcs);
   }
 
+  public void removeNpc(KelpNpc npc, Player player) {
+    Collection<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUniqueId(), new ArrayList<>());
+    npcs.remove(npc);
+    spawnedNpcs.put(player.getUniqueId(), npcs);
+  }
+
   public void startScheduler() {
-    System.out.println("scheduler started");
     scheduledExecutorService = Executors.newScheduledThreadPool(0);
     scheduledExecutorService.scheduleAtFixedRate(() -> {
       try {
@@ -58,19 +63,16 @@ public class KelpNpcRepository {
 
           npcList.forEach(currentNpc -> {
 
-            System.out.println(currentNpc.shouldImitateSneaking());
             if (currentNpc.shouldImitateSneaking()
                     && currentNpc.isSneaking()
                     && !player.isSneaking()) {
               currentNpc.unSneak();
               currentNpc.refresh(player);
-              System.out.println("unsneak");
             } else if(currentNpc.shouldImitateSneaking()
                     && !currentNpc.isSneaking()
                     && player.isSneaking()) {
               currentNpc.sneak();
               currentNpc.refresh(player);
-              System.out.println("sneak");
             }
 
             if (currentNpc.shouldFollowHeadRotation()) {
