@@ -2,6 +2,7 @@ package de.pxav.kelp.core.npc;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import org.bukkit.Location;
@@ -21,22 +22,38 @@ public class KelpNpc {
   private Location location;
   private KelpItem itemInHand;
 
+  private int entityId;
   private UUID uuid;
   private String overHeadDisplayName;
+  private GameProfile gameProfile;
+
   private List<String> titles;
   private String skinSignature;
   private String skinTexture;
+
+  private double removeDistance;
+  private boolean followHeadRotation;
+  private boolean imitateSneaking;
+  private boolean isBurning;
+  private boolean isInvisible;
+  private boolean isSneaking;
 
   private boolean showInTab = false;
   private String tabListName;
   // armor, ...
 
-  private NpcVersionTemplate npcVersionTemplate;
+  private KelpNpcMeta npcMeta;
 
-  public KelpNpc(NpcVersionTemplate npcVersionTemplate) {
+  private NpcVersionTemplate npcVersionTemplate;
+  private KelpNpcRepository kelpNpcRepository;
+
+  public KelpNpc(NpcVersionTemplate npcVersionTemplate, KelpNpcRepository kelpNpcRepository) {
     this.npcVersionTemplate = npcVersionTemplate;
+    this.kelpNpcRepository = kelpNpcRepository;
 
     this.titles = Lists.newArrayList();
+    this.removeDistance = 40;
+    this.isBurning = false;
   }
 
   public KelpNpc location(Location location) {
@@ -94,7 +111,47 @@ public class KelpNpc {
     return this;
   }
 
-  public void spawn(Player player) {
+  public KelpNpc imitateSneaking() {
+    this.imitateSneaking = true;
+    return this;
+  }
+
+  public KelpNpc doNotImitateSneaking() {
+    this.imitateSneaking = false;
+    return this;
+  }
+
+  public KelpNpc followHeadRotation() {
+    this.followHeadRotation = true;
+    return this;
+  }
+
+  public KelpNpc unfollowHeadRotation() {
+    this.imitateSneaking = false;
+    return this;
+  }
+
+  public KelpNpc addBurningEffect() {
+    this.isBurning = true;
+    return this;
+  }
+
+  public KelpNpc removeBurningEffect() {
+    this.isBurning = false;
+    return this;
+  }
+
+  public KelpNpc setInvisible() {
+    this.isInvisible = true;
+    return this;
+  }
+
+  public KelpNpc setVisible() {
+    this.isInvisible = false;
+    return this;
+  }
+
+  public KelpNpc spawn(Player player) {
     if (this.uuid == null) {
       this.uuid = UUID.randomUUID();
     }
@@ -103,7 +160,42 @@ public class KelpNpc {
       this.overHeadDisplayName = " ";
     }
 
-    npcVersionTemplate.spawnNpc(this, player);
+    this.npcMeta = npcVersionTemplate.spawnNpc(this, player);
+    gameProfile = npcMeta.getGameProfile();
+    entityId = npcMeta.getEntityId();
+    overHeadDisplayName = npcMeta.getOverHeadDisplayName();
+
+    this.kelpNpcRepository.addNpc(this, player);
+    return this;
+  }
+
+  public KelpNpc deSpawn(Player player) {
+    npcVersionTemplate.deSpawn(this, player);
+    this.npcMeta = null;
+    return this;
+  }
+
+  public KelpNpc refresh(Player player) {
+    npcVersionTemplate.refresh(this, player);
+    return this;
+  }
+
+  public KelpNpc updateHeadRotation(Player player) {
+    return this;
+  }
+
+  public KelpNpc sneak() {
+    this.isSneaking = true;
+    return this;
+  }
+
+  public KelpNpc unSneak() {
+    this.isSneaking = false;
+    return this;
+  }
+
+  public boolean isSneaking() {
+    return isSneaking;
   }
 
   public UUID getUuid() {
@@ -140,6 +232,34 @@ public class KelpNpc {
 
   public boolean shouldShowInTab() {
     return showInTab;
+  }
+
+  public boolean shouldImitateSneaking() {
+    return imitateSneaking;
+  }
+
+  public boolean shouldFollowHeadRotation() {
+    return followHeadRotation;
+  }
+
+  public boolean hasBurningEffect() {
+    return isBurning;
+  }
+
+  public boolean isInvisible() {
+    return isInvisible;
+  }
+
+  public GameProfile getGameProfile() {
+    return gameProfile;
+  }
+
+  public int getEntityId() {
+    return entityId;
+  }
+
+  public KelpNpcMeta getNpcMeta() {
+    return npcMeta;
   }
 
   public Map<Integer, Double> getTitleHeights() {

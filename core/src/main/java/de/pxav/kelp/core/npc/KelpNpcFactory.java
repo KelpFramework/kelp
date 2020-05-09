@@ -11,14 +11,16 @@ import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 public class KelpNpcFactory {
 
   private NpcVersionTemplate npcVersionTemplate;
+  private KelpNpcRepository kelpNpcRepository;
 
   @Inject
-  public KelpNpcFactory(NpcVersionTemplate npcVersionTemplate) {
+  public KelpNpcFactory(NpcVersionTemplate npcVersionTemplate, KelpNpcRepository kelpNpcRepository) {
     this.npcVersionTemplate = npcVersionTemplate;
+    this.kelpNpcRepository = kelpNpcRepository;
   }
 
   public KelpNpc newKelpNpc() {
-    return new KelpNpc(npcVersionTemplate);
+    return new KelpNpc(npcVersionTemplate, kelpNpcRepository);
   }
 
 }
