@@ -9,6 +9,7 @@ import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.listener.EventRegistration;
+import de.pxav.kelp.core.npc.KelpNpcRepository;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -105,6 +106,8 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).schedule();
 
+    injector.getInstance(KelpNpcRepository.class).startScheduler();
+
     injector.getInstance(KelpInventoryRepository.class).loadMaterials();
 
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
@@ -115,6 +118,8 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpLogger.class).log("Disabling plugins....");
     injector.getInstance(KelpApplicationRepository.class).disablePlugins();
     injector.getInstance(KelpLogger.class).log("[OK] Disabled plugins!");
+
+    injector.getInstance(KelpNpcRepository.class).stopScheduler();
 
     injector.getInstance(KelpLogger.class).log(
             " _   __       _    ",
