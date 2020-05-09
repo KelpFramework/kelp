@@ -283,6 +283,10 @@ public class KelpNpc {
     return isInvisible;
   }
 
+  public boolean shouldShowCustomName() {
+    return this.showCustomName;
+  }
+
   public GameProfile getGameProfile() {
     return gameProfile;
   }
