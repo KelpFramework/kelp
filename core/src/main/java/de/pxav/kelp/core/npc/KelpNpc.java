@@ -151,6 +151,24 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc lookTo(Location target) {
+    double xDiff = target.getX() - location.getX();
+    double yDiff = target.getY() - location.getY();
+    double zDiff = target.getZ() - location.getZ();
+
+    double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+    double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
+
+    double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
+    double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90.0D;
+    if (zDiff < 0.0D) {
+      yaw += Math.abs(180.0D - yaw) * 2.0D;
+    }
+    location.setYaw((float) yaw - 90.0F);
+    location.setPitch((float) pitch);
+    return this;
+  }
+
   public KelpNpc spawn(Player player) {
     if (this.uuid == null) {
       this.uuid = UUID.randomUUID();

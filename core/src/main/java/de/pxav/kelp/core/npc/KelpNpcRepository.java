@@ -73,6 +73,11 @@ public class KelpNpcRepository {
               System.out.println("sneak");
             }
 
+            if (currentNpc.shouldFollowHeadRotation()) {
+              currentNpc.lookTo(player.getLocation());
+              currentNpc.refresh(player);
+            }
+
           });
         });
       } catch (Exception e) {
