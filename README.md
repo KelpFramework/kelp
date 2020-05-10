@@ -2,11 +2,9 @@
 
 > Developed by pxav (c) 2019-2020
 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version)
-![GitHub issues](https://img.shields.io/github/issues/PXAV/finate-studio-java)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp)
-![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version)![GitHub issues](https://img.shields.io/github/issues/PXAV/finate-studio-java)![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp)![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp)![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
+
+
 
 ### What is Kelp?
 
@@ -96,16 +94,17 @@ playerConnection.sendPacket(spawnPacket);
 
 There are version implementations for the following version implementations available:
 
-| Server Version | Supported | Notes                 |
-| -------------- | --------- | --------------------- |
-| 1.8            | ✅         | All features included |
-| 1.9            | ❌         | Following soon        |
-| 1.10           | ❌         | Following soon        |
-| 1.11           | ❌         | Following soon        |
-| 1.12           | ❌         | Following soon        |
-| 1.13           | ❌         | Following soon        |
-| 1.14           | ❌         | Work in progress      |
-| 1.15           | ❌         | Following soon        |
+| Server Version | Supported | Notes                                                        |
+| -------------- | --------- | ------------------------------------------------------------ |
+| 1.0-1.7        | ❌         | At the current state of the project it is not planned to support these versions |
+| 1.8            | ✅         | All features included                                        |
+| 1.9            | ❌         | Following soon                                               |
+| 1.10           | ❌         | Following soon                                               |
+| 1.11           | ❌         | Following soon                                               |
+| 1.12           | ❌         | Following soon                                               |
+| 1.13           | ❌         | Following soon                                               |
+| 1.14           | ❌         | Work in progress                                             |
+| 1.15           | ❌         | Following soon                                               |
 
 
 
