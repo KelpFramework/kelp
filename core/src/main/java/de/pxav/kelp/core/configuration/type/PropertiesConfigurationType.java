@@ -7,8 +7,7 @@ import com.google.inject.Injector;
 import de.pxav.kelp.core.configuration.Configuration;
 import de.pxav.kelp.core.configuration.ConfigurationAttribute;
 import de.pxav.kelp.core.configuration.KelpConfiguration;
-import de.pxav.kelp.core.configuration.KelpFileUtils;
-import kelp.configuration.*;
+import de.pxav.kelp.core.common.KelpFileUtils;
 
 import java.io.*;
 import java.util.Collection;

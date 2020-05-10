@@ -11,6 +11,6 @@ public abstract class KelpInventory {
 
   public abstract Inventory render();
 
-  public abstract void update(Inventory toUpdate);
+  public abstract void update(Inventory toUpdate, int state);
 
 }

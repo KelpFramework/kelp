@@ -16,4 +16,6 @@ public @interface CreateInventory {
 
   String identifier();
 
+  boolean async() default true;
+
 }

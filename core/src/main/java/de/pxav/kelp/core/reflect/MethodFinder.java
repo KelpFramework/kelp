@@ -1,55 +1,69 @@
 package de.pxav.kelp.core.reflect;
 
-import com.google.common.reflect.ClassPath;
-import com.google.inject.Inject;
+import com.google.common.collect.Sets;
+import io.github.classgraph.*;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * A class description goes here.
+ * This class can be used to search for certain methods using
+ * certain criteria. An example of how this could look like:
  *
+ * {@code filter(new String[] {"abc.def", "de.pxav.kelp.core"},
+ * MethodCriterion.annotatedWith(annotation));
+ * }
+ *
+ * @see MethodCriterion
  * @author pxav
  */
 public class MethodFinder {
 
-  private ClassPath classPath;
-
-  @Inject
-  public MethodFinder(ClassLoader classLoader) {
-    try {
-      this.classPath = ClassPath.from(classLoader);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
+  /**
+   * Searches for all methods fulfilling the given criteria in the
+   * given packages.
+   *
+   * @param packageNames    The names of the packages the algorithm should search for.
+   *                        If you pass a package, which has subpackages, those will be
+   *                        scanned as well.
+   * @param methodCriteria  The criteria for the methods you want to find.
+   * @return                A {@code Stream} containing the methods.
+   */
   public Stream<Method> filter(String[] packageNames, MethodCriterion... methodCriteria) {
-    return (packageNames.length == 0
-            ? this.classPath.getAllClasses()
-            : Arrays.stream(packageNames)
-            .flatMap(
-                    packageName -> this.classPath.getTopLevelClassesRecursive(packageName).stream())
-            .collect(Collectors.toList()))
-            .stream()
-            .map(
-                    classInfo -> {
-                      try {
-                        return classInfo.load();
-                      } catch (Throwable ignored) {
-                      }
-                      return null;
-                    })
-            .filter(Objects::nonNull)
-            .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))
-            .filter(
-                    method ->
-                            Arrays.stream(methodCriteria)
-                                    .allMatch(methodFilter -> methodFilter.matches(method)));
+
+    Set<Method> output = Sets.newHashSet();
+
+    // scanning for all classes in the packages and then
+    // iterate all their methods
+    try (ScanResult scanResult = new ClassGraph()
+            .enableAllInfo()
+            .whitelistPackages(packageNames)
+            .scan()) {
+
+      ClassInfoList allClasses = scanResult.getAllClasses();
+
+      for (ClassInfo current : allClasses) {
+        MethodInfoList methodInfos = current.getMethodInfo();
+        for (MethodInfo methodInfo : methodInfos) {
+          Method method = methodInfo.loadClassAndGetMethod();
+          boolean allMatch = true;
+          for (MethodCriterion methodCriterion : methodCriteria) {
+            if (!methodCriterion.matches(method)) {
+              allMatch = false;
+              break;
+            }
+          }
+
+          if (allMatch) {
+            output.add(method);
+          }
+        }
+      }
+    }
+
+    return output.stream().filter(Objects::nonNull);
   }
 
 }

@@ -3,7 +3,7 @@ package de.pxav.kelp.core.sidebar.type;
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.sidebar.component.SidebarComponentFactory;
 import de.pxav.kelp.core.sidebar.component.SimpleSidebarComponent;
-import de.pxav.kelp.core.sidebar.version.VersionedSidebar;
+import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
 import de.pxav.kelp.core.logger.KelpLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -32,18 +32,18 @@ public class SimpleSidebar extends KelpSidebar {
 
   private KelpLogger logger;
   private JavaPlugin javaPlugin;
-  private VersionedSidebar versionedSidebar;
+  private SidebarVersionTemplate sidebarVersionTemplate;
   private SidebarComponentFactory sidebarComponentFactory;
 
   private ScoreboardManager scoreboardManager;
 
   SimpleSidebar(KelpLogger logger,
                 JavaPlugin javaPlugin,
-                VersionedSidebar versionedSidebar,
+                SidebarVersionTemplate sidebarVersionTemplate,
                 SidebarComponentFactory sidebarComponentFactory) {
     this.logger = logger;
     this.javaPlugin = javaPlugin;
-    this.versionedSidebar = versionedSidebar;
+    this.sidebarVersionTemplate = sidebarVersionTemplate;
     this.sidebarComponentFactory = sidebarComponentFactory;
 
     this.components = Lists.newArrayList();
@@ -76,7 +76,7 @@ public class SimpleSidebar extends KelpSidebar {
     });
 
     if (scoreboard.getObjective("main") == null) {
-      versionedSidebar.createObjective(scoreboard, "main", this.title);
+      sidebarVersionTemplate.createObjective(scoreboard, "main", this.title);
     }
 
     for (SimpleSidebarComponent component : this.components) {

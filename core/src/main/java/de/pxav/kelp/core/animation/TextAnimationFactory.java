@@ -23,4 +23,12 @@ public final class TextAnimationFactory {
     return new BuildingTextAnimation(stringUtils);
   }
 
+  public StaticTextAnimation newStaticTextAnimation() {
+    return new StaticTextAnimation();
+  }
+
+  public StaticTextAnimation newStaticTextAnimation(String text) {
+    return new StaticTextAnimation(text);
+  }
+
 }

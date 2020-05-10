@@ -12,14 +12,9 @@
     <modules>
         <module>core</module>
         <module>v1_8_implementation</module>
+        <module>testing-module</module>
+        <module>v_1_14_implementation</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
 
@@ -41,14 +36,6 @@
             <version>2.6</version>
         </dependency>
 
-
-
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>plugin-annotations</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -56,6 +43,23 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.openpojo</groupId>
+            <artifactId>openpojo</artifactId>
+            <version>0.8.13</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>7.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>LATEST</version>
+        </dependency>
 
     </dependencies>
 

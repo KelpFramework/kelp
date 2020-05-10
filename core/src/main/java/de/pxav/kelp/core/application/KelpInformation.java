@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * A class description goes here.
+ * This class represents the information about a
+ * kelp application.
  *
  * @author pxav
+ * @see NewKelpApplication
  */
 public class KelpInformation {
 
