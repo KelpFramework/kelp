@@ -14,6 +14,8 @@ import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
+import de.pxav.kelp.core.sound.SoundRepository;
+import de.pxav.kelp.core.sound.SoundVersionTemplate;
 import de.pxav.kelp.core.version.KelpVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -109,6 +111,7 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpNpcRepository.class).startScheduler();
 
     injector.getInstance(KelpInventoryRepository.class).loadMaterials();
+    injector.getInstance(SoundVersionTemplate.class).defineDefaults();
 
     injector.getInstance(KelpApplicationRepository.class).enablePlugins();
   }

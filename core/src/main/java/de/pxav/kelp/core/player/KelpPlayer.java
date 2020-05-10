@@ -3,6 +3,7 @@ package de.pxav.kelp.core.player;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
+import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -53,6 +54,31 @@ public class KelpPlayer {
 
   public KelpPlayer forceInventoryClose() {
     bukkitPlayer.closeInventory();
+    return this;
+  }
+
+  public KelpPlayer playSound(KelpSound sound) {
+    playerVersionTemplate.playSound(bukkitPlayer, sound, playerVersionTemplate.getLocation(bukkitPlayer), 3, 0);
+    return this;
+  }
+
+  public KelpPlayer playSound(KelpSound sound, Location location) {
+    playerVersionTemplate.playSound(bukkitPlayer, sound, location, 3, 0);
+    return this;
+  }
+
+  public KelpPlayer playSound(KelpSound sound, float volume) {
+    playerVersionTemplate.playSound(bukkitPlayer, sound, playerVersionTemplate.getLocation(bukkitPlayer), volume, 0);
+    return this;
+  }
+
+  public KelpPlayer playSound(KelpSound sound, float volume, float pitch) {
+    playerVersionTemplate.playSound(bukkitPlayer, sound, playerVersionTemplate.getLocation(bukkitPlayer), volume, pitch);
+    return this;
+  }
+
+  public KelpPlayer playSound(KelpSound sound, Location location, float volume, float pitch) {
+    playerVersionTemplate.playSound(bukkitPlayer, sound, location, volume, pitch);
     return this;
   }
 
