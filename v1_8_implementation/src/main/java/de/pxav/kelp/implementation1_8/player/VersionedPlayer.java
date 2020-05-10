@@ -1,9 +1,13 @@
 package de.pxav.kelp.implementation1_8.player;
 
+import com.google.inject.Inject;
 import de.pxav.kelp.core.player.PlayerVersionTemplate;
+import de.pxav.kelp.core.sound.KelpSound;
+import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -17,6 +21,13 @@ import java.util.UUID;
  */
 @Versioned
 public class VersionedPlayer extends PlayerVersionTemplate {
+
+  private SoundRepository soundRepository;
+
+  @Inject
+  public VersionedPlayer(SoundRepository soundRepository) {
+    this.soundRepository = soundRepository;
+  }
 
   @Override
   public void sendTitle(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
@@ -64,6 +75,12 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   }
 
   @Override
+  public void playSound(Player player, KelpSound sound, Location location, float volume, float pitch) {
+    Sound bukkitSound = Sound.valueOf(soundRepository.getSound(sound));
+    player.playSound(player.getLocation(), bukkitSound, volume, pitch);
+  }
+
+  @Override
   public void setHealth(Player player, int health) {
     player.setHealth(health);
   }
@@ -75,6 +92,11 @@ public class VersionedPlayer extends PlayerVersionTemplate {
 
   public UUID getUniqueId(Player player) {
     return player.getUniqueId();
+  }
+
+  @Override
+  public Location getLocation(Player player) {
+    return null;
   }
 
   private void sendPacket(Packet packet, Player player) {
