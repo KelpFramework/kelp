@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.inventory.item.KelpItem;
+import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -46,13 +48,17 @@ public class KelpNpc {
   // armor, ...
 
   private KelpNpcMeta npcMeta;
+  private KelpLogger logger;
 
   private NpcVersionTemplate npcVersionTemplate;
   private KelpNpcRepository kelpNpcRepository;
 
-  public KelpNpc(NpcVersionTemplate npcVersionTemplate, KelpNpcRepository kelpNpcRepository) {
+  public KelpNpc(NpcVersionTemplate npcVersionTemplate,
+                 KelpNpcRepository kelpNpcRepository,
+                 KelpLogger logger) {
     this.npcVersionTemplate = npcVersionTemplate;
     this.kelpNpcRepository = kelpNpcRepository;
+    this.logger = logger;
 
     this.titles = Lists.newArrayList();
     this.removeDistance = 40;
@@ -189,6 +195,11 @@ public class KelpNpc {
 
     if (this.customName == null) {
       this.customName = " ";
+    }
+
+    if (this.location == null) {
+      logger.log(LogLevel.ERROR, "To spawn an NPC, you have to define a location before." +
+              " But there was no location found. Please check your code again.");
     }
 
     this.npcMeta = npcVersionTemplate.spawnNpc(this, player);
