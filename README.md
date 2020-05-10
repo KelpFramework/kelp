@@ -2,7 +2,7 @@
 
 > Developed by pxav (c) 2019-2020
 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version)![GitHub issues](https://img.shields.io/github/issues/PXAV/finate-studio-java)![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp)![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp)![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version) ![GitHub issues](https://img.shields.io/github/issues/PXAV/finate-studio-java) ![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp) ![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
 
 
 
