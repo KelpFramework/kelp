@@ -64,7 +64,7 @@ public final class KelpApplicationRepository {
    */
   public KelpApplicationRepository detectGamePlugins(File kelpApplicationDirectory) {
     Preconditions.checkNotNull(kelpApplicationDirectory);
-    kelpFileUtils.createIfNotExists(kelpApplicationDirectory);
+    kelpFileUtils.createFolderIfNotExists(kelpApplicationDirectory);
 
     // get a list of all files in the directory.
     File[] filesToLoad = kelpApplicationDirectory.listFiles();
@@ -146,7 +146,7 @@ public final class KelpApplicationRepository {
 
           Annotation descriptionAnnotation = Arrays.stream(
                           ((AnnotationsAttribute)
-                                  classFile.getAttribute(AnnotationsAttribute.invisibleTag))
+                                  classFile.getAttribute(AnnotationsAttribute.visibleTag))
                                   .getAnnotations())
                           .filter(annotation -> annotation.getTypeName().equals(NewKelpApplication.class.getName()))
                           .findFirst()
