@@ -61,8 +61,8 @@ public final class VersionBinderModule extends AbstractModule {
     }
 
     File[] files = folder.listFiles();
-    if (files != null && files.length <= 0) return;
     Preconditions.checkNotNull(files);
+    if (files.length <= 0) return;
 
     List<Class<?>> implementationClasses = Lists.newArrayList();
 
