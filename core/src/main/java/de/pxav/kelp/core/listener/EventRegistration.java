@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
 import org.bukkit.Bukkit;
@@ -25,14 +26,17 @@ public class EventRegistration {
   private final MethodFinder methodSearcher;
   private final JavaPlugin javaPlugin;
   private final Injector injector;
+  private final KelpLogger logger;
 
   @Inject
   public EventRegistration(MethodFinder methodSearcher,
                            JavaPlugin javaPlugin,
-                           Injector injector) {
+                           Injector injector,
+                           KelpLogger logger) {
     this.methodSearcher = methodSearcher;
     this.javaPlugin = javaPlugin;
     this.injector = injector;
+    this.logger = logger;
   }
 
   public void initialize(String... packageNames) {
@@ -41,7 +45,7 @@ public class EventRegistration {
             .filter(packageNames, MethodCriterion.annotatedWith(EventHandler.class))
             .forEach(
                     method -> {
-                      System.out.println("registered eventhandler " + method.getName());
+                      logger.log("EventHandler '" + method.getName() + "' successfully registered.");
                       EventHandler handler = method.getAnnotation(EventHandler.class);
                       Bukkit.getPluginManager()
                               .registerEvent(
