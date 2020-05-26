@@ -16,7 +16,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * A class description goes here.
+ * This class handles the bukkit-event registration in Kelp.
+ *
+ * Normally in bukkit you have to implement an empty {@code Listener} interface
+ * and register the class via {@code PluginManager} as a listener class,
+ * but by using Kelp this step becomes unnecessary.
+ *
+ * Listeners are automatically registered if they are simply annotated with {@code @EventHandler} and
+ * you do not have to implement any interfaces anymore or register listeners manually.
  *
  * @author pxav
  */
@@ -39,6 +46,19 @@ public class EventRegistration {
     this.logger = logger;
   }
 
+  /**
+   * This method searches for all methods annotated with
+   * {@code EventHandler} and registers the corresponding listener.
+   *
+   * Execute this method on every application startup to register all
+   * events properly.
+   *
+   * @param packageNames The names of the packages you want to scan.
+   *                     This also includes all sub-packages of the given packages.
+   * @see EventHandler
+   * @see Listener
+   * @see org.bukkit.plugin.PluginManager
+   */
   public void initialize(String... packageNames) {
     Preconditions.checkNotNull(packageNames);
     this.methodSearcher
@@ -46,7 +66,12 @@ public class EventRegistration {
             .forEach(
                     method -> {
                       logger.log("EventHandler '" + method.getName() + "' successfully registered.");
+
+                      // fetch annotation metadata if an annotation was found.
                       EventHandler handler = method.getAnnotation(EventHandler.class);
+
+                      // register the event and manually wrap it into a listener class so that it is valid
+                      // for bukkit.
                       Bukkit.getPluginManager()
                               .registerEvent(
                                       ((Class<? extends Event>) method.getParameterTypes()[0]),
