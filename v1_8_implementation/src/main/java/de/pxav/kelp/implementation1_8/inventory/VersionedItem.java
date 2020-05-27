@@ -37,7 +37,6 @@ public class VersionedItem extends ItemVersionTemplate {
   @Override
   public ItemStack newItemStack(KelpMaterial material) {
     String materialName = materialRepository.getMaterial(material);
-    System.out.println("mat name " + materialName);
     String[] materialElements = materialName.split(":");
     Material bukkitMaterial = Material.valueOf(materialElements[0]);
     if (materialElements.length == 2) {
