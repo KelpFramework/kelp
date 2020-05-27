@@ -38,11 +38,11 @@ import javassist.bytecode.annotation.StringMemberValue;
 @Singleton
 public final class KelpApplicationRepository {
 
-  private final Map<String, KelpInformation> appsToLoad = Maps.newHashMap();
+  private final Map<String, KelpApplicationMeta> appsToLoad = Maps.newHashMap();
   private final Map<String, KelpApplication> appsToEnable = Maps.newHashMap();
   private final Map<String, KelpApplication> enabledApps = Maps.newHashMap();
-  private final Map<String, KelpInformation> appMeta = Maps.newHashMap();
-  private final Map<KelpInformation, Class<? extends KelpApplication>>
+  private final Map<String, KelpApplicationMeta> appMeta = Maps.newHashMap();
+  private final Map<KelpApplicationMeta, Class<? extends KelpApplication>>
           classPathApps = Maps.newHashMap();
 
   private final Injector injector;
@@ -90,16 +90,16 @@ public final class KelpApplicationRepository {
             .filter(Objects::nonNull)
             .forEach(
                     moduleInfo -> {
-                      KelpInformation kelpInformation = checkPlugin(moduleInfo.getJarFile());
-                      appMeta.put(kelpInformation.getApplicationName(), kelpInformation);
-                      if (kelpInformation == null) {
+                      KelpApplicationMeta applicationMeta = validateApplication(moduleInfo.getJarFile());
+                      appMeta.put(applicationMeta.getApplicationName(), applicationMeta);
+                      if (applicationMeta == null) {
                         logger.log(LogLevel.ERROR, "Cannot load application from file " + moduleInfo.getFile().getName());
                         return;
                       }
 
-                      if (!enabledApps.containsKey(kelpInformation.getApplicationName())) {
-                        kelpInformation.file(moduleInfo.getFile());
-                        appsToLoad.put(kelpInformation.getApplicationName(), kelpInformation);
+                      if (!enabledApps.containsKey(applicationMeta.getApplicationName())) {
+                        applicationMeta.file(moduleInfo.getFile());
+                        appsToLoad.put(applicationMeta.getApplicationName(), applicationMeta);
                       }
                     });
     return this;
@@ -110,11 +110,11 @@ public final class KelpApplicationRepository {
    * @return
    */
   public KelpApplicationRepository load() {
-    Map<KelpInformation, Boolean> moduleStatuses2 = Maps.newHashMap();
-    for (Map.Entry<String, KelpInformation> entry : appsToLoad.entrySet()) {
-      KelpInformation module = entry.getValue();
+    Map<KelpApplicationMeta, Boolean> moduleStatuses2 = Maps.newHashMap();
+    for (Map.Entry<String, KelpApplicationMeta> entry : appsToLoad.entrySet()) {
+      KelpApplicationMeta module = entry.getValue();
 
-      if (!loadPluginsInClassPath(moduleStatuses2, new Stack<>(), module)) {
+      if (!bindToClassPath(moduleStatuses2, new Stack<>(), module)) {
         logger.log(LogLevel.ERROR, "Failed to enable " + entry.getKey());
         continue;
       }
@@ -135,9 +135,9 @@ public final class KelpApplicationRepository {
    * @param jarFile The {@code .jar} file you want to search in.
    * @return        The final information object.
    *                {@code null} if the {@code jar} file is no valid kelp application.
-   * @see KelpInformation
+   * @see KelpApplicationMeta
    */
-  private KelpInformation checkPlugin(JarFile jarFile) {
+  private KelpApplicationMeta validateApplication(JarFile jarFile) {
     Enumeration<JarEntry> jarEntries = jarFile.entries();
 
     while (jarEntries.hasMoreElements()) {
@@ -159,27 +159,27 @@ public final class KelpApplicationRepository {
 
           if (descriptionAnnotation == null) continue;
 
-          String descriptionName =
+          String applicationName =
                   ((StringMemberValue) descriptionAnnotation.getMemberValue("applicationName")).getValue();
-          StringMemberValue descriptionVersion =
+          StringMemberValue version =
                   ((StringMemberValue) descriptionAnnotation.getMemberValue("version"));
-          ArrayMemberValue descriptionDepends =
+          ArrayMemberValue hardDependencies =
                   ((ArrayMemberValue) descriptionAnnotation.getMemberValue("hardDependencies"));
-          ArrayMemberValue descriptionSoftDepends =
+          ArrayMemberValue softDependencies =
                   ((ArrayMemberValue) descriptionAnnotation.getMemberValue("softDependencies"));
 
-          KelpInformation kelpInformation = new KelpInformation();
-          kelpInformation
-                  .applicationName(descriptionName)
-                  .version(descriptionVersion == null ? "1.0.0" : descriptionVersion.getValue())
+          KelpApplicationMeta applicationMeta = new KelpApplicationMeta();
+          applicationMeta
+                  .applicationName(applicationName)
+                  .version(version == null ? "1.0.0" : version.getValue())
                   .hardDependencies(
-                          (descriptionDepends == null ? Sets.newHashSet() : newHashSet(descriptionDepends)))
+                          (hardDependencies == null ? Sets.newHashSet() : newHashSet(hardDependencies)))
                   .softDependencies(
-                          (descriptionSoftDepends == null
+                          (softDependencies == null
                                   ? Sets.newHashSet()
-                                  : newHashSet(descriptionSoftDepends)));
-          kelpInformation.main(classFile.getName());
-          return kelpInformation;
+                                  : newHashSet(softDependencies)));
+          applicationMeta.main(classFile.getName());
+          return applicationMeta;
         } catch (IOException ignored) {
           break;
         }
@@ -193,14 +193,14 @@ public final class KelpApplicationRepository {
    * the main plugin.
    *
    * @param moduleStatuses
-   * @param dependStack
+   * @param dependencyStack
    * @param module
    * @return
    */
-  private boolean loadPluginsInClassPath(
-          Map<KelpInformation, Boolean> moduleStatuses,
-          Stack<KelpInformation> dependStack,
-          KelpInformation module) {
+  private boolean bindToClassPath(
+          Map<KelpApplicationMeta, Boolean> moduleStatuses,
+          Stack<KelpApplicationMeta> dependencyStack,
+          KelpApplicationMeta module) {
     if (moduleStatuses.containsKey(module)) return moduleStatuses.get(module);
 
     Set<String> dependencies = Sets.newHashSet();
@@ -210,19 +210,19 @@ public final class KelpApplicationRepository {
     boolean status = true;
 
     for (String dependName : dependencies) {
-      KelpInformation depend =
+      KelpApplicationMeta depend =
               appsToLoad.containsKey(dependName)
                       ? appsToLoad.get(dependName)
                       : (enabledApps.containsKey(dependName))
                       ? enabledApps.get(dependName).getInformation()
                       : null;
-      Boolean dependStatus = (depend != null) ? moduleStatuses.get(depend) : Boolean.FALSE;
+      Boolean dependStatus = (depend != null) ? moduleStatuses.get(depend) : false;
 
       if (dependStatus == null) {
-        if (dependStack.contains(depend)) {
+        if (dependencyStack.contains(depend)) {
           StringBuilder dependencyGraph = new StringBuilder();
 
-          for (KelpInformation element : dependStack) {
+          for (KelpApplicationMeta element : dependencyStack) {
             dependencyGraph.append(element.getApplicationName()).append(" -> ");
           }
 
@@ -232,13 +232,13 @@ public final class KelpApplicationRepository {
                   + ": " + dependencyGraph);
           status = false;
         } else {
-          dependStack.push(module);
-          dependStatus = this.loadPluginsInClassPath(moduleStatuses, dependStack, depend);
-          dependStack.pop();
+          dependencyStack.push(module);
+          dependStatus = this.bindToClassPath(moduleStatuses, dependencyStack, depend);
+          dependencyStack.pop();
         }
       }
 
-      if (Boolean.FALSE.equals(dependStatus) && !module.getSoftDependencies().contains(dependName)) {
+      if (!Boolean.FALSE.equals(dependStatus) && !module.getSoftDependencies().contains(dependName)) {
         logger.log(LogLevel.WARNING, "Dependency " + dependName + " (required by " + module.getApplicationName() + ") is unavailable");
         status = false;
       }
@@ -283,7 +283,7 @@ public final class KelpApplicationRepository {
     });
   }
 
-  public void enablePlugins() {
+  public void enableApplications() {
     for (Map.Entry<String, KelpApplication> namePluginEntry : appsToEnable.entrySet()) {
       try {
         logger.log(
@@ -303,7 +303,7 @@ public final class KelpApplicationRepository {
                         + namePluginEntry.getValue().getInformation().getApplicationName()
                         + ":");
         t.printStackTrace();
-        disablePlugin(namePluginEntry.getValue());
+        disableApplication(namePluginEntry.getValue());
       }
     }
 
@@ -320,11 +320,11 @@ public final class KelpApplicationRepository {
    *          as {@code Class<? extends KelpApplication>}
    * @see     KelpApplication
    */
-  public Collection<Class<? extends KelpApplication>> getAllPluginClasses() {
+  public Collection<Class<? extends KelpApplication>> getAllApplicationClasses() {
     return classPathApps.values();
   }
 
-  private void disablePlugin(KelpApplication application) {
+  private void disableApplication(KelpApplication application) {
     if (enabledApps.containsKey(application.getInformation().getApplicationName())) return;
 
     Lists.newArrayList(enabledApps.values())
@@ -335,7 +335,7 @@ public final class KelpApplicationRepository {
                               .getInformation()
                               .getHardDependencies()
                               .contains(application.getInformation().getApplicationName())) {
-                        disablePlugin(currentApplication);
+                        disableApplication(currentApplication);
                       }
 
                       try {
@@ -351,7 +351,7 @@ public final class KelpApplicationRepository {
     for (KelpApplication currentApplication : Lists.newArrayList(enabledApps.values())) {
       if (!currentApplication.equals(application)
               && currentApplication.getInformation().getHardDependencies().contains(application.getInformation().getApplicationName())) {
-        disablePlugin(currentApplication);
+        disableApplication(currentApplication);
       }
     }
 
@@ -367,8 +367,8 @@ public final class KelpApplicationRepository {
     enabledApps.remove(application.getInformation().getApplicationName());
   }
 
-  public void disablePlugins() {
-    enabledApps.values().forEach(this::disablePlugin);
+  public void disableApplications() {
+    enabledApps.values().forEach(this::disableApplication);
   }
 
   public Collection<KelpApplication> getEnabledApps() {

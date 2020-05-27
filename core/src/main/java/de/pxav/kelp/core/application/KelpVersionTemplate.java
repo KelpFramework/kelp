@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * the template classes and simply let them inject by Guice,
  * because of this technique.
  *
- * Please note that template classes which are not annotated
+ * [!] Please note that template classes which are not annotated
  * with this annotation will be ignored in the binding process
  * and there will be no version-specific code for them. So
  * always put this annotation on top of each version template class.
