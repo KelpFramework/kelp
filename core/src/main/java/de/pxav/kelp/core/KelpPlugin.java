@@ -14,7 +14,6 @@ import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
-import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.sound.SoundVersionTemplate;
 import de.pxav.kelp.core.version.KelpVersion;
 import org.bukkit.Bukkit;
@@ -56,7 +55,7 @@ public class KelpPlugin extends JavaPlugin {
     );
 
     injector.getInstance(KelpApplicationRepository.class)
-            .detectGamePlugins(new File(Bukkit.getWorldContainer(), "kelp_plugins"))
+            .detectKelpApplications(new File(Bukkit.getWorldContainer(), "kelp_plugins"))
             .load()
             .enable();
 
@@ -113,13 +112,13 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpInventoryRepository.class).loadMaterials();
     injector.getInstance(SoundVersionTemplate.class).defineDefaults();
 
-    injector.getInstance(KelpApplicationRepository.class).enablePlugins();
+    injector.getInstance(KelpApplicationRepository.class).enableApplications();
   }
 
   @Override
   public void onDisable() {
     injector.getInstance(KelpLogger.class).log("Disabling plugins....");
-    injector.getInstance(KelpApplicationRepository.class).disablePlugins();
+    injector.getInstance(KelpApplicationRepository.class).disableApplications();
     injector.getInstance(KelpLogger.class).log("[OK] Disabled plugins!");
 
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
