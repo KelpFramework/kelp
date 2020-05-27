@@ -1,6 +1,6 @@
 package string;
 
-import kelp.common.StringUtils;
+import de.pxav.kelp.core.common.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

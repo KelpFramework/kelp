@@ -15,16 +15,19 @@ public class KelpItemFactory {
 
   private MaterialVersionTemplate versionedMaterial;
   private ItemVersionTemplate itemVersionTemplate;
+  private ItemTagVersionTemplate itemTagVersionTemplate;
 
   @Inject
   public KelpItemFactory(MaterialVersionTemplate versionedMaterial,
-                         ItemVersionTemplate itemVersionTemplate) {
+                         ItemVersionTemplate itemVersionTemplate,
+                         ItemTagVersionTemplate itemTagVersionTemplate) {
     this.versionedMaterial = versionedMaterial;
     this.itemVersionTemplate = itemVersionTemplate;
+    this.itemTagVersionTemplate = itemTagVersionTemplate;
   }
 
   public KelpItem newKelpItem() {
-    return new KelpItem(versionedMaterial, itemVersionTemplate);
+    return new KelpItem(versionedMaterial, itemVersionTemplate, itemTagVersionTemplate);
   }
 
 }

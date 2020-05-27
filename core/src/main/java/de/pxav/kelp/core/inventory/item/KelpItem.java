@@ -21,10 +21,14 @@ public class KelpItem {
 
   private MaterialVersionTemplate versionedMaterial;
   private ItemVersionTemplate itemVersionTemplate;
+  private ItemTagVersionTemplate itemTagVersionTemplate;
 
-  public KelpItem(MaterialVersionTemplate versionedMaterial, ItemVersionTemplate itemVersionTemplate) {
+  public KelpItem(MaterialVersionTemplate versionedMaterial,
+                  ItemVersionTemplate itemVersionTemplate,
+                  ItemTagVersionTemplate itemTagVersionTemplate) {
     this.versionedMaterial = versionedMaterial;
     this.itemVersionTemplate = itemVersionTemplate;
+    this.itemTagVersionTemplate = itemTagVersionTemplate;
   }
 
   private KelpMaterial material = KelpMaterial.STONE;
@@ -41,6 +45,9 @@ public class KelpItem {
 
   private boolean glowing = false;
   private boolean unbreakable = false;
+
+  private Map<String, String> nbtTagStrings = Maps.newHashMap();
+  private Collection<String> tagsToRemove = Lists.newArrayList();
 
   public KelpItem material(KelpMaterial material) {
     this.material = material;
@@ -59,6 +66,16 @@ public class KelpItem {
 
   public KelpItem displayName(String displayName) {
     this.displayName = displayName;
+    return this;
+  }
+
+  public KelpItem addTag(String key, String value) {
+    this.nbtTagStrings.put(key, value);
+    return this;
+  }
+
+  public KelpItem removeTag(String key) {
+    this.tagsToRemove.add(key);
     return this;
   }
 
@@ -94,6 +111,14 @@ public class KelpItem {
       itemStack = itemVersionTemplate.makeUnbreakable(itemStack);
     } else {
       itemStack = itemVersionTemplate.makeBreakable(itemStack);
+    }
+
+    for (Map.Entry<String, String> tagEntry : this.nbtTagStrings.entrySet()) {
+      itemStack = itemTagVersionTemplate.tagItem(itemStack, tagEntry.getKey(), tagEntry.getValue());
+    }
+
+    for (String currentTag : this.tagsToRemove) {
+      itemStack = itemTagVersionTemplate.removeTag(itemStack, currentTag);
     }
 
     return itemStack;

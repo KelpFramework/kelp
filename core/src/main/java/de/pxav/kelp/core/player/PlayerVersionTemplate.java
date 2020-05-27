@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.player;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -20,9 +21,13 @@ public abstract class PlayerVersionTemplate {
 
   public abstract void sendTabHeaderAndFooter(Player player, String header, String footer);
 
+  public abstract void playSound(Player player, KelpSound sound, Location location, float volume, float pitch);
+
   public abstract void setHealth(Player player, int health);
 
   public abstract UUID getUniqueId(Player player);
+
+  public abstract Location getLocation(Player player);
 
   public abstract void teleport(Player player, Location location);
 

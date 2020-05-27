@@ -1,7 +1,5 @@
 package de.pxav.kelp.core.inventory.listener;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
-
 /**
  * A class description goes here.
  *
@@ -9,6 +7,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
  */
 public interface ClickListener {
 
-  void onClick(InventoryClickEvent event);
+  void onClick(KelpClickEvent event);
 
 }

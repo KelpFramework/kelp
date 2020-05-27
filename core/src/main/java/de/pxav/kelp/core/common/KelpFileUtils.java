@@ -39,4 +39,17 @@ public class KelpFileUtils {
     return true;
   }
 
+  /**
+   * Checks if the given folder exists and creates it
+   * at the given path if it does not exist.
+   *
+   * @param file The folder you want to check and eventually create.
+   * @return Returns {@code true} if the folder had to be created and did not exist.
+   */
+  public boolean createFolderIfNotExists(File file) {
+    if (file.exists()) return false;
+    file.mkdirs();
+    return true;
+  }
+
 }

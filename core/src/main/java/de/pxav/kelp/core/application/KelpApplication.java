@@ -19,10 +19,10 @@ import com.google.inject.Injector;
  */
 public class KelpApplication {
 
-  private KelpInformation information;
+  private KelpApplicationMeta information;
   private Injector injector;
 
-  public void init(KelpInformation information, Injector injector) {
+  public void init(KelpApplicationMeta information, Injector injector) {
     this.information = information;
     this.injector = injector;
   }
@@ -47,9 +47,9 @@ public class KelpApplication {
    * important information about the plugin (like name, version, ...)
    *
    * @return The final {@code KelpInformation} object.
-   * @see KelpInformation
+   * @see KelpApplicationMeta
    */
-  public KelpInformation getInformation() {
+  public KelpApplicationMeta getInformation() {
     return information;
   }
 
