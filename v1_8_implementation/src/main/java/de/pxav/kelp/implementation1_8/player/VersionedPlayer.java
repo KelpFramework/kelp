@@ -8,6 +8,7 @@ import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -97,6 +98,36 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   @Override
   public Location getLocation(Player player) {
     return null;
+  }
+
+  @Override
+  public boolean isInWater(Player player) {
+    try {
+      Field inWaterField = Entity.class.getDeclaredField("inWater");
+
+      inWaterField.setAccessible(true);
+
+      return inWaterField.getBoolean(((CraftEntity) player).getHandle());
+    } catch (IllegalAccessException | NoSuchFieldException e) {
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean isInCobweb(Player player) {
+    try {
+      Field hField = Entity.class.getDeclaredField("H");
+
+      hField.setAccessible(true);
+
+      return hField.getBoolean(((CraftEntity) player).getHandle());
+    } catch (IllegalAccessException | NoSuchFieldException e) {
+      e.printStackTrace();
+    }
+
+    return false;
   }
 
   private void sendPacket(Packet packet, Player player) {
