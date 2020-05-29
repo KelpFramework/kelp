@@ -17,13 +17,13 @@ public class VersionedWindowPacket extends WindowPacketTemplate {
   @Override
   public void updateWindowTitle(Player player, String newTitle) {
     EntityPlayer entityPlayer = ((CraftPlayer)player).getHandle();
-
-    PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(
+    // TODO: Causing compile errors
+    /*PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(
             entityPlayer.activeContainer.windowId, "minecraft:chest",
             new ChatMessage(newTitle),
             player.getOpenInventory().getTopInventory().getSize());
     entityPlayer.playerConnection.sendPacket(packet);
-    entityPlayer.updateInventory(entityPlayer.activeContainer);
+    entityPlayer.updateInventory(entityPlayer.activeContainer);*/
   }
 
 }
