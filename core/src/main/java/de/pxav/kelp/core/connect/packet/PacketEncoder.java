@@ -27,7 +27,7 @@ public class PacketEncoder extends MessageToMessageEncoder<Packet> {
     KelpBuffer buffer = new KelpBuffer(Unpooled.buffer());
     int packetId = registry.getId(packet.getClass());
 
-    buffer.writeInt(packetId);
+    buffer.writeVarInt(packetId);
 
     packet.store(buffer);
 

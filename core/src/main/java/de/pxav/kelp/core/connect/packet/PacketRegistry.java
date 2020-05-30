@@ -16,6 +16,7 @@ public class PacketRegistry {
   }
 
   public void register(int id, Class<? extends Packet> packetClass) {
+    Preconditions.checkArgument(id <= Short.MAX_VALUE, "id may not be bigger than " + Short.MAX_VALUE);
     Preconditions.checkArgument(!isRegistered(id), String.format("id %d is already taken by %s", id,
       idClassMap.get(id).getCanonicalName()));
     Preconditions.checkArgument(!isRegistered(packetClass), String.format("class %s is already registered with id %d",
