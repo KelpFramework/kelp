@@ -18,11 +18,11 @@ public class ConnectionInboundHandler extends SimpleChannelInboundHandler<Packet
 
   @Override
   protected void channelRead0(ChannelHandlerContext context, Packet packet) throws Exception {
-
+    operator.handleIncomingPacket(packet);
   }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
+    operator.exceptionCaught(cause);
   }
 }

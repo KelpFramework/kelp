@@ -8,4 +8,6 @@ public interface PacketOperator {
   PacketRegistry registry();
 
   void handleIncomingPacket(Packet packet);
+
+  void exceptionCaught(Throwable throwable);
 }
