@@ -3,6 +3,7 @@ package de.pxav.kelp.core.connect.connection;
 import de.pxav.kelp.core.connect.packet.Packet;
 import de.pxav.kelp.core.connect.packet.PacketDecoder;
 import de.pxav.kelp.core.connect.packet.PacketEncoder;
+import de.pxav.kelp.core.connect.packet.PacketOperator;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -20,12 +21,15 @@ public class Connection {
 
   private final Cipher encrypter, decrypter;
 
+  private final PacketOperator packetOperator;
+
   private Channel channel;
 
-  public Connection(InetSocketAddress remoteAddress, Cipher encrypter, Cipher decrypter) {
+  public Connection(InetSocketAddress remoteAddress, Cipher encrypter, Cipher decrypter, PacketOperator packetOperator) {
     this.remoteAddress = remoteAddress;
     this.encrypter = encrypter;
     this.decrypter = decrypter;
+    this.packetOperator = packetOperator;
   }
 
   public Future<Void> open(Bootstrap bootstrap) throws InterruptedException {
@@ -36,9 +40,9 @@ public class Connection {
         Connection.this.channel = channel;
 
         channel.pipeline().addFirst("decrypter", new ConnectionDecrypter(decrypter));
-        channel.pipeline().addAfter("decrypter", "decoder", new PacketDecoder(null));  //TODO: hand over something which shares registry
-        channel.pipeline().addLast("handler", new ConnectionInboundHandler()); //TODO: same as above
-        channel.pipeline().addBefore("encrypter", "encoder", new PacketEncoder(null)); //TODO: same as above
+        channel.pipeline().addAfter("decrypter", "decoder", new PacketDecoder(packetOperator.registry()));
+        channel.pipeline().addLast("handler", new ConnectionInboundHandler(packetOperator));
+        channel.pipeline().addBefore("encrypter", "encoder", new PacketEncoder(packetOperator.registry()));
         channel.pipeline().addLast("encrypter", new ConnectionEncrypter(encrypter));
       }
     }).connect(remoteAddress).sync();
@@ -52,6 +56,18 @@ public class Connection {
     channel.writeAndFlush(packet);
   }
 
+  public boolean isReady() {
+    return channel != null && channel.isOpen();
+  }
+
+  public boolean isClosed() {
+    return channel == null || !channel.isOpen();
+  }
+
+  public InetSocketAddress getRemoteAddress() {
+    return remoteAddress;
+  }
+
   public String getEncryptionAlgorithm() {
     return encrypter == null ? "None" : encrypter.getAlgorithm();
   }
@@ -60,7 +76,7 @@ public class Connection {
     return decrypter == null ? "None" : decrypter.getAlgorithm();
   }
 
-  public boolean isReady() {
-    return channel != null && channel.isOpen();
+  public PacketOperator getPacketOperator() {
+    return packetOperator;
   }
 }
