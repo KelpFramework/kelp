@@ -23,36 +23,47 @@ public class VersionedItem extends ItemVersionTemplate {
   }
 
   @Override
-  public void makeUnbreakable(ItemStack itemStack) {
+  public ItemStack setDisplayName(ItemStack itemStack, String displayName) {
+    return null;
   }
 
   @Override
-  public void makeBreakable(ItemStack itemStack) {
-
+  public ItemStack setLore(ItemStack itemStack, String itemLore) {
+    return null;
   }
 
   @Override
-  public void addEnchantment(Enchantment enchantment, int level, ItemStack to) {
-
+  public ItemStack makeUnbreakable(ItemStack itemStack) {
+    return null;
   }
 
   @Override
-  public void addUnsafeEnchantment(Enchantment enchantment, int level, ItemStack to) {
-
+  public ItemStack makeBreakable(ItemStack itemStack) {
+    return null;
   }
 
   @Override
-  public void removeEnchantment(Enchantment enchantment, ItemStack from) {
-
+  public ItemStack addEnchantment(Enchantment enchantment, int level, ItemStack to) {
+    return null;
   }
 
   @Override
-  public void addItemFlag(ItemFlag itemFlag, ItemStack from) {
-
+  public ItemStack addUnsafeEnchantment(Enchantment enchantment, int level, ItemStack to) {
+    return null;
   }
 
   @Override
-  public void removeItemFlag(ItemFlag itemFlag, ItemStack from) {
+  public ItemStack removeEnchantment(Enchantment enchantment, ItemStack from) {
+    return null;
+  }
 
+  @Override
+  public ItemStack addItemFlag(ItemFlag itemFlag, ItemStack from) {
+    return null;
+  }
+
+  @Override
+  public ItemStack removeItemFlag(ItemFlag itemFlag, ItemStack from) {
+    return null;
   }
 }
