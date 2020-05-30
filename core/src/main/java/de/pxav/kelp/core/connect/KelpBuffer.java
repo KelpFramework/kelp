@@ -28,6 +28,14 @@ public class KelpBuffer extends ByteBuf {
     this.delegate = delegate;
   }
 
+  public byte[] readAllBytes() {
+    byte[] bytes = new byte[readableBytes()];
+
+    readBytes(bytes);
+
+    return bytes;
+  }
+
   public KelpBuffer writeVarInt(int i) {
     while((i & -128) != 0) {
       this.writeByte(i & 127 | 128);
