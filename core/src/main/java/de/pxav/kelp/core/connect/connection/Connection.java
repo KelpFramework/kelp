@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.connect.connection;
 
 import de.pxav.kelp.core.connect.packet.Packet;
+import de.pxav.kelp.core.connect.packet.PacketEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -34,6 +35,7 @@ public class Connection {
         Connection.this.channel = channel;
 
         channel.pipeline().addFirst("decrypter", new ConnectionDecrypter(decrypter));
+        channel.pipeline().addBefore("encrypter", "encoder", new PacketEncoder(null)); // hand over something which shares registry
         channel.pipeline().addLast("encrypter", new ConnectionEncrypter(encrypter));
       }
     }).connect(remoteAddress).sync();
