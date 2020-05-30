@@ -22,7 +22,18 @@ public class PacketRegistry {
     Preconditions.checkArgument(!isRegistered(packetClass), String.format("class %s is already registered with id %d",
       packetClass.getCanonicalName(), idClassMap.inverse().get(packetClass)));
 
+    ensureNoArgsConstructor(packetClass);
+
     idClassMap.put(id, packetClass);
+  }
+
+  private void ensureNoArgsConstructor(Class<? extends Packet> packetClass) {
+    try {
+      packetClass.getConstructor();
+    } catch (NoSuchMethodException e) {
+      throw new IllegalArgumentException(String.format("packetClass(%s) must contain a public no-args constructor.",
+        packetClass.getCanonicalName()));
+    }
   }
 
   public boolean isRegistered(int id) {
