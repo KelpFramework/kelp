@@ -17,7 +17,9 @@ import java.net.InetSocketAddress;
  */
 public class Connection {
 
-  private final InetSocketAddress remoteAddress;
+  final ConnectionHolder holder;
+
+  private final Bootstrap bootstrap;
 
   private final Cipher encrypter, decrypter;
 
@@ -25,14 +27,15 @@ public class Connection {
 
   private Channel channel;
 
-  public Connection(InetSocketAddress remoteAddress, Cipher encrypter, Cipher decrypter, PacketOperator packetOperator) {
-    this.remoteAddress = remoteAddress;
-    this.encrypter = encrypter;
-    this.decrypter = decrypter;
-    this.packetOperator = packetOperator;
+  public Connection(ConnectionHolder holder, ConnectionProperties properties) {
+    this.holder = holder;
+    this.bootstrap = properties.bootstrap;
+    this.encrypter = properties.encrypter;
+    this.decrypter = properties.decrypter;
+    this.packetOperator = properties.packetOperator;
   }
 
-  public Future<Void> open(Bootstrap bootstrap) throws InterruptedException {
+  public Future<Void> open() throws InterruptedException {
     return bootstrap.handler(new ChannelInitializer<Channel>() {
 
       @Override
@@ -41,11 +44,11 @@ public class Connection {
 
         channel.pipeline().addFirst("decrypter", new ConnectionDecrypter(decrypter));
         channel.pipeline().addAfter("decrypter", "decoder", new PacketDecoder(packetOperator.registry()));
-        channel.pipeline().addLast("handler", new ConnectionInboundHandler(packetOperator));
+        channel.pipeline().addLast("handler", new ConnectionInboundHandler(Connection.this));
         channel.pipeline().addBefore("encrypter", "encoder", new PacketEncoder(packetOperator.registry()));
         channel.pipeline().addLast("encrypter", new ConnectionEncrypter(encrypter));
       }
-    }).connect(remoteAddress).sync();
+    }).connect();
   }
 
   public void close() {
@@ -65,7 +68,7 @@ public class Connection {
   }
 
   public InetSocketAddress getRemoteAddress() {
-    return remoteAddress;
+    return channel != null ? (InetSocketAddress) channel.remoteAddress() : null;
   }
 
   public String getEncryptionAlgorithm() {
@@ -79,4 +82,5 @@ public class Connection {
   public PacketOperator getPacketOperator() {
     return packetOperator;
   }
+
 }

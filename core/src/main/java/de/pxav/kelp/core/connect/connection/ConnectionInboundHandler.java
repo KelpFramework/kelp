@@ -1,7 +1,6 @@
 package de.pxav.kelp.core.connect.connection;
 
 import de.pxav.kelp.core.connect.packet.Packet;
-import de.pxav.kelp.core.connect.packet.PacketOperator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -10,19 +9,31 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class ConnectionInboundHandler extends SimpleChannelInboundHandler<Packet> {
 
-  private final PacketOperator operator;
+  private final Connection connection;
 
-  ConnectionInboundHandler(PacketOperator operator) {
-    this.operator = operator;
+  ConnectionInboundHandler(Connection connection) {
+    this.connection = connection;
+  }
+
+  @Override
+  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    connection.holder.unregister(connection);
+
+    connection.getPacketOperator().onConnectionClose();
+  }
+
+  @Override
+  public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    connection.holder.register(connection);
   }
 
   @Override
   protected void channelRead0(ChannelHandlerContext context, Packet packet) throws Exception {
-    operator.handleIncomingPacket(packet);
+    connection.getPacketOperator().handleIncomingPacket(packet);
   }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    operator.exceptionCaught(cause);
+    connection.getPacketOperator().exceptionCaught(cause);
   }
 }

@@ -10,4 +10,6 @@ public interface PacketOperator {
   void handleIncomingPacket(Packet packet);
 
   void exceptionCaught(Throwable throwable);
+
+  void onConnectionClose();
 }
