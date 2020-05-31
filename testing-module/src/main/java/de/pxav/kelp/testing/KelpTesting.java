@@ -3,6 +3,7 @@ package de.pxav.kelp.testing;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.NewKelpApplication;
 import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.sql.KelpSql;
 
 /**
  * This represents the main class for the testing application.
@@ -19,6 +20,8 @@ import de.pxav.kelp.core.logger.KelpLogger;
 )
 public class KelpTesting extends KelpApplication {
 
+  private KelpSql kelpSql;
+
   @Override
   public void onLoad() {
     getInstance(KelpLogger.class).log("Loading test application...");
@@ -26,7 +29,8 @@ public class KelpTesting extends KelpApplication {
 
   @Override
   public void onEnable() {
-
+    this.kelpSql = new KelpSql("localhost", "kelp", "root", "", 3306);
+    kelpSql.addTable("testtable");
   }
 
   @Override

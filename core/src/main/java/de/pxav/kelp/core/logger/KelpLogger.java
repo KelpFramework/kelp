@@ -44,6 +44,7 @@ public final class KelpLogger {
   private final Date DATE;
   private final String sessionBegin;
   private final File LATEST_FILE;
+  private final File LOG_LOCATION;
 
   private File currentFile;
 
@@ -57,7 +58,8 @@ public final class KelpLogger {
     this.defaultConfig = defaultConfig;
 
     this.DATE = new Date();
-    this.LATEST_FILE = new File("kelp_logs", "latest.log");
+    this.LOG_LOCATION = new File("./kelp_logs");
+    this.LATEST_FILE = new File("./kelp_logs/latest.log");
     this.sessionBegin = new SimpleDateFormat("HH-mm-ss_dd-MM-yyyy").format(DATE);
   }
 
@@ -69,7 +71,7 @@ public final class KelpLogger {
    */
   public void loadLoggerFiles() {
     try {
-      kelpFileUtils.createIfNotExists(LATEST_FILE);
+      kelpFileUtils.createFolderIfNotExists(LOG_LOCATION);
       FileChannel.open(Paths.get(LATEST_FILE.getPath()), StandardOpenOption.WRITE).truncate(0).close();
     } catch (IOException e) {
       e.printStackTrace();
