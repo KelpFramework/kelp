@@ -71,8 +71,8 @@ public class Connection implements Closeable {
     channel.pipeline().addFirst("decrypter", (ChannelHandler) versionTemplate.newDecrypter(decrypter));
     channel.pipeline().addAfter("decrypter", "decoder", (ChannelHandler) versionTemplate.newPacketDecoder(packetOperator.registry()));
     channel.pipeline().addLast("handler", new ConnectionInboundHandler(this));
-    channel.pipeline().addBefore("encrypter", "encoder", (ChannelHandler) versionTemplate.newPacketEncoder(packetOperator.registry()));
     channel.pipeline().addLast("encrypter", (ChannelHandler) versionTemplate.newEncrypter(encrypter));
+    channel.pipeline().addBefore("encrypter", "encoder", (ChannelHandler) versionTemplate.newPacketEncoder(packetOperator.registry()));
   }
 
   @Override
