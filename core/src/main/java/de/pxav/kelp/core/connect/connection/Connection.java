@@ -10,12 +10,13 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.util.concurrent.Future;
 
 import javax.crypto.Cipher;
+import java.io.Closeable;
 import java.net.InetSocketAddress;
 
 /**
  * @author Etrayed
  */
-public class Connection {
+public class Connection implements Closeable {
 
   final ConnectionHolder holder;
 
@@ -65,6 +66,7 @@ public class Connection {
     channel.pipeline().addLast("encrypter", new ConnectionEncrypter(encrypter));
   }
 
+  @Override
   public void close() {
     channel.close();
   }

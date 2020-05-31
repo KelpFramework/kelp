@@ -8,6 +8,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.util.concurrent.Future;
 
+import java.io.Closeable;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * @author Etrayed
  */
-public class Server {
+public class Server implements Closeable {
 
   private final ServerBootstrap serverBootstrap;
 
@@ -44,6 +45,7 @@ public class Server {
     return !serverBootstrap.group().isShutdown();
   }
 
+  @Override
   public void close() {
     connectionHolder.closeAll();
 
