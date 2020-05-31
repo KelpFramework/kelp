@@ -35,20 +35,34 @@ public class Connection {
     this.packetOperator = properties.packetOperator;
   }
 
+  public Connection(ConnectionHolder holder, ConnectionProperties properties, Channel channel) {
+    this(holder, properties);
+
+    initChannel(channel);
+  }
+
   public Future<Void> open() throws InterruptedException {
+    if(isReady()) {
+      return null;
+    }
+
     return bootstrap.handler(new ChannelInitializer<Channel>() {
 
       @Override
       protected void initChannel(Channel channel) throws Exception {
-        Connection.this.channel = channel;
-
-        channel.pipeline().addFirst("decrypter", new ConnectionDecrypter(decrypter));
-        channel.pipeline().addAfter("decrypter", "decoder", new PacketDecoder(packetOperator.registry()));
-        channel.pipeline().addLast("handler", new ConnectionInboundHandler(Connection.this));
-        channel.pipeline().addBefore("encrypter", "encoder", new PacketEncoder(packetOperator.registry()));
-        channel.pipeline().addLast("encrypter", new ConnectionEncrypter(encrypter));
+        Connection.this.initChannel(channel);
       }
     }).connect();
+  }
+
+  private void initChannel(Channel channel) {
+    this.channel = channel;
+
+    channel.pipeline().addFirst("decrypter", new ConnectionDecrypter(decrypter));
+    channel.pipeline().addAfter("decrypter", "decoder", new PacketDecoder(packetOperator.registry()));
+    channel.pipeline().addLast("handler", new ConnectionInboundHandler(this));
+    channel.pipeline().addBefore("encrypter", "encoder", new PacketEncoder(packetOperator.registry()));
+    channel.pipeline().addLast("encrypter", new ConnectionEncrypter(encrypter));
   }
 
   public void close() {
@@ -82,5 +96,4 @@ public class Connection {
   public PacketOperator getPacketOperator() {
     return packetOperator;
   }
-
 }
