@@ -7,7 +7,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.resolver.AddressResolverGroup;
 import io.netty.util.AttributeKey;
 
 import javax.crypto.Cipher;
@@ -73,12 +72,6 @@ public final class ConnectionProperties {
 
   public ConnectionProperties useNativeEventLoopGroup(int nThreads, ThreadFactory factory) {
     return withEventLoopGroup(NativeTransportUtil.acquireEventLoopGroup(nThreads, factory));
-  }
-
-  public ConnectionProperties withResolver(AddressResolverGroup<?> resolver) {
-    bootstrap.resolver(resolver);
-
-    return this;
   }
 
   public <T> ConnectionProperties withAttribute(AttributeKey<T> key, T value) {

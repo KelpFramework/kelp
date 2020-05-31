@@ -47,7 +47,14 @@ public class MethodFinder {
       for (ClassInfo current : allClasses) {
         MethodInfoList methodInfos = current.getMethodInfo();
         for (MethodInfo methodInfo : methodInfos) {
-          Method method = methodInfo.loadClassAndGetMethod();
+          Method method;
+
+          try {
+            method = methodInfo.loadClassAndGetMethod();
+          } catch (Exception e) {
+            continue;
+          }
+
           boolean allMatch = true;
           for (MethodCriterion methodCriterion : methodCriteria) {
             if (!methodCriterion.matches(method)) {

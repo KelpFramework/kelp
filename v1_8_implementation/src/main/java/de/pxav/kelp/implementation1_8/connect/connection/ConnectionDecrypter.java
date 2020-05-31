@@ -1,6 +1,7 @@
-package de.pxav.kelp.core.connect.connection;
+package de.pxav.kelp.implementation1_8.connect.connection;
 
 import de.pxav.kelp.core.connect.KelpBuffer;
+import de.pxav.kelp.core.connect.connection.IConnectionDecrypter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,11 +13,11 @@ import java.util.List;
 /**
  * @author Etrayed
  */
-public class ConnectionDecrypter extends ByteToMessageDecoder {
+public class ConnectionDecrypter extends ByteToMessageDecoder implements IConnectionDecrypter {
 
   private final Cipher decrypter;
 
-  ConnectionDecrypter(Cipher decrypter) {
+  public ConnectionDecrypter(Cipher decrypter) {
     this.decrypter = decrypter;
   }
 

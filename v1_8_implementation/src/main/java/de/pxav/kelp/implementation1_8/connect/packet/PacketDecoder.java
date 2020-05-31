@@ -1,7 +1,10 @@
-package de.pxav.kelp.core.connect.packet;
+package de.pxav.kelp.implementation1_8.connect.packet;
 
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.connect.KelpBuffer;
+import de.pxav.kelp.core.connect.packet.IPacketDecoder;
+import de.pxav.kelp.core.connect.packet.Packet;
+import de.pxav.kelp.core.connect.packet.PacketRegistry;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
@@ -10,7 +13,7 @@ import java.util.List;
 /**
  * @author Etrayed
  */
-public class PacketDecoder extends MessageToMessageDecoder<KelpBuffer> {
+public class PacketDecoder extends MessageToMessageDecoder<KelpBuffer> implements IPacketDecoder {
 
   private final PacketRegistry registry;
 

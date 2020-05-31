@@ -1,12 +1,12 @@
 package de.pxav.kelp.core.connect.connection;
 
+import de.pxav.kelp.core.connect.KelpConnectVersionTemplate;
 import de.pxav.kelp.core.connect.packet.Packet;
-import de.pxav.kelp.core.connect.packet.PacketDecoder;
-import de.pxav.kelp.core.connect.packet.PacketEncoder;
 import de.pxav.kelp.core.connect.packet.PacketOperator;
 import de.pxav.kelp.core.connect.server.Server;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.util.concurrent.Future;
 
@@ -18,6 +18,8 @@ import java.net.InetSocketAddress;
  * @author Etrayed
  */
 public class Connection implements Closeable {
+
+  private final KelpConnectVersionTemplate versionTemplate;
 
   final ConnectionHolder holder;
 
@@ -31,7 +33,8 @@ public class Connection implements Closeable {
 
   private Server parent;
 
-  public Connection(ConnectionHolder holder, ConnectionProperties properties) {
+  public Connection(KelpConnectVersionTemplate versionTemplate, ConnectionHolder holder, ConnectionProperties properties) {
+    this.versionTemplate = versionTemplate;
     this.holder = holder;
     this.bootstrap = properties.bootstrap;
     this.encrypter = properties.encrypter;
@@ -39,8 +42,9 @@ public class Connection implements Closeable {
     this.packetOperator = properties.packetOperator;
   }
 
-  public Connection(ConnectionHolder holder, ConnectionProperties properties, Server parent, Channel channel) {
-    this(holder, properties);
+  public Connection(KelpConnectVersionTemplate versionTemplate, ConnectionHolder holder, ConnectionProperties properties,
+                    Server parent, Channel channel) {
+    this(versionTemplate, holder, properties);
 
     initChannel(channel);
 
@@ -64,11 +68,11 @@ public class Connection implements Closeable {
   private void initChannel(Channel channel) {
     this.channel = channel;
 
-    channel.pipeline().addFirst("decrypter", new ConnectionDecrypter(decrypter));
-    channel.pipeline().addAfter("decrypter", "decoder", new PacketDecoder(packetOperator.registry()));
+    channel.pipeline().addFirst("decrypter", (ChannelHandler) versionTemplate.newDecrypter(decrypter));
+    channel.pipeline().addAfter("decrypter", "decoder", (ChannelHandler) versionTemplate.newPacketDecoder(packetOperator.registry()));
     channel.pipeline().addLast("handler", new ConnectionInboundHandler(this));
-    channel.pipeline().addBefore("encrypter", "encoder", new PacketEncoder(packetOperator.registry()));
-    channel.pipeline().addLast("encrypter", new ConnectionEncrypter(encrypter));
+    channel.pipeline().addBefore("encrypter", "encoder", (ChannelHandler) versionTemplate.newPacketEncoder(packetOperator.registry()));
+    channel.pipeline().addLast("encrypter", (ChannelHandler) versionTemplate.newEncrypter(encrypter));
   }
 
   @Override

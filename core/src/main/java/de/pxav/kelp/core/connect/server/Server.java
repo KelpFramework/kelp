@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.connect.server;
 
 import com.google.common.base.Preconditions;
+import de.pxav.kelp.core.connect.KelpConnectVersionTemplate;
 import de.pxav.kelp.core.connect.connection.Connection;
 import de.pxav.kelp.core.connect.connection.ConnectionHolder;
 import io.netty.bootstrap.ServerBootstrap;
@@ -18,13 +19,16 @@ import java.util.List;
  */
 public class Server implements Closeable {
 
+  private final KelpConnectVersionTemplate versionTemplate;
+
   private final ServerBootstrap serverBootstrap;
 
   private final ConnectionHolder connectionHolder;
 
   private ConnectionPropertiesFactory connectionPropertiesFactory;
 
-  public Server(ServerProperties properties) {
+  public Server(KelpConnectVersionTemplate versionTemplate, ServerProperties properties) {
+    this.versionTemplate = versionTemplate;
     this.serverBootstrap = properties.bootstrap;
     this.connectionHolder = new ConnectionHolder();
     this.connectionPropertiesFactory = properties.connectionPropertiesFactory;
@@ -35,7 +39,7 @@ public class Server implements Closeable {
 
       @Override
       protected void initChannel(Channel channel) throws Exception {
-        connectionHolder.register(new Connection(connectionHolder, connectionPropertiesFactory
+        connectionHolder.register(new Connection(versionTemplate, connectionHolder, connectionPropertiesFactory
           .createProperties(Server.this, (InetSocketAddress) channel.remoteAddress())));
       }
     }).bind();

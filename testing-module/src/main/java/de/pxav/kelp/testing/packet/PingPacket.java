@@ -20,11 +20,11 @@ public class PingPacket implements Packet {
 
   @Override
   public void store(KelpBuffer buffer) {
-    buffer.writeLong(timestamp);
+    buffer.delegate().writeLong(timestamp);
   }
 
   @Override
   public void take(KelpBuffer buffer) {
-    this.timestamp = buffer.readLong();
+    this.timestamp = buffer.delegate().readLong();
   }
 }

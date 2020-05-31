@@ -1,6 +1,6 @@
 package de.pxav.kelp.core.connect;
 
-import com.google.inject.Singleton;
+import com.google.inject.Inject;
 import de.pxav.kelp.core.connect.connection.Connection;
 import de.pxav.kelp.core.connect.connection.ConnectionHolder;
 import de.pxav.kelp.core.connect.connection.ConnectionProperties;
@@ -13,21 +13,24 @@ import java.util.List;
 /**
  * @author Etrayed
  */
-@Singleton
 public class KelpConnect {
+
+  private final KelpConnectVersionTemplate versionTemplate;
 
   private final ConnectionHolder connectionHolder;
 
-  public KelpConnect() {
+  @Inject
+  public KelpConnect(KelpConnectVersionTemplate versionTemplate) {
+    this.versionTemplate = versionTemplate;
     this.connectionHolder = new ConnectionHolder();
   }
 
   public Connection createConnection(ConnectionProperties properties) {
-    return new Connection(connectionHolder, properties);
+    return new Connection(versionTemplate, connectionHolder, properties);
   }
 
   public Server createServer(ServerProperties properties) {
-    return new Server(properties);
+    return new Server(versionTemplate, properties);
   }
 
   public List<Connection> getRegisteredConnections() {
