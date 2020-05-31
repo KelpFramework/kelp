@@ -6,7 +6,6 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.AttributeKey;
 
 import java.util.concurrent.Executor;
@@ -24,7 +23,7 @@ public final class ServerProperties {
   final ConnectionPropertiesFactory connectionPropertiesFactory;
 
   public ServerProperties(int port, PacketOperator packetOperator, ConnectionPropertiesFactory propertiesFactory) {
-    this.bootstrap = new ServerBootstrap().localAddress(port).channel(NioServerSocketChannel.class);
+    this.bootstrap = new ServerBootstrap().localAddress(port);
     this.packetOperator = packetOperator;
     this.connectionPropertiesFactory = propertiesFactory;
   }

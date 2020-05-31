@@ -6,7 +6,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 
 import javax.crypto.Cipher;
@@ -26,7 +25,7 @@ public final class ConnectionProperties {
   Cipher encrypter, decrypter;
 
   public ConnectionProperties(InetSocketAddress remoteAddress, PacketOperator packetOperator) {
-    this.bootstrap = new Bootstrap().remoteAddress(remoteAddress).channel(NioSocketChannel.class);
+    this.bootstrap = new Bootstrap().remoteAddress(remoteAddress);
     this.packetOperator = packetOperator;
   }
 

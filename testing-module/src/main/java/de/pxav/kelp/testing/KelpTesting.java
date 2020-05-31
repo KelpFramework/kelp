@@ -47,7 +47,7 @@ public class KelpTesting extends KelpApplication {
     DefaultPacketOperator packetOperator = new DefaultPacketOperator();
 
     this.server = getInstance(KelpConnect.class).createServer(new ServerProperties(25576, packetOperator,
-      new DefaultConnectionPropertiesFactory(packetOperator))); // create a server instance
+      new DefaultConnectionPropertiesFactory(packetOperator)).useNativeEventLoopGroup().useNativeTransport()); // create a server instance
 
     try {
       server.bind().sync(); // bind the server
