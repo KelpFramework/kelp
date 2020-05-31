@@ -26,7 +26,7 @@ public class PacketDecoder extends MessageToMessageDecoder<KelpBuffer> {
 
     Packet packet = registry.getPacketClass(packetId).getConstructor().newInstance();
 
-    packet.take(new KelpBuffer(buffer));
+    packet.take(new KelpBuffer(buffer.delegate()));
 
     list.add(packet);
   }
