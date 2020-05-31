@@ -19,7 +19,7 @@ public class ConnectionInboundHandler extends SimpleChannelInboundHandler<Packet
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     connection.holder.unregister(connection);
 
-    connection.getPacketOperator().onConnectionClose();
+    connection.getPacketOperator().onConnectionClose(connection);
   }
 
   @Override
@@ -29,11 +29,11 @@ public class ConnectionInboundHandler extends SimpleChannelInboundHandler<Packet
 
   @Override
   protected void channelRead0(ChannelHandlerContext context, Packet packet) throws Exception {
-    connection.getPacketOperator().handleIncomingPacket(packet);
+    connection.getPacketOperator().handleIncomingPacket(connection, packet);
   }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    connection.getPacketOperator().exceptionCaught(cause);
+    connection.getPacketOperator().exceptionCaught(connection, cause);
   }
 }

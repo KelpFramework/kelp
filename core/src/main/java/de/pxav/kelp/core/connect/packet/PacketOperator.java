@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.connect.packet;
 
+import de.pxav.kelp.core.connect.connection.Connection;
+
 /**
  * @author Etrayed
  */
@@ -7,9 +9,9 @@ public interface PacketOperator {
 
   PacketRegistry registry();
 
-  void handleIncomingPacket(Packet packet);
+  void handleIncomingPacket(Connection connection, Packet packet);
 
-  void exceptionCaught(Throwable throwable);
+  void exceptionCaught(Connection connection, Throwable throwable);
 
-  void onConnectionClose();
+  void onConnectionClose(Connection connection);
 }

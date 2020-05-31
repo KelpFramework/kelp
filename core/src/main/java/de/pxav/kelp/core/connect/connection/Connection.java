@@ -4,6 +4,7 @@ import de.pxav.kelp.core.connect.packet.Packet;
 import de.pxav.kelp.core.connect.packet.PacketDecoder;
 import de.pxav.kelp.core.connect.packet.PacketEncoder;
 import de.pxav.kelp.core.connect.packet.PacketOperator;
+import de.pxav.kelp.core.connect.server.Server;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -28,6 +29,8 @@ public class Connection implements Closeable {
 
   private Channel channel;
 
+  private Server parent;
+
   public Connection(ConnectionHolder holder, ConnectionProperties properties) {
     this.holder = holder;
     this.bootstrap = properties.bootstrap;
@@ -36,13 +39,15 @@ public class Connection implements Closeable {
     this.packetOperator = properties.packetOperator;
   }
 
-  public Connection(ConnectionHolder holder, ConnectionProperties properties, Channel channel) {
+  public Connection(ConnectionHolder holder, ConnectionProperties properties, Server parent, Channel channel) {
     this(holder, properties);
 
     initChannel(channel);
+
+    this.parent = parent;
   }
 
-  public Future<Void> open() throws InterruptedException {
+  public Future<Void> connect() throws InterruptedException {
     if(isReady()) {
       return null;
     }
@@ -81,6 +86,14 @@ public class Connection implements Closeable {
 
   public boolean isClosed() {
     return channel == null || !channel.isOpen();
+  }
+
+  public boolean isChildConnection() {
+    return parent != null;
+  }
+
+  public Server getParent() {
+    return parent;
   }
 
   public InetSocketAddress getRemoteAddress() {
