@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -47,7 +48,10 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
           if (args.length == 0) {
             return checkExecutorsAndExecute(sender, args, command, commandAnnotation.executorType());
           }
+
           KelpCommand parentCommand = command;
+          int lastCommandArgument = 0;
+
           for (int i = 1; i < args.length + 1; i++) {
             for (Map.Entry<KelpCommand, CreateSubCommand> subCommandEntry : parentCommand.getSubCommands().entrySet()) {
               KelpCommand subCommand = subCommandEntry.getKey();
@@ -55,8 +59,13 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
               String subCommandName = args[i - 1];
               if (subCommandAnnotation.name().equalsIgnoreCase(subCommandName)) {
                 if (i == args.length) {
-                  return checkExecutorsAndExecute(sender, args, subCommand, subCommandAnnotation.executorType());
+                  String[] newArgs = args;
+                  if (subCommand.shouldArgumentsStartFromZero()) {
+                    newArgs = new String[] {};
+                  }
+                  return checkExecutorsAndExecute(sender, newArgs, subCommand, subCommandAnnotation.executorType());
                 } else {
+                  lastCommandArgument = i;
                   parentCommand = subCommand;
                 }
               }
@@ -65,6 +74,7 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
 
           if (parentCommand.customParametersAllowed()) {
             ExecutorType executorType;
+            String[] newArgs = args;
             if (parentCommand.equals(command)) {
               CreateCommand annotation = parentCommand.getClass().getAnnotation(CreateCommand.class);
               executorType = annotation.executorType();
@@ -72,7 +82,10 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
               CreateSubCommand annotation = parentCommand.getClass().getAnnotation(CreateSubCommand.class);
               executorType = annotation.executorType();
             }
-            return checkExecutorsAndExecute(sender, args, parentCommand, executorType);
+            if (parentCommand.shouldArgumentsStartFromZero()) {
+              newArgs = Arrays.copyOfRange(args, lastCommandArgument, args.length);
+            }
+            return checkExecutorsAndExecute(sender, newArgs, parentCommand, executorType);
           }
 
           return false;
