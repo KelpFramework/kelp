@@ -23,6 +23,7 @@ public class KelpCommand {
   private String noConsoleMessage;
   private String permission;
   private boolean allowCustomParameters;
+  private boolean argumentsStartFromZero;
 
   public void onCommand(KelpPlayer player, String[] args) {}
 
@@ -106,6 +107,11 @@ public class KelpCommand {
     return this;
   }
 
+  public KelpCommand argumentsStartFromZero(boolean argumentsStartFromZero) {
+    this.argumentsStartFromZero = argumentsStartFromZero;
+    return this;
+  }
+
   public String getDescription() {
     return description;
   }
@@ -128,6 +134,10 @@ public class KelpCommand {
 
   public boolean customParametersAllowed() {
     return this.allowCustomParameters;
+  }
+
+  public boolean shouldArgumentsStartFromZero() {
+    return this.argumentsStartFromZero;
   }
 
   public Collection<String> getAliases() {
