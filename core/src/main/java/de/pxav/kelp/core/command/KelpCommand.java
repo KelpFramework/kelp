@@ -16,12 +16,13 @@ import java.util.Map;
 public class KelpCommand {
 
   private Map<KelpCommand, CreateSubCommand> subCommands = Maps.newHashMap();
+  private Collection<String> aliases = Lists.newArrayList();
   private String description;
   private String noPermissionMessage;
   private String noPlayerMessage;
   private String noConsoleMessage;
   private String permission;
-  private Collection<String> aliases = Lists.newArrayList();
+  private boolean allowCustomParameters;
 
   public void onCommand(KelpPlayer player, String[] args) {}
 
@@ -95,6 +96,16 @@ public class KelpCommand {
     return this;
   }
 
+  public KelpCommand subCommands(Map<KelpCommand, CreateSubCommand> subCommands) {
+    this.subCommands = subCommands;
+    return this;
+  }
+
+  public KelpCommand allowCustomParameters(boolean allow) {
+    this.allowCustomParameters = allow;
+    return this;
+  }
+
   public String getDescription() {
     return description;
   }
@@ -113,6 +124,10 @@ public class KelpCommand {
 
   public String getPermission() {
     return permission;
+  }
+
+  public boolean customParametersAllowed() {
+    return this.allowCustomParameters;
   }
 
   public Collection<String> getAliases() {
