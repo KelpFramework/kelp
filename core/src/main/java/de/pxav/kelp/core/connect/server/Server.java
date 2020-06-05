@@ -40,7 +40,7 @@ public class Server implements Closeable {
       @Override
       protected void initChannel(Channel channel) throws Exception {
         connectionHolder.register(new Connection(versionTemplate, connectionHolder, connectionPropertiesFactory
-          .createProperties(Server.this, (InetSocketAddress) channel.remoteAddress())));
+          .createProperties(Server.this, (InetSocketAddress) channel.remoteAddress()), Server.this, channel));
       }
     }).bind();
   }

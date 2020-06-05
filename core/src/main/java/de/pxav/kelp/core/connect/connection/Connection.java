@@ -46,9 +46,9 @@ public class Connection implements Closeable {
                     Server parent, Channel channel) {
     this(versionTemplate, holder, properties);
 
-    initChannel(channel);
-
     this.parent = parent;
+
+    initChannel(channel);
   }
 
   public Future<Void> connect() throws InterruptedException {

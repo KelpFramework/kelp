@@ -69,6 +69,8 @@ public class KelpTesting extends KelpApplication {
     }
 
     client.write(new PingPacket());
+
+    getInstance(KelpLogger.class).log("[Kelp Connect] Client -> Sending Ping packet");
   }
 
   @Override
