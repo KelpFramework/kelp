@@ -11,6 +11,15 @@
 
   <artifactId>testing-module</artifactId>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>com.google.inject</groupId>
@@ -21,6 +30,7 @@
       <groupId>de.pxav.kelp</groupId>
       <artifactId>core</artifactId>
       <version>1.0-SNAPSHOT</version>
+      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.spigotmc</groupId>
@@ -33,6 +43,13 @@
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <version>1.14-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-buffer</artifactId>
+      <version>5.0.0.Alpha2</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>
