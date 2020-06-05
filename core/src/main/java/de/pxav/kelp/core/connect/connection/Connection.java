@@ -51,7 +51,7 @@ public class Connection implements Closeable {
     initChannel(channel);
   }
 
-  public Future<Void> connect() throws InterruptedException {
+  public Future<Void> connect() {
     if(isReady()) {
       return null;
     }
@@ -68,11 +68,9 @@ public class Connection implements Closeable {
   private void initChannel(Channel channel) {
     this.channel = channel;
 
-    channel.pipeline().addFirst("decrypter", (ChannelHandler) versionTemplate.newDecrypter(decrypter));
-    channel.pipeline().addAfter("decrypter", "decoder", (ChannelHandler) versionTemplate.newPacketDecoder(packetOperator.registry()));
-    channel.pipeline().addLast("handler", new ConnectionInboundHandler(this));
-    channel.pipeline().addLast("encrypter", (ChannelHandler) versionTemplate.newEncrypter(encrypter));
-    channel.pipeline().addBefore("encrypter", "encoder", (ChannelHandler) versionTemplate.newPacketEncoder(packetOperator.registry()));
+    channel.pipeline().addFirst("decoder", (ChannelHandler) versionTemplate.newPacketDecoder(packetOperator.registry(), decrypter));
+    channel.pipeline().addAfter("decoder", "handler", new ConnectionInboundHandler(this));
+    channel.pipeline().addLast("encoder", (ChannelHandler) versionTemplate.newPacketEncoder(packetOperator.registry(), encrypter));
   }
 
   @Override
