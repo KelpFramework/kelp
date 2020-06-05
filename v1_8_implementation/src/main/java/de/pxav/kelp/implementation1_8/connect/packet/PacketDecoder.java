@@ -6,6 +6,7 @@ import de.pxav.kelp.core.connect.packet.IPacketDecoder;
 import de.pxav.kelp.core.connect.packet.Packet;
 import de.pxav.kelp.core.connect.packet.PacketRegistry;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.EmptyByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -29,6 +30,10 @@ public class PacketDecoder extends ByteToMessageDecoder implements IPacketDecode
 
   @Override
   protected void decode(ChannelHandlerContext context, ByteBuf byteBuf, List<Object> list) throws Exception {
+    if(byteBuf instanceof EmptyByteBuf) {
+      return;
+    }
+
     if(decrypter != null) {
       byte[] allBytes = new byte[byteBuf.readableBytes()];
 
