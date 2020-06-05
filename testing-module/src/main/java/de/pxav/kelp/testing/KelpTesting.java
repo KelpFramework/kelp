@@ -44,7 +44,7 @@ public class KelpTesting extends KelpApplication {
   }
 
   private void setupConnect() {
-    DefaultPacketOperator packetOperator = new DefaultPacketOperator();
+    DefaultPacketOperator packetOperator = getInstance(DefaultPacketOperator.class);
 
     this.server = getInstance(KelpConnect.class).createServer(new ServerProperties(25576, packetOperator,
       new DefaultConnectionPropertiesFactory(packetOperator)).useNativeEventLoopGroup().useNativeTransport()); // create a server instance
@@ -63,14 +63,14 @@ public class KelpTesting extends KelpApplication {
     try {
       client.connect().sync(); // connect client
 
-      getInstance(KelpLogger.class).log("[Kelp Connect] Client connected");
+      getInstance(KelpLogger.class).log("[KelpConnect] Client connected");
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
 
     client.write(new PingPacket());
 
-    getInstance(KelpLogger.class).log("[Kelp Connect] Client -> Sending Ping packet");
+    getInstance(KelpLogger.class).log("[KelpConnect] Client -> Sending Ping packet");
   }
 
   @Override
