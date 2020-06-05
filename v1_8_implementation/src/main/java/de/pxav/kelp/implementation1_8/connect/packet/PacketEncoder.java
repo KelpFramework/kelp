@@ -41,6 +41,8 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> implements IPack
 
     if(encrypter != null) {
       encrypter.doFinal(byteBuf.nioBuffer(), output.nioBuffer());
+    } else {
+      output.writeBytes(byteBuf);
     }
   }
 }
