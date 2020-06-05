@@ -47,6 +47,7 @@ public class KelpCommandRepository {
       Map<KelpCommand, CreateSubCommand> subCommands = parentCommandClass.getSubCommands();
       subCommands.put(subCommandClass, subCommandAnnotation);
 
+      subCommandClass.onCommandRegister();
       parentCommandClass.subCommands(subCommands);
       logger.writeLog("[COMMAND] Successfully registered sub command "
         + subCommandAnnotation.name()
@@ -61,6 +62,7 @@ public class KelpCommandRepository {
       KelpCommand commandClass = injector.getInstance(current.asSubclass(current));
       CreateCommand commandAnnotation = current.getAnnotation(CreateCommand.class);
 
+      commandClass.onCommandRegister();
       registryVersionTemplate.registerCommand(commandClass, commandAnnotation);
       logger.writeLog("[COMMAND] Successfully registered main command "
         + commandAnnotation.name()

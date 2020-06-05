@@ -29,6 +29,8 @@ public class KelpCommand {
 
   public void onCommand(KelpConsoleSender consoleSender, String[] args) {}
 
+  public void onCommandRegister() {}
+
   public Map<KelpCommand, CreateSubCommand> getSubCommands() {
     return subCommands;
   }
