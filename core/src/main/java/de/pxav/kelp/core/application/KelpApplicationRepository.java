@@ -325,7 +325,9 @@ public final class KelpApplicationRepository {
   }
 
   private void disableApplication(KelpApplication application) {
-    if (enabledApps.containsKey(application.getInformation().getApplicationName())) return;
+    if (!enabledApps.containsKey(application.getInformation().getApplicationName())) {
+      return;
+    }
 
     Lists.newArrayList(enabledApps.values())
             .forEach(
