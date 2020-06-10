@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.application.KelpApplicationRepository;
 import de.pxav.kelp.core.application.inject.VersionBinderModule;
+import de.pxav.kelp.core.command.KelpCommandRepository;
 import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
@@ -106,6 +107,7 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).schedule();
+    injector.getInstance(KelpCommandRepository.class).loadCommands(this.getClass().getPackage().getName());
 
     injector.getInstance(KelpNpcRepository.class).startScheduler();
 
