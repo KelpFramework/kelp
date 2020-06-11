@@ -69,6 +69,7 @@ public class KelpTesting extends KelpApplication {
     }
 
     client.write(new PingPacket());
+
   }
 
   @Override
