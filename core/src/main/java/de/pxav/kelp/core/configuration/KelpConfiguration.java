@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import de.pxav.kelp.core.configuration.type.ConfigurationType;
+import org.bukkit.ChatColor;
 
 import java.util.Collection;
 
@@ -36,6 +37,14 @@ public abstract class KelpConfiguration {
    * add/remove keys later.
    */
   public abstract void defineDefaults();
+
+  public void add(String key, Object value, String... replacements) {
+    if (value instanceof String && replacements.length != 0) {
+      defaultValues.add(new ConfigurationAttribute(key, value, replacements));
+      return;
+    }
+    defaultValues.add(new ConfigurationAttribute(key, value));
+  }
 
   /**
    * Save the changes. If you have modified the {@code defaultValues} collection
@@ -89,7 +98,7 @@ public abstract class KelpConfiguration {
    */
   public String getStringValue(String key) {
     ConfigurationAttribute attribute = this.getByKey(key);
-    return (String) attribute.getValue();
+    return ChatColor.translateAlternateColorCodes('&', (String) attribute.getValue());
   }
 
   /**

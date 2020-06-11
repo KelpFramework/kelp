@@ -10,6 +10,7 @@ import de.pxav.kelp.core.configuration.KelpConfiguration;
 import de.pxav.kelp.core.common.KelpFileUtils;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
@@ -111,22 +112,27 @@ public class PropertiesConfigurationType implements ConfigurationType {
       // default values expect which data type and saves the
       // result in a map.
       Map<String, Class<?>> valueTypes = Maps.newHashMap();
+      Map<String, String[]> replacements = Maps.newHashMap();
       instance.defineDefaults();
       instance.defaultValues.forEach(current -> {
-        if (current.getValue() instanceof Integer)
+        if (current.getValue() instanceof Integer) {
           valueTypes.put(current.getKey(), int.class);
-        else if (current.getValue() instanceof String)
+        } else if (current.getValue() instanceof String) {
           valueTypes.put(current.getKey(), String.class);
-        else if (current.getValue() instanceof Boolean)
+          if (current.getReplacements() != null && current.getReplacements().length != 0) {
+            replacements.put(current.getKey(), current.getReplacements());
+          }
+        } else if (current.getValue() instanceof Boolean) {
           valueTypes.put(current.getKey(), boolean.class);
-        else if (current.getValue() instanceof Float)
+        } else if (current.getValue() instanceof Float) {
           valueTypes.put(current.getKey(), float.class);
-        else if (current.getValue() instanceof Double)
+        } else if (current.getValue() instanceof Double) {
           valueTypes.put(current.getKey(), double.class);
-        else if (current.getValue() instanceof Long)
+        } else if (current.getValue() instanceof Long) {
           valueTypes.put(current.getKey(), long.class);
-        else if (current.getValue() instanceof Character)
+        } else if (current.getValue() instanceof Character) {
           valueTypes.put(current.getKey(), char.class);
+        }
       });
       instance.defaultValues.clear();
 
@@ -136,20 +142,34 @@ public class PropertiesConfigurationType implements ConfigurationType {
         ConfigurationAttribute configurationAttribute = new ConfigurationAttribute();
         configurationAttribute.setKey(key.toString());
         Class<?> valueType = valueTypes.get(key.toString());
-        if (valueType == String.class)
-           configurationAttribute.setValue(value.toString());
-        if (valueType == boolean.class)
+        if (valueType == String.class) {
+          if (replacements.containsKey(configurationAttribute.getKey())) {
+            MessageFormat format = new MessageFormat(value.toString());
+            String[] arguments = replacements.get(configurationAttribute.getKey());
+            String result = format.format(arguments);
+            configurationAttribute.setValue(result);
+          } else {
+            configurationAttribute.setValue(value.toString());
+          }
+        }
+        if (valueType == boolean.class) {
            configurationAttribute.setValue(Boolean.parseBoolean(value.toString()));
-        if (valueType == int.class)
+        }
+        if (valueType == int.class) {
            configurationAttribute.setValue(Integer.parseInt(value.toString()));
-        if (valueType == float.class)
+        }
+        if (valueType == float.class) {
            configurationAttribute.setValue(Float.parseFloat(value.toString()));
-        if (valueType == long.class)
+        }
+        if (valueType == long.class) {
           configurationAttribute.setValue(Long.parseLong(value.toString()));
-        if (valueType == double.class)
+        }
+        if (valueType == double.class) {
           configurationAttribute.setValue(Double.parseDouble(value.toString()));
-        if (valueType == char.class)
+        }
+        if (valueType == char.class) {
           configurationAttribute.setValue(value.toString().charAt(0));
+        }
 
         // directly commit the new entry to the configuration class.
         instance.defaultValues.add(configurationAttribute);

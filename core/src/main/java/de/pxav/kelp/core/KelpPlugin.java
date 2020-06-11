@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.application.KelpApplicationRepository;
 import de.pxav.kelp.core.application.inject.VersionBinderModule;
+import de.pxav.kelp.core.command.KelpCommandRepository;
 import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
@@ -79,19 +80,8 @@ public class KelpPlugin extends JavaPlugin {
                 "=> Messages with DEBUG level are not logged."
               };
 
-    injector.getInstance(KelpLogger.class).log(
-            " _   __       _    ",
-            "| | / /      | |        __  __  ",
-            "| |/ /   ___ | | _ __   \\ \\ \\ \\ ",
-            "|    \\  / _ \\| || '_ \\   \\ \\ \\ \\",
-            "| |\\  \\|  __/| || |_) |  / / / /",
-            "\\_| \\_/ \\___||_|| .__/  /_/ /_/ ",
-            "                | |            ",
-            "                |_|          ",
-            "",
-            "Enabling KelpFramework, running version " + this.getDescription().getVersion(),
-            "Developed & maintained by pxav with love <3"
-    );
+    this.logKelpLogo("Enabling KelpFramework, running version " + this.getDescription().getVersion(),
+      "Developed & maintained by pxav and the open-source community with love <3");
     injector.getInstance(KelpLogger.class).log(developmentMode);
 
     injector.getInstance(KelpLogger.class).log("Checking environment...");
@@ -106,13 +96,18 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).schedule();
+    injector.getInstance(KelpCommandRepository.class).loadCommands(this.getClass().getPackage().getName());
 
     injector.getInstance(KelpNpcRepository.class).startScheduler();
 
-    injector.getInstance(KelpInventoryRepository.class).loadMaterials();
-    injector.getInstance(SoundVersionTemplate.class).defineDefaults();
-
     injector.getInstance(KelpApplicationRepository.class).enableApplications();
+
+    injector.getInstance(VersionBinderModule.getMainClass()).init(null, injector);
+    injector.getInstance(VersionBinderModule.getMainClass()).onEnable();
+    injector.getInstance(KelpLogger.class).log("Enabled Version implementation!");
+
+    injector.getInstance(SoundVersionTemplate.class).defineDefaults();
+    injector.getInstance(KelpInventoryRepository.class).loadMaterials();
   }
 
   @Override
@@ -122,20 +117,9 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpLogger.class).log("[OK] Disabled plugins!");
 
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
+    this.logKelpLogo("Successfully shut down all Kelp services.",
+      "Thank you for using Kelp and goodbye!");
 
-    injector.getInstance(KelpLogger.class).log(
-            " _   __       _    ",
-            "| | / /      | |        __  __  ",
-            "| |/ /   ___ | | _ __   \\ \\ \\ \\ ",
-            "|    \\  / _ \\| || '_ \\   \\ \\ \\ \\",
-            "| |\\  \\|  __/| || |_) |  / / / /",
-            "\\_| \\_/ \\___||_|| .__/  /_/ /_/ ",
-            "                | |            ",
-            "                |_|          ",
-            "",
-            "Successfully shut down Kelp services.",
-            "Thanks for using Kelp and goodbye."
-    );
 
     injector.getInstance(SidebarRepository.class).interruptAnimations();
     injector.getInstance(KelpLogger.class).archiveLog();
@@ -144,6 +128,21 @@ public class KelpPlugin extends JavaPlugin {
 
   public static Injector getInjector() {
     return injector;
+  }
+
+  private void logKelpLogo(String... additionalLines) {
+    injector.getInstance(KelpLogger.class).log(
+      " _   __       _    ",
+      "| | / /      | |        __  __  ",
+      "| |/ /   ___ | | _ __   \\ \\ \\ \\ ",
+      "|    \\  / _ \\| || '_ \\   \\ \\ \\ \\",
+      "| |\\  \\|  __/| || |_) |  / / / /",
+      "\\_| \\_/ \\___||_|| .__/  /_/ /_/ ",
+      "                | |            ",
+      "                |_|          ",
+      ""
+    );
+    injector.getInstance(KelpLogger.class).log(additionalLines);
   }
 
 }

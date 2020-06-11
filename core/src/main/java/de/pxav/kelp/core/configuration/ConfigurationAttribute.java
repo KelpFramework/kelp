@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.configuration;
 
+import java.text.MessageFormat;
+
 /**
  * A Configuration attribute basically represents
  * one single pair of a key and a value that belong
@@ -21,9 +23,12 @@ public class ConfigurationAttribute {
   // that it can be changed at any time.
   private Object value;
 
-  public ConfigurationAttribute(String key, Object value) {
+  private String[] replacements = new String[] {};
+
+  public ConfigurationAttribute(String key, Object value, String... replacements) {
     this.key = key;
     this.value = value;
+    this.replacements = replacements;
   }
 
   public ConfigurationAttribute() {}
@@ -36,6 +41,10 @@ public class ConfigurationAttribute {
     return key;
   }
 
+  public String[] getReplacements() {
+    return replacements;
+  }
+
   public void setKey(String key) {
     this.key = key;
   }
@@ -44,4 +53,7 @@ public class ConfigurationAttribute {
     this.value = value;
   }
 
+  public void setReplacements(String[] replacements) {
+    this.replacements = replacements;
+  }
 }

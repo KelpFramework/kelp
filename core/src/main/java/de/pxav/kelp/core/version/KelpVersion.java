@@ -32,7 +32,10 @@ public enum KelpVersion {
   MC_1_14_1(29, "1.14.1-R0.1-SNAPSHOT"),
   MC_1_14_2(30, "1.14.2-R0.1-SNAPSHOT"),
   MC_1_14_3(31, "1.14.3-R0.1-SNAPSHOT"),
-  MC_1_14_4(32, "1.14.4-R0.1-SNAPSHOT")
+  MC_1_14_4(32, "1.14.4-R0.1-SNAPSHOT"),
+  MC_1_15_0(32, "1.15-R0.1-SNAPSHOT"),
+  MC_1_15_1(32, "1.15.1-R0.1-SNAPSHOT"),
+  MC_1_15_2(32, "1.15.2-R0.1-SNAPSHOT")
   ;
 
   private int id;
