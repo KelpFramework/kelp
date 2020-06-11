@@ -28,4 +28,7 @@ hs_err_pid*
 .idea
 *.iml
 
+# Maven
+dependency-reduced-pom.xml
+
 

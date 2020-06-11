@@ -5,19 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.google.inject.Injector;
-
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
+import com.google.inject.Singleton;
 import de.pxav.kelp.core.common.KelpFileUtils;
 import de.pxav.kelp.core.listener.EventRegistration;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -28,6 +17,16 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.ArrayMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
+
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * This repository class is used to load and manage
@@ -325,37 +324,15 @@ public final class KelpApplicationRepository {
   }
 
   private void disableApplication(KelpApplication application) {
-    if (enabledApps.containsKey(application.getInformation().getApplicationName())) return;
-
-    Lists.newArrayList(enabledApps.values())
-            .forEach(
-                    currentApplication -> {
-                      if (!currentApplication.equals(application)
-                              && currentApplication
-                              .getInformation()
-                              .getHardDependencies()
-                              .contains(application.getInformation().getApplicationName())) {
-                        disableApplication(currentApplication);
-                      }
-
-                      try {
-                        application.onDisable();
-                      } catch (Exception e) {
-                        logger.log("Error while disabling " + application.getInformation().getApplicationName());
-                        e.printStackTrace();
-                      }
-
-                      enabledApps.remove(application.getInformation().getApplicationName());
-                    });
-
-    for (KelpApplication currentApplication : Lists.newArrayList(enabledApps.values())) {
-      if (!currentApplication.equals(application)
-              && currentApplication.getInformation().getHardDependencies().contains(application.getInformation().getApplicationName())) {
-        disableApplication(currentApplication);
-      }
+    if (!enabledApps.containsKey(application.getInformation().getApplicationName())) {
+      return;
     }
 
-    logger.log("Disabling module " + application.getInformation().getApplicationName());
+    getEnabledApps().stream().filter(kelpApplication -> !kelpApplication.equals(application)
+      && kelpApplication.getInformation().getHardDependencies().contains(application.getInformation()
+      .getApplicationName())).forEach(this::disableApplication);
+
+    logger.log("Disabling application " + application.getInformation().getApplicationName());
 
     try {
       application.onDisable();
@@ -368,7 +345,7 @@ public final class KelpApplicationRepository {
   }
 
   public void disableApplications() {
-    enabledApps.values().forEach(this::disableApplication);
+    getEnabledApps().forEach(this::disableApplication);
   }
 
   public Collection<KelpApplication> getEnabledApps() {

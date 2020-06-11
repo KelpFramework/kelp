@@ -25,7 +25,8 @@ public class KelpFileUtils {
   public boolean createIfNotExists(File file) {
     if (file.exists()) return false;
 
-    File directory = new File(file.getPath().replace("/" + file.getName(), ""));
+    File directory = file.getParentFile();
+
     if (!directory.exists()) {
       directory.mkdirs();
     }

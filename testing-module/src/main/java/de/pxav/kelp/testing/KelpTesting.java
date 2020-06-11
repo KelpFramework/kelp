@@ -2,8 +2,17 @@ package de.pxav.kelp.testing;
 
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.NewKelpApplication;
+import de.pxav.kelp.core.connect.KelpConnect;
+import de.pxav.kelp.core.connect.connection.Connection;
+import de.pxav.kelp.core.connect.connection.ConnectionProperties;
+import de.pxav.kelp.core.connect.server.Server;
+import de.pxav.kelp.core.connect.server.ServerProperties;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.sql.KelpSql;
+import de.pxav.kelp.testing.packet.DefaultConnectionPropertiesFactory;
+import de.pxav.kelp.testing.packet.DefaultPacketOperator;
+import de.pxav.kelp.testing.packet.PingPacket;
+
+import java.net.InetSocketAddress;
 
 /**
  * This represents the main class for the testing application.
@@ -20,7 +29,9 @@ import de.pxav.kelp.core.sql.KelpSql;
 )
 public class KelpTesting extends KelpApplication {
 
-  private KelpSql kelpSql;
+  private Server server;
+
+  private Connection client;
 
   @Override
   public void onLoad() {
@@ -29,12 +40,42 @@ public class KelpTesting extends KelpApplication {
 
   @Override
   public void onEnable() {
-    this.kelpSql = new KelpSql("localhost", "kelp", "root", "", 3306);
-    kelpSql.addTable("testtable");
+    setupConnect();
+  }
+
+  private void setupConnect() {
+    DefaultPacketOperator packetOperator = getInstance(DefaultPacketOperator.class);
+
+    this.server = getInstance(KelpConnect.class).createServer(new ServerProperties(25576, packetOperator,
+      new DefaultConnectionPropertiesFactory(packetOperator)).useNativeEventLoopGroup().useNativeTransport()); // create a server instance
+
+    try {
+      server.bind().sync(); // bind the server
+
+      getInstance(KelpLogger.class).log("[KelpConnect] Server bound");
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    this.client = getInstance(KelpConnect.class).createConnection(new ConnectionProperties(new InetSocketAddress(25576),
+      packetOperator).useNativeEventLoopGroup().useNativeTransport()); // create a connection using the native transport
+
+    try {
+      client.connect().sync(); // connect client
+
+      getInstance(KelpLogger.class).log("[KelpConnect] Client connected");
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    client.write(new PingPacket());
+
   }
 
   @Override
   public void onDisable() {
-    super.onDisable();
+    getInstance(KelpConnect.class).closeAllConnections();
+
+    server.close();
   }
 }

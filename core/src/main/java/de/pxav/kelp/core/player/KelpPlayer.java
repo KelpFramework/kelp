@@ -92,7 +92,6 @@ public class KelpPlayer {
     return this;
   }
 
-
   public KelpPlayer sendActionbar(String message) {
     playerVersionTemplate.sendActionBar(bukkitPlayer, message);
     return this;
@@ -114,5 +113,13 @@ public class KelpPlayer {
 
   public Player getBukkitPlayer() {
     return bukkitPlayer;
+  }
+
+  public boolean isInWater() {
+    return playerVersionTemplate.isInWater(bukkitPlayer);
+  }
+
+  public boolean isInCobweb() {
+    return playerVersionTemplate.isInCobweb(bukkitPlayer);
   }
 }

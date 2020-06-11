@@ -31,4 +31,7 @@ public abstract class PlayerVersionTemplate {
 
   public abstract void teleport(Player player, Location location);
 
+  public abstract boolean isInCobweb(Player player);
+
+  public abstract boolean isInWater(Player player);
 }
