@@ -3,7 +3,6 @@ package de.pxav.kelp.core.npc;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -90,6 +89,10 @@ public class KelpNpcRepository {
   }
 
   public void stopScheduler() {
+    if(scheduledExecutorService == null) {
+      return;
+    }
+
     scheduledExecutorService.shutdownNow();
   }
 
