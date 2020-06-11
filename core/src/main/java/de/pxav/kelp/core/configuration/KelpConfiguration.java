@@ -38,6 +38,14 @@ public abstract class KelpConfiguration {
    */
   public abstract void defineDefaults();
 
+  public void add(String key, Object value, String... replacements) {
+    if (value instanceof String && replacements.length != 0) {
+      defaultValues.add(new ConfigurationAttribute(key, value, replacements));
+      return;
+    }
+    defaultValues.add(new ConfigurationAttribute(key, value));
+  }
+
   /**
    * Save the changes. If you have modified the {@code defaultValues} collection
    * using the {@code #update} method for example you might want to save your
