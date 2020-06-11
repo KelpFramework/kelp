@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.KelpApplicationRepository;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.version.KelpVersion;
@@ -23,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -33,6 +35,8 @@ import java.util.jar.JarFile;
  * @author pxav
  */
 public final class VersionBinderModule extends AbstractModule {
+
+  private static Class<? extends KelpApplication> mainClass;
 
   // the plugin instance under which the plugin is running
   private final KelpPlugin plugin;
@@ -72,7 +76,9 @@ public final class VersionBinderModule extends AbstractModule {
             .filter(file -> file.isFile() && file.getName().endsWith(".jar"))
             .forEach(current -> {
               try {
-                Collection<Class<?>> implementations = implementationsOf(current.getPath(), version);
+                Collection<Class<?>> implementations = implementationsOf(current.getPath(), version, (newMainClass) -> {
+                  mainClass = newMainClass;
+                });
                 if (!implementations.isEmpty()) {
                   implementationClasses.addAll(implementations);
                 }
@@ -162,7 +168,10 @@ public final class VersionBinderModule extends AbstractModule {
    *                  If the versions don't match you will get back an empty list.
    * @see KelpVersion
    */
-  private Collection<Class<?>> implementationsOf(String path, KelpVersion required) throws IOException,
+  private Collection<Class<?>> implementationsOf(String path,
+                                                 KelpVersion required,
+                                                 Consumer<Class<? extends KelpApplication>> mainClassConsumer)
+    throws IOException,
           ClassNotFoundException,
           NoSuchMethodException,
           InvocationTargetException,
@@ -229,7 +238,7 @@ public final class VersionBinderModule extends AbstractModule {
 
       // check if the current implementation module matches the version
       // requirements, otherwise stop the process.
-      if (mainClassAnnotation != null) {
+      if (mainClassAnnotation != null && classFile.getSuperclass().equalsIgnoreCase(KelpApplication.class.getName())) {
         ArrayMemberValue versionArray = (ArrayMemberValue) mainClassAnnotation.getMemberValue("value");
         MemberValue[] memberValues = versionArray.getValue();
 
@@ -242,6 +251,14 @@ public final class VersionBinderModule extends AbstractModule {
         if (!versions.contains(required)) {
           return Lists.newArrayList();
         }
+
+        int ignoreClass = ".class".length();
+        String className = jarEntry.getName().substring(0, jarEntry.getName().length() - ignoreClass);
+        className = className.replace('/', '.');
+        Class mainClass = classLoader.loadClass(className);
+        this.loadToClassPath(path, mainClass);
+        mainClassConsumer.accept(mainClass);
+
       }
 
     }
@@ -267,6 +284,10 @@ public final class VersionBinderModule extends AbstractModule {
     addURL.setAccessible(true);
     addURL.invoke(loader, new File(path).toURI().toURL());
     return loader.loadClass(toLoad.getName());
+  }
+
+  public static Class<? extends KelpApplication> getMainClass() {
+    return mainClass;
   }
 
 }

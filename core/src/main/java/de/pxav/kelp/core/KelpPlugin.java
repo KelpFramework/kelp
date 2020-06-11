@@ -100,10 +100,14 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(KelpNpcRepository.class).startScheduler();
 
-    injector.getInstance(KelpInventoryRepository.class).loadMaterials();
-    injector.getInstance(SoundVersionTemplate.class).defineDefaults();
-
     injector.getInstance(KelpApplicationRepository.class).enableApplications();
+
+    injector.getInstance(VersionBinderModule.getMainClass()).init(null, injector);
+    injector.getInstance(VersionBinderModule.getMainClass()).onEnable();
+    injector.getInstance(KelpLogger.class).log("Enabled Version implementation!");
+
+    injector.getInstance(SoundVersionTemplate.class).defineDefaults();
+    injector.getInstance(KelpInventoryRepository.class).loadMaterials();
   }
 
   @Override
