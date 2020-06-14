@@ -13,6 +13,10 @@ public abstract class KelpConsoleSenderVersionTemplate {
 
   public abstract void sendMessage(KelpConsoleSender consoleSender, String message);
 
-  public abstract String getName(KelpConsoleSender consoleSender, String message);
+  /**
+   * @param consoleSender The console sender you want to get the name of.
+   * @return
+   */
+  public abstract String getName(KelpConsoleSender consoleSender);
 
 }
