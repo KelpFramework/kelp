@@ -53,7 +53,7 @@ public class KelpNpc {
   private NpcVersionTemplate npcVersionTemplate;
   private KelpNpcRepository kelpNpcRepository;
 
-  public KelpNpc(NpcVersionTemplate npcVersionTemplate,
+  KelpNpc(NpcVersionTemplate npcVersionTemplate,
                  KelpNpcRepository kelpNpcRepository,
                  KelpLogger logger) {
     this.npcVersionTemplate = npcVersionTemplate;
