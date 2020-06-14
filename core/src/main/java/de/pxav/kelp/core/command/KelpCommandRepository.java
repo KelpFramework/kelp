@@ -1,6 +1,5 @@
 package de.pxav.kelp.core.command;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -12,8 +11,16 @@ import de.pxav.kelp.core.reflect.TypeFinder;
 import java.util.Map;
 
 /**
- * A class description goes here.
+ * This is a repository for all commands as it loads and
+ * registers them on every server startup.
  *
+ * The execution of the commands and registration itself is handled by
+ * spigot/bukkit, so it is not included in this class.
+ *
+ * @see CommandRegistryVersionTemplate
+ * @see CreateCommand
+ * @see CreateSubCommand
+ * @see KelpCommand
  * @author pxav
  */
 @Singleton
@@ -35,7 +42,19 @@ public class KelpCommandRepository {
     this.logger = logger;
   }
 
+  /**
+   * Searches for all command classes and automatically registers
+   * them. This method also searches for sub commands and adds them to
+   * their parent commands.
+   *
+   * @param packages The packages in which kelp should search for.
+   */
   public void loadCommands(String... packages) {
+
+    // at first, it searches for sub commands. This is important, because
+    // sub commands have to be added before the parent command is registered.
+    // Otherwise the sub command cannot be included in the registration process
+    // and is not registered/executable.
     typeFinder.filter(packages,
       TypeCriterion.annotatedWith(CreateSubCommand.class),
       TypeCriterion.subclassOf(KelpCommand.class))
@@ -44,6 +63,8 @@ public class KelpCommandRepository {
       KelpCommand subCommandClass = injector.getInstance(current.asSubclass(current));
       KelpCommand parentCommandClass = injector.getInstance(subCommandAnnotation.parentCommand());
 
+      // add sub command to main command. This is important, so that only the main
+      // commands have to be registered later.
       Map<KelpCommand, CreateSubCommand> subCommands = parentCommandClass.getSubCommands();
       subCommands.put(subCommandClass, subCommandAnnotation);
 
@@ -55,6 +76,7 @@ public class KelpCommandRepository {
         + subCommandAnnotation.parentCommand().getName());
     });
 
+    // when all sub commands have been loaded, register main commands.
     typeFinder.filter(packages,
       TypeCriterion.annotatedWith(CreateCommand.class),
       TypeCriterion.subclassOf(KelpCommand.class))
@@ -63,6 +85,8 @@ public class KelpCommandRepository {
       CreateCommand commandAnnotation = current.getAnnotation(CreateCommand.class);
 
       commandClass.onCommandRegister();
+
+      // add command to bukkit registry
       registryVersionTemplate.registerCommand(commandClass, commandAnnotation);
       logger.writeLog("[COMMAND] Successfully registered main command "
         + commandAnnotation.name()
