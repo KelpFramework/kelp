@@ -2,10 +2,9 @@ package de.pxav.kelp.core.inventory.listener;
 
 import com.google.inject.Inject;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.player.PlayerFactory;
+import de.pxav.kelp.core.player.KelpPlayerRepository;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 /**
@@ -15,18 +14,17 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
  */
 public class PlayerInventoryStateListener {
 
-  private PlayerFactory playerFactory;
+  private KelpPlayerRepository playerRepository;
 
   @Inject
-  public PlayerInventoryStateListener(PlayerFactory playerFactory) {
-    this.playerFactory = playerFactory;
+  public PlayerInventoryStateListener(KelpPlayerRepository playerRepository) {
+    this.playerRepository = playerRepository;
   }
 
   @EventHandler
   public void handlePlayerInventoryClose(InventoryCloseEvent event) {
-    KelpPlayer kelpPlayer = playerFactory.newKelpPlayer((Player) event.getPlayer());
+    KelpPlayer kelpPlayer = playerRepository.getKelpPlayer((Player) event.getPlayer());
     kelpPlayer.closeInventory();
-
   }
 
 }
