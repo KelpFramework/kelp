@@ -775,19 +775,9 @@ public abstract class PlayerVersionTemplate {
    */
   public abstract void resetTitle(Player player);
 
-  /**
-   * Gets the view distance of the client. If this view distance
-   * is not accessible, the server view distance will be returned.
-   *
-   * @return The current view distance of the client.
-   */
-  public abstract int getClientViewDistance();
-
   // TODO update commands
 
   public abstract void openBook(Player player, ItemStack book);
-
-  public abstract String getLanguage(Player player);
 
   /**
    * Gets the version number of the client's protocol. You
