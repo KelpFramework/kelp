@@ -11,9 +11,13 @@ import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -29,10 +33,12 @@ import java.util.UUID;
 public class VersionedPlayer extends PlayerVersionTemplate {
 
   private SoundRepository soundRepository;
+  private JavaPlugin plugin;
 
   @Inject
-  public VersionedPlayer(SoundRepository soundRepository) {
+  public VersionedPlayer(SoundRepository soundRepository, JavaPlugin plugin) {
     this.soundRepository = soundRepository;
+    this.plugin = plugin;
   }
 
   /**
@@ -998,14 +1004,121 @@ public class VersionedPlayer extends PlayerVersionTemplate {
     return 0;
   }
 
+  /**
+   * Sets the player to a server operator. A server operator
+   * is a player, who has all permissions and can execute every
+   * command.
+   *
+   * @param player  The player you want to change the operator state of.
+   * @param value   {@code true} If you want to make the player an operator.
+   */
   @Override
   public void setOperator(Player player, boolean value) {
     player.setOp(value);
   }
 
+  /**
+   * Checks if the given player is a server operator. A server operator
+   * is a player, who has all permissions and can execute every
+   * command.
+   *
+   * @param player The player you want to check the operator state of.
+   * @return {@code true} if the player is a server operator.
+   */
   @Override
   public boolean isOperator(Player player) {
     return player.isOp();
+  }
+
+  /**
+   * Gives the player the desired permission.
+   *
+   * @param player            The player who should get the permission.
+   * @param permission        The name of the permission you want to give the player.
+   */
+  @Override
+  public void givePermission(Player player, String permission) {
+    PermissionAttachment attachment = player.addAttachment(this.plugin);
+    attachment.setPermission(permission, true);
+  }
+
+  /**
+   * Removes the specified permission from the given player.
+   *
+   * @param player      The player you want to remove the permission from.
+   * @param permission  The name of the permission you want to remove.
+   */
+  @Override
+  public void removePermission(Player player, String permission) {
+    PermissionAttachment attachment = player.addAttachment(this.plugin);
+    attachment.setPermission(permission, false);
+  }
+
+  /**
+   * Checks if the given player has the desired permission.
+   *
+   * @param player      The player you want to check.
+   * @param permission  The permission you want to check for.
+   * @return {@code true} if the player has the permission.
+   */
+  @Override
+  public boolean hasPermission(Player player, String permission) {
+    return player.hasPermission(permission);
+  }
+
+  /**
+   * Checks if the given player is currently banned from the server.
+   * This does only check if the player was banned by the
+   * bukkit server using the normal {@code /ban} command. If another
+   * plugin has banned the player, this is ignored.
+   *
+   * @param player The player you want to check.
+   * @return {@code true} if the player has been banned by the bukkit server.
+   */
+  @Override
+  public boolean isBannedByBukkit(Player player) {
+    return player.isBanned();
+  }
+
+  /**
+   * Checks if the player is on the bukkit whitelist.
+   *
+   * @param player The player you want to check.
+   * @return {@code true} if the player is whitelisted.
+   */
+  @Override
+  public boolean isWhitelisted(Player player) {
+    return player.isWhitelisted();
+  }
+
+  /**
+   * Sets the player whitelisted or not whitelisted.
+   *
+   * @param player        The player you want to whitelist/unwhitelist.
+   * @param whitelisted   {@code true} if the player should be whitelisted.
+   */
+  @Override
+  public void setWhitelisted(Player player, boolean whitelisted) {
+    player.setWhitelisted(whitelisted);
+  }
+
+  /**
+   * Gets the bed spawn location of the player.
+   * This is the location, where the player has slept for the
+   * last time. A location is only returned if the player has
+   * already slept at least once and the location is valid.
+   *
+   * @param player The player you want to get the bed spawn location of.
+   * @return The spawn location, {@code null} if the player has not slept or location is invalid.
+   */
+  @Override
+  public Location getBedSpawnLocation(Player player) {
+    return player.getBedSpawnLocation();
+  }
+
+  @Override
+  public void sendMessage(Player player, String message) {
+    player.sendMessage(message);
   }
 
   /**
