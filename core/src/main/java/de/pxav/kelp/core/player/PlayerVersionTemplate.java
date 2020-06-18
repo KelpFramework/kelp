@@ -880,6 +880,12 @@ public abstract class PlayerVersionTemplate {
    */
   public abstract Location getBedSpawnLocation(Player player);
 
-
+  /**
+   * Sends the given player a message into their chat.
+   *
+   * @param player    The player who should receive the message.
+   * @param message   The message itself. May contain color codes.
+   */
+  public abstract void sendMessage(Player player, String message);
 
 }

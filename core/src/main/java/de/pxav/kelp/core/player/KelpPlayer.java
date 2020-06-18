@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -574,7 +575,24 @@ public class KelpPlayer {
     return this;
   }
 
+  public KelpPlayer sendMessage(String message) {
+    playerVersionTemplate.sendMessage(bukkitPlayer, message);
+    return this;
+  }
 
+  public KelpPlayer sendMessages(String... messages) {
+    for (String message : messages) {
+      playerVersionTemplate.sendMessage(bukkitPlayer, message);
+    }
+    return this;
+  }
+
+  public KelpPlayer sendMessages(Collection<String> messages) {
+    for (String message : messages) {
+      playerVersionTemplate.sendMessage(bukkitPlayer, message);
+    }
+    return this;
+  }
 
   public Player getBukkitPlayer() {
     return bukkitPlayer;
