@@ -76,7 +76,10 @@ public class VersionedNpc extends NpcVersionTemplate {
     setValue(spawnPacket, "e", MathHelper.floor(npc.getLocation().getZ() * 32.0D));
     setValue(spawnPacket, "f", (byte) ((int) (npc.getLocation().getYaw() * 256.0F / 360.0F)));
     setValue(spawnPacket, "g", (byte) ((int) (npc.getLocation().getPitch() * 256.0F / 360.0F)));
-    setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
+
+    if (npc.getItemInHand() != null) {
+      setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
+    }
 
     DataWatcher dataWatcher = new DataWatcher(null);
     this.applyToDataWatcher(dataWatcher, npc);
