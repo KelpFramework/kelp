@@ -3,6 +3,8 @@ package de.pxav.kelp.core.npc;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.player.KelpPlayerRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,9 +35,12 @@ public class KelpNpcRepository {
   private ConcurrentHashMap<UUID, Collection<KelpNpc>> spawnedNpcs;
   private ScheduledExecutorService scheduledExecutorService;
 
+  private KelpPlayerRepository playerRepository;
+
   @Inject
-  public KelpNpcRepository() {
+  public KelpNpcRepository(KelpPlayerRepository playerRepository) {
     this.spawnedNpcs = new ConcurrentHashMap<>();
+    this.playerRepository = playerRepository;
   }
 
   /**
@@ -55,10 +60,10 @@ public class KelpNpcRepository {
    * @param player  The player for whom the NPC is visible / The player
    *                who receives the spawn packet.
    */
-  public void addNpc(KelpNpc npc, Player player) {
-    Collection<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUniqueId(), new ArrayList<>());
+  public void addNpc(KelpNpc npc, KelpPlayer player) {
+    Collection<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUUID(), new ArrayList<>());
     npcs.add(npc);
-    spawnedNpcs.put(player.getUniqueId(), npcs);
+    spawnedNpcs.put(player.getUUID(), npcs);
   }
 
   /**
@@ -68,10 +73,10 @@ public class KelpNpcRepository {
    * @param npc     The instance of the NPC you want to despawn.
    * @param player  The player for whom the NPC was visible, when it was visible.
    */
-  public void removeNpc(KelpNpc npc, Player player) {
-    Collection<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUniqueId(), new ArrayList<>());
+  public void removeNpc(KelpNpc npc, KelpPlayer player) {
+    Collection<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUUID(), new ArrayList<>());
     npcs.remove(npc);
-    spawnedNpcs.put(player.getUniqueId(), npcs);
+    spawnedNpcs.put(player.getUUID(), npcs);
   }
 
   /**
@@ -87,7 +92,7 @@ public class KelpNpcRepository {
         // iterate all players with spawned NPCs.
         spawnedNpcs.forEach((uuid, npcList) -> {
 
-          Player player = Bukkit.getPlayer(uuid);
+          KelpPlayer player = playerRepository.getKelpPlayer(uuid);
           Preconditions.checkNotNull(player);
 
           // iterate all NPCs of an individual player
@@ -111,7 +116,7 @@ public class KelpNpcRepository {
             // check if the NPC should always look at the player
             // it true, update the head rotation of the npc.
             if (currentNpc.shouldFollowHeadRotation()) {
-              currentNpc.lookTo(player.getLocation());
+              currentNpc.lookTo(player.getBukkitPlayer().getLocation());
               currentNpc.refresh(player);
             }
 

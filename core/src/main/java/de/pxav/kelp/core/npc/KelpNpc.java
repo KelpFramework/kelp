@@ -7,6 +7,7 @@ import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
+import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -375,7 +376,7 @@ public class KelpNpc {
    * @param player The player who should see the NPC.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc spawn(Player player) {
+  public KelpNpc spawn(KelpPlayer player) {
     if (this.uuid == null) {
       this.uuid = UUID.randomUUID();
     }
@@ -389,7 +390,7 @@ public class KelpNpc {
               " But there was no location found. Please check your code again.");
     }
 
-    this.npcMeta = npcVersionTemplate.spawnNpc(this, player);
+    this.npcMeta = npcVersionTemplate.spawnNpc(this, player.getBukkitPlayer());
     gameProfile = npcMeta.getGameProfile();
     entityId = npcMeta.getEntityId();
     customName = npcMeta.getOverHeadDisplayName();
@@ -407,8 +408,8 @@ public class KelpNpc {
    * @param player The player whose NPC should be despawned.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc deSpawn(Player player) {
-    npcVersionTemplate.deSpawn(this, player);
+  public KelpNpc deSpawn(KelpPlayer player) {
+    npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
     this.npcMeta = null;
     this.kelpNpcRepository.removeNpc(this, player);
     return this;
@@ -422,8 +423,8 @@ public class KelpNpc {
    * @param player The player who should receive the update packets.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc refresh(Player player) {
-    npcVersionTemplate.refresh(this, player);
+  public KelpNpc refresh(KelpPlayer player) {
+    npcVersionTemplate.refresh(this, player.getBukkitPlayer());
     return this;
   }
 
