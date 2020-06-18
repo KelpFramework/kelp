@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
 import org.bukkit.Bukkit;
@@ -65,7 +66,7 @@ public class EventRegistration {
             .filter(packageNames, MethodCriterion.annotatedWith(EventHandler.class))
             .forEach(
                     method -> {
-                      logger.log("EventHandler '" + method.getName() + "' successfully registered.");
+                      logger.log(LogLevel.DEBUG, "EventHandler '" + method.getName() + "' successfully registered.");
 
                       // fetch annotation metadata if an annotation was found.
                       EventHandler handler = method.getAnnotation(EventHandler.class);
