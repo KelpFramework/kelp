@@ -791,4 +791,24 @@ public abstract class PlayerVersionTemplate {
    */
   public abstract int getProtocolVersion(Player player);
 
+  /**
+   * Sets the player to a server operator. A server operator
+   * is a player, who has all permissions and can execute every
+   * command.
+   *
+   * @param player  The player you want to change the operator state of.
+   * @param value   {@code true} If you want to make the player an operator.
+   */
+  public abstract void setOperator(Player player, boolean value);
+
+  /**
+   * Checks if the given player is a server operator. A server operator
+   * is a player, who has all permissions and can execute every
+   * command.
+   *
+   * @param player The player you want to check the operator state of.
+   * @return {@code true} if the player is a server operator.
+   */
+  public abstract boolean isOperator(Player player);
+
 }

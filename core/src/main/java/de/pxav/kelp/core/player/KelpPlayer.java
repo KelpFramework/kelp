@@ -500,6 +500,34 @@ public class KelpPlayer {
     return tabListHeader;
   }
 
+  public boolean isOperator() {
+    return playerVersionTemplate.isOperator(bukkitPlayer);
+  }
+
+  public KelpPlayer makeOperator() {
+    playerVersionTemplate.setOperator(bukkitPlayer, true);
+    return this;
+  }
+
+  public KelpPlayer removeOperator() {
+    playerVersionTemplate.setOperator(bukkitPlayer, false);
+    return this;
+  }
+
+  public KelpPlayer toggleOperator() {
+    if (this.isOperator()) {
+      this.removeOperator();
+    } else {
+      this.makeOperator();
+    }
+    return this;
+  }
+
+  public KelpPlayer setOperator(boolean operator) {
+    playerVersionTemplate.setOperator(bukkitPlayer, operator);
+    return this;
+  }
+
   public Player getBukkitPlayer() {
     return bukkitPlayer;
   }
