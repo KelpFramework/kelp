@@ -542,6 +542,40 @@ public class KelpPlayer {
     return playerVersionTemplate.hasPermission(bukkitPlayer, permissionName);
   }
 
+  public boolean isBannedByBukkit() {
+    return playerVersionTemplate.isBannedByBukkit(bukkitPlayer);
+  }
+
+  public boolean isWhitelisted() {
+    return playerVersionTemplate.isWhitelisted(bukkitPlayer);
+  }
+
+  public KelpPlayer whitelist() {
+    playerVersionTemplate.setOperator(bukkitPlayer, true);
+    return this;
+  }
+
+  public KelpPlayer removeFromWhitelist() {
+    playerVersionTemplate.setOperator(bukkitPlayer, false);
+    return this;
+  }
+
+  public KelpPlayer toggleWhitelist() {
+    if (this.isOperator()) {
+      this.removeOperator();
+    } else {
+      this.makeOperator();
+    }
+    return this;
+  }
+
+  public KelpPlayer setWhitelisted(boolean whitelisted) {
+    playerVersionTemplate.setWhitelisted(bukkitPlayer, whitelisted);
+    return this;
+  }
+
+
+
   public Player getBukkitPlayer() {
     return bukkitPlayer;
   }

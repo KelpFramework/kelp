@@ -842,4 +842,44 @@ public abstract class PlayerVersionTemplate {
    */
   public abstract boolean hasPermission(Player player, String permission);
 
+  /**
+   * Checks if the given player is currently banned from the server.
+   * This does only check if the player was banned by the
+   * bukkit server using the normal {@code /ban} command. If another
+   * plugin has banned the player, this is ignored.
+   *
+   * @param player The player you want to check.
+   * @return {@code true} if the player has been banned by the bukkit server.
+   */
+  public abstract boolean isBannedByBukkit(Player player);
+
+  /**
+   * Checks if the player is on the bukkit whitelist.
+   *
+   * @param player The player you want to check.
+   * @return {@code true} if the player is whitelisted.
+   */
+  public abstract boolean isWhitelisted(Player player);
+
+  /**
+   * Sets the player whitelisted or not whitelisted.
+   *
+   * @param player        The player you want to whitelist/unwhitelist.
+   * @param whitelisted   {@code true} if the player should be whitelisted.
+   */
+  public abstract void setWhitelisted(Player player, boolean whitelisted);
+
+  /**
+   * Gets the bed spawn location of the player.
+   * This is the location, where the player has slept for the
+   * last time. A location is only returned if the player has
+   * already slept at least once and the location is valid.
+   *
+   * @param player The player you want to get the bed spawn location of.
+   * @return The spawn location, {@code null} if the player has not slept or location is invalid.
+   */
+  public abstract Location getBedSpawnLocation(Player player);
+
+
+
 }
