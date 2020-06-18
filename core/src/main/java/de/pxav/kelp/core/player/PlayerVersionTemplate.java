@@ -5,8 +5,14 @@ import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.Plugin;
 
 import java.net.InetSocketAddress;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -810,5 +816,30 @@ public abstract class PlayerVersionTemplate {
    * @return {@code true} if the player is a server operator.
    */
   public abstract boolean isOperator(Player player);
+
+  /**
+   * Gives the player the desired permission.
+   *
+   * @param player            The player who should get the permission.
+   * @param permission        The name of the permission you want to give the player.
+   */
+  public abstract void givePermission(Player player, String permission);
+
+  /**
+   * Removes the specified permission from the given player.
+   *
+   * @param player      The player you want to remove the permission from.
+   * @param permission  The name of the permission you want to remove.
+   */
+  public abstract void removePermission(Player player, String permission);
+
+  /**
+   * Checks if the given player has the desired permission.
+   *
+   * @param player      The player you want to check.
+   * @param permission  The permission you want to check for.
+   * @return {@code true} if the player has the permission.
+   */
+  public abstract boolean hasPermission(Player player, String permission);
 
 }

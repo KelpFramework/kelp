@@ -528,6 +528,20 @@ public class KelpPlayer {
     return this;
   }
 
+  public KelpPlayer grantPermission(String permissionName) {
+    playerVersionTemplate.givePermission(bukkitPlayer, permissionName);
+    return this;
+  }
+
+  public KelpPlayer removePermission(String permissionName) {
+    playerVersionTemplate.removePermission(bukkitPlayer, permissionName);
+    return this;
+  }
+
+  public boolean hasPermission(String permissionName) {
+    return playerVersionTemplate.hasPermission(bukkitPlayer, permissionName);
+  }
+
   public Player getBukkitPlayer() {
     return bukkitPlayer;
   }
