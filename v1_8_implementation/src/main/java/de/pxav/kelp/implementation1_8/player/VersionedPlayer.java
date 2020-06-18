@@ -998,6 +998,16 @@ public class VersionedPlayer extends PlayerVersionTemplate {
     return 0;
   }
 
+  @Override
+  public void setOperator(Player player, boolean value) {
+    player.setOp(value);
+  }
+
+  @Override
+  public boolean isOperator(Player player) {
+    return player.isOp();
+  }
+
   /**
    * Sends the given packet to the given player.
    *
