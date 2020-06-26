@@ -2,6 +2,7 @@ package de.pxav.kelp.implementation1_8.entity;
 
 import com.google.inject.Inject;
 import de.pxav.kelp.core.entity.KelpEntity;
+import de.pxav.kelp.core.entity.type.DroppedItemEntity;
 import de.pxav.kelp.core.entity.type.ElderGuardianEntity;
 import de.pxav.kelp.core.entity.type.GuardianEntity;
 import de.pxav.kelp.core.entity.type.ZombieEntity;
@@ -14,6 +15,7 @@ import net.minecraft.server.v1_8_R3.EntityGuardian;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Guardian;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Zombie;
 
 /**
@@ -50,6 +52,10 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
       case ZOMBIE:
         output = new ZombieEntity();
         entity = craftWorld.createEntity(location, Zombie.class);
+        break;
+      case DROPPED_ITEM:
+        output = new DroppedItemEntity();
+        entity = craftWorld.createEntity(location, Item.class);
         break;
     }
 
