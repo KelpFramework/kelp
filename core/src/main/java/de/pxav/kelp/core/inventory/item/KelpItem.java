@@ -19,14 +19,11 @@ import java.util.*;
  */
 public class KelpItem {
 
-  private MaterialVersionTemplate versionedMaterial;
   private ItemVersionTemplate itemVersionTemplate;
   private ItemTagVersionTemplate itemTagVersionTemplate;
 
-  public KelpItem(MaterialVersionTemplate versionedMaterial,
-                  ItemVersionTemplate itemVersionTemplate,
+  public KelpItem(ItemVersionTemplate itemVersionTemplate,
                   ItemTagVersionTemplate itemTagVersionTemplate) {
-    this.versionedMaterial = versionedMaterial;
     this.itemVersionTemplate = itemVersionTemplate;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
   }
