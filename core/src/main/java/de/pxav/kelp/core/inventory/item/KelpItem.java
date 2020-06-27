@@ -79,6 +79,11 @@ public class KelpItem {
     return this;
   }
 
+  public KelpItem itemDescription(List<String> description) {
+    this.itemDescription = description;
+    return this;
+  }
+
   public KelpItem itemDescription(String description) {
     this.itemDescription = Collections.singletonList(description);
     return this;
@@ -91,6 +96,11 @@ public class KelpItem {
 
   public KelpItem addItemDescription(String description) {
     this.itemDescription.add(description);
+    return this;
+  }
+
+  public KelpItem addItemDescription(List<String> description) {
+    this.itemDescription.addAll(description);
     return this;
   }
 
