@@ -1,5 +1,9 @@
 package de.pxav.kelp.core.entity;
 
+import de.pxav.kelp.core.entity.type.DroppedItemEntity;
+import de.pxav.kelp.core.entity.type.ElderGuardianEntity;
+import de.pxav.kelp.core.entity.type.GuardianEntity;
+import de.pxav.kelp.core.entity.type.ZombieEntity;
 import de.pxav.kelp.core.version.KelpVersion;
 
 import java.util.ArrayList;
@@ -12,10 +16,10 @@ import java.util.Collection;
  */
 public enum  KelpEntityType {
 
-  DROPPED_ITEM(KelpVersion.MC_1_8_0, null),
+  DROPPED_ITEM(KelpVersion.MC_1_8_0, DroppedItemEntity.class),
   EXPERIENCE_ORB(KelpVersion.MC_1_8_0, null),
   AREA_EFFECT_CLOUD(KelpVersion.MC_1_9_0, null),
-  ELDER_GUARDIAN(KelpVersion.MC_1_8_0, null),
+  ELDER_GUARDIAN(KelpVersion.MC_1_8_0, ElderGuardianEntity.class),
   WITHER_SKELETON(KelpVersion.MC_1_8_0, null),
   STRAY(KelpVersion.MC_1_10_0, null),
   EGG(KelpVersion.MC_1_8_0, null),
@@ -61,7 +65,7 @@ public enum  KelpEntityType {
   SKELETON(KelpVersion.MC_1_8_0, null),
   SPIDER(KelpVersion.MC_1_8_0, null),
   GIANT(KelpVersion.MC_1_8_0, null),
-  ZOMBIE(KelpVersion.MC_1_8_0, null),
+  ZOMBIE(KelpVersion.MC_1_8_0, ZombieEntity.class),
   SLIME(KelpVersion.MC_1_8_0, null),
   GHAST(KelpVersion.MC_1_8_0, null),
   PIG_ZOMBIE(KelpVersion.MC_1_8_0, null),
@@ -75,7 +79,7 @@ public enum  KelpEntityType {
   BAT(KelpVersion.MC_1_8_0, null),
   WITCH(KelpVersion.MC_1_8_0, null),
   ENDERMITE(KelpVersion.MC_1_8_0, null),
-  GUARDIAN(KelpVersion.MC_1_8_0, null),
+  GUARDIAN(KelpVersion.MC_1_8_0, GuardianEntity.class),
   SHULKER(KelpVersion.MC_1_9_0, null),
   PIG(KelpVersion.MC_1_8_0, null),
   SHEEP(KelpVersion.MC_1_8_0, null),
