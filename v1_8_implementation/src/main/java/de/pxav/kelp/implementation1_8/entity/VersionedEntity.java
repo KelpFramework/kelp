@@ -1,6 +1,8 @@
 package de.pxav.kelp.implementation1_8.entity;
 
 import de.pxav.kelp.core.entity.KelpEntity;
+import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.type.DroppedItemEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.SinceKelpVersion;
@@ -11,6 +13,8 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItem;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -44,8 +48,17 @@ public class VersionedEntity extends EntityVersionTemplate {
   @Override
   public void spawnEntity(KelpEntity entity) {
     CraftWorld craftWorld = (CraftWorld) entity.getCurrentLocation().getWorld();
+    Entity minecraftEntity = (Entity) entity.getBukkitEntity();
     ((Entity) entity.getBukkitEntity()).setPositionRotation(entity.getCurrentLocation().getX(), entity.getCurrentLocation().getY(), entity.getCurrentLocation().getZ(), entity.getCurrentLocation().getYaw(), entity.getCurrentLocation().getPitch());
-    craftWorld.addEntity((Entity) entity.getBukkitEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
+
+    if (entity.getEntityType() == KelpEntityType.DROPPED_ITEM) {
+      DroppedItemEntity kelpItemEntity = (DroppedItemEntity) entity;
+      CraftItem item = (CraftItem) minecraftEntity.getBukkitEntity();
+      item.setItemStack(kelpItemEntity.getItem().getItemStack());
+      minecraftEntity = item.getHandle();
+    }
+
+    craftWorld.addEntity(minecraftEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
   }
 
   /**

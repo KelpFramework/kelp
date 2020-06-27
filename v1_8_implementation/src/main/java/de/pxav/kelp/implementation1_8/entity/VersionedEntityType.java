@@ -8,6 +8,8 @@ import de.pxav.kelp.core.entity.type.GuardianEntity;
 import de.pxav.kelp.core.entity.type.ZombieEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.inventory.item.KelpItem;
+import de.pxav.kelp.core.inventory.item.KelpItemFactory;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.Entity;
@@ -27,11 +29,11 @@ import org.bukkit.entity.Zombie;
 @Versioned
 public class VersionedEntityType extends EntityTypeVersionTemplate {
 
-  private KelpLogger logger;
+  private KelpItemFactory kelpItemFactory;
 
   @Inject
-  public VersionedEntityType(KelpLogger logger) {
-    this.logger = logger;
+  public VersionedEntityType(KelpItemFactory kelpItemFactory) {
+    this.kelpItemFactory = kelpItemFactory;
   }
 
   @Override
@@ -73,25 +75,22 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
 
     if (bukkitEntity instanceof Item) {
       Item item = (Item) bukkitEntity;
-      return new DroppedItemEntity();
+      KelpItem kelpItem = kelpItemFactory.fromItemStack(item.getItemStack());
+      return new DroppedItemEntity(((CraftEntity)item).getHandle(), item.getEntityId(), item.getLocation(), kelpItem);
     }
 
     if (bukkitEntity instanceof Zombie) {
       Zombie zombie = (Zombie) bukkitEntity;
-      ZombieEntity output = new ZombieEntity();
-      if (zombie.isBaby()) {
-        output.setBaby(true);
-      } else {
-        output.setBaby(false);
-      }
-
-      return output;
+      return new ZombieEntity(((CraftEntity)zombie).getHandle(),
+        zombie.getEntityId(),
+        zombie.getLocation(),
+        zombie.isBaby());
     }
 
     if (bukkitEntity instanceof Guardian) {
       Guardian guardian = (Guardian) bukkitEntity;
       if (guardian.isElder()) {
-        return new ElderGuardianEntity();
+        return new ElderGuardianEntity(((CraftEntity)guardian).getHandle(), guardian.getEntityId(), guardian.getLocation());
       } else {
         return new GuardianEntity(((CraftEntity)guardian).getHandle(), guardian.getEntityId(), guardian.getLocation());
       }
