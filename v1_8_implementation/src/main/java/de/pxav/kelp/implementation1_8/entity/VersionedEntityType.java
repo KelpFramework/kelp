@@ -14,6 +14,7 @@ import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityGuardian;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Guardian;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Zombie;
@@ -65,6 +66,38 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     output.bukkitEntity(entity);
 
     return output;
+  }
+
+  @Override
+  public KelpEntity getKelpEntity(org.bukkit.entity.Entity bukkitEntity) {
+
+    if (bukkitEntity instanceof Item) {
+      Item item = (Item) bukkitEntity;
+      return new DroppedItemEntity();
+    }
+
+    if (bukkitEntity instanceof Zombie) {
+      Zombie zombie = (Zombie) bukkitEntity;
+      ZombieEntity output = new ZombieEntity();
+      if (zombie.isBaby()) {
+        output.setBaby(true);
+      } else {
+        output.setBaby(false);
+      }
+
+      return output;
+    }
+
+    if (bukkitEntity instanceof Guardian) {
+      Guardian guardian = (Guardian) bukkitEntity;
+      if (guardian.isElder()) {
+        return new ElderGuardianEntity();
+      } else {
+        return new GuardianEntity(((CraftEntity)guardian).getHandle(), guardian.getEntityId(), guardian.getLocation());
+      }
+    }
+
+    return null;
   }
 
 }
