@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 /**
  * A class description goes here.
@@ -22,6 +23,10 @@ public class KelpEntityFactory {
 
   public KelpEntity newKelpEntity(KelpEntityType entityType, Location location) {
     return typeVersionTemplate.newKelpEntity(entityType, location);
+  }
+
+  public KelpEntity getKelpEntity(Entity bukkitEntity) {
+    return typeVersionTemplate.getKelpEntity(bukkitEntity);
   }
 
 }

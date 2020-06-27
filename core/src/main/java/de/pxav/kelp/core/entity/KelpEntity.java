@@ -14,6 +14,15 @@ public class KelpEntity {
   private Location currentLocation;
   private int entityId;
 
+  public KelpEntity(Object bukkitEntity, KelpEntityType entityType, Location currentLocation, int entityId) {
+    this.bukkitEntity = bukkitEntity;
+    this.entityType = entityType;
+    this.currentLocation = currentLocation;
+    this.entityId = entityId;
+  }
+
+  public KelpEntity() {}
+
   public Object getBukkitEntity() {
     return bukkitEntity;
   }
@@ -49,4 +58,5 @@ public class KelpEntity {
     this.entityId = entityId;
     return this;
   }
+
 }
