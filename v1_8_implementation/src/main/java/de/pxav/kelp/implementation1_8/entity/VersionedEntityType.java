@@ -10,7 +10,6 @@ import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.item.KelpItemFactory;
-import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityGuardian;
@@ -41,6 +40,8 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     KelpEntity output = new KelpEntity();
     CraftWorld craftWorld = (CraftWorld) location.getWorld();
     Entity entity = null;
+    output.bukkitEntity(null);
+    output.currentLocation(location);
 
     switch (entityType) {
       case GUARDIAN:
@@ -57,15 +58,16 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
         entity = craftWorld.createEntity(location, Zombie.class);
         break;
       case DROPPED_ITEM:
-        output = new DroppedItemEntity();
-        entity = craftWorld.createEntity(location, Item.class);
+        output = new DroppedItemEntity(null, 0, location, null);
+        entity = null;
         break;
     }
 
-    output.entityId(entity.getId());
-    output.entityType(entityType);
-    output.currentLocation(location);
-    output.bukkitEntity(entity);
+    if (entityType != KelpEntityType.DROPPED_ITEM) {
+      output.entityId(entity.getId());
+      output.entityType(entityType);
+      output.bukkitEntity(entity);
+    }
 
     return output;
   }

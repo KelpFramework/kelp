@@ -3,11 +3,13 @@ package de.pxav.kelp.implementation1_8.entity;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.DroppedItemEntity;
+import de.pxav.kelp.core.entity.type.ItemDropType;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.SinceKelpVersion;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -48,15 +50,19 @@ public class VersionedEntity extends EntityVersionTemplate {
   @Override
   public void spawnEntity(KelpEntity entity) {
     CraftWorld craftWorld = (CraftWorld) entity.getCurrentLocation().getWorld();
-    Entity minecraftEntity = (Entity) entity.getBukkitEntity();
-    ((Entity) entity.getBukkitEntity()).setPositionRotation(entity.getCurrentLocation().getX(), entity.getCurrentLocation().getY(), entity.getCurrentLocation().getZ(), entity.getCurrentLocation().getYaw(), entity.getCurrentLocation().getPitch());
 
     if (entity.getEntityType() == KelpEntityType.DROPPED_ITEM) {
-      DroppedItemEntity kelpItemEntity = (DroppedItemEntity) entity;
-      CraftItem item = (CraftItem) minecraftEntity.getBukkitEntity();
-      item.setItemStack(kelpItemEntity.getItem().getItemStack());
-      minecraftEntity = item.getHandle();
+      DroppedItemEntity kelpEntity = (DroppedItemEntity) entity;
+      if (kelpEntity.getItemDropType() == ItemDropType.NATURAL) {
+        craftWorld.dropItemNaturally(entity.getCurrentLocation(), kelpEntity.getItem().getItemStack());
+      } else {
+        craftWorld.dropItem(entity.getCurrentLocation(), kelpEntity.getItem().getItemStack());
+      }
+      return;
     }
+
+    Entity minecraftEntity = (Entity) entity.getBukkitEntity();
+    ((Entity) entity.getBukkitEntity()).setPositionRotation(entity.getCurrentLocation().getX(), entity.getCurrentLocation().getY(), entity.getCurrentLocation().getZ(), entity.getCurrentLocation().getYaw(), entity.getCurrentLocation().getPitch());
 
     craftWorld.addEntity(minecraftEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
   }

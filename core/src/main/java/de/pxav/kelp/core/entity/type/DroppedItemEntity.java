@@ -13,6 +13,7 @@ import org.bukkit.Location;
 public class DroppedItemEntity extends KelpEntity {
 
   private KelpItem item;
+  private ItemDropType itemDropType;
 
   public DroppedItemEntity() {}
 
@@ -28,4 +29,13 @@ public class DroppedItemEntity extends KelpEntity {
   public void setItem(KelpItem item) {
     this.item = item;
   }
+
+  public ItemDropType getItemDropType() {
+    return itemDropType;
+  }
+
+  public void setItemDropType(ItemDropType itemDropType) {
+    this.itemDropType = itemDropType;
+  }
+
 }
