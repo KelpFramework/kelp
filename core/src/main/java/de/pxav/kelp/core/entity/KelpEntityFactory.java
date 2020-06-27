@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.entity;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import org.bukkit.Location;
 
@@ -9,6 +10,7 @@ import org.bukkit.Location;
  *
  * @author pxav
  */
+@Singleton
 public class KelpEntityFactory {
 
   private EntityTypeVersionTemplate typeVersionTemplate;
