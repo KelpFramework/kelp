@@ -45,21 +45,21 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
 
     switch (entityType) {
       case GUARDIAN:
-        output = new GuardianEntity();
         entity = craftWorld.createEntity(location, Guardian.class);
+        output = new GuardianEntity();
         break;
       case ELDER_GUARDIAN:
-        output = new ElderGuardianEntity();
         entity = craftWorld.createEntity(location, Guardian.class);
         ((EntityGuardian) entity).setElder(true);
+        output = new ElderGuardianEntity();
         break;
       case ZOMBIE:
-        output = new ZombieEntity();
         entity = craftWorld.createEntity(location, Zombie.class);
+        output = new ZombieEntity();
         break;
       case DROPPED_ITEM:
-        output = new DroppedItemEntity(null, 0, location, null);
         entity = null;
+        output = new DroppedItemEntity(null, 0, location, null);
         break;
     }
 
