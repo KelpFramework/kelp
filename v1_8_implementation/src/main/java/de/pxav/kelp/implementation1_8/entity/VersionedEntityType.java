@@ -69,7 +69,7 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
       output.entityId(entity.getId());
       output.entityType(entityType);
       output.minecraftEntity(entity);
-      output.currentLocation(location);
+      output.initialLocation(location);
       output.versionTemplate(this.entityVersionTemplate);
     }
 

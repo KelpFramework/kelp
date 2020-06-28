@@ -14,18 +14,18 @@ public class KelpEntity {
 
   private Object minecraftEntity;
   private KelpEntityType entityType;
-  private Location currentLocation;
+  private Location initialLocation;
   private int entityId;
   private EntityVersionTemplate entityVersionTemplate;
 
   public KelpEntity(Object minecraftEntity,
                     KelpEntityType entityType,
-                    Location currentLocation,
+                    Location initialLocation,
                     int entityId,
                     EntityVersionTemplate entityVersionTemplate) {
     this.minecraftEntity = minecraftEntity;
     this.entityType = entityType;
-    this.currentLocation = currentLocation;
+    this.initialLocation = initialLocation;
     this.entityId = entityId;
     this.entityVersionTemplate = entityVersionTemplate;
   }
@@ -54,12 +54,12 @@ public class KelpEntity {
     return this;
   }
 
-  public Location getCurrentLocation() {
-    return currentLocation;
+  public Location getInitialLocation() {
+    return initialLocation;
   }
 
-  public KelpEntity currentLocation(Location currentLocation) {
-    this.currentLocation = currentLocation;
+  public KelpEntity initialLocation(Location currentLocation) {
+    this.initialLocation = currentLocation;
     return this;
   }
 

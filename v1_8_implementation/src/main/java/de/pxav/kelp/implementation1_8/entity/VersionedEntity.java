@@ -46,20 +46,20 @@ public class VersionedEntity extends EntityVersionTemplate {
    */
   @Override
   public void spawnEntity(KelpEntity entity) {
-    CraftWorld craftWorld = (CraftWorld) entity.getCurrentLocation().getWorld();
+    CraftWorld craftWorld = (CraftWorld) entity.getInitialLocation().getWorld();
 
     if (entity.getEntityType() == KelpEntityType.DROPPED_ITEM) {
       DroppedItemEntity kelpEntity = (DroppedItemEntity) entity;
       if (kelpEntity.getItemDropType() == ItemDropType.NATURAL) {
-        craftWorld.dropItemNaturally(entity.getCurrentLocation(), kelpEntity.getItem().getItemStack());
+        craftWorld.dropItemNaturally(entity.getInitialLocation(), kelpEntity.getItem().getItemStack());
       } else {
-        craftWorld.dropItem(entity.getCurrentLocation(), kelpEntity.getItem().getItemStack());
+        craftWorld.dropItem(entity.getInitialLocation(), kelpEntity.getItem().getItemStack());
       }
       return;
     }
 
     Entity minecraftEntity = (Entity) entity.getMinecraftEntity();
-    ((Entity) entity.getMinecraftEntity()).setPositionRotation(entity.getCurrentLocation().getX(), entity.getCurrentLocation().getY(), entity.getCurrentLocation().getZ(), entity.getCurrentLocation().getYaw(), entity.getCurrentLocation().getPitch());
+    ((Entity) entity.getMinecraftEntity()).setPositionRotation(entity.getInitialLocation().getX(), entity.getInitialLocation().getY(), entity.getInitialLocation().getZ(), entity.getInitialLocation().getYaw(), entity.getInitialLocation().getPitch());
 
     craftWorld.addEntity(minecraftEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
   }
