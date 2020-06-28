@@ -4,6 +4,7 @@ import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.Vector;
 
 /**
  * A class description goes here.
@@ -81,6 +82,25 @@ public class KelpEntity {
     System.out.println("mc entity " + this.minecraftEntity);
     System.out.println("version template " + this.entityVersionTemplate);
     return entityVersionTemplate.toBukkitEntity(this.minecraftEntity);
+  }
+
+  /**
+   * Gets the current entity's location in the world.
+   *
+   * @return The current location of the current entity.
+   */
+  public Location getLocation() {
+    return entityVersionTemplate.getLocation(toBukkitEntity());
+  }
+
+  /**
+   * Sets the entity's velocity to the given vector.
+   *
+   * @param vector The vector of the velocity you want to set.
+   */
+  public KelpEntity setVelocity(Vector vector) {
+    entityVersionTemplate.setVelocity(toBukkitEntity(), vector);
+    return this;
   }
 
   public void teleport(Location to) {

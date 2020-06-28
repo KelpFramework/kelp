@@ -136,6 +136,10 @@ public enum  KelpEntityType {
     return entityClass;
   }
 
+  public static boolean isLivingEntity(KelpEntityType entityType) {
+    return entityType == KelpEntityType.ZOMBIE;
+  }
+
   public static Collection<KelpEntityType> aboveVersion(KelpVersion version) {
     Collection<KelpEntityType> output = new ArrayList<>();
 
