@@ -8,6 +8,7 @@ import de.pxav.kelp.core.entity.type.GuardianEntity;
 import de.pxav.kelp.core.entity.type.ZombieEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.item.KelpItemFactory;
 import de.pxav.kelp.core.version.Versioned;
@@ -29,19 +30,20 @@ import org.bukkit.entity.Zombie;
 public class VersionedEntityType extends EntityTypeVersionTemplate {
 
   private KelpItemFactory kelpItemFactory;
+  private EntityVersionTemplate entityVersionTemplate;
 
   @Inject
-  public VersionedEntityType(KelpItemFactory kelpItemFactory) {
+  public VersionedEntityType(KelpItemFactory kelpItemFactory, EntityVersionTemplate entityVersionTemplate) {
     this.kelpItemFactory = kelpItemFactory;
+    this.entityVersionTemplate = entityVersionTemplate;
   }
 
   @Override
   public KelpEntity newKelpEntity(KelpEntityType entityType, Location location) {
-    KelpEntity output = new KelpEntity();
+    KelpEntity output = new KelpEntity(this.entityVersionTemplate);
     CraftWorld craftWorld = (CraftWorld) location.getWorld();
     Entity entity = null;
-    output.bukkitEntity(null);
-    output.currentLocation(location);
+    output.minecraftEntity(null);
 
     switch (entityType) {
       case GUARDIAN:
@@ -59,14 +61,16 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
         break;
       case DROPPED_ITEM:
         entity = null;
-        output = new DroppedItemEntity(null, 0, location, null);
+        output = new DroppedItemEntity(entityVersionTemplate, null, 0, location, null);
         break;
     }
 
     if (entityType != KelpEntityType.DROPPED_ITEM) {
       output.entityId(entity.getId());
       output.entityType(entityType);
-      output.bukkitEntity(entity);
+      output.minecraftEntity(entity);
+      output.currentLocation(location);
+      output.versionTemplate(this.entityVersionTemplate);
     }
 
     return output;
@@ -78,12 +82,17 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     if (bukkitEntity instanceof Item) {
       Item item = (Item) bukkitEntity;
       KelpItem kelpItem = kelpItemFactory.fromItemStack(item.getItemStack());
-      return new DroppedItemEntity(((CraftEntity)item).getHandle(), item.getEntityId(), item.getLocation(), kelpItem);
+      return new DroppedItemEntity(this.entityVersionTemplate,
+        ((CraftEntity)item).getHandle(),
+        item.getEntityId(),
+        item.getLocation(),
+        kelpItem);
     }
 
     if (bukkitEntity instanceof Zombie) {
       Zombie zombie = (Zombie) bukkitEntity;
-      return new ZombieEntity(((CraftEntity)zombie).getHandle(),
+      return new ZombieEntity(this.entityVersionTemplate,
+        ((CraftEntity)zombie).getHandle(),
         zombie.getEntityId(),
         zombie.getLocation(),
         zombie.isBaby());
@@ -92,9 +101,9 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     if (bukkitEntity instanceof Guardian) {
       Guardian guardian = (Guardian) bukkitEntity;
       if (guardian.isElder()) {
-        return new ElderGuardianEntity(((CraftEntity)guardian).getHandle(), guardian.getEntityId(), guardian.getLocation());
+        return new ElderGuardianEntity(this.entityVersionTemplate, ((CraftEntity)guardian).getHandle(), guardian.getEntityId(), guardian.getLocation());
       } else {
-        return new GuardianEntity(((CraftEntity)guardian).getHandle(), guardian.getEntityId(), guardian.getLocation());
+        return new GuardianEntity(this.entityVersionTemplate, ((CraftEntity)guardian).getHandle(), guardian.getEntityId(), guardian.getLocation());
       }
     }
 

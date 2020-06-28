@@ -38,6 +38,8 @@ public abstract class EntityVersionTemplate {
    */
   public abstract void spawnEntity(KelpEntity entity);
 
+  public abstract Entity toBukkitEntity(Object minecraftEntity);
+
   /**
    * Gets the current entity's location in the world.
    *

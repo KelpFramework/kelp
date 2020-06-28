@@ -2,6 +2,7 @@ package de.pxav.kelp.core.entity.type;
 
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import org.bukkit.Location;
 
 /**
@@ -15,8 +16,8 @@ public class ZombieEntity extends KelpEntity {
 
   public ZombieEntity() {}
 
-  public ZombieEntity(Object entity, int entityId, Location location, boolean isBaby) {
-    super(entity, KelpEntityType.ZOMBIE, location, entityId);
+  public ZombieEntity(EntityVersionTemplate entityVersionTemplate, Object entity, int entityId, Location location, boolean isBaby) {
+    super(entity, KelpEntityType.ZOMBIE, location, entityId, entityVersionTemplate);
     this.isBaby = isBaby;
   }
 

@@ -2,6 +2,7 @@ package de.pxav.kelp.core.entity.type;
 
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import org.bukkit.Location;
 
@@ -17,8 +18,8 @@ public class DroppedItemEntity extends KelpEntity {
 
   public DroppedItemEntity() {}
 
-  public DroppedItemEntity(Object entity, int entityId, Location location, KelpItem item) {
-    super(entity, KelpEntityType.DROPPED_ITEM, location, entityId);
+  public DroppedItemEntity(EntityVersionTemplate entityVersionTemplate, Object entity, int entityId, Location location, KelpItem item) {
+    super(entity, KelpEntityType.DROPPED_ITEM, location, entityId, entityVersionTemplate);
     this.item = item;
   }
 

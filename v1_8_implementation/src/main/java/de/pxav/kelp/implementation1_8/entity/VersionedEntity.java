@@ -9,14 +9,11 @@ import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.SinceKelpVersion;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItem;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -61,10 +58,15 @@ public class VersionedEntity extends EntityVersionTemplate {
       return;
     }
 
-    Entity minecraftEntity = (Entity) entity.getBukkitEntity();
-    ((Entity) entity.getBukkitEntity()).setPositionRotation(entity.getCurrentLocation().getX(), entity.getCurrentLocation().getY(), entity.getCurrentLocation().getZ(), entity.getCurrentLocation().getYaw(), entity.getCurrentLocation().getPitch());
+    Entity minecraftEntity = (Entity) entity.getMinecraftEntity();
+    ((Entity) entity.getMinecraftEntity()).setPositionRotation(entity.getCurrentLocation().getX(), entity.getCurrentLocation().getY(), entity.getCurrentLocation().getZ(), entity.getCurrentLocation().getYaw(), entity.getCurrentLocation().getPitch());
 
     craftWorld.addEntity(minecraftEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
+  }
+
+  @Override
+  public org.bukkit.entity.Entity toBukkitEntity(Object minecraftEntity) {
+    return ((Entity) minecraftEntity).getBukkitEntity();
   }
 
   /**
