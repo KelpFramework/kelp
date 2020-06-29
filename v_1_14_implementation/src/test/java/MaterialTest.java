@@ -1,5 +1,4 @@
 import org.bukkit.Material;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +10,6 @@ import java.util.Collection;
  */
 public class MaterialTest {
 
-  @Test
   public void testMaterials() {
     Collection<String> c = new ArrayList<>();
     for (Material value : Material.values()) {
