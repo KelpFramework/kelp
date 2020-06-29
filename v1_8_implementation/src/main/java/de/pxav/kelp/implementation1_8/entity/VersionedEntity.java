@@ -577,6 +577,4 @@ public class VersionedEntity extends EntityVersionTemplate {
 
   }
 
-  // craftentity.getHandle. length / width
-
 }
