@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerLoginEvent;
 
@@ -23,6 +24,8 @@ public class PlayerCreationListener {
 
   @EventHandler
   public void handlePlayerLogin(PlayerLoginEvent event) {
+    kelpPlayerRepository.playerEntityObject(event.getPlayer().getUniqueId(),
+      ((CraftEntity)event.getPlayer()).getHandle());
     KelpPlayer kelpPlayer = kelpPlayerRepository.newKelpPlayer(event.getPlayer());
     kelpPlayerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
   }

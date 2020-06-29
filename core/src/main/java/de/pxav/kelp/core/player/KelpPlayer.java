@@ -1,11 +1,14 @@
 package de.pxav.kelp.core.player;
 
+import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.LivingKelpEntity;
+import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
+import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -16,7 +19,7 @@ import java.util.UUID;
  *
  * @author pxav
  */
-public class KelpPlayer {
+public class KelpPlayer extends LivingKelpEntity {
 
   private PlayerVersionTemplate playerVersionTemplate;
   private SidebarRepository sidebarRepository;
@@ -34,7 +37,20 @@ public class KelpPlayer {
   public KelpPlayer(Player bukkitPlayer,
                     PlayerVersionTemplate playerVersionTemplate,
                     SidebarRepository sidebarRepository,
-                    KelpInventoryRepository inventoryRepository) {
+                    KelpInventoryRepository inventoryRepository,
+                    KelpPlayerRepository kelpPlayerRepository,
+                    EntityVersionTemplate entityVersionTemplate,
+                    LivingEntityVersionTemplate livingEntityVersionTemplate,
+                    UUID uuid,
+                    Location location,
+                    int entityId) {
+    super(kelpPlayerRepository.getMinecraftEntity(uuid),
+      KelpEntityType.PLAYER,
+      location,
+      entityId,
+      entityVersionTemplate,
+      livingEntityVersionTemplate,
+      bukkitPlayer);
     this.bukkitPlayer = bukkitPlayer;
     this.playerVersionTemplate = playerVersionTemplate;
     this.sidebarRepository = sidebarRepository;
@@ -110,10 +126,11 @@ public class KelpPlayer {
     return playerVersionTemplate.getUniqueId(bukkitPlayer);
   }
 
-  public KelpPlayer teleport(Location location) {
-    playerVersionTemplate.teleport(bukkitPlayer, location);
-    return this;
-  }
+//  @Override
+//  public KelpPlayer teleport(Location location) {
+//    playerVersionTemplate.teleport(bukkitPlayer, location);
+//    return this;
+//  }
 
   public KelpPlayer setHealth(int health) {
     playerVersionTemplate.setHealth(bukkitPlayer, health);
