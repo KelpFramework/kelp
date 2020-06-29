@@ -56,8 +56,10 @@ public class GlobalPacketListener {
           switch (String.valueOf(reflectionUtil.getValue(settingsPacket, "c"))) {
             case "FULL":
               chatVisibility = PlayerChatVisibility.SHOW_ALL_MESSAGES;
+              break;
             case "SYSTEM":
               chatVisibility = PlayerChatVisibility.COMMANDS_ONLY;
+              break;
             case "HIDDEN":
               chatVisibility = PlayerChatVisibility.HIDDEN;
           }
