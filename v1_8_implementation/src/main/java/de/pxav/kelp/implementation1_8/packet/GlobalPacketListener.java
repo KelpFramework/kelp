@@ -62,6 +62,7 @@ public class GlobalPacketListener {
               break;
             case "HIDDEN":
               chatVisibility = PlayerChatVisibility.HIDDEN;
+              break;
           }
 
           KelpPlayer kelpPlayer = playerRepository.getKelpPlayer(player);
