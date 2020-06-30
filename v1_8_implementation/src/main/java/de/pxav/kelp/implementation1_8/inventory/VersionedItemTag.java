@@ -33,6 +33,9 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
   @Override
   public boolean hasTagKey(ItemStack itemStack, String key) {
     net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+    if (nmsItemStack.getTag() == null || nmsItemStack.getTag().isEmpty()) {
+      return false;
+    }
     return nmsItemStack.getTag().hasKey(key);
   }
 
