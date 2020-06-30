@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.inventory.material.MaterialVersionTemplate;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * A class description goes here.
@@ -27,7 +28,11 @@ public class KelpItemFactory {
   }
 
   public KelpItem newKelpItem() {
-    return new KelpItem(versionedMaterial, itemVersionTemplate, itemTagVersionTemplate);
+    return new KelpItem(itemVersionTemplate, itemTagVersionTemplate);
+  }
+
+  public KelpItem fromItemStack(ItemStack bukkitItemStack) {
+    return itemVersionTemplate.fromItemStack(bukkitItemStack);
   }
 
 }

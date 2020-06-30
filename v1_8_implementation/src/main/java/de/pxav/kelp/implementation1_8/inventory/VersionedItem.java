@@ -1,15 +1,14 @@
 package de.pxav.kelp.implementation1_8.inventory;
 
 import com.google.inject.Inject;
+import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
+import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialRepository;
-import de.pxav.kelp.core.inventory.material.MaterialVersionTemplate;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
 import de.pxav.kelp.core.version.Versioned;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,10 +22,32 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class VersionedItem extends ItemVersionTemplate {
 
   private MaterialRepository materialRepository;
+  private ItemTagVersionTemplate itemTagVersionTemplate;
 
   @Inject
-  public VersionedItem(MaterialRepository materialRepository) {
+  public VersionedItem(MaterialRepository materialRepository, ItemTagVersionTemplate itemTagVersionTemplate) {
     this.materialRepository = materialRepository;
+    this.itemTagVersionTemplate = itemTagVersionTemplate;
+  }
+
+  @Override
+  public KelpItem fromItemStack(ItemStack itemStack) {
+    short subId = itemStack.getDurability();
+    KelpMaterial material = KelpMaterial.STONE;
+    if (subId == 0) {
+      materialRepository.getKelpMaterial(itemStack.getType().toString());
+    } else {
+      materialRepository.getKelpMaterial(itemStack.getType().toString(), subId);
+    }
+
+    ItemMeta itemMeta = itemStack.getItemMeta();
+
+    KelpItem item = new KelpItem(this, itemTagVersionTemplate)
+      .material(material)
+      .amount(itemStack.getAmount())
+      .itemDescription(itemMeta.getLore());
+
+    return item;
   }
 
   @Override
