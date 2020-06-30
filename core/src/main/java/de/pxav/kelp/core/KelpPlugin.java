@@ -121,6 +121,9 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
     injector.getInstance(SidebarRepository.class).interruptAnimations();
 
+    logger().log("[VERSION] Disabling version implementation module");
+    injector.getInstance(VersionBinderModule.getMainClass()).onDisable();
+
     this.logKelpLogo("Successfully shut down all Kelp services.",
       "Thank you for using Kelp and goodbye!");
 

@@ -5,15 +5,13 @@ import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.ChannelPromise;
+import io.netty.channel.*;
 import net.minecraft.server.v1_8_R3.PacketPlayInSettings;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * A class description goes here.
@@ -36,12 +34,17 @@ public class GlobalPacketListener {
     injectPacketListener(event.getPlayer());
   }
 
+  @EventHandler
+  public void handlePlayerQuit(PlayerQuitEvent event) {
+    removePacketListener(event.getPlayer());
+  }
+
   /**
    * Creates a new packet listener.
    *
    * @param player
    */
-  private void injectPacketListener(Player player) {
+  public void injectPacketListener(Player player) {
     ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 
       @Override
@@ -87,6 +90,14 @@ public class GlobalPacketListener {
 
     ChannelPipeline pipeline = ((CraftPlayer)player).getHandle().playerConnection.networkManager.channel.pipeline();
     pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
+  }
+
+  public void removePacketListener(Player player) {
+    Channel channel = ((CraftPlayer)player).getHandle().playerConnection.networkManager.channel;
+    channel.eventLoop().submit(() -> {
+      channel.pipeline().remove(player.getName());
+      return null;
+    });
   }
 
 }
