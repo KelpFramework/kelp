@@ -5,9 +5,11 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.command.version.CommandRegistryVersionTemplate;
 import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.TypeCriterion;
 import de.pxav.kelp.core.reflect.TypeFinder;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -70,7 +72,7 @@ public class KelpCommandRepository {
 
       subCommandClass.onCommandRegister();
       parentCommandClass.subCommands(subCommands);
-      logger.writeLog("[COMMAND] Successfully registered sub command "
+      logger.log(LogLevel.DEBUG, "[COMMAND] Registered sub command "
         + subCommandAnnotation.name()
         + " for class "
         + subCommandAnnotation.parentCommand().getName());
@@ -88,11 +90,13 @@ public class KelpCommandRepository {
 
       // add command to bukkit registry
       registryVersionTemplate.registerCommand(commandClass, commandAnnotation);
-      logger.writeLog("[COMMAND] Successfully registered main command "
+      logger.log(LogLevel.DEBUG, "[COMMAND] Registered main command "
         + commandAnnotation.name()
         + " in class "
         + current.getName());
     });
+
+    logger.log("[COMMAND] Successfully loaded all commands for " + Arrays.toString(packages));
   }
 
 

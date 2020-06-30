@@ -3,11 +3,13 @@ package de.pxav.kelp.core.configuration;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.reflect.TypeCriterion;
 import de.pxav.kelp.core.reflect.TypeFinder;
 import de.pxav.kelp.core.configuration.type.ConfigurationType;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * This repository class allows you to load
@@ -21,11 +23,13 @@ public class ConfigurationRepository {
 
   private Injector injector;
   private TypeFinder typeFinder;
+  private KelpLogger logger;
 
   @Inject
-  public ConfigurationRepository(Injector injector, TypeFinder typeFinder) {
+  public ConfigurationRepository(Injector injector, TypeFinder typeFinder, KelpLogger logger) {
     this.injector = injector;
     this.typeFinder = typeFinder;
+    this.logger = logger;
   }
 
   /**
@@ -55,7 +59,7 @@ public class ConfigurationRepository {
    * @see Configuration
    */
   public void loadAll(String... packages) {
-    System.out.println("loading config files....");
+    logger.log("[CONFIG] Loading all configuration files in " + Arrays.toString(packages));
     this.typeFinder
             .filter(
                     packages,
@@ -63,16 +67,12 @@ public class ConfigurationRepository {
                     TypeCriterion.annotatedWith(Configuration.class))
             .forEach(
                     configurationClass -> {
-                      System.out.println("loading config file " + configurationClass);
                       Configuration annotation = configurationClass.getAnnotation(Configuration.class);
                       ConfigurationType type = injector.getInstance(annotation.type());
                       KelpConfiguration config = (KelpConfiguration) injector.getInstance(configurationClass);
 
                       type.loadAttributes(config.getClass());
-                      System.out.println(
-                              "Successfully loaded configuration "
-                                      + annotation.name()
-                                      + type.fileExtension());
+                      logger.log("[CONFIG] Successfully loaded configuration '" + annotation.name() + type.fileExtension() + "'.");
                     });
   }
 

@@ -79,19 +79,19 @@ public class SidebarRepository {
    * @see CreateSidebar
    */
   public void loadSidebars(String... packageNames) {
-    kelpLogger.log("Loading sidebars in " + Arrays.toString(packageNames));
+    kelpLogger.log("[SIDEBAR] Loading sidebars in " + Arrays.toString(packageNames));
     this.methodFinder.filter(packageNames, MethodCriterion.annotatedWith(CreateSidebar.class))
             .forEach(method -> {
               CreateSidebar annotation = method.getAnnotation(CreateSidebar.class);
               String identifier = annotation.identifier();
               if (identifier.equalsIgnoreCase("NONE")) {
-                kelpLogger.log(LogLevel.ERROR, "Sidebar identifier 'NONE' is not allowed, " +
+                kelpLogger.log(LogLevel.ERROR, "[SIDEBAR] Sidebar identifier 'NONE' is not allowed, " +
                         "because it's reserved for the system. Please choose another name.");
                 return;
               }
 
               if (!identifierAvailable(identifier)) {
-                kelpLogger.log(LogLevel.ERROR, "Sidebar identifier " + identifier
+                kelpLogger.log(LogLevel.ERROR, "[SIDEBAR] Sidebar identifier " + identifier
                         + " is already in use, but identifiers must be unique!" +
                         " Please change the identifier and reload the system.");
                 return;
@@ -100,7 +100,7 @@ public class SidebarRepository {
               methods.put(identifier, method);
               asyncMode.put(identifier, annotation.async());
               if (annotation.titleAnimationInterval() <= 0) {
-                kelpLogger.log(LogLevel.ERROR, "Animation interval of sidebar '" + identifier
+                kelpLogger.log(LogLevel.ERROR, "[SIDEBAR] Animation interval of sidebar '" + identifier
                         + "' is smaller than or equal to 0. Please change the delay to at least 1.");
                 return;
               }
@@ -110,9 +110,9 @@ public class SidebarRepository {
                 defaultScoreboard = annotation.identifier();
               }
 
-              kelpLogger.log("Sidebar " + identifier + " successfully loaded!");
+              kelpLogger.log("[SIDEBAR] Sidebar " + identifier + " successfully loaded!");
             });
-    kelpLogger.log("Loaded " + methods.size() + " in total so far.");
+    kelpLogger.log("[SIDEBAR] Loading process complete. Loaded " + methods.size() + " sidebars in total so far.");
   }
 
   /**
@@ -127,6 +127,7 @@ public class SidebarRepository {
    * §aOpi_CAN -> 7 states
    */
   public void schedule() {
+    kelpLogger.log("[SIDEBAR] Enabling animation schedulers.");
     for (Map.Entry<String, Integer> entry : Maps.newHashMap(this.titleAnimationInterval).entrySet()) {
       String identifier = entry.getKey();
 
@@ -190,6 +191,7 @@ public class SidebarRepository {
     for (Map.Entry<String, ScheduledExecutorService> entry : this.titleScheduler.entrySet()) {
       entry.getValue().shutdown();
     }
+    kelpLogger.log("[SIDEBAR] Interrupted all animation schedulers.");
   }
 
   /**

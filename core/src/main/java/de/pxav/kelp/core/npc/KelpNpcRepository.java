@@ -3,6 +3,7 @@ package de.pxav.kelp.core.npc;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import org.bukkit.Bukkit;
@@ -36,11 +37,13 @@ public class KelpNpcRepository {
   private ScheduledExecutorService scheduledExecutorService;
 
   private KelpPlayerRepository playerRepository;
+  private KelpLogger logger;
 
   @Inject
-  public KelpNpcRepository(KelpPlayerRepository playerRepository) {
+  public KelpNpcRepository(KelpPlayerRepository playerRepository, KelpLogger logger) {
     this.spawnedNpcs = new ConcurrentHashMap<>();
     this.playerRepository = playerRepository;
+    this.logger = logger;
   }
 
   /**
@@ -85,6 +88,7 @@ public class KelpNpcRepository {
    * sneak state of the NPC.
    */
   public void startScheduler() {
+    logger.log("[NPC] Starting NPC heartbeat schedulers.");
     scheduledExecutorService = Executors.newScheduledThreadPool(0);
     scheduledExecutorService.scheduleAtFixedRate(() -> {
       try {
@@ -140,6 +144,7 @@ public class KelpNpcRepository {
     }
 
     scheduledExecutorService.shutdownNow();
+    logger.log("[NPC] Stopped NPC heartbeat.");
   }
 
 }

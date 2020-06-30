@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 /**
  * This class handles the bukkit-event registration in Kelp.
@@ -61,6 +62,7 @@ public class EventRegistration {
    * @see org.bukkit.plugin.PluginManager
    */
   public void initialize(String... packageNames) {
+    logger.log("[EVENT] Registering event handlers in " + Arrays.toString(packageNames));
     Preconditions.checkNotNull(packageNames);
     this.methodSearcher
             .filter(packageNames, MethodCriterion.annotatedWith(EventHandler.class))
@@ -90,6 +92,7 @@ public class EventRegistration {
                                       javaPlugin,
                                       handler.ignoreCancelled());
                     });
+    logger.log("[EVENT] Registration of event handlers complete.");
   }
 
 }

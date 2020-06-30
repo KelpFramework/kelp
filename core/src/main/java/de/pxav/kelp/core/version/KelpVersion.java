@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.version;
 
+import com.google.common.collect.Lists;
+
 /**
  * A class description goes here.
  *
@@ -109,6 +111,19 @@ public enum KelpVersion {
       }
     }
     return null;
+  }
+
+  public static boolean versionImplementationExists(KelpVersion version) {
+    KelpVersion[] implementedVersions = new KelpVersion[] {
+      KelpVersion.MC_1_8_0,
+      KelpVersion.MC_1_8_3,
+      KelpVersion.MC_1_8_4,
+      KelpVersion.MC_1_8_5,
+      KelpVersion.MC_1_8_6,
+      KelpVersion.MC_1_8_7,
+      KelpVersion.MC_1_8_8
+    };
+    return Lists.newArrayList(implementedVersions).contains(version);
   }
 
   public static KelpVersion get(int index) {
