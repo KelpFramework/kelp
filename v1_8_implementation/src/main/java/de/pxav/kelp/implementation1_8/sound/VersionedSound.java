@@ -24,10 +24,13 @@ public class VersionedSound extends SoundVersionTemplate {
 
   @Override
   public void defineDefaults() {
+    long started = System.currentTimeMillis();
+
     soundRepository.addSound(KelpSound.LEVEL_UP, Sound.LEVEL_UP.toString());
     soundRepository.addSound(KelpSound.ITEM_BREAK, Sound.ITEM_BREAK.toString());
 
-    System.out.println("Successfully defined sound names for 1.8 version");
+    long elapsed = System.currentTimeMillis() - started;
+    System.out.println("[VERSION-1.8] Successfully defined sound names (took " + elapsed + "ms)");
   }
 
 }

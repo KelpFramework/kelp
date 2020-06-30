@@ -728,7 +728,7 @@ public class VersionedMaterial extends MaterialVersionTemplate {
     materialRepository.addMaterial(KelpMaterial.WRITTEN_BOOK, Material.WRITTEN_BOOK.toString());
 
     long elapsedTime = System.currentTimeMillis() - startedAt;
-    System.out.println("Successfully defined item names for 1.8 version (took " + elapsedTime + "ms)");
+    System.out.println("[VERSION-1.8] Successfully defined item names (took " + elapsedTime + "ms)");
   }
 
 }
