@@ -84,6 +84,11 @@ public class KelpEntity {
     return this;
   }
 
+  public KelpEntity spawn() {
+    entityVersionTemplate.spawnEntity(this);
+    return this;
+  }
+
   /**
    * Converts the current {@code KelpEntity} to a normal
    * bukkit entity.
