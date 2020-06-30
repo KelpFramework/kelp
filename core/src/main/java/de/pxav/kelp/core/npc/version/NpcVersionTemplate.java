@@ -3,6 +3,7 @@ package de.pxav.kelp.core.npc.version;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -38,6 +39,8 @@ public abstract class NpcVersionTemplate {
    * @param player  The player for whom the NPC should be despawned.
    */
   public abstract void deSpawn(KelpNpc npc, Player player);
+
+  public abstract void walkTo(KelpNpc npc, Player player, Location target, float yaw, float pitch);
 
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state

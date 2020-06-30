@@ -27,7 +27,8 @@ import java.util.UUID;
  */
 public class KelpNpc {
 
-  private Location location;
+  private Location spawnLocation;
+  private Location currentLocation;
   private KelpItem itemInHand;
 
   private int entityId;
@@ -76,8 +77,13 @@ public class KelpNpc {
    * @param location The desired location
    * @return An instance of the current NPC object.
    */
-  public KelpNpc location(Location location) {
-    this.location = location;
+  public KelpNpc spawnLocation(Location location) {
+    this.spawnLocation = location;
+    return this;
+  }
+
+  public KelpNpc currentLocation(Location location) {
+    this.currentLocation = location;
     return this;
   }
 
@@ -352,9 +358,9 @@ public class KelpNpc {
    * @return An instance of the current NPC object.
    */
   public KelpNpc lookTo(Location target) {
-    double xDiff = target.getX() - location.getX();
-    double yDiff = target.getY() - location.getY();
-    double zDiff = target.getZ() - location.getZ();
+    double xDiff = target.getX() - spawnLocation.getX();
+    double yDiff = target.getY() - spawnLocation.getY();
+    double zDiff = target.getZ() - spawnLocation.getZ();
 
     double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
     double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
@@ -364,9 +370,13 @@ public class KelpNpc {
     if (zDiff < 0.0D) {
       yaw += Math.abs(180.0D - yaw) * 2.0D;
     }
-    location.setYaw((float) yaw - 90.0F);
-    location.setPitch((float) pitch);
+    spawnLocation.setYaw((float) yaw - 90.0F);
+    spawnLocation.setPitch((float) pitch);
     return this;
+  }
+
+  public void walkTo(Player player, Location target) {
+    npcVersionTemplate.walkTo(this, player, target, player.getLocation().getYaw(), player.getLocation().getPitch());
   }
 
   /**
@@ -385,7 +395,7 @@ public class KelpNpc {
       this.customName = " ";
     }
 
-    if (this.location == null) {
+    if (this.spawnLocation == null) {
       logger.log(LogLevel.ERROR, "To spawn an NPC, you have to define a location before." +
               " But there was no location found. Please check your code again.");
     }
@@ -478,8 +488,8 @@ public class KelpNpc {
   /**
    * @return The location, where the NPC is spawned/will be spawned.
    */
-  public Location getLocation() {
-    return location;
+  public Location getSpawnLocation() {
+    return spawnLocation;
   }
 
   /**
@@ -586,6 +596,10 @@ public class KelpNpc {
    */
   public KelpNpcMeta getNpcMeta() {
     return npcMeta;
+  }
+
+  public Location getCurrentLocation() {
+    return currentLocation;
   }
 
   /**
