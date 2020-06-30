@@ -138,7 +138,7 @@ Put the jar file of the core module into the normal `plugins` folder of your ser
 
 #### For developers
 
-A detailed wiki and documentation is following soon.
+Check out the [KelpWiki](https://github.com/PXAV/kelp/wiki), where you can find tutorials about the different features of Kelp. It is not 100% complete but constantly updated. Furthermore most of the classes and methods have JavaDocs, so check them out. A separate JavaDoc page is following soon. 
 
 
 
