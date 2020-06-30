@@ -18,7 +18,7 @@ public class VersionedConsoleSender extends KelpConsoleSenderVersionTemplate {
   }
 
   @Override
-  public String getName(KelpConsoleSender consoleSender, String message) {
+  public String getName(KelpConsoleSender consoleSender) {
     return consoleSender.getBukkitSender().getName();
   }
 

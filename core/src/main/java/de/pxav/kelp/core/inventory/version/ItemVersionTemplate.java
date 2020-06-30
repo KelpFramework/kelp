@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.inventory.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -13,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
  */
 @KelpVersionTemplate
 public abstract class ItemVersionTemplate {
+
+  public abstract KelpItem fromItemStack(ItemStack itemStack);
 
   public abstract ItemStack newItemStack();
 

@@ -1,19 +1,23 @@
 package de.pxav.kelp.implementation1_8.npc;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
+import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -30,6 +34,13 @@ import java.util.concurrent.ThreadLocalRandom;
 @Versioned
 public class VersionedNpc extends NpcVersionTemplate {
 
+  private ReflectionUtil reflectionUtil;
+
+  @Inject
+  public VersionedNpc(ReflectionUtil reflectionUtil) {
+    this.reflectionUtil = reflectionUtil;
+  }
+
   @Override
   public KelpNpcMeta spawnNpc(KelpNpc npc, Player player) {
     PlayerConnection playerConnection = ((CraftPlayer)player).getHandle().playerConnection;
@@ -43,8 +54,6 @@ public class VersionedNpc extends NpcVersionTemplate {
       gameProfile.getProperties().put("textures", new Property("textures", npc.getSkinTexture(), npc.getSkinSignature()));
     }
 
-
-
     Collections.reverse(npc.getTitles());
     Collection<Integer> armorStandIds = Lists.newArrayList();
     npc.getTitleHeights().forEach((lineId, height) -> {
@@ -53,9 +62,9 @@ public class VersionedNpc extends NpcVersionTemplate {
       }
 
       EntityArmorStand armorStand = new EntityArmorStand(nmsWorld,
-              npc.getLocation().getX(),
-              npc.getLocation().clone().add(0, height, 0).getY(),
-              npc.getLocation().getZ());
+              npc.getSpawnLocation().getX(),
+              npc.getSpawnLocation().clone().add(0, height, 0).getY(),
+              npc.getSpawnLocation().getZ());
       armorStand.setInvisible(true);
       armorStand.setBasePlate(false);
       armorStand.setGravity(false);
@@ -71,12 +80,15 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     setValue(spawnPacket, "a", entityId);
     setValue(spawnPacket, "b", gameProfile.getId());
-    setValue(spawnPacket, "c", MathHelper.floor(npc.getLocation().getX() * 32.0D));
-    setValue(spawnPacket, "d", MathHelper.floor(npc.getLocation().getY() * 32.0D));
-    setValue(spawnPacket, "e", MathHelper.floor(npc.getLocation().getZ() * 32.0D));
-    setValue(spawnPacket, "f", (byte) ((int) (npc.getLocation().getYaw() * 256.0F / 360.0F)));
-    setValue(spawnPacket, "g", (byte) ((int) (npc.getLocation().getPitch() * 256.0F / 360.0F)));
-    setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
+    setValue(spawnPacket, "c", MathHelper.floor(npc.getSpawnLocation().getX() * 32.0D));
+    setValue(spawnPacket, "d", MathHelper.floor(npc.getSpawnLocation().getY() * 32.0D));
+    setValue(spawnPacket, "e", MathHelper.floor(npc.getSpawnLocation().getZ() * 32.0D));
+    setValue(spawnPacket, "f", (byte) ((int) (npc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
+    setValue(spawnPacket, "g", (byte) ((int) (npc.getSpawnLocation().getPitch() * 256.0F / 360.0F)));
+
+    if (npc.getItemInHand() != null) {
+      setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
+    }
 
     DataWatcher dataWatcher = new DataWatcher(null);
     this.applyToDataWatcher(dataWatcher, npc);
@@ -101,6 +113,22 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     PacketPlayOutEntityDestroy npcDestroyPacket = new PacketPlayOutEntityDestroy(npc.getEntityId());
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(npcDestroyPacket);
+  }
+
+  @Override
+  public void walkTo(KelpNpc npc, Player player, Location target, float yaw, float pitch) {
+//    Vector vector;
+//
+//    PacketPlayOutEntity.PacketPlayOutRelEntityMove movePacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMove(
+//      npc.getEntityId(),
+//      (byte) (dx * 4096),
+//      (byte) (dy * 4096),
+//      (byte) (dz * 4096),
+//      onGround
+//    );
+//
+//    ((CraftPlayer)player).getHandle().playerConnection.sendPacket(movePacket);
+    throw new UnsupportedOperationException("The #walkTo method of NPCs is not available yet.");
   }
 
   @Override
@@ -180,15 +208,15 @@ public class VersionedNpc extends NpcVersionTemplate {
     PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport();
 
     setValue(teleportPacket, "a", kelpNpc.getEntityId());
-    setValue(teleportPacket, "b", MathHelper.floor(kelpNpc.getLocation().getX() * 32.0D));
-    setValue(teleportPacket, "c", MathHelper.floor(kelpNpc.getLocation().getY() * 32.0D));
-    setValue(teleportPacket, "d", MathHelper.floor(kelpNpc.getLocation().getZ() * 32.0D));
-    setValue(teleportPacket, "e", (byte) ((int) (kelpNpc.getLocation().getYaw() * 256.0F / 360.0F)));
-    setValue(teleportPacket, "f", (byte) ((int) (kelpNpc.getLocation().getPitch() * 256.0F / 360.0F)));
+    setValue(teleportPacket, "b", MathHelper.floor(kelpNpc.getSpawnLocation().getX() * 32.0D));
+    setValue(teleportPacket, "c", MathHelper.floor(kelpNpc.getSpawnLocation().getY() * 32.0D));
+    setValue(teleportPacket, "d", MathHelper.floor(kelpNpc.getSpawnLocation().getZ() * 32.0D));
+    setValue(teleportPacket, "e", (byte) ((int) (kelpNpc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
+    setValue(teleportPacket, "f", (byte) ((int) (kelpNpc.getSpawnLocation().getPitch() * 256.0F / 360.0F)));
 
     PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
     setValue(headRotationPacket, "a", kelpNpc.getEntityId());
-    setValue(headRotationPacket, "b", (byte) ((int) (kelpNpc.getLocation().getYaw() * 256.0F / 360.0F)));
+    setValue(headRotationPacket, "b", (byte) ((int) (kelpNpc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
 
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(teleportPacket);
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(headRotationPacket);

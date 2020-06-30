@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import de.pxav.kelp.core.command.*;
 import de.pxav.kelp.core.command.version.CommandRegistryVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.player.PlayerFactory;
+import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.version.Versioned;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -28,13 +28,13 @@ import java.util.Map;
 public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
 
   private KelpConsoleSenderFactory consoleSenderFactory;
-  private PlayerFactory playerFactory;
+  private KelpPlayerRepository playerRepository;
   private JavaPlugin kelpPlugin;
 
   @Inject
-  public VersionedCommandRegistry(KelpConsoleSenderFactory consoleSenderFactory, PlayerFactory playerFactory, JavaPlugin kelpPlugin) {
+  public VersionedCommandRegistry(KelpConsoleSenderFactory consoleSenderFactory, KelpPlayerRepository playerRepository, JavaPlugin kelpPlugin) {
     this.consoleSenderFactory = consoleSenderFactory;
-    this.playerFactory = playerFactory;
+    this.playerRepository = playerRepository;
     this.kelpPlugin = kelpPlugin;
   }
 
@@ -153,7 +153,7 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
 
   private boolean checkPlayerPermissionsAndExecute(CommandSender sender, String[] args, KelpCommand command, ExecutorType executorType) {
     Player bukkitPlayer = (Player) sender;
-    KelpPlayer player = playerFactory.newKelpPlayer(bukkitPlayer);
+    KelpPlayer player = playerRepository.getKelpPlayer(bukkitPlayer);
     if (command.getPermission() != null) {
       if (bukkitPlayer.hasPermission(command.getPermission())) {
         if (executorType == ExecutorType.PLAYER_AND_CONSOLE) {

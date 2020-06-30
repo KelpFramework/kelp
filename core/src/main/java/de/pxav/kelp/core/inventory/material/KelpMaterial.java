@@ -1193,6 +1193,6 @@ public enum KelpMaterial {
 
   @Override
   public String toString() {
-    return super.toString() + ":" + bukkitSubId;
+    return super.toString();
   }
 }

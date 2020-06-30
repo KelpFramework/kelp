@@ -114,11 +114,11 @@ public final class KelpApplicationRepository {
       KelpApplicationMeta module = entry.getValue();
 
       if (!bindToClassPath(moduleStatuses2, new Stack<>(), module)) {
-        logger.log(LogLevel.ERROR, "Failed to enable " + entry.getKey());
+        logger.log(LogLevel.ERROR, "[APP] Failed to enable " + entry.getKey());
         continue;
       }
 
-      logger.log(LogLevel.INFO, "Successfully loaded " + entry.getKey());
+      logger.log(LogLevel.INFO, "[APP] Successfully loaded " + entry.getKey());
     }
     return this;
   }
@@ -226,7 +226,7 @@ public final class KelpApplicationRepository {
           }
 
           dependencyGraph.append(module.getApplicationName()).append(" -> ").append(dependName);
-          logger.log(LogLevel.ERROR, "Circular dependency detected for "
+          logger.log(LogLevel.ERROR, "[APP] Circular dependency detected for "
                   + module.getApplicationName()
                   + ": " + dependencyGraph);
           status = false;
@@ -238,7 +238,7 @@ public final class KelpApplicationRepository {
       }
 
       if (!Boolean.FALSE.equals(dependStatus) && !module.getSoftDependencies().contains(dependName)) {
-        logger.log(LogLevel.WARNING, "Dependency " + dependName + " (required by " + module.getApplicationName() + ") is unavailable");
+        logger.log(LogLevel.WARNING, "[APP] Dependency " + dependName + " (required by " + module.getApplicationName() + ") is unavailable");
         status = false;
       }
 
@@ -257,7 +257,7 @@ public final class KelpApplicationRepository {
                 (Class<? extends KelpApplication>) loader.loadClass(module.getMain());
         this.classPathApps.put(module, main);
       } catch (Throwable t) {
-        logger.log(LogLevel.ERROR,"Cannot load module " + module.getApplicationName() + ". Check stack trace for more information:");
+        logger.log(LogLevel.ERROR,"[APP] Cannot load module " + module.getApplicationName() + ". Check stack trace for more information:");
         t.printStackTrace();
       }
     }
@@ -273,8 +273,7 @@ public final class KelpApplicationRepository {
               moduleInstance.init(description, injector);
 
               appsToEnable.put(description.getApplicationName(), moduleInstance);
-              logger.log(
-                      "Loading application "
+              logger.log("[APP] Loading application "
                               + description.getApplicationName()
                               + " with version "
                               + description.getVersion());
@@ -283,10 +282,11 @@ public final class KelpApplicationRepository {
   }
 
   public void enableApplications() {
+    logger.log("[APP] Enabling all registered KelpApplications...");
     for (Map.Entry<String, KelpApplication> namePluginEntry : appsToEnable.entrySet()) {
       try {
         logger.log(
-                "Enabling application "
+                "[APP] Enabling application "
                         + namePluginEntry.getValue().getInformation().getApplicationName()
                         + " with version "
                         + namePluginEntry.getValue().getInformation().getVersion());
@@ -298,7 +298,7 @@ public final class KelpApplicationRepository {
         enabledApps.put(namePluginEntry.getKey(), namePluginEntry.getValue());
       } catch (Throwable t) {
         logger.log(LogLevel.ERROR,
-                "Exception encountered while loading application "
+                "[APP] Exception encountered while loading application "
                         + namePluginEntry.getValue().getInformation().getApplicationName()
                         + ":");
         t.printStackTrace();
@@ -309,7 +309,7 @@ public final class KelpApplicationRepository {
     appsToEnable.clear();
   }
 
-  public void enable() {
+  public void callOnLoad() {
     enableAfterClassPathLoad();
     appsToLoad.clear();
   }
@@ -332,12 +332,12 @@ public final class KelpApplicationRepository {
       && kelpApplication.getInformation().getHardDependencies().contains(application.getInformation()
       .getApplicationName())).forEach(this::disableApplication);
 
-    logger.log("Disabling application " + application.getInformation().getApplicationName());
+    logger.log("[APP] Disabling application " + application.getInformation().getApplicationName());
 
     try {
       application.onDisable();
     } catch (Exception e) {
-      logger.log(LogLevel.ERROR, "Error while disabling " + application.getInformation().getApplicationName());
+      logger.log(LogLevel.ERROR, "[APP] Error while disabling " + application.getInformation().getApplicationName());
       e.printStackTrace();
     }
 
@@ -345,7 +345,9 @@ public final class KelpApplicationRepository {
   }
 
   public void disableApplications() {
+    logger.log("[APP] Disabling all KelpApplications...");
     getEnabledApps().forEach(this::disableApplication);
+    logger.log("[APP] All KelpApplications have been successfully disabled.");
   }
 
   public Collection<KelpApplication> getEnabledApps() {

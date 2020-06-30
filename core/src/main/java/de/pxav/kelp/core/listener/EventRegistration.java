@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 /**
  * This class handles the bukkit-event registration in Kelp.
@@ -60,12 +62,13 @@ public class EventRegistration {
    * @see org.bukkit.plugin.PluginManager
    */
   public void initialize(String... packageNames) {
+    logger.log("[EVENT] Registering event handlers in " + Arrays.toString(packageNames));
     Preconditions.checkNotNull(packageNames);
     this.methodSearcher
             .filter(packageNames, MethodCriterion.annotatedWith(EventHandler.class))
             .forEach(
                     method -> {
-                      logger.log("EventHandler '" + method.getName() + "' successfully registered.");
+                      logger.log(LogLevel.DEBUG, "EventHandler '" + method.getName() + "' successfully registered.");
 
                       // fetch annotation metadata if an annotation was found.
                       EventHandler handler = method.getAnnotation(EventHandler.class);
@@ -89,6 +92,7 @@ public class EventRegistration {
                                       javaPlugin,
                                       handler.ignoreCancelled());
                     });
+    logger.log("[EVENT] Registration of event handlers complete.");
   }
 
 }

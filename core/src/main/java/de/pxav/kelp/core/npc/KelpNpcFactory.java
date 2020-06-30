@@ -5,8 +5,11 @@ import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 
 /**
- * A class description goes here.
+ * This is a simple factory class for {@code KelpNpc}.
+ * Always use this class if you need to create a new instance
+ * of a {@code KelpNpc}.
  *
+ * @see KelpNpc
  * @author pxav
  */
 public class KelpNpcFactory {
@@ -24,6 +27,10 @@ public class KelpNpcFactory {
     this.logger = logger;
   }
 
+  /**
+   * Creates a new instance and automatically injects all required dependencies.
+   * @return A new {@code KelpNpc} instance.
+   */
   public KelpNpc newKelpNpc() {
     return new KelpNpc(npcVersionTemplate, kelpNpcRepository, logger);
   }

@@ -86,6 +86,10 @@ playerConnection.sendPacket(spawnPacket);
 - **Sidebar system:** Create sidebars - no matter if animated or just simple & casual. Use up to 32 chars per line and enjoy flicker-free updating
 - **Inventory system:** Create stunning GUIs with minimal effort, use an integrated listener system and meet helpful pre-defined or custom widgets. Never mess with changed material names anymore.
 - **NPC system:** Create NPCs with ease and give them abilities like sneaking or give them effects and animations. 
+- **Entity system:** Create and modify entities without directly spawning them.
+- **Command system:** Create commands and sub-commands with complex structures and easily maintain them.
+- **Config system:** Create key-value-based configurations for your messages, etc.
+- **KelpConnect:** A simple and easy to use netty wrapper for Kelp  
 - **Particle engine:** coming soon
 
 
@@ -138,7 +142,7 @@ Put the jar file of the core module into the normal `plugins` folder of your ser
 
 #### For developers
 
-A detailed wiki and documentation is following soon.
+Check out the [KelpWiki](https://github.com/PXAV/kelp/wiki), where you can find tutorials about the different features of Kelp. It is not 100% complete but constantly updated. Furthermore most of the classes and methods have JavaDocs, so check them out. A separate JavaDoc page is following soon. 
 
 
 

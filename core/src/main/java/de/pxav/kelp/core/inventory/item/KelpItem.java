@@ -19,14 +19,11 @@ import java.util.*;
  */
 public class KelpItem {
 
-  private MaterialVersionTemplate versionedMaterial;
   private ItemVersionTemplate itemVersionTemplate;
   private ItemTagVersionTemplate itemTagVersionTemplate;
 
-  public KelpItem(MaterialVersionTemplate versionedMaterial,
-                  ItemVersionTemplate itemVersionTemplate,
+  public KelpItem(ItemVersionTemplate itemVersionTemplate,
                   ItemTagVersionTemplate itemTagVersionTemplate) {
-    this.versionedMaterial = versionedMaterial;
     this.itemVersionTemplate = itemVersionTemplate;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
   }
@@ -79,6 +76,11 @@ public class KelpItem {
     return this;
   }
 
+  public KelpItem itemDescription(List<String> description) {
+    this.itemDescription = description;
+    return this;
+  }
+
   public KelpItem itemDescription(String description) {
     this.itemDescription = Collections.singletonList(description);
     return this;
@@ -91,6 +93,11 @@ public class KelpItem {
 
   public KelpItem addItemDescription(String description) {
     this.itemDescription.add(description);
+    return this;
+  }
+
+  public KelpItem addItemDescription(List<String> description) {
+    this.itemDescription.addAll(description);
     return this;
   }
 
