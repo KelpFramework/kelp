@@ -33,21 +33,19 @@ public class VersionedItem extends ItemVersionTemplate {
   @Override
   public KelpItem fromItemStack(ItemStack itemStack) {
     short subId = itemStack.getDurability();
-    KelpMaterial material = KelpMaterial.STONE;
+    KelpMaterial material;
     if (subId == 0) {
-      materialRepository.getKelpMaterial(itemStack.getType().toString());
+      material = materialRepository.getKelpMaterial(itemStack.getType().toString());
     } else {
-      materialRepository.getKelpMaterial(itemStack.getType().toString(), subId);
+      material = materialRepository.getKelpMaterial(itemStack.getType().toString(), subId);
     }
 
     ItemMeta itemMeta = itemStack.getItemMeta();
 
-    KelpItem item = new KelpItem(this, itemTagVersionTemplate)
+    return new KelpItem(this, itemTagVersionTemplate)
       .material(material)
       .amount(itemStack.getAmount())
       .itemDescription(itemMeta.getLore());
-
-    return item;
   }
 
   @Override
