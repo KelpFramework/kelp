@@ -2,6 +2,8 @@ package de.pxav.kelp.testing;
 
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.NewKelpApplication;
+import de.pxav.kelp.core.command.KelpCommandRepository;
+import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.connect.KelpConnect;
 import de.pxav.kelp.core.connect.connection.Connection;
 import de.pxav.kelp.core.connect.connection.ConnectionProperties;
@@ -40,6 +42,8 @@ public class KelpTesting extends KelpApplication {
 
   @Override
   public void onEnable() {
+    getInstance(ConfigurationRepository.class).loadAll("de.pxav.kelp.testing");
+    getInstance(KelpCommandRepository.class).loadCommands("de.pxav.kelp.testing");
     setupConnect();
   }
 
