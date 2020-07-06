@@ -114,6 +114,11 @@ public class KelpItem {
     return this;
   }
 
+  public KelpItem cancelInteractions() {
+    this.addTag("interactionCancelled", "true");
+    return this;
+  }
+
   public KelpItem addListener(KelpPlayer player, ClickListener listener) {
     String listenerId = listenerRepository.registerListener(player.getUUID(), listener);
     this.addTag("listenerId", listenerId);

@@ -46,6 +46,10 @@ public class InventoryClickListener {
 
     ItemStack itemStack = event.getCurrentItem();
 
+    if (itemTagVersionTemplate.hasTagKey(itemStack, "interactionCancelled")) {
+      event.setCancelled(true);
+    }
+
     if (itemTagVersionTemplate.hasTagKey(itemStack, "listenerId")) {
       KelpPlayer player = playerRepository.getKelpPlayer((Player) event.getWhoClicked());
       KelpItem item = itemFactory.fromItemStack(itemStack).slot(event.getSlot());
