@@ -3,6 +3,7 @@ package de.pxav.kelp.core.inventory;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.MaterialVersionTemplate;
 import de.pxav.kelp.core.inventory.type.AnimatedInventory;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
@@ -26,6 +27,7 @@ public class KelpInventoryRepository {
 
   private MaterialVersionTemplate materialVersionTemplate;
   private MethodFinder methodFinder;
+  private KelpListenerRepository kelpListenerRepository;
 
   private Map<String, Method> methods = Maps.newHashMap();
 
@@ -33,9 +35,12 @@ public class KelpInventoryRepository {
   private Map<UUID, AnimatedInventory> playerAnimations = Maps.newHashMap();
 
   @Inject
-  public KelpInventoryRepository(MaterialVersionTemplate materialVersionTemplate, MethodFinder methodFinder) {
+  public KelpInventoryRepository(MaterialVersionTemplate materialVersionTemplate,
+                                 MethodFinder methodFinder,
+                                 KelpListenerRepository kelpListenerRepository) {
     this.materialVersionTemplate = materialVersionTemplate;
     this.methodFinder = methodFinder;
+    this.kelpListenerRepository = kelpListenerRepository;
   }
 
   public void loadMaterials() {
@@ -74,6 +79,7 @@ public class KelpInventoryRepository {
 
     this.playerInventories.remove(player.getUUID());
     this.playerAnimations.remove(player.getUUID());
+    this.kelpListenerRepository.unregisterListeners(player.getUUID());
   }
 
   public void schedule() {

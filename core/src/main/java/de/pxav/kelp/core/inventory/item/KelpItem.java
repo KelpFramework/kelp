@@ -114,10 +114,15 @@ public class KelpItem {
     return this;
   }
 
-  public KelpItem addListener(ClickListener listener) {
-    String listenerId = listenerRepository.registerListener(listener);
+  public KelpItem addListener(KelpPlayer player, ClickListener listener) {
+    String listenerId = listenerRepository.registerListener(player.getUUID(), listener);
     this.addTag("listenerId", listenerId);
-    System.out.println("added listener tag for " + listenerId);
+    return this;
+  }
+
+  public KelpItem addListener(UUID player, ClickListener listener) {
+    String listenerId = listenerRepository.registerListener(player, listener);
+    this.addTag("listenerId", listenerId);
     return this;
   }
 
