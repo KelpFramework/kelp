@@ -21,6 +21,7 @@ public class KelpListenerRepository {
   public String registerListener(ClickListener listener) {
     String listenerId = this.newListenerId();
     listeners.put(listenerId, listener);
+    System.out.println("Registered listener " + listenerId + " in repo.");
     return listenerId;
   }
 

@@ -2,10 +2,15 @@ package de.pxav.kelp.core.inventory.item;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.pxav.kelp.core.inventory.listener.ClickListener;
+import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
+import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialVersionTemplate;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
+import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -21,11 +26,14 @@ public class KelpItem {
 
   private ItemVersionTemplate itemVersionTemplate;
   private ItemTagVersionTemplate itemTagVersionTemplate;
+  private KelpListenerRepository listenerRepository;
 
   public KelpItem(ItemVersionTemplate itemVersionTemplate,
-                  ItemTagVersionTemplate itemTagVersionTemplate) {
+                  ItemTagVersionTemplate itemTagVersionTemplate,
+                  KelpListenerRepository listenerRepository) {
     this.itemVersionTemplate = itemVersionTemplate;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
+    this.listenerRepository = listenerRepository;
   }
 
   private KelpMaterial material = KelpMaterial.STONE;
@@ -103,6 +111,13 @@ public class KelpItem {
 
   public KelpItem addItemDescription(String... description) {
     this.itemDescription.addAll(Arrays.asList(description));
+    return this;
+  }
+
+  public KelpItem addListener(ClickListener listener) {
+    String listenerId = listenerRepository.registerListener(listener);
+    this.addTag("listenerId", listenerId);
+    System.out.println("added listener tag for " + listenerId);
     return this;
   }
 
