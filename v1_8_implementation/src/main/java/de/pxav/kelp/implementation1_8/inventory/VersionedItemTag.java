@@ -83,7 +83,7 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
   }
 
   private void logAirError() {
-    logger.log(LogLevel.ERROR, "Cannot get item tags of items with type AIR.");
+    logger.log(LogLevel.DEBUG, "Cannot get item tags of items with type AIR.");
   }
 
 }
