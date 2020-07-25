@@ -91,7 +91,7 @@ public class AnimatedInventory extends KelpInventory {
   }
 
   public void scheduleUpdater(Player playerFor) {
-    scheduledExecutorService = Executors.newScheduledThreadPool(0);
+    scheduledExecutorService = Executors.newScheduledThreadPool(1);
     scheduledExecutorService.scheduleAtFixedRate(() -> {
       try {
         updateTitleOnly(playerFor, animationState);
