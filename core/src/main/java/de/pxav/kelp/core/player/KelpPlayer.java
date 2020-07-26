@@ -72,6 +72,11 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
+  public KelpPlayer updateKelpInventory() {
+    this.inventoryRepository.updateInventory(this);
+    return this;
+  }
+
   public KelpPlayer closeInventory() {
     this.inventoryRepository.closeInventory(this);
     return this;

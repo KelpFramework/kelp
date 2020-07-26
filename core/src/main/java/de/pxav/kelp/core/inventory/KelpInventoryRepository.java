@@ -10,7 +10,6 @@ import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
-import de.pxav.kelp.core.sidebar.type.AnimatedSidebar;
 import org.bukkit.inventory.Inventory;
 
 import java.lang.reflect.Method;
@@ -91,7 +90,8 @@ public class KelpInventoryRepository {
   }
 
   public void updateInventory(KelpPlayer player) {
-
+    KelpInventory kelpInventory = playerInventories.get(player.getUUID());
+    kelpInventory.update(player);
   }
 
 }
