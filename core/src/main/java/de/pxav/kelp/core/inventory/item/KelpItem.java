@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A class description goes here.
@@ -121,13 +122,13 @@ public class KelpItem {
 
   public KelpItem addListener(KelpPlayer player, ClickListener listener) {
     String listenerId = listenerRepository.registerListener(player.getUUID(), listener);
-    this.addTag("listenerId", listenerId);
+    this.addTag("listener-" + ThreadLocalRandom.current().nextInt(1, 1000), listenerId);
     return this;
   }
 
   public KelpItem addListener(UUID player, ClickListener listener) {
     String listenerId = listenerRepository.registerListener(player, listener);
-    this.addTag("listenerId", listenerId);
+    this.addTag("listener-" + ThreadLocalRandom.current().nextInt(1, 1000), listenerId);
     return this;
   }
 

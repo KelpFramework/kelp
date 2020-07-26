@@ -8,6 +8,7 @@ import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -40,7 +41,8 @@ public class InventoryClickListener {
   public void handleInventoryClick(InventoryClickEvent event) {
     if (!(event.getWhoClicked() instanceof Player)
       || event.getClickedInventory() == null
-      || event.getCurrentItem() == null) {
+      || event.getCurrentItem() == null
+      || event.getCurrentItem().getType() == Material.AIR) {
       return;
     }
 
@@ -50,13 +52,26 @@ public class InventoryClickListener {
       event.setCancelled(true);
     }
 
-    if (itemTagVersionTemplate.hasTagKey(itemStack, "listenerId")) {
+    for (String current : itemTagVersionTemplate.getTagKeys(itemStack)) {
+      if (!current.startsWith("listener-")) {
+        continue;
+      }
+
       KelpPlayer player = playerRepository.getKelpPlayer((Player) event.getWhoClicked());
       KelpItem item = itemFactory.fromItemStack(itemStack).slot(event.getSlot());
 
-      String listenerId = itemTagVersionTemplate.getStringValue(itemStack, "listenerId");
+      String listenerId = itemTagVersionTemplate.getStringValue(itemStack, current);
       listenerRepository.fireListener(listenerId, new KelpClickEvent(player, null, item));
     }
+
+//
+//    if (itemTagVersionTemplate.hasTagKey(itemStack, "listenerId")) {
+//      KelpPlayer player = playerRepository.getKelpPlayer((Player) event.getWhoClicked());
+//      KelpItem item = itemFactory.fromItemStack(itemStack).slot(event.getSlot());
+//
+//      String listenerId = itemTagVersionTemplate.getStringValue(itemStack, "listenerId");
+//      listenerRepository.fireListener(listenerId, new KelpClickEvent(player, null, item));
+//    }
 
   }
 
