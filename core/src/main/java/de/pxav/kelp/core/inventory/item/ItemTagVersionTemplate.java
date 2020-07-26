@@ -3,6 +3,8 @@ package de.pxav.kelp.core.inventory.item;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collection;
+
 /**
  * A class description goes here.
  *
@@ -18,5 +20,7 @@ public abstract class ItemTagVersionTemplate {
   public abstract boolean hasTagKey(ItemStack itemStack, String key);
 
   public abstract String getStringValue(ItemStack itemStack, String key);
+
+  public abstract Collection<String> getTagKeys(ItemStack itemStack);
 
 }
