@@ -120,6 +120,11 @@ public class KelpItem {
     return this;
   }
 
+  public KelpItem uncancelInteractions() {
+    this.removeTag("interactionCancelled");
+    return this;
+  }
+
   public KelpItem addListener(KelpPlayer player, ClickListener listener) {
     String listenerId = listenerRepository.registerListener(player.getUUID(), listener);
     this.addTag("listener-" + ThreadLocalRandom.current().nextInt(1, 1000), listenerId);
@@ -144,6 +149,10 @@ public class KelpItem {
       itemStack = itemVersionTemplate.makeUnbreakable(itemStack);
     } else {
       itemStack = itemVersionTemplate.makeBreakable(itemStack);
+    }
+
+    if (!this.nbtTagStrings.containsKey("interactionCancelled") && !tagsToRemove.contains("interactionCancelled")) {
+      this.cancelInteractions();
     }
 
     for (Map.Entry<String, String> tagEntry : this.nbtTagStrings.entrySet()) {
