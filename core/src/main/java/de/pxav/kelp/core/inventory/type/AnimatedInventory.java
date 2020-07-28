@@ -5,6 +5,7 @@ import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.animation.TextAnimationFactory;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
+import de.pxav.kelp.core.inventory.widget.GroupedWidget;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.inventory.version.WindowPacketTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -29,6 +30,7 @@ public class AnimatedInventory extends KelpInventory {
   private TextAnimation title;
   private int size;
   private List<SimpleWidget> simpleWidgets;
+  private List<GroupedWidget> groupedWidgets;
 
   private ScheduledExecutorService scheduledExecutorService;
   private int animationState = 0;
@@ -45,6 +47,7 @@ public class AnimatedInventory extends KelpInventory {
     this.inventoryVersionTemplate = inventoryVersionTemplate;
     this.textAnimationFactory = textAnimationFactory;
     this.simpleWidgets = Lists.newArrayList();
+    this.groupedWidgets = Lists.newArrayList();
     this.size = 54;
   }
 
@@ -60,6 +63,11 @@ public class AnimatedInventory extends KelpInventory {
 
   public AnimatedInventory addWidget(SimpleWidget widget) {
     this.simpleWidgets.add(widget);
+    return this;
+  }
+
+  public AnimatedInventory addWidget(GroupedWidget widget) {
+    this.groupedWidgets.add(widget);
     return this;
   }
 
@@ -80,6 +88,12 @@ public class AnimatedInventory extends KelpInventory {
       inventory.setItem(item.getSlot(), item.getItemStack());
     }
 
+    for (GroupedWidget current : groupedWidgets) {
+      current.render().forEach(item -> {
+        inventory.setItem(item.getSlot(), item.getItemStack());
+      });
+    }
+
     return inventory;
   }
 
@@ -90,7 +104,13 @@ public class AnimatedInventory extends KelpInventory {
 
     for (SimpleWidget current : simpleWidgets) {
       KelpItem item = current.render();
-      toUpdate.getBukkitPlayer().getOpenInventory().getTopInventory().setItem(item.getSlot(), item.getItemStack());
+      playerInventory.setItem(item.getSlot(), item.getItemStack());
+    }
+
+    for (GroupedWidget current : groupedWidgets) {
+      current.render().forEach(item -> {
+        playerInventory.setItem(item.getSlot(), item.getItemStack());
+      });
     }
 
     toUpdate.getBukkitPlayer().updateInventory();
