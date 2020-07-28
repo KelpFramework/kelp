@@ -1,14 +1,16 @@
 package de.pxav.kelp.core.inventory.widget;
 
-import org.bukkit.inventory.Inventory;
+import de.pxav.kelp.core.inventory.item.KelpItem;
+
+import java.util.Collection;
 
 /**
  * A class description goes here.
  *
  * @author pxav
  */
-public interface GroupedWidget {
+public interface GroupedWidget extends Widget {
 
-  void render(Inventory to);
+  Collection<KelpItem> render();
 
 }

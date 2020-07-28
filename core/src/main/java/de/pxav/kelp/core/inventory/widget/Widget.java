@@ -8,8 +8,10 @@ import de.pxav.kelp.core.player.KelpPlayer;
  *
  * @author pxav
  */
-public interface SimpleWidget extends Widget {
+public interface Widget {
 
-  KelpItem render();
+  Widget player(KelpPlayer player);
+
+  KelpPlayer getPlayer();
 
 }
