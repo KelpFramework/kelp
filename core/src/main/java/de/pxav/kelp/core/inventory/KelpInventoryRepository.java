@@ -7,6 +7,7 @@ import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.MaterialVersionTemplate;
 import de.pxav.kelp.core.inventory.type.AnimatedInventory;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
+import de.pxav.kelp.core.inventory.widget.Pagination;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
@@ -31,6 +32,7 @@ public class KelpInventoryRepository {
   private Map<String, Method> methods = Maps.newHashMap();
 
   private Map<UUID, KelpInventory> playerInventories = Maps.newHashMap();
+  private Map<UUID, Map<Pagination, Integer>> playerPages = Maps.newHashMap();
   private Map<UUID, AnimatedInventory> playerAnimations = Maps.newHashMap();
 
   @Inject
@@ -92,6 +94,10 @@ public class KelpInventoryRepository {
   public void updateInventory(KelpPlayer player) {
     KelpInventory kelpInventory = playerInventories.get(player.getUUID());
     kelpInventory.update(player);
+  }
+
+  public Map<UUID, Map<Pagination, Integer>> getPlayerPages() {
+    return playerPages;
   }
 
 }
