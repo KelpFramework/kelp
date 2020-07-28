@@ -18,12 +18,9 @@ public class ToggleableWidget implements SimpleWidget {
   private KelpItem whenTrue;
   private KelpItem whenFalse;
 
-  private Runnable whenTrueAction;
-  private Runnable whenFalseAction;
-
   ToggleableWidget() {}
 
-  public ToggleableWidget slot(int slot) { // TODO: Keine NPE, aber updaten muss noch gefixt werden (es passiert nichts)
+  public ToggleableWidget slot(int slot) {
     this.slot = slot;
     return this;
   }
@@ -44,7 +41,6 @@ public class ToggleableWidget implements SimpleWidget {
   public ToggleableWidget whenTrue(KelpItem kelpItem, Runnable action) {
     Preconditions.checkNotNull(action);
     this.whenTrue = kelpItem;
-    this.whenTrueAction = action;
     whenTrue.addListener(player, event -> {
       action.run();
       player.updateKelpInventory();
@@ -63,7 +59,6 @@ public class ToggleableWidget implements SimpleWidget {
   public ToggleableWidget whenFalse(KelpItem kelpItem, Runnable action) {
     Preconditions.checkNotNull(action);
     this.whenFalse = kelpItem;
-    this.whenFalseAction = action;
     whenFalse.addListener(player, event -> {
       action.run();
       player.updateKelpInventory();
