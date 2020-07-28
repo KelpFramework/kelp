@@ -165,4 +165,23 @@ public class KelpItem {
     return slot;
   }
 
+  public KelpMaterial getMaterial() {
+    return material;
+  }
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  public List<String> getItemDescription() {
+    return itemDescription;
+  }
+
+  public String getItemDescriptionAt(int line) {
+    return itemDescription.get(line);
+  }
+
+  public int getAmount() {
+    return amount;
+  }
 }
