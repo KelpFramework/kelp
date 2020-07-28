@@ -7,6 +7,6 @@ package de.pxav.kelp.core.inventory.widget;
  */
 public interface Condition {
 
-  public boolean getCondition();
+  boolean getCondition();
 
 }
