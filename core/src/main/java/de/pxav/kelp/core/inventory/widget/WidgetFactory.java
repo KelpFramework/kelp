@@ -5,7 +5,8 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 
 /**
- * A class description goes here.
+ * This factory class is used to create new instances of
+ * different inventory widgets.
  *
  * @author pxav
  */
