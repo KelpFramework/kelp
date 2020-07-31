@@ -120,7 +120,11 @@ public class KelpItem {
     return this;
   }
 
-  public KelpItem uncancelInteractions() {
+  /**
+   * Uncanceles item interactions.
+   * @return
+   */
+  public KelpItem allowInteractions() {
     this.removeTag("interactionCancelled");
     return this;
   }
