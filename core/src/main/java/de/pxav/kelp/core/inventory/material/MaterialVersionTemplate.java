@@ -1,17 +1,20 @@
 package de.pxav.kelp.core.inventory.material;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 
 /**
- * A class description goes here.
+ * This version template is used to map all material names of the
+ * server version with the {@code KelpMaterial} names.
  *
  * @author pxav
  */
 @KelpVersionTemplate
 public abstract class MaterialVersionTemplate {
 
+  /**
+   * Maps the KelpMaterials with the corresponding bukkit materials
+   * and saves them into the {@link MaterialRepository}.
+   */
   public abstract void defineDefaults();
 
 }

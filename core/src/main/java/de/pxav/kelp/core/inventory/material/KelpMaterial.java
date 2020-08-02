@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A class description goes here.
+ * This enum represents all materials you can use when writing a
+ * kelp application. Note that you can only use materials which
+ * are available in your minimum server version.
  *
  * @author pxav
  */
@@ -1133,6 +1135,14 @@ public enum KelpMaterial {
     return since;
   }
 
+  /**
+   * Returns a collection of materials included in newer versions than
+   * the given one. So if you input 1.12 for example, only materials
+   * added in 1.13 will be returned.
+   *
+   * @param version The version you want to use for the calculation.
+   * @return The final collection
+   */
   public static Collection<KelpMaterial> aboveVersion(KelpVersion version) {
     Collection<KelpMaterial> output = new ArrayList<>();
 
@@ -1150,6 +1160,14 @@ public enum KelpMaterial {
     return output;
   }
 
+  /**
+   * Returns a collection of materials added in older versions than
+   * the given one. If you input 1.11 for example, only materials
+   * contained in 1.10 will be returned.
+   *
+   * @param version The version
+   * @return The final collection.
+   */
   public static Collection<KelpMaterial> belowVersion(KelpVersion version) {
     Collection<KelpMaterial> output = new ArrayList<>();
 
@@ -1167,6 +1185,13 @@ public enum KelpMaterial {
     return output;
   }
 
+  /**
+   * Returns a collection of materials which have been added in the
+   * given version. No materials of older or future versions are included.
+   *
+   * @param version The version you want to get the materials of.
+   * @return A collection of newly added materials.
+   */
   public static Collection<KelpMaterial> matchesVersion(KelpVersion version) {
     Collection<KelpMaterial> output = new ArrayList<>();
 
@@ -1179,6 +1204,13 @@ public enum KelpMaterial {
     return output;
   }
 
+  /**
+   * Returns a collection of materials available in the given
+   * kelp version.
+   *
+   * @param version The version you want to check the materials of.
+   * @return The collection of materials included in the given version.
+   */
   public static Collection<KelpMaterial> includedIn(KelpVersion version) {
     Collection<KelpMaterial> output = new ArrayList<>(belowVersion(version));
     output.addAll(matchesVersion(version));
