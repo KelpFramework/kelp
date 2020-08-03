@@ -3,8 +3,6 @@ package de.pxav.kelp.implementation1_8.inventory;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.item.KelpItemFactory;
-import de.pxav.kelp.core.inventory.listener.KelpListener;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialRepository;
