@@ -177,6 +177,8 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
+  // TODO make tablist name hideable
+
   // TODO TAB LIST HEADER AND FOOTER
 
   public KelpPlayer setCompassTarget(Location target) {
