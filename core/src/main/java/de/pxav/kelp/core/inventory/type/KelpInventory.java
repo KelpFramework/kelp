@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.inventory.type;
 
+import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.inventory.Inventory;
 
 /**
@@ -11,6 +12,6 @@ public abstract class KelpInventory {
 
   public abstract Inventory render();
 
-  public abstract void update(Inventory toUpdate, int state);
+  public abstract void update(KelpPlayer toUpdate);
 
 }

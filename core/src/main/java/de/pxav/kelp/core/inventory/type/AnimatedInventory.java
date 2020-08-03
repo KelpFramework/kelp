@@ -5,11 +5,15 @@ import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.animation.TextAnimationFactory;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
+import de.pxav.kelp.core.inventory.widget.GroupedWidget;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.inventory.version.WindowPacketTemplate;
+import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.sidebar.type.AnimatedSidebar;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -26,6 +30,7 @@ public class AnimatedInventory extends KelpInventory {
   private TextAnimation title;
   private int size;
   private List<SimpleWidget> simpleWidgets;
+  private List<GroupedWidget> groupedWidgets;
 
   private ScheduledExecutorService scheduledExecutorService;
   private int animationState = 0;
@@ -42,6 +47,7 @@ public class AnimatedInventory extends KelpInventory {
     this.inventoryVersionTemplate = inventoryVersionTemplate;
     this.textAnimationFactory = textAnimationFactory;
     this.simpleWidgets = Lists.newArrayList();
+    this.groupedWidgets = Lists.newArrayList();
     this.size = 54;
   }
 
@@ -57,6 +63,11 @@ public class AnimatedInventory extends KelpInventory {
 
   public AnimatedInventory addWidget(SimpleWidget widget) {
     this.simpleWidgets.add(widget);
+    return this;
+  }
+
+  public AnimatedInventory addWidget(GroupedWidget widget) {
+    this.groupedWidgets.add(widget);
     return this;
   }
 
@@ -77,21 +88,36 @@ public class AnimatedInventory extends KelpInventory {
       inventory.setItem(item.getSlot(), item.getItemStack());
     }
 
+    for (GroupedWidget current : groupedWidgets) {
+      current.render().forEach(item -> {
+        inventory.setItem(item.getSlot(), item.getItemStack());
+      });
+    }
+
     return inventory;
   }
 
   @Override
-  public void update(Inventory toUpdate, int state) {
-    toUpdate.clear();
+  public void update(KelpPlayer toUpdate) {
+    Inventory playerInventory = toUpdate.getBukkitPlayer().getOpenInventory().getTopInventory();
+    playerInventory.clear();
 
     for (SimpleWidget current : simpleWidgets) {
       KelpItem item = current.render();
-      toUpdate.setItem(item.getSlot(), item.getItemStack());
+      playerInventory.setItem(item.getSlot(), item.getItemStack());
     }
+
+    for (GroupedWidget current : groupedWidgets) {
+      current.render().forEach(item -> {
+        playerInventory.setItem(item.getSlot(), item.getItemStack());
+      });
+    }
+
+    toUpdate.getBukkitPlayer().updateInventory();
   }
 
   public void scheduleUpdater(Player playerFor) {
-    scheduledExecutorService = Executors.newScheduledThreadPool(0);
+    scheduledExecutorService = Executors.newScheduledThreadPool(1);
     scheduledExecutorService.scheduleAtFixedRate(() -> {
       try {
         updateTitleOnly(playerFor, animationState);

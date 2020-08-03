@@ -72,6 +72,11 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
+  public KelpPlayer updateKelpInventory() {
+    this.inventoryRepository.updateInventory(this);
+    return this;
+  }
+
   public KelpPlayer closeInventory() {
     this.inventoryRepository.closeInventory(this);
     return this;
@@ -171,6 +176,8 @@ public class KelpPlayer extends LivingKelpEntity {
     playerVersionTemplate.setPlayerTabListName(bukkitPlayer, tabListName);
     return this;
   }
+
+  // TODO make tablist name hideable
 
   // TODO TAB LIST HEADER AND FOOTER
 

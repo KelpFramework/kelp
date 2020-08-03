@@ -3,6 +3,7 @@ package de.pxav.kelp.implementation1_8.inventory;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
+import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialRepository;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
@@ -23,11 +24,15 @@ public class VersionedItem extends ItemVersionTemplate {
 
   private MaterialRepository materialRepository;
   private ItemTagVersionTemplate itemTagVersionTemplate;
+  private KelpListenerRepository kelpListenerRepository;
 
   @Inject
-  public VersionedItem(MaterialRepository materialRepository, ItemTagVersionTemplate itemTagVersionTemplate) {
+  public VersionedItem(MaterialRepository materialRepository,
+                       ItemTagVersionTemplate itemTagVersionTemplate,
+                       KelpListenerRepository kelpListenerRepository) {
     this.materialRepository = materialRepository;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
+    this.kelpListenerRepository = kelpListenerRepository;
   }
 
   @Override
@@ -42,9 +47,10 @@ public class VersionedItem extends ItemVersionTemplate {
 
     ItemMeta itemMeta = itemStack.getItemMeta();
 
-    return new KelpItem(this, itemTagVersionTemplate)
+    return new KelpItem(this, itemTagVersionTemplate, kelpListenerRepository)
       .material(material)
       .amount(itemStack.getAmount())
+      .displayName(itemMeta.getDisplayName())
       .itemDescription(itemMeta.getLore());
   }
 
