@@ -112,6 +112,11 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(SoundVersionTemplate.class).defineDefaults();
     injector.getInstance(KelpInventoryRepository.class).loadMaterials();
     logger().log("[GENERAL] Successfully enabled KelpFramework. Have fun.");
+
+    logger().log("[GENERAL] NOTE: Kelp is still under heavy development and will contain bugs. " +
+      "Applications developed with the current version might not work with future releases. Do not use " +
+      "Kelp in production environments, but only for testing purposes. Report bugs and issues to https://github.com/PXAV/kelp " +
+      "to get them fixed in the next version.");
   }
 
   @Override
