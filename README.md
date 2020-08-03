@@ -117,7 +117,7 @@ There are version implementations for the following version implementations avai
 To build all Kelp modules you first have to compile all CraftBukkit versions from 1.8 to 1.14 for yourself using the official BuildTools.jar. The CraftBukkit library may not be distributed by Kelp for legal reasons. A tutorial can be found [here](https://www.spigotmc.org/wiki/buildtools/).
 
 ```shell
-java -jar BuildTools.jar --rev <version>
+java -jar BuildTools.jar --compile craftbukkit --rev <version>
 ```
 
 
