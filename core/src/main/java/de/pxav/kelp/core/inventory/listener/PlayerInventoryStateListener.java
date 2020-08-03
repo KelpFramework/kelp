@@ -8,7 +8,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 /**
- * A class description goes here.
+ * This listener controls the inventory state of every player.
+ * Inventory state means whether a player has opened or closed
+ * his inventory. When a player closes it, he has to be removed from
+ * the cache to avoid problems and lags on long running servers.
  *
  * @author pxav
  */
@@ -21,6 +24,11 @@ public class PlayerInventoryStateListener {
     this.playerRepository = playerRepository;
   }
 
+  /**
+   * This method is triggered when any player closes their inventory.
+   *
+   * @param event The event to listen for.
+   */
   @EventHandler
   public void handlePlayerInventoryClose(InventoryCloseEvent event) {
     KelpPlayer kelpPlayer = playerRepository.getKelpPlayer((Player) event.getPlayer());
