@@ -8,6 +8,7 @@ import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
+import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -44,6 +45,7 @@ public class KelpPlayerRepository {
   private KelpLogger logger;
   private EntityVersionTemplate entityVersionTemplate;
   private LivingEntityVersionTemplate livingEntityVersionTemplate;
+  private ParticleVersionTemplate particleVersionTemplate;
 
   @Inject
   public KelpPlayerRepository(PlayerVersionTemplate playerVersionTemplate,
@@ -51,13 +53,15 @@ public class KelpPlayerRepository {
                        SidebarRepository sidebarRepository,
                        KelpInventoryRepository inventoryRepository,
                        EntityVersionTemplate entityVersionTemplate,
-                       LivingEntityVersionTemplate livingEntityVersionTemplate) {
+                       LivingEntityVersionTemplate livingEntityVersionTemplate,
+                       ParticleVersionTemplate particleVersionTemplate) {
     this.playerVersionTemplate = playerVersionTemplate;
     this.logger = logger;
     this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.entityVersionTemplate = entityVersionTemplate;
     this.livingEntityVersionTemplate = livingEntityVersionTemplate;
+    this.particleVersionTemplate = particleVersionTemplate;
   }
 
   /**
@@ -200,6 +204,7 @@ public class KelpPlayerRepository {
       sidebarRepository,
       inventoryRepository,
       this,
+      particleVersionTemplate,
       entityVersionTemplate,
       livingEntityVersionTemplate,
       playerVersionTemplate.getUniqueId(bukkitPlayer),

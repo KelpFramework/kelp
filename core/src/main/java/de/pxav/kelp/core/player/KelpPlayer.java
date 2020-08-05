@@ -6,6 +6,8 @@ import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
+import de.pxav.kelp.core.particle.type.ParticleType;
+import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
@@ -24,6 +26,7 @@ public class KelpPlayer extends LivingKelpEntity {
   private PlayerVersionTemplate playerVersionTemplate;
   private SidebarRepository sidebarRepository;
   private KelpInventoryRepository inventoryRepository;
+  private ParticleVersionTemplate particleVersionTemplate;
 
   private Player bukkitPlayer;
 
@@ -39,6 +42,7 @@ public class KelpPlayer extends LivingKelpEntity {
                     SidebarRepository sidebarRepository,
                     KelpInventoryRepository inventoryRepository,
                     KelpPlayerRepository kelpPlayerRepository,
+                    ParticleVersionTemplate particleVersionTemplate,
                     EntityVersionTemplate entityVersionTemplate,
                     LivingEntityVersionTemplate livingEntityVersionTemplate,
                     UUID uuid,
@@ -55,6 +59,7 @@ public class KelpPlayer extends LivingKelpEntity {
     this.playerVersionTemplate = playerVersionTemplate;
     this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
+    this.particleVersionTemplate = particleVersionTemplate;
   }
 
   public KelpPlayer openKelpSidebar(String identifier) {
@@ -124,6 +129,81 @@ public class KelpPlayer extends LivingKelpEntity {
 
   public KelpPlayer sendActionbar(String message) {
     playerVersionTemplate.sendActionBar(bukkitPlayer, message);
+    return this;
+  }
+
+  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, float offsetX, float offsetY, float offsetZ, int count) {
+    particleVersionTemplate.spawnParticle(this,
+      particleType,
+      longDistance,
+      getLocation().getX(),
+      getLocation().getY(),
+      getLocation().getZ(),
+      offsetX, offsetY,
+      offsetZ,
+      0,
+      count,
+      null);
+    return this;
+  }
+
+  public KelpPlayer spawnParticle(ParticleType particleType, float offsetX, float offsetY, float offsetZ) {
+    particleVersionTemplate.spawnParticle(this,
+      particleType,
+      false,
+      getLocation().getX(),
+      getLocation().getY(),
+      getLocation().getZ(),
+      offsetX, offsetY,
+      offsetZ,
+      0,
+      1,
+      null);
+    return this;
+  }
+
+  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
+    particleVersionTemplate.spawnParticle(this,
+      particleType,
+      longDistance,
+      getLocation().getX(),
+      getLocation().getY(),
+      getLocation().getZ(),
+      offsetX, offsetY,
+      offsetZ,
+      particleData,
+      count,
+      generalData);
+    return this;
+  }
+
+  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, Location location, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
+    particleVersionTemplate.spawnParticle(this,
+      particleType,
+      longDistance,
+      location.getX(),
+      location.getY(),
+      location.getZ(),
+      offsetX, offsetY,
+      offsetZ,
+      particleData,
+      count,
+      generalData);
+    return this;
+  }
+
+  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, double x, double y, double z, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
+    particleVersionTemplate.spawnParticle(this,
+      particleType,
+      longDistance,
+      x,
+      y,
+      z,
+      offsetX, offsetY,
+      offsetZ,
+      particleData,
+      count,
+      generalData);
     return this;
   }
 
