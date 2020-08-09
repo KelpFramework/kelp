@@ -31,3 +31,7 @@ The headlines with `MR <number>` stand for the major release. The following head
 * Fixed bug that CPU load was on 100% when `AnimatedInventory` was opened.
 * Fixed NPE when trying to get item tags of items with type `AIR`
 
+#### v0.0.3 (date)
+* **sssssss**
+* If you request a `ScheduledExecutorService` in a constructor annotated with `@Inject` by Guice, a new scheduled thread pool will be injected automatically.
+
