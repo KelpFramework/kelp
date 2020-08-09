@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ParticleLineEffect extends ParticleEffect {
 
+  private ParticleEffectRepository particleEffectRepository;
   private ScheduledExecutorService scheduledExecutorService;
   private ExecutorService executorService;
 
@@ -27,7 +28,8 @@ public class ParticleLineEffect extends ParticleEffect {
   private Location secondPoint;
   private double particleDensity;
 
-  public ParticleLineEffect() {
+  ParticleLineEffect(ParticleEffectRepository particleEffectRepository) {
+    this.particleEffectRepository = particleEffectRepository;
     this.scheduledExecutorService = Executors.newScheduledThreadPool(1);
     this.executorService = Executors.newCachedThreadPool();
   }
@@ -69,11 +71,11 @@ public class ParticleLineEffect extends ParticleEffect {
         scheduledExecutorService.shutdownNow();
         return;
       }
-      System.out.println("played particle effect");
       currentIterations.set(currentIterations.get() + 1);
       playAnimationOnce(player);
     }, 0, intervalInMillis, TimeUnit.MILLISECONDS);
 
+    particleEffectRepository.addTimer(player, scheduledExecutorService);
   }
 
   @Override
