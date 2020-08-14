@@ -5,12 +5,7 @@ import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A class description goes here.
@@ -19,19 +14,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class ParticleLineEffect extends ParticleEffect {
 
-  private ParticleEffectRepository particleEffectRepository;
-  private ScheduledExecutorService scheduledExecutorService;
-  private ExecutorService executorService;
-
   private ParticleType particleType;
   private Location firstPoint;
   private Location secondPoint;
   private double particleDensity;
 
   ParticleLineEffect(ParticleEffectRepository particleEffectRepository) {
-    this.particleEffectRepository = particleEffectRepository;
-    this.scheduledExecutorService = Executors.newScheduledThreadPool(1);
-    this.executorService = Executors.newCachedThreadPool();
+    super(particleEffectRepository);
   }
 
   public ParticleLineEffect particleType(ParticleType particleType) {
@@ -60,30 +49,7 @@ public class ParticleLineEffect extends ParticleEffect {
   }
 
   @Override
-  public void play(Collection<KelpPlayer> player) {
-    if (this.playOnce) {
-      this.executorService.execute(() -> this.playAnimationOnce(player));
-      return;
-    }
-
-    scheduledExecutorService.scheduleAtFixedRate(() -> {
-      if (currentIterations.get() == maxIterations) {
-        scheduledExecutorService.shutdownNow();
-        return;
-      }
-      currentIterations.set(currentIterations.get() + 1);
-      playAnimationOnce(player);
-    }, 0, intervalInMillis, TimeUnit.MILLISECONDS);
-
-    particleEffectRepository.addTimer(player, scheduledExecutorService);
-  }
-
-  @Override
-  public void play(KelpPlayer... player) {
-    play(Arrays.asList(player));
-  }
-
-  private void playAnimationOnce(Collection<KelpPlayer> player) {
+  protected void playAnimationOnce(Collection<KelpPlayer> player) {
     Location firstPointBackup = firstPoint.clone();
 
     Vector line = secondPoint.clone().toVector().subtract(firstPointBackup.toVector());
