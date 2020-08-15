@@ -11,6 +11,9 @@ import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.listener.EventRegistration;
 import de.pxav.kelp.core.npc.KelpNpcRepository;
+import de.pxav.kelp.core.particle.effect.ParticleEffect;
+import de.pxav.kelp.core.particle.effect.ParticleEffectRepository;
+import de.pxav.kelp.core.particle.type.ParticleTypeVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -31,7 +34,7 @@ import java.util.logging.Level;
  *
  * @author pxav
  */
-@Plugin(name = "Kelp", version = "0.0.2-SNAPSHOT")
+@Plugin(name = "Kelp", version = "0.0.3-SNAPSHOT")
 @Author("pxav")
 @Description("A cross version spigot framework.")
 @Singleton
@@ -111,6 +114,7 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(SoundVersionTemplate.class).defineDefaults();
     injector.getInstance(KelpInventoryRepository.class).loadMaterials();
+    injector.getInstance(ParticleTypeVersionTemplate.class).defineDefaults();
     logger().log("[GENERAL] Successfully enabled KelpFramework. Have fun.");
 
     logger().log("[GENERAL] NOTE: Kelp is still under heavy development and will contain bugs. " +
@@ -125,6 +129,7 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
     injector.getInstance(SidebarRepository.class).interruptAnimations();
+    injector.getInstance(ParticleEffectRepository.class).stopAllTimers();
 
     logger().log("[VERSION] Disabling version implementation module");
     injector.getInstance(VersionBinderModule.getMainClass()).onDisable();

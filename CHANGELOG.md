@@ -31,3 +31,18 @@ The headlines with `MR <number>` stand for the major release. The following head
 * Fixed bug that CPU load was on 100% when `AnimatedInventory` was opened.
 * Fixed NPE when trying to get item tags of items with type `AIR`
 
+#### v0.0.3 (15.08.2020)
+* **The particle engine update**
+
+**NEW:** 
+* Create `ParticleType` class that maps particle type names across different versions.
+* Create version template `ParticleVersionTemplate` and a v1.8 implementation for version independent particle spawning
+* Create particle effect system to spawn complex particle effects.
+
+**FIXED:**
+* If you request a `ScheduledExecutorService` in a constructor annotated with `@Inject` by Guice, a new scheduled thread pool will be injected automatically.
+
+**NOTES**:
+This release only creates a basis of the particle system for kelp. More particle types and effects will follow in the next releases. If you have ideas for more particle effects, feel free to create an own particle effect class and open a PR for it.
+
+
