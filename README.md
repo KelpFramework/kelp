@@ -2,7 +2,7 @@
 
 > Developed by pxav (c) 2019-2020
 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version) ![GitHub issues](https://img.shields.io/github/issues/PXAV/finate-studio-java) ![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp) ![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version) ![GitHub issues](https://img.shields.io/github/issues/PXAV/kelp) ![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp) ![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
 
 
 
@@ -81,7 +81,7 @@ playerConnection.sendPacket(spawnPacket);
 
 
 
-### Feature overview
+## Feature overview
 
 - **Sidebar system:** Create sidebars - no matter if animated or just simple & casual. Use up to 32 chars per line and enjoy flicker-free updating
 - **Inventory system:** Create stunning GUIs with minimal effort, use an integrated listener system and meet helpful pre-defined or custom widgets. Never mess with changed material names anymore.
@@ -94,7 +94,12 @@ playerConnection.sendPacket(spawnPacket);
 
 
 
-### Support
+## Support & Requirements
+
+The following requirements are needed:
+* Java 8 or higher
+* A server with Linux/Windows (MacOS has not been tested sufficiently yet)
+* A spigot/paper server with one of the supported versions
 
 There are version implementations for the following version implementations available:
 
@@ -110,7 +115,33 @@ There are version implementations for the following version implementations avai
 | 1.14           | ❌         | Work in progress                                             |
 | 1.15           | ❌         | Following soon                                               |
 
+## Downloading
 
+#### Maven
+```xml
+<dependency>
+  <groupId>com.github.pxav.kelp</groupId>
+  <artifactId>core</artifactId>
+  <version>0.0.3</version>
+</dependency>
+```
+
+### Gradle
+```shell script
+implementation 'com.github.pxav.kelp:core:0.0.3'
+```
+
+### Bazel
+```shell script
+maven_jar(
+    name = "core",
+    artifact = "com.github.pxav.kelp:core:0.0.3",
+    sha1 = "4743f29c20f3b033de5fe8c1eddb374511fa31d8",
+)
+```
+
+### Pre-built files
+If you are a server owner who simply needs the jar files or a developer who does not use a built tool like Maven, you can simply download the pre-built jar files from the [Releaes page](https://github.com/PXAV/kelp/releases). There you can find all versions, but it's recommended to use the latest.
 
 ### Build from source
 
@@ -132,21 +163,13 @@ mvn install
 
 
 
-### How to use
-
-#### For server owners
-
-Put the jar file of the core module into the normal `plugins` folder of your server. Start the server and wait until Kelp has generated the required folders. Pick the right version module for your server and drag it into the `kelp_versions` folder. Reload/Restart the server and Kelp should be ready to use. **Note:** Plugins based on Kelp go into the `kelp_plugins` folder!
-
-
-
-#### For developers
+## How to use
 
 Check out the [KelpWiki](https://github.com/PXAV/kelp/wiki), where you can find tutorials about the different features of Kelp. It is not 100% complete but constantly updated. Furthermore most of the classes and methods have JavaDocs, so check them out. A separate JavaDoc page is following soon. 
 
 
 
-### Contributing
+## Contributing
 
 Currently Kelp is developed by a single developer and bug reports, feature suggestions and pull requests are very welcome. If you want to contribute to the code, have a look at our [contribution guidelines](CONTRIBUTING.md). If you have bug reports, ideas, or need support feel free to open a new issue here on GitHub. 
 
