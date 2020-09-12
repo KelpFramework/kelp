@@ -131,6 +131,15 @@ There are version implementations for the following version implementations avai
 implementation 'com.github.pxav.kelp:core:0.0.3'
 ```
 
+### Bazel
+```shell script
+maven_jar(
+    name = "core",
+    artifact = "com.github.pxav.kelp:core:0.0.3",
+    sha1 = "4743f29c20f3b033de5fe8c1eddb374511fa31d8",
+)
+```
+
 ### Pre-built files
 If you are a server owner who simply needs the jar files or a developer who does not use a built tool like Maven, you can simply download the pre-built jar files from the [Releaes page](https://github.com/PXAV/kelp/releases). There you can find all versions, but it's recommended to use the latest.
 
