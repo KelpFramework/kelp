@@ -12,6 +12,9 @@
 
   <artifactId>core</artifactId>
 
+  <name>Kelp Core</name>
+  <description>This module is used to develop plugins with the KelpFramework.</description>
+
   <repositories>
     <repository>
       <id>spigot-repo</id>
