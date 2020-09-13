@@ -11,6 +11,9 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>v1_8_implementation</artifactId>
 
+  <name>Kelp 1.8 Implementation</name>
+  <description>An implementation of the core templates in order to make kelp work on 1.8 servers.</description>
+
   <repositories>
     <repository>
       <id>spigot-repo</id>

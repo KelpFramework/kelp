@@ -11,6 +11,9 @@
 
   <artifactId>testing-module</artifactId>
 
+  <name>Kelp Testing Module</name>
+  <description>A plugin written with Kelp in order to simplify testing and demonstrate features.</description>
+
   <build>
     <plugins>
       <plugin>
