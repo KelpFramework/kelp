@@ -9,9 +9,8 @@ import de.pxav.kelp.core.command.KelpCommandRepository;
 import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
-import de.pxav.kelp.core.listener.EventRegistration;
+import de.pxav.kelp.core.listener.EventHandlerRegistration;
 import de.pxav.kelp.core.npc.KelpNpcRepository;
-import de.pxav.kelp.core.particle.effect.ParticleEffect;
 import de.pxav.kelp.core.particle.effect.ParticleEffectRepository;
 import de.pxav.kelp.core.particle.type.ParticleTypeVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
@@ -96,7 +95,7 @@ public class KelpPlugin extends JavaPlugin {
       }
     }
 
-    injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
+    injector.getInstance(EventHandlerRegistration.class).initialize(this.getClass().getPackage().getName());
 
     injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).schedule();
