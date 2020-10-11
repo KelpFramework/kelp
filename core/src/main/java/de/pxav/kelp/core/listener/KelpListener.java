@@ -25,23 +25,23 @@ public class KelpListener {
 
   private KelpEventRepository kelpEventRepository;
 
-  public Collection<Class<? extends Event>> getListenedEvents() {
+  Collection<Class<? extends Event>> getListenedEvents() {
     return listenedEvents;
   }
 
-  public Consumer<Event> getHandler() {
+  Consumer<Event> getHandler() {
     return this.handler;
   }
 
-  public Collection<Listener> getBukkitListeners() {
+  Collection<Listener> getBukkitListeners() {
     return bukkitListeners;
   }
 
-  public KelpListener(KelpEventRepository kelpEventRepository) {
+  KelpListener(KelpEventRepository kelpEventRepository) {
     this.kelpEventRepository = kelpEventRepository;
   }
 
-  public void addBukkitListener(Listener listener) {
+  void addBukkitListener(Listener listener) {
     this.bukkitListeners.add(listener);
   }
 
