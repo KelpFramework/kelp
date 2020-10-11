@@ -15,7 +15,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,7 +37,7 @@ public class KelpEventRepository {
   private KelpLogger logger;
 
   private Map<UUID, KelpListener> kelpListeners;
-  private Map<UUID, Listener> listeners;
+  private Map<UUID, Integer> timesCalled;
 
   @Inject
   public KelpEventRepository(TypeFinder typeFinder, MethodFinder methodFinder, JavaPlugin javaPlugin, Injector injector, KelpLogger logger) {
@@ -49,7 +48,7 @@ public class KelpEventRepository {
     this.logger = logger;
 
     this.kelpListeners = Maps.newHashMap();
-    this.listeners = Maps.newHashMap();
+    this.timesCalled = Maps.newHashMap();
   }
 
   public void detectSubscriptions(String... packageNames) {
@@ -98,6 +97,13 @@ public class KelpEventRepository {
           EventPriority.NORMAL,
           (listener, event) -> {
             kelpListener.getHandler().accept(event);
+            int timesCalled = this.timesCalled.getOrDefault(uuid, 0);
+            if ((timesCalled + 1) >= kelpListener.getMaxExecutions() && kelpListener.getMaxExecutions() != -1) {
+              removeListener(uuid);
+              return;
+            }
+            this.timesCalled.put(uuid, timesCalled + 1);
+
           },
           javaPlugin,
           false);

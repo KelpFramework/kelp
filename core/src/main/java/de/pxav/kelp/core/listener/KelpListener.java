@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 public class KelpListener {
 
   private Collection<Class<? extends Event>> listenedEvents = Lists.newArrayList();
+  private int maxExecutions = -1;
   private Collection<Predicate<?>> criteria = Lists.newArrayList();
   private Collection<Predicate<?>> conditionalExpires = Lists.newArrayList();
   private Consumer<Event> handler;
@@ -37,6 +38,10 @@ public class KelpListener {
     return bukkitListeners;
   }
 
+  int getMaxExecutions() {
+    return this.maxExecutions;
+  }
+
   KelpListener(KelpEventRepository kelpEventRepository) {
     this.kelpEventRepository = kelpEventRepository;
   }
@@ -52,6 +57,11 @@ public class KelpListener {
 
   public KelpListener expireIf(Predicate<?> conditionalExpiry) { // todo: add test stage!!!!
     conditionalExpires.add(conditionalExpiry);
+    return this;
+  }
+
+  public KelpListener expireAfterExecutions(int maxExecutions) {
+    this.maxExecutions = maxExecutions;
     return this;
   }
 
