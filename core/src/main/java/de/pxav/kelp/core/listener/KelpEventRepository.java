@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * A class description goes here.
@@ -96,6 +97,23 @@ public class KelpEventRepository {
           listenerInstance,
           EventPriority.NORMAL,
           (listener, event) -> {
+            boolean execute = true;
+            for (Map.Entry<ConditionalExpiryTestStage, Predicate<Event>> entry : kelpListener.getConditionalExpires().entrySet()) {
+              if (entry.getKey() != ConditionalExpiryTestStage.BEFORE_HANDLER && entry.getKey() != ConditionalExpiryTestStage.ALWAYS) {
+                continue;
+              }
+
+              if (!entry.getValue().test(event)) {
+                execute = false;
+                removeListener(uuid);
+                break;
+              }
+            }
+
+            if (!execute) {
+              return;
+            }
+
             kelpListener.getHandler().accept(event);
             int timesCalled = this.timesCalled.getOrDefault(uuid, 0);
             if ((timesCalled + 1) >= kelpListener.getMaxExecutions() && kelpListener.getMaxExecutions() != -1) {
@@ -103,6 +121,18 @@ public class KelpEventRepository {
               return;
             }
             this.timesCalled.put(uuid, timesCalled + 1);
+
+            for (Map.Entry<ConditionalExpiryTestStage, Predicate<Event>> entry : kelpListener.getConditionalExpires().entrySet()) {
+              if (entry.getKey() != ConditionalExpiryTestStage.AFTER_HANDLER && entry.getKey() != ConditionalExpiryTestStage.ALWAYS) {
+                continue;
+              }
+
+              if (!entry.getValue().test(event)) {
+                execute = false;
+                removeListener(uuid);
+                break;
+              }
+            }
 
           },
           javaPlugin,
