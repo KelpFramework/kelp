@@ -90,7 +90,7 @@ public class KelpEventRepository {
     UUID uuid = UUID.randomUUID();
     for (Class<? extends Event> listenedEvent : kelpListener.getListenedEvents()) {
       Listener listenerInstance = new Listener() {};
-      this.listeners.put(uuid, listenerInstance);
+      kelpListener.addBukkitListener(listenerInstance);
       Bukkit.getPluginManager()
         .registerEvent(
           (listenedEvent),
@@ -107,6 +107,11 @@ public class KelpEventRepository {
   }
 
   public void removeListener(UUID listenerId) {
+    if (!this.kelpListeners.containsKey(listenerId)) {
+      logger.log(LogLevel.ERROR, "Cannot remove non-existing listener (id: " + listenerId + ")");
+      return;
+    }
+
     KelpListener kelpListener = this.kelpListeners.get(listenerId);
     kelpListener.getListenedEvents().forEach((eventClass) -> {
       try {
@@ -117,6 +122,8 @@ public class KelpEventRepository {
         e.printStackTrace();
       }
     });
+
+    this.kelpListeners.remove(listenerId);
   }
 
   public void detectKelpEvents(String... packageNames) {
