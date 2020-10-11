@@ -40,4 +40,6 @@ The headlines with `MR <number>` stand for the major release. The following head
 * Create particle effect system to spawn complex particle effects.
 * If you request a `ScheduledExecutorService` in a constructor annotated with `@Inject` by Guice, a new scheduled thread pool will be injected automatically.
 
+#### v0.0.4 (date!)
 
+* Add name and description for child modules
