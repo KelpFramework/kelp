@@ -53,4 +53,12 @@ public class ServerMainThread {
 
   }
 
+  public static class RunParallel {
+
+    public static void run(Runnable runnable) {
+      Bukkit.getScheduler().scheduleSyncDelayedTask(KelpPlugin.getPlugin(KelpPlugin.class), runnable);
+    }
+
+  }
+
 }
