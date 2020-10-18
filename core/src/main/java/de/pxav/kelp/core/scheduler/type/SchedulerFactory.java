@@ -23,4 +23,8 @@ public class SchedulerFactory {
     return new RepeatingScheduler(this.kelpSchedulerRepository);
   }
 
+  public DelayedScheduler newDelayedScheduler() {
+    return new DelayedScheduler(this.kelpSchedulerRepository);
+  }
+
 }
