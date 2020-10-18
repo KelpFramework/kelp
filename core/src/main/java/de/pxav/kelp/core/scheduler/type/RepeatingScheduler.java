@@ -69,6 +69,39 @@ public class RepeatingScheduler {
     return this;
   }
 
+  /**
+   * Sets the time unit for the {@code interval} as well as {@code initialDelay}
+   * to {@code MINUTES}. This method can be used if you want to
+   * have a fluent builder design and uses {@link #timeUnit(TimeUnit)} in the background.
+   *
+   * @return
+   */
+  public RepeatingScheduler minutes() {
+    return timeUnit(TimeUnit.MINUTES);
+  }
+
+  /**
+   * Sets the time unit for the {@code interval} as well as {@code initialDelay}
+   * to {@code MILLISECONDS}. This method can be used if you want to
+   * have a fluent builder design and uses {@link #timeUnit(TimeUnit)} in the background.
+   *
+   * @return
+   */
+  public RepeatingScheduler milliseconds() {
+    return timeUnit(TimeUnit.MILLISECONDS);
+  }
+
+  /**
+   * Sets the time unit for the {@code interval} as well as {@code initialDelay}
+   * to {@code HOURS}. This method can be used if you want to
+   * have a fluent builder design and uses {@link #timeUnit(TimeUnit)} in the background.
+   *
+   * @return
+   */
+  public RepeatingScheduler hours() {
+    return timeUnit(TimeUnit.HOURS);
+  }
+
   public RepeatingScheduler withInitialDelay(int initialDelay) {
     this.initialDelay = initialDelay;
     return this;
