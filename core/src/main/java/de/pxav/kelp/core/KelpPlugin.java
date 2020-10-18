@@ -14,6 +14,7 @@ import de.pxav.kelp.core.listener.KelpEventRepository;
 import de.pxav.kelp.core.npc.KelpNpcRepository;
 import de.pxav.kelp.core.particle.effect.ParticleEffectRepository;
 import de.pxav.kelp.core.particle.type.ParticleTypeVersionTemplate;
+import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -131,6 +132,7 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
     injector.getInstance(SidebarRepository.class).interruptAnimations();
     injector.getInstance(ParticleEffectRepository.class).stopAllTimers();
+    injector.getInstance(KelpSchedulerRepository.class).interruptAll();
 
     logger().log("[VERSION] Disabling version implementation module");
     injector.getInstance(VersionBinderModule.getMainClass()).onDisable();
