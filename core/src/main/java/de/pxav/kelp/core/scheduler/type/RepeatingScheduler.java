@@ -1,7 +1,10 @@
-package de.pxav.kelp.core.scheduler;
+package de.pxav.kelp.core.scheduler.type;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
+import de.pxav.kelp.core.scheduler.KelpSchedulerRunnable;
+import de.pxav.kelp.core.scheduler.TimeConverter;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;
