@@ -2,7 +2,7 @@ package de.pxav.kelp.implementation1_8;
 
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.application.KelpApplication;
-import de.pxav.kelp.core.event.EventHandlerRegistration;
+import de.pxav.kelp.core.event.listener.EventHandlerRegistration;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.VersionImplementation;
