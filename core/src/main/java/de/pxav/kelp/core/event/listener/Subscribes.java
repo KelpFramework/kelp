@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.event;
+package de.pxav.kelp.core.event.listener;
 
 import org.bukkit.event.Event;
 

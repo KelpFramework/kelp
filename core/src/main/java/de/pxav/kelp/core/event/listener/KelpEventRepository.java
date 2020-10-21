@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.event;
+package de.pxav.kelp.core.event.listener;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
