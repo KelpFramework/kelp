@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.listener;
+package de.pxav.kelp.core.event;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
