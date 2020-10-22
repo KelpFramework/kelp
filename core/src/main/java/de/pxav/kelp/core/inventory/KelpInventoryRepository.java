@@ -3,6 +3,9 @@ package de.pxav.kelp.core.inventory;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.event.kelpevent.KelpInventoryCloseEvent;
+import de.pxav.kelp.core.event.kelpevent.KelpInventoryOpenEvent;
+import de.pxav.kelp.core.event.kelpevent.KelpInventoryUpdateEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.MaterialVersionTemplate;
 import de.pxav.kelp.core.inventory.type.AnimatedInventory;
@@ -10,6 +13,7 @@ import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.inventory.widget.Pagination;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.reflect.MethodFinder;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
 import java.lang.reflect.Method;
@@ -74,13 +78,16 @@ public class KelpInventoryRepository {
   public void openInventory(KelpInventory inventory, KelpPlayer player) {
     Inventory renderedInventory = inventory.render();
     player.getBukkitPlayer().openInventory(renderedInventory);
+    boolean animated = false;
 
     if (inventory instanceof AnimatedInventory) {
+      animated = true;
       AnimatedInventory animatedInventory = (AnimatedInventory) inventory;
       animatedInventory.scheduleUpdater(player.getBukkitPlayer());
       playerAnimations.put(player.getUUID(), animatedInventory);
     }
 
+    Bukkit.getPluginManager().callEvent(new KelpInventoryOpenEvent(player.getBukkitPlayer(), inventory, animated));
     playerInventories.put(player.getUUID(), inventory);
   }
 
@@ -94,13 +101,16 @@ public class KelpInventoryRepository {
    */
   public void closeInventory(KelpPlayer player) {
     KelpInventory inventory = this.playerInventories.get(player.getUUID());
+    boolean animated = false;
 
     // if his inventory was animated, stop the scheduler
     if (inventory instanceof AnimatedInventory) {
+      animated = true;
       AnimatedInventory animatedInventory = (AnimatedInventory) inventory;
       animatedInventory.stopUpdater();
     }
 
+    Bukkit.getPluginManager().callEvent(new KelpInventoryCloseEvent(player.getBukkitPlayer(), inventory, animated));
     this.playerInventories.remove(player.getUUID());
     this.playerAnimations.remove(player.getUUID());
     this.kelpListenerRepository.unregisterListeners(player.getUUID());
@@ -116,6 +126,7 @@ public class KelpInventoryRepository {
   public void updateInventory(KelpPlayer player) {
     KelpInventory kelpInventory = playerInventories.get(player.getUUID());
     kelpInventory.update(player);
+    Bukkit.getPluginManager().callEvent(new KelpInventoryUpdateEvent(player.getBukkitPlayer(), kelpInventory));
   }
 
   public Map<UUID, Map<Pagination, Integer>> getPlayerPages() {
