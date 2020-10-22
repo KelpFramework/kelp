@@ -122,20 +122,20 @@ There are version implementations for the following version implementations avai
 <dependency>
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>core</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
 </dependency>
 ```
 
 ### Gradle
 ```shell script
-implementation 'com.github.pxav.kelp:core:0.0.3'
+implementation 'com.github.pxav.kelp:core:0.0.4'
 ```
 
 ### Bazel
 ```shell script
 maven_jar(
     name = "core",
-    artifact = "com.github.pxav.kelp:core:0.0.3",
+    artifact = "com.github.pxav.kelp:core:0.0.4",
     sha1 = "4743f29c20f3b033de5fe8c1eddb374511fa31d8",
 )
 ```
