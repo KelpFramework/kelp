@@ -32,6 +32,11 @@ public class PlayerInventoryStateListener {
   @EventHandler
   public void handlePlayerInventoryClose(InventoryCloseEvent event) {
     KelpPlayer kelpPlayer = playerRepository.getKelpPlayer((Player) event.getPlayer());
+
+    if (kelpPlayer == null) {
+      return;
+    }
+
     kelpPlayer.closeInventory();
   }
 
