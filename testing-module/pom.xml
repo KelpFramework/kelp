@@ -5,11 +5,14 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>com.github.pxav.kelp</groupId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>testing-module</artifactId>
+
+  <name>Kelp Testing Module</name>
+  <description>A plugin written with Kelp in order to simplify testing and demonstrate features.</description>
 
   <build>
     <plugins>
@@ -42,7 +45,7 @@
     <dependency>
       <groupId>com.github.pxav.kelp</groupId>
       <artifactId>core</artifactId>
-      <version>0.0.3</version>
+      <version>0.0.4</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>

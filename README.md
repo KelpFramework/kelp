@@ -2,7 +2,7 @@
 
 > Developed by pxav (c) 2019-2020
 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version) ![GitHub issues](https://img.shields.io/github/issues/PXAV/kelp) ![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp) ![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version&color=green) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.pxav.kelp/core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.pxav.kelp/core)  ![GitHub issues](https://img.shields.io/github/issues/PXAV/kelp) ![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp) ![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
 
 
 
@@ -90,7 +90,9 @@ playerConnection.sendPacket(spawnPacket);
 - **Command system:** Create commands and sub-commands with complex structures and easily maintain them.
 - **Config system:** Create key-value-based configurations for your messages, etc.
 - **KelpConnect:** A simple and easy to use netty wrapper for Kelp  
-- **Particle engine:** coming soon
+- **Particle engine:** Easily create custom and prebuilt particle effects
+- **Schedulers**: Create sync and async schedulers and make use of powerful thread synchronization tools
+- **Events**: Custom events for NPCs, Inventories and more as well as new listener techniques 
 
 
 
@@ -122,20 +124,20 @@ There are version implementations for the following version implementations avai
 <dependency>
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>core</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
 </dependency>
 ```
 
 ### Gradle
 ```shell script
-implementation 'com.github.pxav.kelp:core:0.0.3'
+implementation 'com.github.pxav.kelp:core:0.0.4'
 ```
 
 ### Bazel
 ```shell script
 maven_jar(
     name = "core",
-    artifact = "com.github.pxav.kelp:core:0.0.3",
+    artifact = "com.github.pxav.kelp:core:0.0.4",
     sha1 = "4743f29c20f3b033de5fe8c1eddb374511fa31d8",
 )
 ```

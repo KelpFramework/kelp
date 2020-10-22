@@ -157,20 +157,20 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
     if (command.getPermission() != null) {
       if (bukkitPlayer.hasPermission(command.getPermission())) {
         if (executorType == ExecutorType.PLAYER_AND_CONSOLE) {
-          command.onCommand(consoleSenderFactory.newKelpConsoleSender(sender), args);
+          command.onCommand(player, args);
         } else if (executorType == ExecutorType.PLAYER_ONLY) {
           command.onCommand(player, args);
         }
         return true;
       } else if (command.getNoPermissionMessage() != null) {
-        bukkitPlayer.sendMessage(command.getNoPermissionMessage());
+        player.sendMessage(command.getNoPermissionMessage());
       } else {
-        bukkitPlayer.sendMessage("Default no permission message.");
+        player.sendMessage("Default no permission message.");
       }
       return false;
     } else {
       if (executorType == ExecutorType.PLAYER_AND_CONSOLE) {
-        command.onCommand(consoleSenderFactory.newKelpConsoleSender(sender), args);
+        command.onCommand(player, args);
       } else if (executorType == ExecutorType.PLAYER_ONLY) {
         command.onCommand(player, args);
       }

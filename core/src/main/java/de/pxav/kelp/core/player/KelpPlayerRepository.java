@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * This repository class basically handles the creation and
@@ -30,14 +32,14 @@ public class KelpPlayerRepository {
   // This map stored the KelpPlayer objects of all players by their
   // UUID. This is needed to avoid new instances to be created
   // (see factory methods)
-  private Map<UUID, KelpPlayer> kelpPlayers = Maps.newHashMap();
+  private ConcurrentMap<UUID, KelpPlayer> kelpPlayers = Maps.newConcurrentMap();
 
   // This map stores the NMS entity objects of players.
   // Those are required by the entity classes and version
   // specific, thus they are stored as a simple object in the map.
   // As an application developer you likely won't need information
   // provided by this map.
-  private Map<UUID, Object> playerEntities = Maps.newHashMap();
+  private ConcurrentMap<UUID, Object> playerEntities = Maps.newConcurrentMap();
 
   private PlayerVersionTemplate playerVersionTemplate;
   private SidebarRepository sidebarRepository;
@@ -188,6 +190,17 @@ public class KelpPlayerRepository {
       return null;
     }
     return this.newKelpPlayerFrom(bukkitPlayer);
+  }
+
+  /**
+   * Removes the player with the given {@link UUID} from the
+   * cache.
+   *
+   * @param uuid of the player to be removed.
+   */
+  public void removeKelpPlayer(UUID uuid) {
+    this.playerEntities.remove(uuid);
+    this.kelpPlayers.remove(uuid);
   }
 
   /**

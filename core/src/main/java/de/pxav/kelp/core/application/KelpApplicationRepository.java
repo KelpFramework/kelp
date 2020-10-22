@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.common.KelpFileUtils;
-import de.pxav.kelp.core.listener.EventRegistration;
+import de.pxav.kelp.core.event.listener.EventHandlerRegistration;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import javassist.bytecode.AnnotationsAttribute;
@@ -291,7 +291,7 @@ public final class KelpApplicationRepository {
                         + " with version "
                         + namePluginEntry.getValue().getInformation().getVersion());
         injector
-                .getInstance(EventRegistration.class)
+                .getInstance(EventHandlerRegistration.class)
                 .initialize(namePluginEntry.getValue().getClass().getPackage().getName());
         namePluginEntry.getValue().onEnable();
 

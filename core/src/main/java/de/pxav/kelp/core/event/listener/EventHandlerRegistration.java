@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.listener;
+package de.pxav.kelp.core.event.listener;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -30,7 +30,7 @@ import java.util.Arrays;
  * @author pxav
  */
 @Singleton
-public class EventRegistration {
+public class EventHandlerRegistration {
 
   private final MethodFinder methodSearcher;
   private final JavaPlugin javaPlugin;
@@ -38,10 +38,10 @@ public class EventRegistration {
   private final KelpLogger logger;
 
   @Inject
-  public EventRegistration(MethodFinder methodSearcher,
-                           JavaPlugin javaPlugin,
-                           Injector injector,
-                           KelpLogger logger) {
+  public EventHandlerRegistration(MethodFinder methodSearcher,
+                                  JavaPlugin javaPlugin,
+                                  Injector injector,
+                                  KelpLogger logger) {
     this.methodSearcher = methodSearcher;
     this.javaPlugin = javaPlugin;
     this.injector = injector;

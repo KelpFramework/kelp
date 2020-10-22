@@ -9,11 +9,12 @@ import de.pxav.kelp.core.command.KelpCommandRepository;
 import de.pxav.kelp.core.configuration.ConfigurationRepository;
 import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
-import de.pxav.kelp.core.listener.EventRegistration;
+import de.pxav.kelp.core.event.listener.EventHandlerRegistration;
+import de.pxav.kelp.core.event.listener.KelpEventRepository;
 import de.pxav.kelp.core.npc.KelpNpcRepository;
-import de.pxav.kelp.core.particle.effect.ParticleEffect;
 import de.pxav.kelp.core.particle.effect.ParticleEffectRepository;
 import de.pxav.kelp.core.particle.type.ParticleTypeVersionTemplate;
+import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.application.inject.SimpleBinderModule;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -34,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author pxav
  */
-@Plugin(name = "Kelp", version = "0.0.3")
+@Plugin(name = "Kelp", version = "0.0.4")
 @Author("pxav")
 @Description("A cross version spigot framework.")
 @Singleton
@@ -96,7 +97,8 @@ public class KelpPlugin extends JavaPlugin {
       }
     }
 
-    injector.getInstance(EventRegistration.class).initialize(this.getClass().getPackage().getName());
+    injector.getInstance(EventHandlerRegistration.class).initialize(this.getClass().getPackage().getName());
+    injector.getInstance(KelpEventRepository.class).detectSubscriptions(this.getClass().getPackage().getName());
 
     injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
     injector.getInstance(SidebarRepository.class).schedule();
@@ -130,6 +132,7 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
     injector.getInstance(SidebarRepository.class).interruptAnimations();
     injector.getInstance(ParticleEffectRepository.class).stopAllTimers();
+    injector.getInstance(KelpSchedulerRepository.class).interruptAll();
 
     logger().log("[VERSION] Disabling version implementation module");
     injector.getInstance(VersionBinderModule.getMainClass()).onDisable();

@@ -5,11 +5,14 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>com.github.pxav.kelp</groupId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>v_1_14_implementation</artifactId>
+
+  <name>Kelp 1.14 Implementation</name>
+  <description>An implementation of the core templates in order to make kelp work on 1.14 servers.</description>
 
   <repositories>
     <repository>
@@ -54,7 +57,7 @@
     <dependency>
       <groupId>com.github.pxav.kelp</groupId>
       <artifactId>core</artifactId>
-      <version>0.0.3</version>
+      <version>0.0.4</version>
       <exclusions>
         <exclusion>
           <groupId>org.spigotmc</groupId>
