@@ -191,6 +191,17 @@ public class KelpPlayerRepository {
   }
 
   /**
+   * Removes the player with the given {@link UUID} from the
+   * cache.
+   *
+   * @param uuid of the player to be removed.
+   */
+  public void removeKelpPlayer(UUID uuid) {
+    this.playerEntities.remove(uuid);
+    this.kelpPlayers.remove(uuid);
+  }
+
+  /**
    * Creates a new {@code KelpPlayer} instance and automatically
    * injects all dependencies needed.
    *
