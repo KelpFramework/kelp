@@ -90,7 +90,9 @@ playerConnection.sendPacket(spawnPacket);
 - **Command system:** Create commands and sub-commands with complex structures and easily maintain them.
 - **Config system:** Create key-value-based configurations for your messages, etc.
 - **KelpConnect:** A simple and easy to use netty wrapper for Kelp  
-- **Particle engine:** coming soon
+- **Particle engine:** Easily create custom and prebuilt particle effects
+- **Schedulers**: Create sync and async schedulers and make use of powerful thread synchronization tools
+- **Events**: Custom events for NPCs, Inventories and more as well as new listener techniques 
 
 
 
