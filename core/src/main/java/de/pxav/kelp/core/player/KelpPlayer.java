@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.player;
 
+import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
@@ -8,6 +9,7 @@ import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
+import de.pxav.kelp.core.player.chat.DefaultFontSize;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
@@ -771,6 +773,81 @@ public class KelpPlayer extends LivingKelpEntity {
       playerVersionTemplate.sendMessage(bukkitPlayer, message);
     }
     return this;
+  }
+
+  public void sendCenteredMessage(String message) {
+    Preconditions.checkNotNull(message);
+    if(message.equals("")) {
+      this.sendMessage("");
+    }
+
+    final int CENTER_PX = 154;
+    int messagePxSize = 0;
+    boolean previousCode = false;
+    boolean isBold = false;
+
+    for(char c : message.toCharArray()){
+      if(c == '§') {
+        previousCode = true;
+        continue;
+      }
+
+      if(previousCode) {
+        previousCode = false;
+        isBold = c == 'l' || c == 'L';
+      } else {
+        DefaultFontSize dFI = DefaultFontSize.getDefaultFontInfo(c);
+        messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+        messagePxSize++;
+      }
+    }
+
+    int halvedMessageSize = messagePxSize / 2;
+    int toCompensate = CENTER_PX - halvedMessageSize;
+    int spaceLength = DefaultFontSize.SPACE.getLength() + 1;
+    int compensated = 0;
+    StringBuilder sb = new StringBuilder();
+    while(compensated < toCompensate){
+      sb.append(" ");
+      compensated += spaceLength;
+    }
+    this.sendMessage(sb.toString() + message);
+  }
+
+  public void sendCenteredMessages(String... messages) {
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+  }
+
+  public void sendCenteredMessages(Collection<String> messages) {
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+  }
+
+  public void sendCenteredMessages(String header, String footer, String... messages) {
+    if (header != null) {
+      this.sendMessage(header);
+    }
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+    if (footer != null) {
+      this.sendMessage(footer);
+    }
+  }
+
+  public void sendCenteredMessages(String header, Collection<String> messages, String footer) {
+    if (header != null) {
+      this.sendMessage(header);
+    }
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+    if (footer != null) {
+      this.sendMessage(footer);
+    }
   }
 
   public Player getBukkitPlayer() {
