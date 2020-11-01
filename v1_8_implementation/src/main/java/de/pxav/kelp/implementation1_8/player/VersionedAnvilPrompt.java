@@ -13,6 +13,7 @@ import de.pxav.kelp.core.player.prompt.PromptResponseType;
 import de.pxav.kelp.core.player.prompt.SimplePromptResponseHandler;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
 import de.pxav.kelp.core.version.Versioned;
+import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +21,9 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -42,6 +45,7 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
   private KelpPlayerRepository playerRepository;
 
   private ConcurrentMap<UUID, SimplePromptResponseHandler> promptHandlers = Maps.newConcurrentMap();
+  private ConcurrentMap<UUID, Runnable> onCloseRunnables = Maps.newConcurrentMap();
 
   @Inject
   public VersionedAnvilPrompt(MaterialRepository materialRepository, KelpPlayerRepository playerRepository) {
@@ -50,7 +54,11 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
   }
 
   @Override
-  public void openPrompt(KelpPlayer player, String initialText, KelpMaterial sourceMaterial, SimplePromptResponseHandler handler) {
+  public void openPrompt(KelpPlayer player,
+                         String initialText,
+                         KelpMaterial sourceMaterial,
+                         Runnable onClose,
+                         SimplePromptResponseHandler handler) {
     CraftPlayer craftPlayer = (CraftPlayer) player.getBukkitPlayer();
     EntityHuman entityHuman = craftPlayer.getHandle();
 
@@ -84,6 +92,7 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     entityHuman.activeContainer.addSlotListener(craftPlayer.getHandle());
 
     this.promptHandlers.put(player.getUUID(), handler);
+    this.onCloseRunnables.put(player.getUUID(), onClose);
 
   }
 
@@ -114,18 +123,48 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
         sourceMaterial = materialRepository.getKelpMaterial(itemStack.getType().toString());
       }
 
+      Runnable onClose = this.onCloseRunnables.get(player.getUniqueId());
       Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
-        this.openPrompt(kelpPlayer, displayName, sourceMaterial, handler);
+        this.openPrompt(kelpPlayer,
+          displayName,
+          sourceMaterial,
+          onClose,
+          handler);
       }, 1);
 
       return;
     }
 
     event.getClickedInventory().clear();
-    player.closeInventory();
+
     this.promptHandlers.remove(player.getUniqueId());
+    this.onCloseRunnables.remove(player.getUniqueId());
+
+    player.closeInventory();
   }
 
-  // todo: fix inv close bug
+  @EventHandler
+  public void handleAnvilClose(InventoryCloseEvent event) {
+    if (!(event.getPlayer() instanceof Player)
+      || event.getInventory() == null
+      || event.getInventory().getType() != InventoryType.ANVIL
+      || !promptHandlers.containsKey(event.getPlayer().getUniqueId())) {
+      return;
+    }
+
+    event.getInventory().clear();
+
+    Player player = (Player) event.getPlayer();
+
+    if (this.promptHandlers.containsKey(player.getUniqueId())) {
+      Runnable onClose = this.onCloseRunnables.get(player.getUniqueId());
+
+      Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), onClose, 1);
+
+      this.onCloseRunnables.remove(player.getUniqueId());
+      this.promptHandlers.remove(player.getUniqueId());
+    }
+
+  }
 
 }
