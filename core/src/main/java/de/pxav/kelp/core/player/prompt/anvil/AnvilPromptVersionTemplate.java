@@ -13,6 +13,10 @@ import de.pxav.kelp.core.player.prompt.SimplePromptResponseHandler;
 @KelpVersionTemplate
 public abstract class AnvilPromptVersionTemplate {
 
-  public abstract void openPrompt(KelpPlayer player, String initialText, KelpMaterial sourceMaterial, SimplePromptResponseHandler handler);
+  public abstract void openPrompt(KelpPlayer player,
+                                  String initialText,
+                                  KelpMaterial sourceMaterial,
+                                  Runnable onClose,
+                                  SimplePromptResponseHandler handler);
 
 }
