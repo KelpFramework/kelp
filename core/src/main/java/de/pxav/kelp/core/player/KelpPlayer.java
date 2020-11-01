@@ -9,7 +9,7 @@ import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
-import de.pxav.kelp.core.player.chat.DefaultFontSize;
+import de.pxav.kelp.core.player.prompt.chat.DefaultFontSize;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;

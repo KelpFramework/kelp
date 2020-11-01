@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.player.chat;
+package de.pxav.kelp.core.player.prompt.chat;
 
 /**
  * https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
