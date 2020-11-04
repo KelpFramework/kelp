@@ -10,8 +10,12 @@ import de.pxav.kelp.core.inventory.material.MaterialRepository;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.prompt.PromptResponseType;
+import de.pxav.kelp.core.player.prompt.PromptTimeout;
 import de.pxav.kelp.core.player.prompt.SimplePromptResponseHandler;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
+import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
+import de.pxav.kelp.core.scheduler.synchronize.ServerMainThread;
+import de.pxav.kelp.core.scheduler.type.SchedulerFactory;
 import de.pxav.kelp.core.version.Versioned;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.server.v1_8_R3.*;
@@ -23,7 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -41,13 +45,18 @@ import java.util.concurrent.ConcurrentMap;
 public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
   private MaterialRepository materialRepository;
+  private SchedulerFactory schedulerFactory;
+  private KelpSchedulerRepository schedulerRepository;
 
   private ConcurrentMap<UUID, SimplePromptResponseHandler> promptHandlers = Maps.newConcurrentMap();
   private ConcurrentMap<UUID, Runnable> onCloseRunnables = Maps.newConcurrentMap();
+  private ConcurrentMap<UUID, PromptTimeout> playerTimeouts = Maps.newConcurrentMap();
 
   @Inject
-  public VersionedAnvilPrompt(MaterialRepository materialRepository) {
+  public VersionedAnvilPrompt(MaterialRepository materialRepository, SchedulerFactory schedulerFactory, KelpSchedulerRepository schedulerRepository) {
     this.materialRepository = materialRepository;
+    this.schedulerFactory = schedulerFactory;
+    this.schedulerRepository = schedulerRepository;
   }
 
   @Override
@@ -55,6 +64,7 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
                          String initialText,
                          KelpMaterial sourceMaterial,
                          Runnable onClose,
+                         PromptTimeout timeout,
                          SimplePromptResponseHandler handler) {
     CraftPlayer craftPlayer = (CraftPlayer) player;
     EntityHuman entityHuman = craftPlayer.getHandle();
@@ -89,7 +99,41 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     entityHuman.activeContainer.addSlotListener(craftPlayer.getHandle());
 
     this.promptHandlers.put(player.getUniqueId(), handler);
-    this.onCloseRunnables.put(player.getUniqueId(), onClose);
+
+    if (onClose != null) {
+      this.onCloseRunnables.put(player.getUniqueId(), onClose);
+    } else {
+      this.onCloseRunnables.put(player.getUniqueId(), () -> {});
+    }
+
+
+    if (timeout != null) {
+      UUID task = schedulerFactory.newDelayedScheduler()
+        .withDelayOf(timeout.getTimeout())
+        .timeUnit(timeout.getTimeUnit())
+        .async()
+        .run((taskId -> {
+          this.removeFromCache(player.getUniqueId());
+            ServerMainThread.RunParallel.run(() -> {
+              if (timeout.getOnTimeout() != null && !timeout.isAsync()) {
+                timeout.getOnTimeout().run();
+              }
+
+              if (timeout.shouldCloseOnTimeout()) {
+                player.getOpenInventory().getTopInventory().clear();
+                player.closeInventory();
+              }
+            });
+
+            if (timeout.getOnTimeout() != null && timeout.isAsync()) {
+              timeout.getOnTimeout().run();
+            }
+
+        }));
+
+      timeout.setTaskId(task);
+      this.playerTimeouts.put(player.getUniqueId(), timeout);
+    }
 
   }
 
@@ -121,10 +165,14 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
       Runnable onClose = this.onCloseRunnables.get(player.getUniqueId());
       Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
+        UUID taskId = this.playerTimeouts.get(player.getUniqueId()).getTaskId();
+        this.schedulerRepository.interruptScheduler(taskId);
+
         this.openPrompt(player,
           displayName,
           sourceMaterial,
           onClose,
+          this.playerTimeouts.get(player.getUniqueId()),
           handler);
       }, 1);
 
@@ -133,8 +181,9 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
     event.getClickedInventory().clear();
 
-    this.promptHandlers.remove(player.getUniqueId());
-    this.onCloseRunnables.remove(player.getUniqueId());
+    UUID taskId = this.playerTimeouts.get(player.getUniqueId()).getTaskId();
+    this.schedulerRepository.interruptScheduler(taskId);
+    this.removeFromCache(player.getUniqueId());
 
     player.closeInventory();
   }
@@ -157,10 +206,26 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
       Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), onClose, 1);
 
-      this.onCloseRunnables.remove(player.getUniqueId());
-      this.promptHandlers.remove(player.getUniqueId());
+      this.removeFromCache(player.getUniqueId());
     }
 
+  }
+
+  @EventHandler
+  public void handlePlayerQuit(PlayerQuitEvent event) {
+    Player player = event.getPlayer();
+    if (this.promptHandlers.containsKey(player.getUniqueId())) {
+      UUID taskId = this.playerTimeouts.get(player.getUniqueId()).getTaskId();
+      this.schedulerRepository.interruptScheduler(taskId);
+
+      this.removeFromCache(player.getUniqueId());
+    }
+  }
+
+  private void removeFromCache(UUID player) {
+    this.playerTimeouts.remove(player);
+    this.promptHandlers.remove(player);
+    this.onCloseRunnables.remove(player);
   }
 
 }

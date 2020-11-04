@@ -3,6 +3,7 @@ package de.pxav.kelp.core.player.prompt.anvil;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.player.prompt.PromptTimeout;
 import de.pxav.kelp.core.player.prompt.SimplePromptResponseHandler;
 import org.bukkit.entity.Player;
 
@@ -18,6 +19,7 @@ public abstract class AnvilPromptVersionTemplate {
                                   String initialText,
                                   KelpMaterial sourceMaterial,
                                   Runnable onClose,
+                                  PromptTimeout timeout,
                                   SimplePromptResponseHandler handler);
 
 }
