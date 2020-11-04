@@ -9,7 +9,11 @@ import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
+import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
+import de.pxav.kelp.core.player.prompt.chat.ChatPromptVersionTemplate;
 import de.pxav.kelp.core.player.prompt.chat.DefaultFontSize;
+import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
+import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
@@ -49,6 +53,9 @@ public class KelpPlayer extends LivingKelpEntity {
   private SidebarRepository sidebarRepository;
   private KelpInventoryRepository inventoryRepository;
   private ParticleVersionTemplate particleVersionTemplate;
+  private SignPromptVersionTemplate signPromptVersionTemplate;
+  private AnvilPromptVersionTemplate anvilPromptVersionTemplate;
+  private ChatPromptVersionTemplate chatPromptVersionTemplate;
 
   private Player bukkitPlayer;
 
@@ -72,6 +79,9 @@ public class KelpPlayer extends LivingKelpEntity {
                     KelpInventoryRepository inventoryRepository,
                     KelpPlayerRepository kelpPlayerRepository,
                     ParticleVersionTemplate particleVersionTemplate,
+                    SignPromptVersionTemplate signPromptVersionTemplate,
+                    AnvilPromptVersionTemplate anvilPromptVersionTemplate,
+                    ChatPromptVersionTemplate chatPromptVersionTemplate,
                     EntityVersionTemplate entityVersionTemplate,
                     LivingEntityVersionTemplate livingEntityVersionTemplate,
                     UUID uuid,
@@ -89,6 +99,13 @@ public class KelpPlayer extends LivingKelpEntity {
     this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.particleVersionTemplate = particleVersionTemplate;
+    this.signPromptVersionTemplate = signPromptVersionTemplate;
+    this.chatPromptVersionTemplate = chatPromptVersionTemplate;
+    this.anvilPromptVersionTemplate = anvilPromptVersionTemplate;
+  }
+
+  public SignPrompt openSignPrompt() {
+    return new SignPrompt(this.getBukkitPlayer(), this.signPromptVersionTemplate);
   }
 
   /**
