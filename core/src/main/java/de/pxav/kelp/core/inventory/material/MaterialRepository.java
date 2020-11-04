@@ -83,6 +83,9 @@ public class MaterialRepository {
    * @return The final kelp material.
    */
   public KelpMaterial getKelpMaterial(String bukkitMaterial, short subId) {
+    if (subId == 0) {
+      return this.getKelpMaterial(bukkitMaterial);
+    }
     return materials.inverse().get(bukkitMaterial + ":" + subId);
   }
 
@@ -97,6 +100,9 @@ public class MaterialRepository {
    * @return The kelp material matching the given bukkit material.
    */
   public KelpMaterial getKelpMaterial(String bukkitMaterial, int subId) {
+    if (subId == 0) {
+      return this.getKelpMaterial(bukkitMaterial);
+    }
     return materials.inverse().get(bukkitMaterial + ":" + subId);
   }
 
