@@ -2,6 +2,7 @@ package de.pxav.kelp.core.player.prompt.sign;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -13,6 +14,6 @@ import java.util.List;
 @KelpVersionTemplate
 public abstract class SignPromptVersionTemplate {
 
-  public abstract void openSignPrompt(KelpPlayer player, List<String> initialText, SignPromptResponseHandler responseHandler);
+  public abstract void openSignPrompt(Player player, List<String> initialLines, SignPromptResponseHandler responseHandler);
 
 }

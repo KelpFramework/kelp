@@ -107,7 +107,7 @@ public class GlobalPacketListener {
           if (responseType == PromptResponseType.TRY_AGAIN) {
             signPrompt.resetBlockAndRemove(player.getUniqueId());
             Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
-              signPrompt.openSignPrompt(playerRepository.getKelpPlayer(player), input, handler);
+              signPrompt.openSignPrompt(player, input, handler);
             }, 1);
             return;
           }

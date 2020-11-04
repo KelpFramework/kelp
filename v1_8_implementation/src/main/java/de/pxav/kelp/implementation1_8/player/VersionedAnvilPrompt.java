@@ -28,7 +28,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
@@ -42,24 +41,22 @@ import java.util.concurrent.ConcurrentMap;
 public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
   private MaterialRepository materialRepository;
-  private KelpPlayerRepository playerRepository;
 
   private ConcurrentMap<UUID, SimplePromptResponseHandler> promptHandlers = Maps.newConcurrentMap();
   private ConcurrentMap<UUID, Runnable> onCloseRunnables = Maps.newConcurrentMap();
 
   @Inject
-  public VersionedAnvilPrompt(MaterialRepository materialRepository, KelpPlayerRepository playerRepository) {
+  public VersionedAnvilPrompt(MaterialRepository materialRepository) {
     this.materialRepository = materialRepository;
-    this.playerRepository = playerRepository;
   }
 
   @Override
-  public void openPrompt(KelpPlayer player,
+  public void openPrompt(Player player,
                          String initialText,
                          KelpMaterial sourceMaterial,
                          Runnable onClose,
                          SimplePromptResponseHandler handler) {
-    CraftPlayer craftPlayer = (CraftPlayer) player.getBukkitPlayer();
+    CraftPlayer craftPlayer = (CraftPlayer) player;
     EntityHuman entityHuman = craftPlayer.getHandle();
 
     BlockPosition blockPosition = new BlockPosition(0, 0, 0);
@@ -91,8 +88,8 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     entityHuman.activeContainer.windowId = containerId;
     entityHuman.activeContainer.addSlotListener(craftPlayer.getHandle());
 
-    this.promptHandlers.put(player.getUUID(), handler);
-    this.onCloseRunnables.put(player.getUUID(), onClose);
+    this.promptHandlers.put(player.getUniqueId(), handler);
+    this.onCloseRunnables.put(player.getUniqueId(), onClose);
 
   }
 
@@ -115,7 +112,6 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     PromptResponseType responseType = handler.accept(displayName);
 
     if (responseType == PromptResponseType.TRY_AGAIN) {
-      KelpPlayer kelpPlayer = playerRepository.getKelpPlayer(player);
       KelpMaterial sourceMaterial;
       if (itemStack.getDurability() != 0) {
         sourceMaterial = materialRepository.getKelpMaterial(itemStack.getType().toString(), itemStack.getDurability());
@@ -125,7 +121,7 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
       Runnable onClose = this.onCloseRunnables.get(player.getUniqueId());
       Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
-        this.openPrompt(kelpPlayer,
+        this.openPrompt(player,
           displayName,
           sourceMaterial,
           onClose,
