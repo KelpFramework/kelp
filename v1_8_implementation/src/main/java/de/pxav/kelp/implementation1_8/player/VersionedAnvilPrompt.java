@@ -156,16 +156,13 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     }
 
     ItemStack itemStack = event.getCurrentItem();
-    String displayName = itemStack.getItemMeta().getDisplayName();
+    String displayName = itemStack.getItemMeta().getDisplayName() != null
+      ? itemStack.getItemMeta().getDisplayName()
+      : materialRepository.getKelpMaterial(itemStack.getType().toString(), itemStack.getDurability()).toString();
     PromptResponseType responseType = handler.accept(displayName);
 
     if (responseType == PromptResponseType.TRY_AGAIN) {
-      KelpMaterial sourceMaterial;
-      if (itemStack.getDurability() != 0) {
-        sourceMaterial = materialRepository.getKelpMaterial(itemStack.getType().toString(), itemStack.getDurability());
-      } else {
-        sourceMaterial = materialRepository.getKelpMaterial(itemStack.getType().toString());
-      }
+      KelpMaterial sourceMaterial = materialRepository.getKelpMaterial(itemStack.getType().toString(), itemStack.getDurability());
 
       Runnable onClose = this.onCloseRunnables.get(player.getUniqueId());
       Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
