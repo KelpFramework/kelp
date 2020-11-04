@@ -9,6 +9,7 @@ import de.pxav.kelp.core.player.PlayerChatVisibility;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptResponseHandler;
 import de.pxav.kelp.core.player.prompt.PromptResponseType;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
+import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
 import de.pxav.kelp.implementation1_8.player.VersionedSignPrompt;
 import io.netty.channel.*;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -22,6 +23,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A class description goes here.
@@ -33,12 +35,17 @@ public class GlobalPacketListener {
   private KelpPlayerRepository playerRepository;
   private ReflectionUtil reflectionUtil;
   private VersionedSignPrompt signPrompt;
+  private KelpSchedulerRepository schedulerRepository;
 
   @Inject
-  public GlobalPacketListener(KelpPlayerRepository playerRepository, ReflectionUtil reflectionUtil, VersionedSignPrompt signPrompt) {
+  public GlobalPacketListener(KelpPlayerRepository playerRepository,
+                              ReflectionUtil reflectionUtil,
+                              VersionedSignPrompt signPrompt,
+                              KelpSchedulerRepository schedulerRepository) {
     this.playerRepository = playerRepository;
     this.reflectionUtil = reflectionUtil;
     this.signPrompt = signPrompt;
+    this.schedulerRepository = schedulerRepository;
   }
 
   @EventHandler
@@ -107,11 +114,15 @@ public class GlobalPacketListener {
           if (responseType == PromptResponseType.TRY_AGAIN) {
             signPrompt.resetBlockAndRemove(player.getUniqueId());
             Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
-              signPrompt.openSignPrompt(player, input, handler);
+              UUID taskId = signPrompt.getTimeout(player.getUniqueId()).getTaskId();
+              schedulerRepository.interruptScheduler(taskId);
+              signPrompt.openSignPrompt(player, input, signPrompt.getTimeout(player.getUniqueId()), handler);
             }, 1);
             return;
           }
 
+          UUID taskId = signPrompt.getTimeout(player.getUniqueId()).getTaskId();
+          schedulerRepository.interruptScheduler(taskId);
           signPrompt.resetBlockAndRemove(player.getUniqueId());
 
         }
