@@ -151,6 +151,10 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     Player player = (Player) event.getWhoClicked();
     SimplePromptResponseHandler handler = this.promptHandlers.get(player.getUniqueId());
 
+    if (player.getLevel() >= 1) {
+      player.setLevel(player.getLevel());
+    }
+
     ItemStack itemStack = event.getCurrentItem();
     String displayName = itemStack.getItemMeta().getDisplayName();
     PromptResponseType responseType = handler.accept(displayName);
