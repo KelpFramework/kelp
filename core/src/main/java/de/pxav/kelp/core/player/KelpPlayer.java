@@ -13,6 +13,7 @@ import de.pxav.kelp.core.player.prompt.anvil.AnvilPrompt;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
 import de.pxav.kelp.core.player.prompt.chat.ChatPromptVersionTemplate;
 import de.pxav.kelp.core.player.prompt.chat.DefaultFontSize;
+import de.pxav.kelp.core.player.prompt.chat.SimpleChatPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
@@ -111,6 +112,10 @@ public class KelpPlayer extends LivingKelpEntity {
 
   public AnvilPrompt openAnvilPrompt() {
     return new AnvilPrompt(this.getBukkitPlayer(), this.anvilPromptVersionTemplate);
+  }
+
+  public SimpleChatPrompt openSimpleChatPrompt() {
+    return new SimpleChatPrompt(this.getBukkitPlayer(), this.chatPromptVersionTemplate);
   }
 
   /**
