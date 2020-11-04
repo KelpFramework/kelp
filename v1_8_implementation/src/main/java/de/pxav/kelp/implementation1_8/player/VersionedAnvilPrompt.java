@@ -207,6 +207,8 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
       Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), onClose, 1);
 
+      UUID taskId = this.playerTimeouts.get(player.getUniqueId()).getTaskId();
+      this.schedulerRepository.interruptScheduler(taskId);
       this.removeFromCache(player.getUniqueId());
     }
 
