@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * This repository class is used to save all material names of the
@@ -50,6 +51,14 @@ public class MaterialRepository {
   public String getMaterial(String kelpMaterialName) {
     KelpMaterial kelpMaterial = KelpMaterial.valueOf(kelpMaterialName);
     return this.getMaterial(kelpMaterial);
+  }
+
+  public MaterialContainer getBukkitMaterial(KelpMaterial kelpMaterial) {
+    String[] format = materials.get(kelpMaterial).split(":");
+    if (format.length == 1) {
+      return new MaterialContainer(format[0], (short) 0);
+    }
+    return new MaterialContainer(format[0], Short.parseShort(format[1]));
   }
 
   /**
