@@ -4,12 +4,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.player.PlayerVersionTemplate;
+import de.pxav.kelp.core.player.bossbar.BossBarColor;
+import de.pxav.kelp.core.player.bossbar.BossBarStyle;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -18,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -33,12 +37,14 @@ import java.util.UUID;
 public class VersionedPlayer extends PlayerVersionTemplate {
 
   private SoundRepository soundRepository;
+  private BossBarLocationUpdater bossBarLocationUpdater;
   private JavaPlugin plugin;
 
   @Inject
-  public VersionedPlayer(SoundRepository soundRepository, JavaPlugin plugin) {
+  public VersionedPlayer(SoundRepository soundRepository, JavaPlugin plugin, BossBarLocationUpdater bossBarLocationUpdater) {
     this.soundRepository = soundRepository;
     this.plugin = plugin;
+    this.bossBarLocationUpdater = bossBarLocationUpdater;
   }
 
   /**
@@ -1119,6 +1125,45 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   @Override
   public void sendMessage(Player player, String message) {
     player.sendMessage(message);
+  }
+
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it. If you use this
+   * method in 1.8, please keep in mind that bar colors other than {@code PURPLE} and bar styles
+   * other than {@code SOLID} are not supported.
+   *
+   * @param player    The player you want to send the message to.
+   * @param message   The message you want to be displayed above the boss bar.
+   * @param barColor  The color of the boss bar. Please note that in 1.8 only
+   *                  {@code PURPLE} is allowed. If you use any color, no exception
+   *                  is thrown but purple will be chosen automatically.
+   * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
+   *                  in 1.8 only {@code SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@code SOLID} is chosen
+   *                  automatically.
+   */
+  @Override
+  public void sendBossBar(Player player, String message, BossBarColor barColor, BossBarStyle barStyle) {
+    CraftPlayer craftPlayer = (CraftPlayer) player;
+    Vector direction = craftPlayer.getLocation().getDirection();
+    Location location = craftPlayer.getLocation().add(direction.multiply(40));
+
+    if (location.getY() < 1) {
+      location.setY(1);
+    }
+
+    EntityWither entityWither = new EntityWither(craftPlayer.getHandle().getWorld());
+    entityWither.setInvisible(true);
+    entityWither.setCustomName((message == null ? "Custom Boss Bar Message." : message));
+    entityWither.setCustomNameVisible(false);
+    entityWither.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
+
+    PacketPlayOutSpawnEntityLiving spawnPacket = new PacketPlayOutSpawnEntityLiving(entityWither);
+    craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
+
+    bossBarLocationUpdater.remove(player.getUniqueId());
+    bossBarLocationUpdater.add(player.getUniqueId(), entityWither.getId(), message);
+
   }
 
   /**

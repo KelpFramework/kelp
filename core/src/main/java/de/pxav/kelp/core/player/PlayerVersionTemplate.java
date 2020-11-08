@@ -1,8 +1,11 @@
 package de.pxav.kelp.core.player;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.player.bossbar.BossBarColor;
+import de.pxav.kelp.core.player.bossbar.BossBarStyle;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.*;
+import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
@@ -887,5 +890,7 @@ public abstract class PlayerVersionTemplate {
    * @param message   The message itself. May contain color codes.
    */
   public abstract void sendMessage(Player player, String message);
+
+  public abstract void sendBossBar(Player player, String message, BossBarColor barColor, BossBarStyle barStyle);
 
 }
