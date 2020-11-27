@@ -10,6 +10,7 @@ import de.pxav.kelp.core.connect.connection.ConnectionProperties;
 import de.pxav.kelp.core.connect.server.Server;
 import de.pxav.kelp.core.connect.server.ServerProperties;
 import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.testing.packet.DefaultConnectionPropertiesFactory;
 import de.pxav.kelp.testing.packet.DefaultPacketOperator;
 import de.pxav.kelp.testing.packet.PingPacket;
@@ -44,7 +45,8 @@ public class KelpTesting extends KelpApplication {
   public void onEnable() {
     getInstance(ConfigurationRepository.class).loadAll("de.pxav.kelp.testing");
     getInstance(KelpCommandRepository.class).loadCommands("de.pxav.kelp.testing");
-    setupConnect();
+    getInstance(SidebarRepository.class).loadSidebars("de.pxav.kelp.testing");
+    //setupConnect();
   }
 
   private void setupConnect() {
@@ -80,6 +82,6 @@ public class KelpTesting extends KelpApplication {
   public void onDisable() {
     getInstance(KelpConnect.class).closeAllConnections();
 
-    server.close();
+    //server.close();
   }
 }

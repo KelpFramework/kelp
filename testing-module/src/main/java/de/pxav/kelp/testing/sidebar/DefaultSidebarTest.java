@@ -1,5 +1,6 @@
 package de.pxav.kelp.testing.sidebar;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.animation.TextAnimationFactory;
@@ -23,6 +24,7 @@ public class DefaultSidebarTest {
   private SidebarRepository sidebarRepository;
   private TextAnimationFactory textAnimationFactory;
 
+  @Inject
   public DefaultSidebarTest(SidebarFactory sidebarFactory,
                             SidebarComponentFactory sidebarComponentFactory,
                             SidebarRepository sidebarRepository,
@@ -51,6 +53,6 @@ public class DefaultSidebarTest {
             .addComponent(sidebarComponentFactory
                     .simpleTextComponent()
                     .text(player.getName())
-                    .line(8));
+                    .line(7));
   }
 }
