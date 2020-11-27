@@ -52,6 +52,7 @@
   <modules>
     <module>core</module>
     <module>v1_8_implementation</module>
+    <module>v1_12_implementation</module>
     <module>testing-module</module>
     <module>v_1_14_implementation</module>
   </modules>
