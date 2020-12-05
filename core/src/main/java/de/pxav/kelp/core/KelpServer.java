@@ -1,6 +1,7 @@
 package de.pxav.kelp.core;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
@@ -18,6 +19,11 @@ import java.util.Collection;
 public class KelpServer {
 
   private KelpPlayerRepository kelpPlayerRepository;
+
+  @Inject
+  public KelpServer(KelpPlayerRepository kelpPlayerRepository) {
+    this.kelpPlayerRepository = kelpPlayerRepository;
+  }
 
   public KelpVersion getVersion() {
     return KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
@@ -37,10 +43,30 @@ public class KelpServer {
     Bukkit.getOnlinePlayers().forEach(current -> current.sendMessage(message));
   }
 
+  public void broadcastCenteredMessage(String message) {
+    this.getOnlinePlayers().forEach(current -> current.sendCenteredMessage(message));
+  }
+
   public void broadcastMessages(String... message) {
     Bukkit.getOnlinePlayers().forEach(current -> {
       for (String s : message) {
         current.sendMessage(s);
+      }
+    });
+  }
+
+  public void broadcastCenteredMessages(String... message) {
+    this.getOnlinePlayers().forEach(current -> {
+      for (String s : message) {
+        current.sendCenteredMessage(s);
+      }
+    });
+  }
+
+  public void broadcastCenteredMessages(Collection<String> messages) {
+    this.getOnlinePlayers().forEach(current -> {
+      for (String s : messages) {
+        current.sendCenteredMessage(s);
       }
     });
   }
