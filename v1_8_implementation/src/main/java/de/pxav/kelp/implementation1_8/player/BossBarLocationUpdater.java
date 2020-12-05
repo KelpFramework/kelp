@@ -10,11 +10,13 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import javax.persistence.Entity;
@@ -73,6 +75,18 @@ public class BossBarLocationUpdater {
     entityWither.setInvisible(true);
     entityWither.setCustomName(message);
     entityWither.setCustomNameVisible(false);
+
+    BlockIterator blockIterator = new BlockIterator(craftPlayer.getLocation(), craftPlayer.getEyeHeight(),30);
+    while (blockIterator.hasNext()) {
+      Block block = blockIterator.next();
+      if (block.getType() == Material.AIR) {
+        continue;
+      }
+
+      location = block.getLocation().add(craftPlayer.getLocation().getDirection().multiply(20));
+      break;
+    }
+
     entityWither.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
 
     PacketPlayOutSpawnEntityLiving spawnPacket = new PacketPlayOutSpawnEntityLiving(entityWither);
@@ -81,49 +95,6 @@ public class BossBarLocationUpdater {
     this.add(player.getUniqueId(), entityWither.getId(), message);
 
     craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
-  }
-
-  /**
-   * Scheduler based updater may lead to a laggy behaviour of smoke particles.
-   * If move event lags to much, use this method.
-   * reminder for @pxav ^^
-   */
-  public void startScheduler() {
-    schedulerFactory.newRepeatingScheduler()
-      .async()
-      .every(1500)
-      .milliseconds()
-      .waitForTaskCompletion(true)
-      .run((taskId) -> {
-
-        if (bossBarEntities.isEmpty()) {
-          return;
-        }
-
-        bossBarEntities.forEach((uuid, entityId) -> {
-          CraftPlayer craftPlayer = (CraftPlayer) Bukkit.getPlayer(uuid);
-          Vector direction = craftPlayer.getLocation().getDirection();
-          Location location = craftPlayer.getLocation().add(direction.multiply(20));
-          String message = this.bossBarMessages.getOrDefault(uuid, "Custom Boss Bar Message");
-
-          EntityWither entityWither = new EntityWither(craftPlayer.getHandle().getWorld());
-          entityWither.setInvisible(true);
-          entityWither.setCustomName(message);
-          entityWither.setCustomNameVisible(false);
-          entityWither.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
-
-          PacketPlayOutSpawnEntityLiving spawnPacket = new PacketPlayOutSpawnEntityLiving(entityWither);
-
-          this.remove(uuid);
-          this.add(uuid, entityWither.getId(), message);
-
-          ServerMainThread.RunParallel.run(() -> {
-            craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
-          });
-
-        });
-
-      });
   }
 
   @EventHandler
