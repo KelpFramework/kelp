@@ -35,4 +35,8 @@ public class KelpInventoryOpenEvent extends PlayerEvent {
     return handlers;
   }
 
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
+
 }
