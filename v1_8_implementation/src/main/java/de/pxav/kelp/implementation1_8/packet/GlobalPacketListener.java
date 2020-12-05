@@ -3,6 +3,8 @@ package de.pxav.kelp.implementation1_8.packet;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.event.kelpevent.KelpPlayerUpdateSettingsEvent;
+import de.pxav.kelp.core.event.kelpevent.SettingsUpdateStage;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
@@ -92,6 +94,13 @@ public class GlobalPacketListener {
             .setPlayerChatColorEnabledInternally(chatColorEnabled)
             .setPlayerChatVisibilityInternally(chatVisibility);
           playerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
+
+          Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(player,
+            SettingsUpdateStage.PACKET_PLAY_IN,
+            language,
+            viewDistance,
+            chatVisibility,
+            chatColorEnabled));
 
           return;
         }

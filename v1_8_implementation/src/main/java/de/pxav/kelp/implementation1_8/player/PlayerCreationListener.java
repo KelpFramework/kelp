@@ -1,6 +1,8 @@
 package de.pxav.kelp.implementation1_8.player;
 
 import com.google.inject.Inject;
+import de.pxav.kelp.core.event.kelpevent.KelpPlayerUpdateSettingsEvent;
+import de.pxav.kelp.core.event.kelpevent.SettingsUpdateStage;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
@@ -56,6 +58,12 @@ public class PlayerCreationListener {
         kelpPlayer.setPlayerChatColorEnabledInternally(true);
         globalPacketListener.injectPacketListener(current);
         kelpPlayerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
+        Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(current,
+          SettingsUpdateStage.PLUGIN_STARTUP,
+          "en_US",
+          Bukkit.getViewDistance(),
+          PlayerChatVisibility.SHOW_ALL_MESSAGES,
+          true));
       } catch (NoSuchElementException ignore) {
         // if the player has quit during the reload, immediately remove it
         // from the cache again.
