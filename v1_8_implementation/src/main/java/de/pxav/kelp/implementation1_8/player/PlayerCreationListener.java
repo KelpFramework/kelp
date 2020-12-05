@@ -58,7 +58,7 @@ public class PlayerCreationListener {
         kelpPlayer.setPlayerChatColorEnabledInternally(true);
         globalPacketListener.injectPacketListener(current);
         kelpPlayerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
-        Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(current,
+        Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(kelpPlayer,
           SettingsUpdateStage.PLUGIN_STARTUP,
           "en_US",
           Bukkit.getViewDistance(),

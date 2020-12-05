@@ -88,19 +88,20 @@ public class GlobalPacketListener {
           }
 
           KelpPlayer kelpPlayer = playerRepository.getKelpPlayer(player);
+
+          Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(kelpPlayer,
+            SettingsUpdateStage.PACKET_PLAY_IN,
+            language,
+            viewDistance,
+            chatVisibility,
+            chatColorEnabled));
+
           kelpPlayer
             .setClientLanguageInternally(language)
             .setClientViewDistanceInternally(viewDistance)
             .setPlayerChatColorEnabledInternally(chatColorEnabled)
             .setPlayerChatVisibilityInternally(chatVisibility);
           playerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
-
-          Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(player,
-            SettingsUpdateStage.PACKET_PLAY_IN,
-            language,
-            viewDistance,
-            chatVisibility,
-            chatColorEnabled));
 
           return;
         }
