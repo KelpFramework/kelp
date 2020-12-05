@@ -20,7 +20,7 @@ public final class KelpDefaultConfiguration extends KelpConfiguration {
 
   @Override
   public void defineDefaults() {
-    defaultValues.add(new ConfigurationAttribute(developmentMode(), false));
+    add(developmentMode(), false);
   }
 
   public String developmentMode() {
