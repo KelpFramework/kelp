@@ -1,5 +1,8 @@
 package de.pxav.kelp.core.player.message;
 
+import java.io.File;
+import java.net.URL;
+
 /**
  * A class description goes here.
  *
@@ -47,6 +50,60 @@ public class MessageComponent {
   public MessageComponent executeCommandOnClick(String command) {
     this.clickAction = MessageClickAction.EXECUTE_COMMAND;
     this.clickValue = command;
+    return this;
+  }
+
+  public MessageComponent suggestCommandOnClick(String command) {
+    this.clickAction = MessageClickAction.SUGGEST_COMMAND;
+    this.clickValue = command;
+    return this;
+  }
+
+  public MessageComponent openURLOnClick(String url) {
+    this.clickAction = MessageClickAction.OPEN_URL;
+    this.clickValue = url;
+    return this;
+  }
+
+  public MessageComponent openURLOnClick(URL url) {
+    this.clickAction = MessageClickAction.OPEN_URL;
+    this.clickValue = url.getPath();
+    return this;
+  }
+
+  public MessageComponent openFileOnClick(URL url) {
+    this.clickAction = MessageClickAction.OPEN_FILE;
+    this.clickValue = url.getPath();
+    return this;
+  }
+
+  public MessageComponent openFileOnClick(File file) {
+    this.clickAction = MessageClickAction.OPEN_FILE;
+    this.clickValue = file.getPath();
+    return this;
+  }
+
+  public MessageComponent openFileOnClick(String filePath) {
+    this.clickAction = MessageClickAction.OPEN_FILE;
+    this.clickValue = filePath;
+    return this;
+  }
+
+  public MessageComponent sendChatMessageOnClick(String message) {
+    this.clickAction = MessageClickAction.SEND_CHAT_MESSAGE;
+    this.clickValue = message;
+    return this;
+  }
+
+  public MessageComponent copyToClipboardOnClick(String text) {
+    this.clickAction = MessageClickAction.COPY_TO_CLIPBOARD;
+    this.clickValue = text;
+    return this;
+  }
+
+  public MessageComponent changeBookPageOnClick(int page) {
+    this.clickAction = MessageClickAction.CHANGE_PAGE;
+    this.clickValue = page;
     return this;
   }
 
