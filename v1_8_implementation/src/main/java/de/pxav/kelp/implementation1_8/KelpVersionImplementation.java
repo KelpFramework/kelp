@@ -35,7 +35,6 @@ public class KelpVersionImplementation extends KelpApplication {
     getInstance(KelpLogger.class).log("Enabling v1.8 version module...");
     getInstance(EventHandlerRegistration.class).initialize("de.pxav.kelp.implementation1_8");
     getInstance(PlayerCreationListener.class).createOnStartup();
-    //getInstance(BossBarLocationUpdater.class).startScheduler();
   }
 
   @Override
