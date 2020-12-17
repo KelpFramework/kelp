@@ -2,9 +2,11 @@ package de.pxav.kelp.core.common;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class contains useful methods to work with strings
@@ -239,6 +241,66 @@ public class StringUtils {
       }
     }
     return false;
+  }
+
+  public ChatColor getChatColor(char formattingCode) {
+    return isFormattingCode(formattingCode)
+      ? ChatColor.getByChar(formattingCode)
+      : ChatColor.WHITE;
+  }
+
+  public org.bukkit.ChatColor getBukkitChatColor(char formattingCode) {
+    return isFormattingCode(formattingCode)
+      ? org.bukkit.ChatColor.getByChar(formattingCode)
+      : org.bukkit.ChatColor.WHITE;
+  }
+
+  public ChatColor getChatColor(String formattingCode) {
+    char code = formattingCode.charAt(1);
+    return isFormattingCode(code) && formattingCode.charAt(0) == '§'
+      ? ChatColor.getByChar(code)
+      : ChatColor.WHITE;
+  }
+
+  public org.bukkit.ChatColor getBukkitChatColor(String formattingCode) {
+    char code = formattingCode.charAt(1);
+    return isFormattingCode(code) && formattingCode.charAt(0) == '§'
+      ? org.bukkit.ChatColor.getByChar(code)
+      : org.bukkit.ChatColor.WHITE;
+  }
+
+  public String endsWithColorCode(String text) {
+    if (text.length() < 2) {
+      return null;
+    }
+
+    String code = text.substring(text.length() - 2);
+    if (code.charAt(0) == '§' && isColorCode(code.charAt(1))) {
+      return code;
+    }
+
+    return null;
+  }
+
+  public String endsWithFormattingCode(String text) {
+    if (text.length() < 2) {
+      return null;
+    }
+
+    String code = text.substring(text.length() - 2);
+    if (code.charAt(0) == '§' && isFormattingCode(code.charAt(1))) {
+      return code;
+    }
+
+    return null;
+  }
+
+  public char randomColorCode() {
+    return colorCodes[ThreadLocalRandom.current().nextInt(colorCodes.length - 1)];
+  }
+
+  public char randomStyleCode() {
+    return styleCodes[ThreadLocalRandom.current().nextInt(colorCodes.length - 1)];
   }
 
   /**
