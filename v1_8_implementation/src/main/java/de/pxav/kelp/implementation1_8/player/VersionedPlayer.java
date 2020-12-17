@@ -1,22 +1,27 @@
 package de.pxav.kelp.implementation1_8.player;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.inject.Inject;
+import de.pxav.kelp.core.common.StringUtils;
 import de.pxav.kelp.core.player.PlayerVersionTemplate;
 import de.pxav.kelp.core.player.bossbar.BossBarColor;
 import de.pxav.kelp.core.player.bossbar.BossBarStyle;
+import de.pxav.kelp.core.player.message.InteractiveMessage;
+import de.pxav.kelp.core.player.message.MessageClickAction;
+import de.pxav.kelp.core.player.message.MessageComponent;
+import de.pxav.kelp.core.player.message.MessageHoverAction;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.version.Versioned;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.*;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
@@ -25,6 +30,8 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -39,12 +46,17 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   private SoundRepository soundRepository;
   private BossBarLocationUpdater bossBarLocationUpdater;
   private JavaPlugin plugin;
+  private StringUtils stringUtils;
 
   @Inject
-  public VersionedPlayer(SoundRepository soundRepository, JavaPlugin plugin, BossBarLocationUpdater bossBarLocationUpdater) {
+  public VersionedPlayer(SoundRepository soundRepository,
+                         JavaPlugin plugin,
+                         BossBarLocationUpdater bossBarLocationUpdater,
+                         StringUtils stringUtils) {
     this.soundRepository = soundRepository;
     this.plugin = plugin;
     this.bossBarLocationUpdater = bossBarLocationUpdater;
+    this.stringUtils = stringUtils;
   }
 
   /**
@@ -1164,6 +1176,140 @@ public class VersionedPlayer extends PlayerVersionTemplate {
     bossBarLocationUpdater.remove(player.getUniqueId());
     bossBarLocationUpdater.add(player.getUniqueId(), entityWither.getId(), message);
 
+  }
+
+  @Override
+  public void sendInteractiveMessage(Player player, InteractiveMessage interactiveMessage) {
+    ComponentBuilder componentBuilder = new ComponentBuilder("")
+      .retain(ComponentBuilder.FormatRetention.NONE);
+    String retainedColorCode = null;
+
+    for (MessageComponent component : interactiveMessage.getComponents()) {
+
+      String message = component.getText();
+      StringBuilder tempMessage = new StringBuilder();
+      ChatColor color = ChatColor.WHITE;
+      boolean colorCode = false, formattingCode = false;
+      boolean bold = false, italic = false, underlined = false, strikethrough = false, obfuscated = false;
+
+      if (retainedColorCode != null) {
+        appendComponentBuilder(componentBuilder,
+          component,
+          new StringBuilder(""),
+          stringUtils.getChatColor(retainedColorCode),
+          false,
+          false,
+          false,
+          false,
+          false);
+        retainedColorCode = null;
+      }
+
+      retainedColorCode = stringUtils.endsWithFormattingCode(message);
+      if (retainedColorCode != null) {
+        if (message.length() <= 2) {
+          continue;
+        }
+        message = message.substring(0, message.length() - 2);
+      }
+
+      for (int i = 0; i < message.length() - 1; i++) {
+
+        if (message.charAt(i) == '§' && stringUtils.isColorCode(message.charAt(i + 1))) {
+          if (tempMessage.length() > 0) {
+            appendComponentBuilder(componentBuilder, component, tempMessage, color, bold, italic, underlined, strikethrough, obfuscated);
+          }
+          colorCode = true;
+          color = stringUtils.getChatColor(message.charAt(i + 1));
+          continue;
+        }
+
+        if (colorCode) {
+          colorCode = false;
+          continue;
+        }
+
+        if (message.charAt(i) == '§' && stringUtils.isFormattingCode(message.charAt(i + 1))) {
+          formattingCode = true;
+          ChatColor chatColor = stringUtils.getChatColor(message.charAt(i + 1));
+          switch (chatColor) {
+            case STRIKETHROUGH:
+              strikethrough = true;
+              break;
+            case MAGIC:
+              obfuscated = true;
+              break;
+            case UNDERLINE:
+              underlined = true;
+              break;
+            case ITALIC:
+              italic = true;
+              break;
+            case BOLD:
+              bold = true;
+              break;
+          }
+          continue;
+        }
+
+        if (formattingCode) {
+          formattingCode = false;
+          continue;
+        }
+
+        tempMessage.append(message.charAt(i));
+
+        if (i + 1 == message.length() - 1) {
+          tempMessage.append(message.charAt(i + 1));
+          appendComponentBuilder(componentBuilder, component, tempMessage, color, bold, italic, underlined, strikethrough, obfuscated);
+        }
+      }
+    }
+
+    player.spigot().sendMessage(componentBuilder.create());
+  }
+
+  private void appendComponentBuilder(ComponentBuilder componentBuilder,
+                                      MessageComponent component,
+                                      StringBuilder tempMessage,
+                                      ChatColor color,
+                                      boolean bold,
+                                      boolean italic,
+                                      boolean underlined,
+                                      boolean strikethrough,
+                                      boolean obfuscated) {
+    componentBuilder
+      .append(tempMessage.toString())
+      .reset()
+      .color(color);
+    if (bold) {
+      componentBuilder.bold(true);
+    } else if (italic) {
+      componentBuilder.italic(true);
+    } else if (underlined) {
+      componentBuilder.underlined(true);
+    } else if (strikethrough) {
+      componentBuilder.strikethrough(true);
+    } else if (obfuscated) {
+      componentBuilder.obfuscated(true);
+    }
+    if (tempMessage.length() > 0) {
+      applyEvents(component, componentBuilder);
+    }
+    tempMessage.setLength(0);
+  }
+
+  private ComponentBuilder applyEvents(MessageComponent component, ComponentBuilder builder) {
+    if (component.getClickAction() == MessageClickAction.EXECUTE_COMMAND) {
+      builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + component.getClickValue().toString()));
+    }
+
+    if (component.getHoverAction() == MessageHoverAction.SHOW_MESSAGE) {
+      builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+        TextComponent.fromLegacyText(component.getHoverValue().toString())));
+    }
+
+    return builder;
   }
 
   /**
