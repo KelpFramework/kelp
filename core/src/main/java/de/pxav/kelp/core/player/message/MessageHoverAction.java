@@ -7,8 +7,6 @@ package de.pxav.kelp.core.player.message;
  */
 public enum  MessageHoverAction {
 
-  SHOW_MESSAGE,
-  SHOW_ITEM_NAME,
-  SHOW_ENTITY_NAME,
+  SHOW_MESSAGE
 
 }
