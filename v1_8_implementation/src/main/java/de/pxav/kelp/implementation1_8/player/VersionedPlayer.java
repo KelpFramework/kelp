@@ -1,10 +1,11 @@
 package de.pxav.kelp.implementation1_8.player;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.common.StringUtils;
+import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.player.PlayerVersionTemplate;
 import de.pxav.kelp.core.player.bossbar.BossBarColor;
 import de.pxav.kelp.core.player.bossbar.BossBarStyle;
@@ -30,8 +31,6 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -47,16 +46,19 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   private BossBarLocationUpdater bossBarLocationUpdater;
   private JavaPlugin plugin;
   private StringUtils stringUtils;
+  private KelpLogger logger;
 
   @Inject
   public VersionedPlayer(SoundRepository soundRepository,
                          JavaPlugin plugin,
                          BossBarLocationUpdater bossBarLocationUpdater,
-                         StringUtils stringUtils) {
+                         StringUtils stringUtils,
+                         KelpLogger logger) {
     this.soundRepository = soundRepository;
     this.plugin = plugin;
     this.bossBarLocationUpdater = bossBarLocationUpdater;
     this.stringUtils = stringUtils;
+    this.logger = logger;
   }
 
   /**
@@ -1302,6 +1304,37 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   private ComponentBuilder applyEvents(MessageComponent component, ComponentBuilder builder) {
     if (component.getClickAction() == MessageClickAction.EXECUTE_COMMAND) {
       builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.SEND_CHAT_MESSAGE) {
+      builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.CHANGE_PAGE) {
+      try {
+        // The click value is converted to an integer first in order to check if the given
+        // value really is an integer and then converted back into a string to be passed
+        // as a parameter.
+        builder.event(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(Integer.parseInt(component.getClickValue().toString()))));
+      } catch (NumberFormatException e) {
+        logger.log(LogLevel.ERROR, "Error converting click value to type INTEGER. If you selected click action CHANGE_PAGE, the click value has to be an integer.");
+      }
+    }
+
+    if (component.getClickAction() == MessageClickAction.COPY_TO_CLIPBOARD) {
+      // In Spigot 1.8, this feature is not available.
+    }
+
+    if (component.getClickAction() == MessageClickAction.OPEN_FILE) {
+      builder.event(new ClickEvent(ClickEvent.Action.OPEN_FILE, component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.OPEN_URL) {
+      builder.event(new ClickEvent(ClickEvent.Action.OPEN_URL, component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.SUGGEST_COMMAND) {
+      builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, component.getClickValue().toString()));
     }
 
     if (component.getHoverAction() == MessageHoverAction.SHOW_MESSAGE) {
