@@ -3,19 +3,13 @@ package de.pxav.kelp.core.player;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.player.bossbar.BossBarColor;
 import de.pxav.kelp.core.player.bossbar.BossBarStyle;
+import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.*;
-import org.bukkit.boss.BarColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.Permissible;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
 
 import java.net.InetSocketAddress;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -892,5 +886,7 @@ public abstract class PlayerVersionTemplate {
   public abstract void sendMessage(Player player, String message);
 
   public abstract void sendBossBar(Player player, String message, BossBarColor barColor, BossBarStyle barStyle);
+
+  public abstract void sendInteractiveMessage(Player player, InteractiveMessage interactiveMessage);
 
 }

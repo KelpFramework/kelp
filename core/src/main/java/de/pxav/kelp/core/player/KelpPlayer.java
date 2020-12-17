@@ -9,6 +9,7 @@ import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
+import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPrompt;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
 import de.pxav.kelp.core.player.prompt.chat.ChatPromptVersionTemplate;
@@ -875,6 +876,10 @@ public class KelpPlayer extends LivingKelpEntity {
     if (footer != null) {
       this.sendMessage(footer);
     }
+  }
+
+  public void sendInteractiveMessage(InteractiveMessage interactiveMessage) {
+    playerVersionTemplate.sendInteractiveMessage(bukkitPlayer, interactiveMessage);
   }
 
   public Player getBukkitPlayer() {
