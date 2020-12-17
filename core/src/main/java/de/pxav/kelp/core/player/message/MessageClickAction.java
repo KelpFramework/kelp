@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.player.message;
 
-import net.md_5.bungee.api.chat.ClickEvent;
+import de.pxav.kelp.core.version.KelpVersion;
+import de.pxav.kelp.core.version.SinceKelpVersion;
 
 /**
  * A class description goes here.
@@ -14,7 +15,9 @@ public enum  MessageClickAction {
   OPEN_URL,
   OPEN_FILE,
   CHANGE_PAGE,
+  SEND_CHAT_MESSAGE,
+
+  @SinceKelpVersion(KelpVersion.MC_1_14_0)
   COPY_TO_CLIPBOARD,
-  SEND_CHAT_MESSAGE
 
 }
