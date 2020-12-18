@@ -45,6 +45,7 @@ public class PromptTimeout {
     this.timeout = timeout;
     this.timeUnit = timeUnit;
     this.onTimeout = onTimeout;
+    this.async = async;
     this.closeOnTimeout = closeOnTimeout;
   }
 
