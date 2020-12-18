@@ -86,8 +86,15 @@ public class VersionedChatPrompt extends ChatPromptVersionTemplate {
     String message = event.getMessage().replace("%", "%%");
 
     if (chatPrompt.isEchoEnabled()) {
-      String echoMessage = chatPrompt.getEchoPrefix() + message + chatPrompt.getEchoSuffix();
-      player.sendMessage(echoMessage);
+      StringBuilder echoMessage = new StringBuilder();
+      if (chatPrompt.getEchoPrefix() != null) {
+        echoMessage.append(chatPrompt.getEchoPrefix());
+      }
+      echoMessage.append(message);
+      if (chatPrompt.getEchoSuffix() != null) {
+        echoMessage.append(chatPrompt.getEchoSuffix());
+      }
+      player.sendMessage(echoMessage.toString());
     }
 
     if (message.equalsIgnoreCase(chatPrompt.getCancelFlag())) {
