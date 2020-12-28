@@ -5,6 +5,7 @@
 # Compilation files
 *.class
 target
+builds
 
 # Log files
 *.log
@@ -30,5 +31,4 @@ hs_err_pid*
 
 # Maven
 dependency-reduced-pom.xml
-
 
