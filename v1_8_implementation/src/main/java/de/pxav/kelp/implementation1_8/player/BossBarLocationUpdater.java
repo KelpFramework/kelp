@@ -62,8 +62,8 @@ public class BossBarLocationUpdater {
   }
 
   /**
-   * Adds the given player and its boss bar entity to the cache. This
-   * allows to despawn specific entities when the player quits.
+   * Adds the given player and its boss bar entity to the cache.
+   * This does not spawn a new boss bar entity for the player.
    *
    * @param player      The player whose entity should be added.
    * @param entityId    The minecraft internal id of the entity (retrievable
