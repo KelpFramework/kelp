@@ -8,7 +8,8 @@ import org.junit.Test;
 import java.util.UUID;
 
 /**
- * A class description goes here.
+ * This class contains a bunch of unit tests testing the
+ * functionality of {@link StringUtils}.
  *
  * @author pxav
  */
@@ -16,6 +17,10 @@ public class StringUtilsTest {
 
   private StringUtils stringUtils;
 
+  /**
+   * Before each test, a fresh instance of {@link StringUtils}
+   * is created for neutral, unaffected test results.
+   */
   @Before
   public void newInstance() {
     this.stringUtils = new StringUtils();
