@@ -13,6 +13,7 @@ import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.player.message.MessageClickAction;
 import de.pxav.kelp.core.player.message.MessageComponent;
 import de.pxav.kelp.core.player.message.MessageHoverAction;
+import de.pxav.kelp.core.scheduler.synchronize.ServerMainThread;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.version.Versioned;
@@ -1178,6 +1179,17 @@ public class VersionedPlayer extends PlayerVersionTemplate {
     bossBarLocationUpdater.remove(player.getUniqueId());
     bossBarLocationUpdater.add(player.getUniqueId(), entityWither.getId(), message);
 
+  }
+
+  /**
+   * Makes the boss bar disappear for the given player.
+   *
+   * @param player The player whose boss bar you want to remove.
+   */
+  @Override
+  public void removeBossBar(Player player) {
+    ServerMainThread.RunParallel.run(()
+      -> bossBarLocationUpdater.remove(player.getUniqueId()));
   }
 
   /**
