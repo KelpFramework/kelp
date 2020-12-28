@@ -189,6 +189,10 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     player.closeInventory();
   }
 
+  /**
+   *
+   * @param event
+   */
   @EventHandler
   public void handleAnvilClose(InventoryCloseEvent event) {
     if (!(event.getPlayer() instanceof Player)
@@ -214,10 +218,19 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
 
   }
 
+  /**
+   * If the player quits the server (either naturally or by a ban/kick/...)
+   * the prompt has to be closed and the player has to be removed from the
+   * cache so that the server does not wait for a response infinitely.
+   *
+   * @param event The event to listen for
+   */
   @EventHandler
   public void handlePlayerQuit(PlayerQuitEvent event) {
     Player player = event.getPlayer();
     if (this.promptHandlers.containsKey(player.getUniqueId())) {
+
+      // cancel timeout schedulers in order to avoid null pointer exceptions later
       UUID taskId = this.playerTimeouts.get(player.getUniqueId()).getTaskId();
       this.schedulerRepository.interruptScheduler(taskId);
 
@@ -225,6 +238,14 @@ public class VersionedAnvilPrompt extends AnvilPromptVersionTemplate {
     }
   }
 
+  /**
+   * Removes the given player from the cache and thus all
+   * its data including the timeout, prompt handler code
+   * and the code that is executed when the player closes
+   * the prompt manually.
+   *
+   * @param player The player to remove.
+   */
   private void removeFromCache(UUID player) {
     this.playerTimeouts.remove(player);
     this.promptHandlers.remove(player);
