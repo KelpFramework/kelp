@@ -885,8 +885,34 @@ public abstract class PlayerVersionTemplate {
    */
   public abstract void sendMessage(Player player, String message);
 
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it. If you use this
+   * method in 1.8, please keep in mind that bar colors other than {@code PURPLE} and bar styles
+   * other than {@code SOLID} are not supported.
+   *
+   * @param player    The player you want to send the message to.
+   * @param message   The message you want to be displayed above the boss bar.
+   * @param barColor  The color of the boss bar. Please note that in 1.8 only
+   *                  {@link BossBarColor#PURPLE} is allowed. If you use any color, no exception
+   *                  is thrown but purple will be chosen automatically.
+   * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
+   *                  in 1.8 only {@link BossBarStyle#SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@link BossBarStyle#SOLID} is chosen
+   *                  automatically.
+   */
   public abstract void sendBossBar(Player player, String message, BossBarColor barColor, BossBarStyle barStyle);
 
+  /**
+   * Sends an interactive message to the player. An interactive message is a message
+   * the player can click on and events (execute a command, open a url, ...) are triggered.
+   * You can also add hover events to it. You can add as many components as you want.
+   * More detailed information about how to build an interactive message can be found out
+   * in {@link InteractiveMessage}.
+   *
+   * @param player              The player who should receive this message and be able
+   *                            to interact with it.
+   * @param interactiveMessage  The actual message you want to send to the player.
+   */
   public abstract void sendInteractiveMessage(Player player, InteractiveMessage interactiveMessage);
 
 }

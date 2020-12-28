@@ -1180,12 +1180,27 @@ public class VersionedPlayer extends PlayerVersionTemplate {
 
   }
 
+  /**
+   * Sends an interactive message to the player. An interactive message is a message
+   * the player can click on and events (execute a command, open a url, ...) are triggered.
+   * You can also add hover events to it. You can add as many components as you want.
+   * More detailed information about how to build an interactive message can be found out
+   * in {@link InteractiveMessage}.
+   *
+   * @param player              The player who should receive this message and be able
+   *                            to interact with it.
+   * @param interactiveMessage  The actual message you want to send to the player.
+   */
   @Override
   public void sendInteractiveMessage(Player player, InteractiveMessage interactiveMessage) {
+    // create the component builder retaining no formatting code information so that
+    // the messages stay independent from each other.
     ComponentBuilder componentBuilder = new ComponentBuilder("")
       .retain(ComponentBuilder.FormatRetention.NONE);
     String retainedColorCode = null;
 
+    // iterate through all components of the message to add the individual events and
+    // handle the color codes correctly.
     for (MessageComponent component : interactiveMessage.getComponents()) {
 
       String message = component.getText();
@@ -1194,10 +1209,12 @@ public class VersionedPlayer extends PlayerVersionTemplate {
       boolean colorCode = false, formattingCode = false;
       boolean bold = false, italic = false, underlined = false, strikethrough = false, obfuscated = false;
 
+      // check whether a color code from the last component was retained
+      // and eventually apply it.
       if (retainedColorCode != null) {
         appendComponentBuilder(componentBuilder,
           component,
-          new StringBuilder(""),
+          new StringBuilder(),
           stringUtils.getChatColor(retainedColorCode),
           false,
           false,
@@ -1207,6 +1224,8 @@ public class VersionedPlayer extends PlayerVersionTemplate {
         retainedColorCode = null;
       }
 
+      // if the message of the current component ends with any formatting code,
+      // it is saved and applied to the next component but ignored in the current iteration.
       retainedColorCode = stringUtils.endsWithFormattingCode(message);
       if (retainedColorCode != null) {
         if (message.length() <= 2) {
@@ -1215,8 +1234,14 @@ public class VersionedPlayer extends PlayerVersionTemplate {
         message = message.substring(0, message.length() - 2);
       }
 
+      // iterate through each character of the current message and search for color and style codes.
+      // a message is basically divided every time a new color code occurs. This has to be done as the
+      // spigot component builder can only handle one color at once. Example (| is a point where the message is divided.)
+      // §8[|§aYourPlugin|§8] |§7Click ... [next component]
       for (int i = 0; i < message.length() - 1; i++) {
 
+        // if a § with a valid color code id was found, the message up to this point is
+        // appended to the component builder.
         if (message.charAt(i) == '§' && stringUtils.isColorCode(message.charAt(i + 1))) {
           if (tempMessage.length() > 0) {
             appendComponentBuilder(componentBuilder, component, tempMessage, color, bold, italic, underlined, strikethrough, obfuscated);
@@ -1226,11 +1251,15 @@ public class VersionedPlayer extends PlayerVersionTemplate {
           continue;
         }
 
+        // if a color code was detected in the last iteration, this is the
+        // id of the color code (such as 1, 2, 3, ..., a, b, ...) so we can skip this
+        // char as it was already handled.
         if (colorCode) {
           colorCode = false;
           continue;
         }
 
+        // if a formatting code is detected, it is cached and applied to the message.
         if (message.charAt(i) == '§' && stringUtils.isFormattingCode(message.charAt(i + 1))) {
           formattingCode = true;
           ChatColor chatColor = stringUtils.getChatColor(message.charAt(i + 1));
@@ -1254,13 +1283,18 @@ public class VersionedPlayer extends PlayerVersionTemplate {
           continue;
         }
 
+        // if a formatting code has been detected in the last iteration, we can skip this char.
         if (formattingCode) {
           formattingCode = false;
           continue;
         }
 
+        // append the current char to the string builder for the temporary message
+        // if this was a normal char.
         tempMessage.append(message.charAt(i));
 
+        // if we are at the last char of the message, we can append the text to the component builder
+        // and jump to the next MessageComponent if there is one.
         if (i + 1 == message.length() - 1) {
           tempMessage.append(message.charAt(i + 1));
           appendComponentBuilder(componentBuilder, component, tempMessage, color, bold, italic, underlined, strikethrough, obfuscated);
@@ -1268,9 +1302,24 @@ public class VersionedPlayer extends PlayerVersionTemplate {
       }
     }
 
+    // finally send the message to the player via spigot api call.
     player.spigot().sendMessage(componentBuilder.create());
   }
 
+  /**
+   * Appends a message to the given {@link ComponentBuilder}. Please note that every message you append
+   * using this method may only have one chat color and the formatting code applies for the entire message.
+   *
+   * @param componentBuilder    The {@link ComponentBuilder} the message should be appended to.
+   * @param component           The {@link MessageComponent} that produced this message.
+   * @param tempMessage         The actual message to send.
+   * @param color               The color of the message.
+   * @param bold                Whether the message should be printed bold.
+   * @param italic              Whether the message should be printed italic.
+   * @param underlined          Whether the message should be underlined.
+   * @param strikethrough       Whether the message should have a strikethrough.
+   * @param obfuscated          Whether the message should be obfuscated/magic.
+   */
   private void appendComponentBuilder(ComponentBuilder componentBuilder,
                                       MessageComponent component,
                                       StringBuilder tempMessage,
@@ -1301,6 +1350,13 @@ public class VersionedPlayer extends PlayerVersionTemplate {
     tempMessage.setLength(0);
   }
 
+  /**
+   * Applies the hover and click events contained in the {@link MessageComponent} to the {@link ComponentBuilder}.
+   *
+   * @param component   The {@link MessageComponent} containing the events you want to apply.
+   * @param builder     The {@link ComponentBuilder} the events should be applied to.
+   * @return The newly built {@link ComponentBuilder} containing the event data.
+   */
   private ComponentBuilder applyEvents(MessageComponent component, ComponentBuilder builder) {
     if (component.getClickAction() == MessageClickAction.EXECUTE_COMMAND) {
       builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + component.getClickValue().toString()));
