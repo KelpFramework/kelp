@@ -9,6 +9,8 @@ import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
+import de.pxav.kelp.core.player.bossbar.BossBarColor;
+import de.pxav.kelp.core.player.bossbar.BossBarStyle;
 import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPrompt;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
@@ -878,10 +880,55 @@ public class KelpPlayer extends LivingKelpEntity {
     }
   }
 
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it. If you use this
+   * method in 1.8, please keep in mind that bar colors other than {@code PURPLE} and bar styles
+   * other than {@code SOLID} are not supported.
+   *
+   * @param message   The message you want to be displayed above the boss bar.
+   * @param barColor  The color of the boss bar. Please note that in 1.8 only
+   *                  {@link BossBarColor#PURPLE} is allowed. If you use any color, no exception
+   *                  is thrown but purple will be chosen automatically.
+   * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
+   *                  in 1.8 only {@link BossBarStyle#SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@link BossBarStyle#SOLID} is chosen
+   *                  automatically.
+   */
+  public void sendBossBar(String message, BossBarColor barColor, BossBarStyle barStyle) {
+    playerVersionTemplate.sendBossBar(bukkitPlayer, message, barColor, barStyle);
+  }
+
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it.
+   * This method uses {@link BossBarColor#PURPLE} and {@link BossBarStyle#SOLID}
+   * in order to be compatible with all versions. If you want to use another style or color
+   * you can use {@link #sendBossBar(String, BossBarColor, BossBarStyle)} instead.
+   *
+   * @param message The message you want to be displayed above the boss bar.
+   */
+  public void sendBossBar(String message) {
+    playerVersionTemplate.sendBossBar(bukkitPlayer, message, BossBarColor.PURPLE, BossBarStyle.SOLID);
+  }
+
+  /**
+   * Sends an interactive message to the player. An interactive message is a message
+   * the player can click on and events (execute a command, open a url, ...) are triggered.
+   * You can also add hover events to it. You can add as many components as you want.
+   * More detailed information about how to build an interactive message can be found out
+   * in {@link InteractiveMessage}.
+   *
+   * @param interactiveMessage The interactive message you want to send to the player.
+   */
   public void sendInteractiveMessage(InteractiveMessage interactiveMessage) {
     playerVersionTemplate.sendInteractiveMessage(bukkitPlayer, interactiveMessage);
   }
 
+  /**
+   * Gets the bukkit instance of the current {@link Player}. Be aware that
+   * by using this, you might lose version independence.
+   *
+   * @return The current bukkit player instance.
+   */
   public Player getBukkitPlayer() {
     return bukkitPlayer;
   }
