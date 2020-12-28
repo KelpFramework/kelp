@@ -1,8 +1,18 @@
 package de.pxav.kelp.core.player.prompt.chat;
 
 /**
+ * This class is used to decide how big different chars appear in the chat,
+ * which is important for deciding where to put a message if it should be
+ * centered.
+ *
+ * This class is written by SirSpoodles from SpigotMC who provided a method for
+ * sending centered chat messages. Link to the corresponding spigot page:
  * https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
  *
+ * The file has been modified and some further chars have been implemented to
+ * be more universal and applicable for more use cases.
+ *
+ * @author SirSpoodles
  * @author pxav
  */
 public enum DefaultFontSize {
