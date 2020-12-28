@@ -903,6 +903,13 @@ public abstract class PlayerVersionTemplate {
   public abstract void sendBossBar(Player player, String message, BossBarColor barColor, BossBarStyle barStyle);
 
   /**
+   * Makes the boss bar disappear for the given player.
+   *
+   * @param player The player whose boss bar you want to remove.
+   */
+  public abstract void removeBossBar(Player player);
+
+  /**
    * Sends an interactive message to the player. An interactive message is a message
    * the player can click on and events (execute a command, open a url, ...) are triggered.
    * You can also add hover events to it. You can add as many components as you want.

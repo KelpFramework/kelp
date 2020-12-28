@@ -911,6 +911,13 @@ public class KelpPlayer extends LivingKelpEntity {
   }
 
   /**
+   * Makes the boss bar disappear for the player.
+   */
+  public void removeBossBar() {
+    playerVersionTemplate.removeBossBar(bukkitPlayer);
+  }
+
+  /**
    * Sends an interactive message to the player. An interactive message is a message
    * the player can click on and events (execute a command, open a url, ...) are triggered.
    * You can also add hover events to it. You can add as many components as you want.
