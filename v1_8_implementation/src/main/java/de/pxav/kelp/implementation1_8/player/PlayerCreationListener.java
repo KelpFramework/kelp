@@ -1,6 +1,7 @@
 package de.pxav.kelp.implementation1_8.player;
 
 import com.google.inject.Inject;
+import de.pxav.kelp.core.event.kelpevent.KelpPlayerLoginEvent;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerUpdateSettingsEvent;
 import de.pxav.kelp.core.event.kelpevent.SettingsUpdateStage;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -16,7 +17,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.NoSuchElementException;
 
 /**
- * A class description goes here.
+ * This class is responsible for keeping player instances over
+ * the server lifetime. When the kelp plugin instance is disabled
+ * (by a reload for example), then
  *
  * @author pxav
  */
@@ -31,19 +34,46 @@ public class PlayerCreationListener {
     this.globalPacketListener = globalPacketListener;
   }
 
+  /**
+   * Creates the player in the {@link KelpPlayerRepository} so that it can
+   * be queried by other plugins. After the player has been added, the
+   * {@link KelpPlayerLoginEvent} is called. This event should be used by kelp
+   * applications instead of the {@link PlayerLoginEvent} as it is not save
+   * whether the {@code KelpPlayer} has already been initialized.
+   *
+   * @param event The event to listen for.
+   */
   @EventHandler
   public void handlePlayerLogin(PlayerLoginEvent event) {
     kelpPlayerRepository.playerEntityObject(event.getPlayer().getUniqueId(),
       ((CraftEntity)event.getPlayer()).getHandle());
     KelpPlayer kelpPlayer = kelpPlayerRepository.newKelpPlayer(event.getPlayer());
     kelpPlayerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
+    Bukkit.getPluginManager().callEvent(new KelpPlayerLoginEvent(
+      event.getPlayer(),
+      kelpPlayer,
+      event.getHostname(),
+      event.getResult(),
+      event.getKickMessage()));
   }
 
+  /**
+   * Deletes the player from the cache as soon as they quit in
+   * order to save server performance.
+   *
+   * @param event The event to listen for.
+   */
   @EventHandler
   public void handlePlayerQuit(PlayerQuitEvent event) {
     kelpPlayerRepository.removeKelpPlayer(event.getPlayer().getUniqueId());
   }
 
+  /**
+   * Iterates through all players that are currently online and
+   * adds them to the cache. This is important as the cache is cleared
+   * after every reload and querying information about those players
+   * would lead to {@code null pointers}.
+   */
   public void createOnStartup() {
     Bukkit.getOnlinePlayers().forEach(current -> {
       // catches NoSuchElementException which occurs when a player quits
