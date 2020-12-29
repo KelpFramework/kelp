@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 public class BossBarLocationUpdater {
 
   private ConcurrentMap<UUID, Integer> bossBarEntities = Maps.newConcurrentMap();
+  private ConcurrentMap<UUID, Float> bossBarHealth = Maps.newConcurrentMap();
   private ConcurrentMap<UUID, String> bossBarMessages = Maps.newConcurrentMap();
 
   private SchedulerFactory schedulerFactory;
@@ -59,6 +60,7 @@ public class BossBarLocationUpdater {
 
     this.bossBarEntities.remove(player);
     this.bossBarMessages.remove(player);
+    this.bossBarHealth.remove(player);
   }
 
   /**
@@ -70,9 +72,21 @@ public class BossBarLocationUpdater {
    *                    with {@link Entity#getId()})
    * @param message     The boss bar message (display name of the entity. )
    */
-  public void add(UUID player, int entityId, String message) {
+  public void add(UUID player, int entityId, float health, String message) {
     this.bossBarEntities.put(player, entityId);
     this.bossBarMessages.put(player, message);
+    this.bossBarHealth.put(player, health);
+  }
+
+  public void setHealth(UUID player, float percentage) {
+    int entityId = this.bossBarEntities.get(player);
+    CraftPlayer craftPlayer = (CraftPlayer) Bukkit.getPlayer(player);
+
+    DataWatcher dataWatcher = new DataWatcher(null);
+    dataWatcher.a(6, percentage);
+
+    PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entityId, dataWatcher, true);
+    craftPlayer.getHandle().playerConnection.sendPacket(metadataPacket);
   }
 
   /**
@@ -97,14 +111,16 @@ public class BossBarLocationUpdater {
     Vector direction = craftPlayer.getLocation().getDirection();
     Location location = craftPlayer.getLocation().add(direction.multiply(40));
     String message = this.bossBarMessages.getOrDefault(player.getUniqueId(), "Custom Boss Bar Message");
+    float health = this.bossBarHealth.get(player.getUniqueId());
 
     EntityWither entityWither = new EntityWither(craftPlayer.getHandle().getWorld());
     entityWither.setInvisible(true);
     entityWither.setCustomName(message);
     entityWither.setCustomNameVisible(false);
+    entityWither.setHealth(health);
 
     // check all blocks between the player and the boss bar entity. If there are too
-    // many blocks, minecraft automatically hides the bossbar again, so the boss bar
+    // many blocks, minecraft automatically hides the boss bar again, so the boss bar
     // entity has to be moved nearer to the player in those cases to still be visible.
     BlockIterator blockIterator = new BlockIterator(craftPlayer.getLocation(), craftPlayer.getEyeHeight(),30);
     while (blockIterator.hasNext()) {
@@ -126,7 +142,7 @@ public class BossBarLocationUpdater {
     PacketPlayOutSpawnEntityLiving spawnPacket = new PacketPlayOutSpawnEntityLiving(entityWither);
 
     this.remove(player.getUniqueId());
-    this.add(player.getUniqueId(), entityWither.getId(), message);
+    this.add(player.getUniqueId(), entityWither.getId(), health, message);
 
     craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
   }
