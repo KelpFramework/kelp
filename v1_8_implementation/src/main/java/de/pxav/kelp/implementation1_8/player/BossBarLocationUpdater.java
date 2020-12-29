@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class handles the boss bar updating service. In 1.8, boss bars
@@ -78,15 +79,15 @@ public class BossBarLocationUpdater {
     this.bossBarHealth.put(player, health);
   }
 
-  public void setHealth(UUID player, float percentage) {
-    int entityId = this.bossBarEntities.get(player);
-    CraftPlayer craftPlayer = (CraftPlayer) Bukkit.getPlayer(player);
-
-    DataWatcher dataWatcher = new DataWatcher(null);
-    dataWatcher.a(6, percentage);
-
-    PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entityId, dataWatcher, true);
-    craftPlayer.getHandle().playerConnection.sendPacket(metadataPacket);
+  /**
+   * Sets the health of the player's boss bar entity with the next
+   * update performed by the move listener.
+   *
+   * @param player The player whose entity health you want to set.
+   * @param health The actual health to display (min 0f, max 300f)
+   */
+  public void setHealth(UUID player, float health) {
+    this.bossBarHealth.put(player, health);
   }
 
   /**
@@ -111,7 +112,7 @@ public class BossBarLocationUpdater {
     Vector direction = craftPlayer.getLocation().getDirection();
     Location location = craftPlayer.getLocation().add(direction.multiply(40));
     String message = this.bossBarMessages.getOrDefault(player.getUniqueId(), "Custom Boss Bar Message");
-    float health = this.bossBarHealth.get(player.getUniqueId());
+    final float health = this.bossBarHealth.get(player.getUniqueId());
 
     EntityWither entityWither = new EntityWither(craftPlayer.getHandle().getWorld());
     entityWither.setInvisible(true);
