@@ -892,15 +892,28 @@ public abstract class PlayerVersionTemplate {
    *
    * @param player    The player you want to send the message to.
    * @param message   The message you want to be displayed above the boss bar.
+   * @param health    How much the boss bar should be loaded (equivalent to how much
+   *                  health the boss entity has. 300f is a full boss bar and 0f an empty one).
    * @param barColor  The color of the boss bar. Please note that in 1.8 only
-   *                  {@link BossBarColor#PURPLE} is allowed. If you use any color, no exception
+   *                  {@code PURPLE} is allowed. If you use any color, no exception
    *                  is thrown but purple will be chosen automatically.
    * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
-   *                  in 1.8 only {@link BossBarStyle#SOLID} is supported. If you use any different
-   *                  style, no exception will be thrown, but {@link BossBarStyle#SOLID} is chosen
+   *                  in 1.8 only {@code SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@code SOLID} is chosen
    *                  automatically.
    */
-  public abstract void sendBossBar(Player player, String message, BossBarColor barColor, BossBarStyle barStyle);
+  public abstract void sendBossBar(Player player, String message, float health, BossBarColor barColor, BossBarStyle barStyle);
+
+  /**
+   * Sets the progress of the player's boss bar by modifying the
+   * health of the boss bar entity. As withers are used for that
+   * purpose, the maximum value {@code 300f} represents full boss
+   * bar and {@code 0f} would be an empty boss bar (equivalent to
+   * the wither dieing.)
+   *
+   * @param health The health of the boss bar entity.
+   */
+  public abstract void setBossBarProgress(Player player, float health);
 
   /**
    * Makes the boss bar disappear for the given player.

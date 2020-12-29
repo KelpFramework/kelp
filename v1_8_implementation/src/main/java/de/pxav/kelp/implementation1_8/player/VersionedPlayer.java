@@ -1149,6 +1149,8 @@ public class VersionedPlayer extends PlayerVersionTemplate {
    *
    * @param player    The player you want to send the message to.
    * @param message   The message you want to be displayed above the boss bar.
+   * @param health    How much the boss bar should be loaded (equivalent to how much
+   *                  health the boss entity has. 300f is a full boss bar and 0f an empty one).
    * @param barColor  The color of the boss bar. Please note that in 1.8 only
    *                  {@code PURPLE} is allowed. If you use any color, no exception
    *                  is thrown but purple will be chosen automatically.
@@ -1158,7 +1160,7 @@ public class VersionedPlayer extends PlayerVersionTemplate {
    *                  automatically.
    */
   @Override
-  public void sendBossBar(Player player, String message, BossBarColor barColor, BossBarStyle barStyle) {
+  public void sendBossBar(Player player, String message, float health, BossBarColor barColor, BossBarStyle barStyle) {
     CraftPlayer craftPlayer = (CraftPlayer) player;
     Vector direction = craftPlayer.getLocation().getDirection();
     Location location = craftPlayer.getLocation().add(direction.multiply(40));
@@ -1172,13 +1174,28 @@ public class VersionedPlayer extends PlayerVersionTemplate {
     entityWither.setCustomName((message == null ? "Custom Boss Bar Message." : message));
     entityWither.setCustomNameVisible(false);
     entityWither.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
+    entityWither.setHealth(health);
 
     PacketPlayOutSpawnEntityLiving spawnPacket = new PacketPlayOutSpawnEntityLiving(entityWither);
     craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
 
     bossBarLocationUpdater.remove(player.getUniqueId());
-    bossBarLocationUpdater.add(player.getUniqueId(), entityWither.getId(), message);
+    bossBarLocationUpdater.add(player.getUniqueId(), entityWither.getId(), health, message);
 
+  }
+
+  /**
+   * Sets the progress of the player's boss bar by modifying the
+   * health of the boss bar entity. As withers are used for that
+   * purpose, the maximum value {@code 300f} represents full boss
+   * bar and {@code 0f} would be an empty boss bar (equivalent to
+   * the wither dieing.)
+   *
+   * @param health The health of the boss bar entity.
+   */
+  @Override
+  public void setBossBarProgress(Player player, float health) {
+    bossBarLocationUpdater.setHealth(player.getUniqueId(), health);
   }
 
   /**

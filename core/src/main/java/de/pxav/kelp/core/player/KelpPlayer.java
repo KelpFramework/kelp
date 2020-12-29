@@ -886,28 +886,55 @@ public class KelpPlayer extends LivingKelpEntity {
    * other than {@code SOLID} are not supported.
    *
    * @param message   The message you want to be displayed above the boss bar.
+   * @param health    How much the boss bar should be loaded (equivalent to how much
+   *                  health the boss entity has. 300f is a full boss bar and 0f an empty one).
    * @param barColor  The color of the boss bar. Please note that in 1.8 only
-   *                  {@link BossBarColor#PURPLE} is allowed. If you use any color, no exception
+   *                  {@code PURPLE} is allowed. If you use any color, no exception
    *                  is thrown but purple will be chosen automatically.
    * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
-   *                  in 1.8 only {@link BossBarStyle#SOLID} is supported. If you use any different
-   *                  style, no exception will be thrown, but {@link BossBarStyle#SOLID} is chosen
+   *                  in 1.8 only {@code SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@code SOLID} is chosen
    *                  automatically.
    */
-  public void sendBossBar(String message, BossBarColor barColor, BossBarStyle barStyle) {
-    playerVersionTemplate.sendBossBar(bukkitPlayer, message, barColor, barStyle);
+  public void sendBossBar(String message, float health, BossBarColor barColor, BossBarStyle barStyle) {
+    playerVersionTemplate.sendBossBar(bukkitPlayer, message, health, barColor, barStyle);
   }
 
   /**
    * Sends a boss bar to the player by spawning a boss entity near it.
    * This method uses {@link BossBarColor#PURPLE} and {@link BossBarStyle#SOLID}
    * in order to be compatible with all versions. If you want to use another style or color
-   * you can use {@link #sendBossBar(String, BossBarColor, BossBarStyle)} instead.
+   * you can use {@link #sendBossBar(String, float, BossBarColor, BossBarStyle)} instead.
    *
    * @param message The message you want to be displayed above the boss bar.
    */
   public void sendBossBar(String message) {
-    playerVersionTemplate.sendBossBar(bukkitPlayer, message, BossBarColor.PURPLE, BossBarStyle.SOLID);
+    playerVersionTemplate.sendBossBar(bukkitPlayer, message, 300f, BossBarColor.PURPLE, BossBarStyle.SOLID);
+  }
+
+  /**
+   * Sets the progress of the player's boss bar by modifying the
+   * health of the boss bar entity. As withers are used for that
+   * purpose, the maximum value {@code 300f} represents full boss
+   * bar and {@code 0f} would be an empty boss bar (equivalent to
+   * the wither dieing.)
+   *
+   * @param health The health of the boss bar entity.
+   */
+  public void setBossBarProgressHealth(float health) {
+    playerVersionTemplate.setBossBarProgress(bukkitPlayer, health);
+  }
+
+  /**
+   * Sets the progress of the player's boss bar, where 1 means
+   * that the bar is fully loaded and 0 means the bar is completely
+   * unloaded (equivalent to the boss entity being killed).
+   *
+   * @param percentage The percentage value of the progress between 0 and 1.
+   */
+  public void setBossBarProgress(double percentage) {
+    float health = 300f * (float) percentage;
+    setBossBarProgressHealth(health);
   }
 
   /**
