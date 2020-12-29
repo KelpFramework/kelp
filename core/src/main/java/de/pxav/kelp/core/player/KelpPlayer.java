@@ -938,6 +938,38 @@ public class KelpPlayer extends LivingKelpEntity {
   }
 
   /**
+   * Sets the progress of the player's boss bar. This method
+   * automatically calculates the percentage value based on the
+   * value representing your maximum and the current state you want
+   * to display. Example: If you have a 60 seconds timer and there
+   * are still 20 seconds to wait, you pass 60 seconds as your maximum
+   * and 40 seconds as your current value.
+   *
+   * @param current The current state of reaching the maximum in absolute numbers.
+   * @param max     The maximum value that is reachable for parameter {@code current}.
+   */
+  public void setBossBarProgress(int current, int max) {
+    double percentage = (double) current / (double) max;
+    setBossBarProgress(percentage);
+  }
+
+  /**
+   * Sets the progress of the player's boss bar. This method
+   * automatically calculates the percentage value based on the
+   * value representing your maximum and the current state you want
+   * to display. Example: If you have a 60 seconds timer and there
+   * are still 20 seconds to wait, you pass 60 seconds as your maximum
+   * and 40 seconds as your current value.
+   *
+   * @param current The current state of reaching the maximum in absolute numbers.
+   * @param max     The maximum value that is reachable for parameter {@code current}.
+   */
+  public void setBossBarProgress(double current, double max) {
+    double percentage = current / max;
+    setBossBarProgress(percentage);
+  }
+
+  /**
    * Makes the boss bar disappear for the player.
    */
   public void removeBossBar() {
