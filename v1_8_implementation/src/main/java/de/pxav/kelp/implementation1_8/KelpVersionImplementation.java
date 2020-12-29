@@ -7,6 +7,7 @@ import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.VersionImplementation;
 import de.pxav.kelp.implementation1_8.packet.GlobalPacketListener;
+import de.pxav.kelp.implementation1_8.player.BossBarLocationUpdater;
 import de.pxav.kelp.implementation1_8.player.PlayerCreationListener;
 import org.bukkit.Bukkit;
 
@@ -47,6 +48,7 @@ public class KelpVersionImplementation extends KelpApplication {
   public void onDisable() {
     // Disable packet listeners to avoid listener overflow.
     Bukkit.getOnlinePlayers().forEach(current -> {
+      getInstance(BossBarLocationUpdater.class).remove(current.getUniqueId());
       getInstance(GlobalPacketListener.class).removePacketListener(current);
     });
   }
