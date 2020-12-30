@@ -805,6 +805,20 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
+  public KelpPlayer sendPrefixedMessages(String prefix, String... messages) {
+    for (String message : messages) {
+      sendMessage(prefix + message);
+    }
+    return this;
+  }
+
+  public KelpPlayer sendPrefixedMessages(String prefix, Collection<String> messages) {
+    for (String message : messages) {
+      sendMessage(prefix + message);
+    }
+    return this;
+  }
+
   public void sendCenteredMessage(String message) {
     Preconditions.checkNotNull(message);
     if(message.equals("")) {
