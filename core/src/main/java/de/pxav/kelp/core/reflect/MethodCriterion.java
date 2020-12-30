@@ -2,6 +2,7 @@ package de.pxav.kelp.core.reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
 /**
  * This class contains all criteria you can use for searching/filtering
@@ -10,9 +11,8 @@ import java.lang.reflect.Method;
  * @see MethodFinder
  * @author pxav
  */
-public interface MethodCriterion {
-
-  boolean matches(Method method);
+@FunctionalInterface
+public interface MethodCriterion extends Predicate<Method> {
 
   static MethodCriterion annotatedWith(Class<? extends Annotation> annotation) {
     return method -> method.isAnnotationPresent(annotation);
@@ -36,4 +36,7 @@ public interface MethodCriterion {
             .equals(packageName);
   }
 
+  static MethodCriterion fromPredicate(Predicate<Method> predicate) {
+    return predicate::test;
+  }
 }
