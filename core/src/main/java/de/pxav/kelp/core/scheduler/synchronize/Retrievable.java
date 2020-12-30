@@ -11,6 +11,7 @@ package de.pxav.kelp.core.scheduler.synchronize;
  *
  * @author pxav
  */
+@FunctionalInterface
 public interface Retrievable {
 
   /**
