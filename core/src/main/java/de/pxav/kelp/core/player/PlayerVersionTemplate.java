@@ -1,18 +1,15 @@
 package de.pxav.kelp.core.player;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.player.bossbar.BossBarColor;
+import de.pxav.kelp.core.player.bossbar.BossBarStyle;
+import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.Permissible;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
 
 import java.net.InetSocketAddress;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -887,5 +884,55 @@ public abstract class PlayerVersionTemplate {
    * @param message   The message itself. May contain color codes.
    */
   public abstract void sendMessage(Player player, String message);
+
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it. If you use this
+   * method in 1.8, please keep in mind that bar colors other than {@code PURPLE} and bar styles
+   * other than {@code SOLID} are not supported.
+   *
+   * @param player    The player you want to send the message to.
+   * @param message   The message you want to be displayed above the boss bar.
+   * @param health    How much the boss bar should be loaded (equivalent to how much
+   *                  health the boss entity has. 300f is a full boss bar and 0f an empty one).
+   * @param barColor  The color of the boss bar. Please note that in 1.8 only
+   *                  {@code PURPLE} is allowed. If you use any color, no exception
+   *                  is thrown but purple will be chosen automatically.
+   * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
+   *                  in 1.8 only {@code SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@code SOLID} is chosen
+   *                  automatically.
+   */
+  public abstract void sendBossBar(Player player, String message, float health, BossBarColor barColor, BossBarStyle barStyle);
+
+  /**
+   * Sets the progress of the player's boss bar by modifying the
+   * health of the boss bar entity. As withers are used for that
+   * purpose, the maximum value {@code 300f} represents full boss
+   * bar and {@code 0f} would be an empty boss bar (equivalent to
+   * the wither dieing.)
+   *
+   * @param health The health of the boss bar entity.
+   */
+  public abstract void setBossBarProgress(Player player, float health);
+
+  /**
+   * Makes the boss bar disappear for the given player.
+   *
+   * @param player The player whose boss bar you want to remove.
+   */
+  public abstract void removeBossBar(Player player);
+
+  /**
+   * Sends an interactive message to the player. An interactive message is a message
+   * the player can click on and events (execute a command, open a url, ...) are triggered.
+   * You can also add hover events to it. You can add as many components as you want.
+   * More detailed information about how to build an interactive message can be found out
+   * in {@link InteractiveMessage}.
+   *
+   * @param player              The player who should receive this message and be able
+   *                            to interact with it.
+   * @param interactiveMessage  The actual message you want to send to the player.
+   */
+  public abstract void sendInteractiveMessage(Player player, InteractiveMessage interactiveMessage);
 
 }

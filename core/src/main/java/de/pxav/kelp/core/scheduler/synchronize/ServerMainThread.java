@@ -117,6 +117,13 @@ public class ServerMainThread {
      * @param runnable The code to execute on the main thread
      */
     public static void run(Runnable runnable) {
+
+      // if we are already on the main thread, directly execute the operation instead of creating a new scheduler.
+      if (Bukkit.isPrimaryThread()) {
+        runnable.run();
+        return;
+      }
+
       Bukkit.getScheduler().scheduleSyncDelayedTask(KelpPlugin.getPlugin(KelpPlugin.class), runnable);
     }
 

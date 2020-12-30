@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.player;
 
+import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
@@ -8,6 +9,16 @@ import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
+import de.pxav.kelp.core.player.bossbar.BossBarColor;
+import de.pxav.kelp.core.player.bossbar.BossBarStyle;
+import de.pxav.kelp.core.player.message.InteractiveMessage;
+import de.pxav.kelp.core.player.prompt.anvil.AnvilPrompt;
+import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
+import de.pxav.kelp.core.player.prompt.chat.ChatPromptVersionTemplate;
+import de.pxav.kelp.core.player.prompt.chat.DefaultFontSize;
+import de.pxav.kelp.core.player.prompt.chat.SimpleChatPrompt;
+import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
+import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
@@ -47,6 +58,9 @@ public class KelpPlayer extends LivingKelpEntity {
   private SidebarRepository sidebarRepository;
   private KelpInventoryRepository inventoryRepository;
   private ParticleVersionTemplate particleVersionTemplate;
+  private SignPromptVersionTemplate signPromptVersionTemplate;
+  private AnvilPromptVersionTemplate anvilPromptVersionTemplate;
+  private ChatPromptVersionTemplate chatPromptVersionTemplate;
 
   private Player bukkitPlayer;
 
@@ -70,6 +84,9 @@ public class KelpPlayer extends LivingKelpEntity {
                     KelpInventoryRepository inventoryRepository,
                     KelpPlayerRepository kelpPlayerRepository,
                     ParticleVersionTemplate particleVersionTemplate,
+                    SignPromptVersionTemplate signPromptVersionTemplate,
+                    AnvilPromptVersionTemplate anvilPromptVersionTemplate,
+                    ChatPromptVersionTemplate chatPromptVersionTemplate,
                     EntityVersionTemplate entityVersionTemplate,
                     LivingEntityVersionTemplate livingEntityVersionTemplate,
                     UUID uuid,
@@ -87,6 +104,21 @@ public class KelpPlayer extends LivingKelpEntity {
     this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.particleVersionTemplate = particleVersionTemplate;
+    this.signPromptVersionTemplate = signPromptVersionTemplate;
+    this.chatPromptVersionTemplate = chatPromptVersionTemplate;
+    this.anvilPromptVersionTemplate = anvilPromptVersionTemplate;
+  }
+
+  public SignPrompt openSignPrompt() {
+    return new SignPrompt(this.getBukkitPlayer(), this.signPromptVersionTemplate);
+  }
+
+  public AnvilPrompt openAnvilPrompt() {
+    return new AnvilPrompt(this.getBukkitPlayer(), this.anvilPromptVersionTemplate);
+  }
+
+  public SimpleChatPrompt openSimpleChatPrompt() {
+    return new SimpleChatPrompt(this.getBukkitPlayer(), this.chatPromptVersionTemplate);
   }
 
   /**
@@ -773,6 +805,210 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
+  public KelpPlayer sendPrefixedMessages(String prefix, String... messages) {
+    for (String message : messages) {
+      sendMessage(prefix + message);
+    }
+    return this;
+  }
+
+  public KelpPlayer sendPrefixedMessages(String prefix, Collection<String> messages) {
+    for (String message : messages) {
+      sendMessage(prefix + message);
+    }
+    return this;
+  }
+
+  public void sendCenteredMessage(String message) {
+    Preconditions.checkNotNull(message);
+    if(message.equals("")) {
+      this.sendMessage("");
+    }
+
+    final int CENTER_PX = 154;
+    int messagePxSize = 0;
+    boolean previousCode = false;
+    boolean isBold = false;
+
+    for(char c : message.toCharArray()){
+      if(c == '§') {
+        previousCode = true;
+        continue;
+      }
+
+      if(previousCode) {
+        previousCode = false;
+        isBold = c == 'l' || c == 'L';
+      } else {
+        DefaultFontSize dFI = DefaultFontSize.getDefaultFontInfo(c);
+        messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+        messagePxSize++;
+      }
+    }
+
+    int halvedMessageSize = messagePxSize / 2;
+    int toCompensate = CENTER_PX - halvedMessageSize;
+    int spaceLength = DefaultFontSize.SPACE.getLength() + 1;
+    int compensated = 0;
+    StringBuilder sb = new StringBuilder();
+    while(compensated < toCompensate){
+      sb.append(" ");
+      compensated += spaceLength;
+    }
+    this.sendMessage(sb.toString() + message);
+  }
+
+  public void sendCenteredMessages(String... messages) {
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+  }
+
+  public void sendCenteredMessages(Collection<String> messages) {
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+  }
+
+  public void sendCenteredMessages(String header, String footer, String... messages) {
+    if (header != null) {
+      this.sendMessage(header);
+    }
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+    if (footer != null) {
+      this.sendMessage(footer);
+    }
+  }
+
+  public void sendCenteredMessages(String header, Collection<String> messages, String footer) {
+    if (header != null) {
+      this.sendMessage(header);
+    }
+    for (String s : messages) {
+      this.sendCenteredMessage(s);
+    }
+    if (footer != null) {
+      this.sendMessage(footer);
+    }
+  }
+
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it. If you use this
+   * method in 1.8, please keep in mind that bar colors other than {@code PURPLE} and bar styles
+   * other than {@code SOLID} are not supported.
+   *
+   * @param message   The message you want to be displayed above the boss bar.
+   * @param health    How much the boss bar should be loaded (equivalent to how much
+   *                  health the boss entity has. 300f is a full boss bar and 0f an empty one).
+   * @param barColor  The color of the boss bar. Please note that in 1.8 only
+   *                  {@code PURPLE} is allowed. If you use any color, no exception
+   *                  is thrown but purple will be chosen automatically.
+   * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
+   *                  in 1.8 only {@code SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@code SOLID} is chosen
+   *                  automatically.
+   */
+  public void sendBossBar(String message, float health, BossBarColor barColor, BossBarStyle barStyle) {
+    playerVersionTemplate.sendBossBar(bukkitPlayer, message, health, barColor, barStyle);
+  }
+
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it.
+   * This method uses {@link BossBarColor#PURPLE} and {@link BossBarStyle#SOLID}
+   * in order to be compatible with all versions. If you want to use another style or color
+   * you can use {@link #sendBossBar(String, float, BossBarColor, BossBarStyle)} instead.
+   *
+   * @param message The message you want to be displayed above the boss bar.
+   */
+  public void sendBossBar(String message) {
+    playerVersionTemplate.sendBossBar(bukkitPlayer, message, 300f, BossBarColor.PURPLE, BossBarStyle.SOLID);
+  }
+
+  /**
+   * Sets the progress of the player's boss bar by modifying the
+   * health of the boss bar entity. As withers are used for that
+   * purpose, the maximum value {@code 300f} represents full boss
+   * bar and {@code 0f} would be an empty boss bar (equivalent to
+   * the wither dieing.)
+   *
+   * @param health The health of the boss bar entity.
+   */
+  public void setBossBarProgressHealth(float health) {
+    playerVersionTemplate.setBossBarProgress(bukkitPlayer, health);
+  }
+
+  /**
+   * Sets the progress of the player's boss bar, where 1 means
+   * that the bar is fully loaded and 0 means the bar is completely
+   * unloaded (equivalent to the boss entity being killed).
+   *
+   * @param percentage The percentage value of the progress between 0 and 1.
+   */
+  public void setBossBarProgress(double percentage) {
+    float health = 300f * (float) percentage;
+    setBossBarProgressHealth(health);
+  }
+
+  /**
+   * Sets the progress of the player's boss bar. This method
+   * automatically calculates the percentage value based on the
+   * value representing your maximum and the current state you want
+   * to display. Example: If you have a 60 seconds timer and there
+   * are still 20 seconds to wait, you pass 60 seconds as your maximum
+   * and 40 seconds as your current value.
+   *
+   * @param current The current state of reaching the maximum in absolute numbers.
+   * @param max     The maximum value that is reachable for parameter {@code current}.
+   */
+  public void setBossBarProgress(int current, int max) {
+    double percentage = (double) current / (double) max;
+    setBossBarProgress(percentage);
+  }
+
+  /**
+   * Sets the progress of the player's boss bar. This method
+   * automatically calculates the percentage value based on the
+   * value representing your maximum and the current state you want
+   * to display. Example: If you have a 60 seconds timer and there
+   * are still 20 seconds to wait, you pass 60 seconds as your maximum
+   * and 40 seconds as your current value.
+   *
+   * @param current The current state of reaching the maximum in absolute numbers.
+   * @param max     The maximum value that is reachable for parameter {@code current}.
+   */
+  public void setBossBarProgress(double current, double max) {
+    double percentage = current / max;
+    setBossBarProgress(percentage);
+  }
+
+  /**
+   * Makes the boss bar disappear for the player.
+   */
+  public void removeBossBar() {
+    playerVersionTemplate.removeBossBar(bukkitPlayer);
+  }
+
+  /**
+   * Sends an interactive message to the player. An interactive message is a message
+   * the player can click on and events (execute a command, open a url, ...) are triggered.
+   * You can also add hover events to it. You can add as many components as you want.
+   * More detailed information about how to build an interactive message can be found out
+   * in {@link InteractiveMessage}.
+   *
+   * @param interactiveMessage The interactive message you want to send to the player.
+   */
+  public void sendInteractiveMessage(InteractiveMessage interactiveMessage) {
+    playerVersionTemplate.sendInteractiveMessage(bukkitPlayer, interactiveMessage);
+  }
+
+  /**
+   * Gets the bukkit instance of the current {@link Player}. Be aware that
+   * by using this, you might lose version independence.
+   *
+   * @return The current bukkit player instance.
+   */
   public Player getBukkitPlayer() {
     return bukkitPlayer;
   }

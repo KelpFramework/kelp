@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * This repository class is used to save all material names of the
@@ -52,6 +53,14 @@ public class MaterialRepository {
     return this.getMaterial(kelpMaterial);
   }
 
+  public MaterialContainer getBukkitMaterial(KelpMaterial kelpMaterial) {
+    String[] format = materials.get(kelpMaterial).split(":");
+    if (format.length == 1) {
+      return new MaterialContainer(format[0], (short) 0);
+    }
+    return new MaterialContainer(format[0], Short.parseShort(format[1]));
+  }
+
   /**
    * Gets the kelp material matching the given bukkit material name.
    * This method does not support sub IDs.
@@ -74,6 +83,9 @@ public class MaterialRepository {
    * @return The final kelp material.
    */
   public KelpMaterial getKelpMaterial(String bukkitMaterial, short subId) {
+    if (subId == 0) {
+      return this.getKelpMaterial(bukkitMaterial);
+    }
     return materials.inverse().get(bukkitMaterial + ":" + subId);
   }
 
@@ -88,6 +100,9 @@ public class MaterialRepository {
    * @return The kelp material matching the given bukkit material.
    */
   public KelpMaterial getKelpMaterial(String bukkitMaterial, int subId) {
+    if (subId == 0) {
+      return this.getKelpMaterial(bukkitMaterial);
+    }
     return materials.inverse().get(bukkitMaterial + ":" + subId);
   }
 

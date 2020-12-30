@@ -3,21 +3,32 @@ package de.pxav.kelp.implementation1_8.player;
 import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
 import com.google.inject.Inject;
+import de.pxav.kelp.core.common.StringUtils;
+import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.player.PlayerVersionTemplate;
+import de.pxav.kelp.core.player.bossbar.BossBarColor;
+import de.pxav.kelp.core.player.bossbar.BossBarStyle;
+import de.pxav.kelp.core.player.message.InteractiveMessage;
+import de.pxav.kelp.core.player.message.MessageClickAction;
+import de.pxav.kelp.core.player.message.MessageComponent;
+import de.pxav.kelp.core.player.message.MessageHoverAction;
+import de.pxav.kelp.core.scheduler.synchronize.ServerMainThread;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.version.Versioned;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.*;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
@@ -33,12 +44,22 @@ import java.util.UUID;
 public class VersionedPlayer extends PlayerVersionTemplate {
 
   private SoundRepository soundRepository;
+  private BossBarLocationUpdater bossBarLocationUpdater;
   private JavaPlugin plugin;
+  private StringUtils stringUtils;
+  private KelpLogger logger;
 
   @Inject
-  public VersionedPlayer(SoundRepository soundRepository, JavaPlugin plugin) {
+  public VersionedPlayer(SoundRepository soundRepository,
+                         JavaPlugin plugin,
+                         BossBarLocationUpdater bossBarLocationUpdater,
+                         StringUtils stringUtils,
+                         KelpLogger logger) {
     this.soundRepository = soundRepository;
     this.plugin = plugin;
+    this.bossBarLocationUpdater = bossBarLocationUpdater;
+    this.stringUtils = stringUtils;
+    this.logger = logger;
   }
 
   /**
@@ -1119,6 +1140,294 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   @Override
   public void sendMessage(Player player, String message) {
     player.sendMessage(message);
+  }
+
+  /**
+   * Sends a boss bar to the player by spawning a boss entity near it. If you use this
+   * method in 1.8, please keep in mind that bar colors other than {@code PURPLE} and bar styles
+   * other than {@code SOLID} are not supported.
+   *
+   * @param player    The player you want to send the message to.
+   * @param message   The message you want to be displayed above the boss bar.
+   * @param health    How much the boss bar should be loaded (equivalent to how much
+   *                  health the boss entity has. 300f is a full boss bar and 0f an empty one).
+   * @param barColor  The color of the boss bar. Please note that in 1.8 only
+   *                  {@code PURPLE} is allowed. If you use any color, no exception
+   *                  is thrown but purple will be chosen automatically.
+   * @param barStyle  The style of the boss bar (how many segments?, ...). Note that
+   *                  in 1.8 only {@code SOLID} is supported. If you use any different
+   *                  style, no exception will be thrown, but {@code SOLID} is chosen
+   *                  automatically.
+   */
+  @Override
+  public void sendBossBar(Player player, String message, float health, BossBarColor barColor, BossBarStyle barStyle) {
+    CraftPlayer craftPlayer = (CraftPlayer) player;
+    Vector direction = craftPlayer.getLocation().getDirection();
+    Location location = craftPlayer.getLocation().add(direction.multiply(40));
+
+    if (location.getY() < 1) {
+      location.setY(1);
+    }
+
+    EntityWither entityWither = new EntityWither(craftPlayer.getHandle().getWorld());
+    entityWither.setInvisible(true);
+    entityWither.setCustomName((message == null ? "Custom Boss Bar Message." : message));
+    entityWither.setCustomNameVisible(false);
+    entityWither.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
+    entityWither.setHealth(health);
+
+    PacketPlayOutSpawnEntityLiving spawnPacket = new PacketPlayOutSpawnEntityLiving(entityWither);
+    craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
+
+    bossBarLocationUpdater.remove(player.getUniqueId());
+    bossBarLocationUpdater.add(player.getUniqueId(), entityWither.getId(), health, message);
+
+  }
+
+  /**
+   * Sets the progress of the player's boss bar by modifying the
+   * health of the boss bar entity. As withers are used for that
+   * purpose, the maximum value {@code 300f} represents full boss
+   * bar and {@code 0f} would be an empty boss bar (equivalent to
+   * the wither dieing.)
+   *
+   * @param health The health of the boss bar entity.
+   */
+  @Override
+  public void setBossBarProgress(Player player, float health) {
+    bossBarLocationUpdater.setHealth(player.getUniqueId(), health);
+  }
+
+  /**
+   * Makes the boss bar disappear for the given player.
+   *
+   * @param player The player whose boss bar you want to remove.
+   */
+  @Override
+  public void removeBossBar(Player player) {
+    ServerMainThread.RunParallel.run(()
+      -> bossBarLocationUpdater.remove(player.getUniqueId()));
+  }
+
+  /**
+   * Sends an interactive message to the player. An interactive message is a message
+   * the player can click on and events (execute a command, open a url, ...) are triggered.
+   * You can also add hover events to it. You can add as many components as you want.
+   * More detailed information about how to build an interactive message can be found out
+   * in {@link InteractiveMessage}.
+   *
+   * @param player              The player who should receive this message and be able
+   *                            to interact with it.
+   * @param interactiveMessage  The actual message you want to send to the player.
+   */
+  @Override
+  public void sendInteractiveMessage(Player player, InteractiveMessage interactiveMessage) {
+    // create the component builder retaining no formatting code information so that
+    // the messages stay independent from each other.
+    ComponentBuilder componentBuilder = new ComponentBuilder("")
+      .retain(ComponentBuilder.FormatRetention.NONE);
+    String retainedColorCode = null;
+
+    // iterate through all components of the message to add the individual events and
+    // handle the color codes correctly.
+    for (MessageComponent component : interactiveMessage.getComponents()) {
+
+      String message = component.getText();
+      StringBuilder tempMessage = new StringBuilder();
+      ChatColor color = ChatColor.WHITE;
+      boolean colorCode = false, formattingCode = false;
+      boolean bold = false, italic = false, underlined = false, strikethrough = false, obfuscated = false;
+
+      // check whether a color code from the last component was retained
+      // and eventually apply it.
+      if (retainedColorCode != null) {
+        appendComponentBuilder(componentBuilder,
+          component,
+          new StringBuilder(),
+          stringUtils.getChatColor(retainedColorCode),
+          false,
+          false,
+          false,
+          false,
+          false);
+        retainedColorCode = null;
+      }
+
+      // if the message of the current component ends with any formatting code,
+      // it is saved and applied to the next component but ignored in the current iteration.
+      retainedColorCode = stringUtils.endsWithFormattingCode(message);
+      if (retainedColorCode != null) {
+        if (message.length() <= 2) {
+          continue;
+        }
+        message = message.substring(0, message.length() - 2);
+      }
+
+      // iterate through each character of the current message and search for color and style codes.
+      // a message is basically divided every time a new color code occurs. This has to be done as the
+      // spigot component builder can only handle one color at once. Example (| is a point where the message is divided.)
+      // §8[|§aYourPlugin|§8] |§7Click ... [next component]
+      for (int i = 0; i < message.length() - 1; i++) {
+
+        // if a § with a valid color code id was found, the message up to this point is
+        // appended to the component builder.
+        if (message.charAt(i) == '§' && stringUtils.isColorCode(message.charAt(i + 1))) {
+          if (tempMessage.length() > 0) {
+            appendComponentBuilder(componentBuilder, component, tempMessage, color, bold, italic, underlined, strikethrough, obfuscated);
+          }
+          colorCode = true;
+          color = stringUtils.getChatColor(message.charAt(i + 1));
+          continue;
+        }
+
+        // if a color code was detected in the last iteration, this is the
+        // id of the color code (such as 1, 2, 3, ..., a, b, ...) so we can skip this
+        // char as it was already handled.
+        if (colorCode) {
+          colorCode = false;
+          continue;
+        }
+
+        // if a formatting code is detected, it is cached and applied to the message.
+        if (message.charAt(i) == '§' && stringUtils.isFormattingCode(message.charAt(i + 1))) {
+          formattingCode = true;
+          ChatColor chatColor = stringUtils.getChatColor(message.charAt(i + 1));
+          switch (chatColor) {
+            case STRIKETHROUGH:
+              strikethrough = true;
+              break;
+            case MAGIC:
+              obfuscated = true;
+              break;
+            case UNDERLINE:
+              underlined = true;
+              break;
+            case ITALIC:
+              italic = true;
+              break;
+            case BOLD:
+              bold = true;
+              break;
+          }
+          continue;
+        }
+
+        // if a formatting code has been detected in the last iteration, we can skip this char.
+        if (formattingCode) {
+          formattingCode = false;
+          continue;
+        }
+
+        // append the current char to the string builder for the temporary message
+        // if this was a normal char.
+        tempMessage.append(message.charAt(i));
+
+        // if we are at the last char of the message, we can append the text to the component builder
+        // and jump to the next MessageComponent if there is one.
+        if (i + 1 == message.length() - 1) {
+          tempMessage.append(message.charAt(i + 1));
+          appendComponentBuilder(componentBuilder, component, tempMessage, color, bold, italic, underlined, strikethrough, obfuscated);
+        }
+      }
+    }
+
+    // finally send the message to the player via spigot api call.
+    player.spigot().sendMessage(componentBuilder.create());
+  }
+
+  /**
+   * Appends a message to the given {@link ComponentBuilder}. Please note that every message you append
+   * using this method may only have one chat color and the formatting code applies for the entire message.
+   *
+   * @param componentBuilder    The {@link ComponentBuilder} the message should be appended to.
+   * @param component           The {@link MessageComponent} that produced this message.
+   * @param tempMessage         The actual message to send.
+   * @param color               The color of the message.
+   * @param bold                Whether the message should be printed bold.
+   * @param italic              Whether the message should be printed italic.
+   * @param underlined          Whether the message should be underlined.
+   * @param strikethrough       Whether the message should have a strikethrough.
+   * @param obfuscated          Whether the message should be obfuscated/magic.
+   */
+  private void appendComponentBuilder(ComponentBuilder componentBuilder,
+                                      MessageComponent component,
+                                      StringBuilder tempMessage,
+                                      ChatColor color,
+                                      boolean bold,
+                                      boolean italic,
+                                      boolean underlined,
+                                      boolean strikethrough,
+                                      boolean obfuscated) {
+    componentBuilder
+      .append(tempMessage.toString())
+      .reset()
+      .color(color);
+    if (bold) {
+      componentBuilder.bold(true);
+    } else if (italic) {
+      componentBuilder.italic(true);
+    } else if (underlined) {
+      componentBuilder.underlined(true);
+    } else if (strikethrough) {
+      componentBuilder.strikethrough(true);
+    } else if (obfuscated) {
+      componentBuilder.obfuscated(true);
+    }
+    if (tempMessage.length() > 0) {
+      applyEvents(component, componentBuilder);
+    }
+    tempMessage.setLength(0);
+  }
+
+  /**
+   * Applies the hover and click events contained in the {@link MessageComponent} to the {@link ComponentBuilder}.
+   *
+   * @param component   The {@link MessageComponent} containing the events you want to apply.
+   * @param builder     The {@link ComponentBuilder} the events should be applied to.
+   * @return The newly built {@link ComponentBuilder} containing the event data.
+   */
+  private ComponentBuilder applyEvents(MessageComponent component, ComponentBuilder builder) {
+    if (component.getClickAction() == MessageClickAction.EXECUTE_COMMAND) {
+      builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.SEND_CHAT_MESSAGE) {
+      builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.CHANGE_PAGE) {
+      try {
+        // The click value is converted to an integer first in order to check if the given
+        // value really is an integer and then converted back into a string to be passed
+        // as a parameter.
+        builder.event(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(Integer.parseInt(component.getClickValue().toString()))));
+      } catch (NumberFormatException e) {
+        logger.log(LogLevel.ERROR, "Error converting click value to type INTEGER. If you selected click action CHANGE_PAGE, the click value has to be an integer.");
+      }
+    }
+
+    if (component.getClickAction() == MessageClickAction.COPY_TO_CLIPBOARD) {
+      // In Spigot 1.8, this feature is not available.
+    }
+
+    if (component.getClickAction() == MessageClickAction.OPEN_FILE) {
+      builder.event(new ClickEvent(ClickEvent.Action.OPEN_FILE, component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.OPEN_URL) {
+      builder.event(new ClickEvent(ClickEvent.Action.OPEN_URL, component.getClickValue().toString()));
+    }
+
+    if (component.getClickAction() == MessageClickAction.SUGGEST_COMMAND) {
+      builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, component.getClickValue().toString()));
+    }
+
+    if (component.getHoverAction() == MessageHoverAction.SHOW_MESSAGE) {
+      builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+        TextComponent.fromLegacyText(component.getHoverValue().toString())));
+    }
+
+    return builder;
   }
 
   /**

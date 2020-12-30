@@ -16,7 +16,6 @@ import de.pxav.kelp.core.reflect.MethodFinder;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,8 +34,6 @@ public class KelpInventoryRepository {
   private MaterialVersionTemplate materialVersionTemplate;
   private MethodFinder methodFinder;
   private KelpListenerRepository kelpListenerRepository;
-
-  private Map<String, Method> methods = Maps.newHashMap();
 
   private Map<UUID, KelpInventory> playerInventories = Maps.newHashMap();
   private Map<UUID, Map<Pagination, Integer>> playerPages = Maps.newHashMap();
@@ -57,16 +54,6 @@ public class KelpInventoryRepository {
   public void loadMaterials() {
     this.materialVersionTemplate.defineDefaults();
   }
-
-/*  public void detectInventories(String... packages) {
-    methodFinder.filter(packages, MethodCriterion.annotatedWith(CreateInventory.class)).forEach(method -> {
-      CreateInventory annotation = method.getAnnotation(CreateInventory.class);
-      String identifier = annotation.identifier();
-
-      methods.put(identifier, method);
-
-    });
-  }*/
 
   /**
    * Opens a kelp inventory to the given player. This also adds the

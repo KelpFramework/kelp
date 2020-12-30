@@ -7,7 +7,7 @@
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
 
   <name>Kelp</name>
   <description>A cross-version spigot framework to avoid boilerplate code and make your plugin compatible with multiple spigot versions easily</description>
@@ -54,6 +54,7 @@
     <module>v1_8_implementation</module>
     <module>testing-module</module>
     <module>v_1_14_implementation</module>
+    <module>kelp-sql</module>
   </modules>
 
   <properties>
@@ -66,6 +67,12 @@
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
         <version>4.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -196,6 +203,8 @@
                 </filters>
                 <createDependencyReducedPom>false</createDependencyReducedPom>
                 <shadedArtifactAttached>true</shadedArtifactAttached>
+                <finalName>${project.artifactId}-${project.version}-shaded</finalName>
+                <outputDirectory>../builds</outputDirectory>
               </configuration>
             </execution>
           </executions>
@@ -235,6 +244,11 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
