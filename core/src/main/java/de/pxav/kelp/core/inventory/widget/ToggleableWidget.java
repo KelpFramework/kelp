@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 
+import java.util.function.Supplier;
+
 /**
  * This widget is used to handle button interactions
  * toggling a certain setting.
@@ -29,7 +31,7 @@ public class ToggleableWidget implements SimpleWidget {
   private KelpPlayer player;
 
   // the condition to be checked every time the widget updates
-  private Condition condition;
+  private Supplier<Boolean> condition;
 
   // The slot of the inventory, where the widget should finally be located.
   private int slot;
@@ -64,7 +66,7 @@ public class ToggleableWidget implements SimpleWidget {
    * @param condition The condition to be fulfilled.
    * @return Current instance of the widget.
    */
-  public ToggleableWidget condition(Condition condition) {
+  public ToggleableWidget condition(Supplier<Boolean> condition) {
     this.condition = condition;
     return this;
   }
@@ -178,7 +180,7 @@ public class ToggleableWidget implements SimpleWidget {
    */
   @Override
   public KelpItem render() {
-    if (condition.getCondition()) {
+    if (condition.get()) {
       return this.whenTrue.slot(slot);
     } else {
       return this.whenFalse.slot(slot);
