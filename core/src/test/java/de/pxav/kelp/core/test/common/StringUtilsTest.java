@@ -47,6 +47,18 @@ public class StringUtilsTest {
   @Test
   public void testStyleCodeExtraction() {
     List<String> styleCodes1 = stringUtils.extractStyleCodes("§a§lWelcome §6to the §oserver");
+    Assert.assertEquals(styleCodes1.size(), 2);
+  }
+
+  @Test
+  public void testColorCodeExtraction() {
+    List<String> styleCodes1 = stringUtils.extractColorCodes("§a§lWelcome §6to the §oserver");
+    Assert.assertEquals(styleCodes1.size(), 2);
+  }
+
+  @Test
+  public void testFormattingCodeExtraction() {
+    List<String> styleCodes1 = stringUtils.extractFormattingCodes("§a§lWelcome §6to the §oserver");
     Assert.assertEquals(styleCodes1.size(), 4);
   }
 
