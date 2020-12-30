@@ -54,6 +54,7 @@
     <module>v1_8_implementation</module>
     <module>testing-module</module>
     <module>v_1_14_implementation</module>
+    <module>kelp-sql</module>
   </modules>
 
   <properties>
@@ -66,6 +67,12 @@
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
         <version>4.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
