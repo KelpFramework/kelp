@@ -48,7 +48,7 @@ public class TypeFinder {
         Class<?> c = current.loadClass();
         boolean allMatch = true;
         for (TypeCriterion typeCriterion : typeCriteria) {
-          if (!typeCriterion.matches(c)) {
+          if (!typeCriterion.test(c)) {
             allMatch = false;
             break;
           }

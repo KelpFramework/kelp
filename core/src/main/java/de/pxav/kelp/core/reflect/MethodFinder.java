@@ -57,7 +57,7 @@ public class MethodFinder {
 
           boolean allMatch = true;
           for (MethodCriterion methodCriterion : methodCriteria) {
-            if (!methodCriterion.matches(method)) {
+            if (!methodCriterion.test(method)) {
               allMatch = false;
               break;
             }

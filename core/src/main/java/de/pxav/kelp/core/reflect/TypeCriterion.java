@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.reflect;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Predicate;
 
 /**
  * This class contains all criteria you can use for searching/filtering
@@ -9,16 +10,8 @@ import java.lang.annotation.Annotation;
  * @see TypeFinder
  * @author pxav
  */
-public interface TypeCriterion {
-
-  /**
-   * Returns {@code true} if the given criteria are fulfilled
-   * by the given class.
-   *
-   * @param c The class you want to check
-   * @return  {@code true} if the criteria matches the class
-   */
-  boolean matches(Class<?> c);
+@FunctionalInterface
+public interface TypeCriterion extends Predicate<Class<?>> {
 
   /**
    * Checks if the class is annotated with a certain
@@ -56,4 +49,7 @@ public interface TypeCriterion {
     return c -> c.getPackage().getName().equals(packageName);
   }
 
+  static TypeCriterion fromPredicate(Predicate<Class<?>> predicate) {
+    return predicate::test;
+  }
 }
