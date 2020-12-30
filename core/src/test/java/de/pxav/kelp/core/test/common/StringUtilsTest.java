@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -32,6 +33,21 @@ public class StringUtilsTest {
     String text1 = UUID.randomUUID() + "§" + colorCode;
 
     Assert.assertEquals("§" + colorCode, stringUtils.endsWithColorCode(text1));
+  }
+
+  @Test
+  public void testLastFormattingCodesOf() {
+    String lastCodes1 = stringUtils.lastFormattingCodesOf("§b§lYOUR TITLE STRING HERE");
+    Assert.assertEquals(lastCodes1, "§b§l");
+
+    String lastCodes2 = stringUtils.lastFormattingCodesOf("§b§lYOUR TITLE STRING §oHERE");
+    Assert.assertEquals(lastCodes2, "§b§l§o");
+  }
+
+  @Test
+  public void testStyleCodeExtraction() {
+    List<String> styleCodes1 = stringUtils.extractStyleCodes("§a§lWelcome §6to the §oserver");
+    Assert.assertEquals(styleCodes1.size(), 4);
   }
 
 }
