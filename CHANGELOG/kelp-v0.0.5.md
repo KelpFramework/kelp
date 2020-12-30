@@ -16,3 +16,4 @@
 * Add `KelpPlayerLoginEvent` which is called on login of a player but after it has been initialized by kelp, so that calls to the `KelpPlayerRepository` are safe. If you want to handle logins now, it is recommended to use this event instead of the normal bukkit event.
 * You can now send interactive messages to KelpPlayers. You can assign messages that are displayable when you hover over them and define events which are triggered when a player clicks on a message. You can combine unlimited components per message unlike the normal `TextComponent#addExtra` method which is wide spread across the spigot community.
 * Documentation improvements in the code as well as in the GitHub wiki
+* Create empty kelp sql module
