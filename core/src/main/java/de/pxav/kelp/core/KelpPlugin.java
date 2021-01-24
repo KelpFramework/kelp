@@ -35,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author pxav
  */
-@Plugin(name = "Kelp", version = "0.0.4")
+@Plugin(name = "Kelp", version = "0.1.0")
 @Author("pxav")
 @Description("A cross version spigot framework.")
 @Singleton
@@ -100,8 +100,8 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(EventHandlerRegistration.class).initialize(this.getClass().getPackage().getName());
     injector.getInstance(KelpEventRepository.class).detectSubscriptions(this.getClass().getPackage().getName());
 
-    injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
-    injector.getInstance(SidebarRepository.class).schedule();
+//    injector.getInstance(SidebarRepository.class).loadSidebars(this.getClass().getPackage().getName());
+//    injector.getInstance(SidebarRepository.class).schedule();
 
     injector.getInstance(KelpCommandRepository.class).loadCommands(this.getClass().getPackage().getName());
 
@@ -130,7 +130,7 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpApplicationRepository.class).disableApplications();
 
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
-    injector.getInstance(SidebarRepository.class).interruptAnimations();
+    //injector.getInstance(SidebarRepository.class).interruptAnimations();
     injector.getInstance(ParticleEffectRepository.class).stopAllTimers();
     injector.getInstance(KelpSchedulerRepository.class).interruptAll();
 
