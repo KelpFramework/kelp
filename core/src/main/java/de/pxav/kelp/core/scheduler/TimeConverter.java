@@ -49,7 +49,7 @@ public class TimeConverter {
   public static int getTicks(int value, TimeUnit timeUnit) {
     switch (timeUnit) {
       case MILLISECONDS:
-        return secondsToTicks(value * 1000);
+        return value / 50;
       case SECONDS:
         return secondsToTicks(value);
       case MINUTES:
