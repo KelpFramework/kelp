@@ -50,13 +50,5 @@ public abstract class KelpSidebar<T extends KelpSidebar> {
   public abstract void update(KelpPlayer player);
 
   public abstract void remove(KelpPlayer player);
-//
-//  protected void unregisterAllTeams() {
-//    scoreboard.getTeams().forEach(current -> {
-//      if (current.getName().startsWith("entry_")) {
-//        current.unregister();
-//      }
-//    });
-//  }
 
 }
