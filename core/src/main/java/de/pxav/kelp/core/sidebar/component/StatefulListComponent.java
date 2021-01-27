@@ -1,7 +1,7 @@
 package de.pxav.kelp.core.sidebar.component;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import de.pxav.kelp.core.scheduler.synchronize.Retrievable;
 
 import java.util.Iterator;
 import java.util.List;
@@ -15,8 +15,10 @@ public class StatefulListComponent extends SidebarComponent {
   private int maxLine;
   private boolean enableLimiter;
   private boolean ascendingOrder;
+  private boolean autoFill;
 
   public StatefulListComponent() {
+    this.list = Lists::newArrayList;
     this.startLine = 0;
     this.maxLine = 0;
     this.enableLimiter = false;
@@ -43,6 +45,16 @@ public class StatefulListComponent extends SidebarComponent {
     return this;
   }
 
+  public StatefulListComponent enableAutoFill() {
+    this.autoFill = true;
+    return this;
+  }
+
+  public StatefulListComponent disableAutoFill() {
+    this.autoFill = false;
+    return this;
+  }
+
   public StatefulListComponent disableLimiter() {
     this.enableLimiter = false;
     return this;
@@ -63,28 +75,59 @@ public class StatefulListComponent extends SidebarComponent {
     Map<Integer, String> output = Maps.newHashMap();
     List<String> lines = list.get();
 
-    if (lines == null || lines.isEmpty()) {
-      return output;
-    }
-
     Iterator<String> iterator = lines.iterator();
     if (ascendingOrder) {
       for (int i = startLine; i < Integer.MAX_VALUE; i++) {
-        if (!iterator.hasNext() || (enableLimiter && i == maxLine)) {
+        if (!iterator.hasNext()) {
+          if (enableLimiter && autoFill && i <= maxLine) {
+            for (int fillIndex = i; fillIndex <= maxLine; fillIndex++) {
+              output.put(fillIndex, " ");
+            }
+            return output;
+          }
+          return output;
+        }
+        if (enableLimiter && i == maxLine) {
           return output;
         }
         output.put(i, iterator.next());
       }
     } else {
       for (int i = startLine; i < Integer.MAX_VALUE; i--) {
-        if (!iterator.hasNext() || (enableLimiter && i == maxLine)) {
+        if (!iterator.hasNext()) {
+          if (enableLimiter && autoFill && i >= maxLine) {
+            for (int fillIndex = i; fillIndex >= maxLine; fillIndex--) {
+              output.put(fillIndex, " ");
+            }
+            return output;
+          }
+          return output;
+        }
+        if (enableLimiter && i == maxLine) {
           return output;
         }
         output.put(i, iterator.next());
       }
     }
 
+    if (output.isEmpty() && enableLimiter && autoFill) {
+      if (ascendingOrder) {
+        for (int fillIndex = startLine; fillIndex <= maxLine; fillIndex++) {
+          output.put(fillIndex, " ");
+        }
+      } else {
+        for (int fillIndex = startLine; fillIndex >= maxLine; fillIndex--) {
+          output.put(fillIndex, " ");
+        }
+      }
+
+    }
+
     return output;
+  }
+
+  private void fill() {
+
   }
 
 }
