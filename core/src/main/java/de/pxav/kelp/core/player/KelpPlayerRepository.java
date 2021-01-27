@@ -56,9 +56,18 @@ public class KelpPlayerRepository {
   private ChatPromptVersionTemplate chatPromptVersionTemplate;
 
   @Inject
-  public KelpPlayerRepository(PlayerVersionTemplate playerVersionTemplate, SidebarRepository sidebarRepository, KelpInventoryRepository inventoryRepository, KelpLogger logger, EntityVersionTemplate entityVersionTemplate, LivingEntityVersionTemplate livingEntityVersionTemplate, ParticleVersionTemplate particleVersionTemplate, SignPromptVersionTemplate signPromptVersionTemplate, AnvilPromptVersionTemplate anvilPromptVersionTemplate, ChatPromptVersionTemplate chatPromptVersionTemplate) {
+  public KelpPlayerRepository(PlayerVersionTemplate playerVersionTemplate,
+                              //SidebarRepository sidebarRepository,
+                              KelpInventoryRepository inventoryRepository,
+                              KelpLogger logger,
+                              EntityVersionTemplate entityVersionTemplate,
+                              LivingEntityVersionTemplate livingEntityVersionTemplate,
+                              ParticleVersionTemplate particleVersionTemplate,
+                              SignPromptVersionTemplate signPromptVersionTemplate,
+                              AnvilPromptVersionTemplate anvilPromptVersionTemplate,
+                              ChatPromptVersionTemplate chatPromptVersionTemplate) {
     this.playerVersionTemplate = playerVersionTemplate;
-    this.sidebarRepository = sidebarRepository;
+    //this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.logger = logger;
     this.entityVersionTemplate = entityVersionTemplate;
@@ -217,7 +226,7 @@ public class KelpPlayerRepository {
   private KelpPlayer newKelpPlayerFrom(Player bukkitPlayer) {
     return new KelpPlayer(bukkitPlayer,
       playerVersionTemplate,
-      sidebarRepository,
+      //sidebarRepository,
       inventoryRepository,
       this,
       particleVersionTemplate,

@@ -80,7 +80,7 @@ public class KelpPlayer extends LivingKelpEntity {
 
   public KelpPlayer(Player bukkitPlayer,
                     PlayerVersionTemplate playerVersionTemplate,
-                    SidebarRepository sidebarRepository,
+                    //SidebarRepository sidebarRepository,
                     KelpInventoryRepository inventoryRepository,
                     KelpPlayerRepository kelpPlayerRepository,
                     ParticleVersionTemplate particleVersionTemplate,
@@ -101,7 +101,7 @@ public class KelpPlayer extends LivingKelpEntity {
       bukkitPlayer);
     this.bukkitPlayer = bukkitPlayer;
     this.playerVersionTemplate = playerVersionTemplate;
-    this.sidebarRepository = sidebarRepository;
+    //this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.particleVersionTemplate = particleVersionTemplate;
     this.signPromptVersionTemplate = signPromptVersionTemplate;
@@ -130,7 +130,8 @@ public class KelpPlayer extends LivingKelpEntity {
    * @return the current instance of the player.
    */
   public KelpPlayer openKelpSidebar(String identifier) {
-    this.sidebarRepository.openSidebar(identifier, bukkitPlayer);
+//    this.sidebarRepository.openSidebar(identifier, bukkitPlayer);
+//    return this;
     return this;
   }
 
@@ -140,7 +141,8 @@ public class KelpPlayer extends LivingKelpEntity {
    * @return the current instance of the player.
    */
   public KelpPlayer removeKelpSidebar() {
-    this.sidebarRepository.removeSidebar(bukkitPlayer);
+//    this.sidebarRepository.removeSidebar(bukkitPlayer);
+//    return this;
     return this;
   }
 
