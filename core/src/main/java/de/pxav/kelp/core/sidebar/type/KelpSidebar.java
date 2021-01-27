@@ -19,7 +19,6 @@ import java.util.Collection;
 public abstract class KelpSidebar<T extends KelpSidebar> {
 
   protected Collection<SidebarComponent> components = Lists.newArrayList();
-  protected int latestLines = 0;
 
   /**
    * Adds a new component to the sidebar. When you add it,
@@ -63,15 +62,6 @@ public abstract class KelpSidebar<T extends KelpSidebar> {
    */
   public Collection<SidebarComponent> getComponents() {
     return this.components;
-  }
-
-  public int getLatestLines() {
-    return latestLines;
-  }
-
-  public T setLatestLines(int latestLines) {
-    this.latestLines = latestLines;
-    return (T) this;
   }
 
   /**
