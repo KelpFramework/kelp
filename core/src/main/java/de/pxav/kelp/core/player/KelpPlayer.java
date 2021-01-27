@@ -82,7 +82,6 @@ public class KelpPlayer extends LivingKelpEntity {
 
   public KelpPlayer(Player bukkitPlayer,
                     PlayerVersionTemplate playerVersionTemplate,
-                    //SidebarRepository sidebarRepository,
                     KelpInventoryRepository inventoryRepository,
                     KelpPlayerRepository kelpPlayerRepository,
                     ParticleVersionTemplate particleVersionTemplate,
@@ -103,7 +102,6 @@ public class KelpPlayer extends LivingKelpEntity {
       bukkitPlayer);
     this.bukkitPlayer = bukkitPlayer;
     this.playerVersionTemplate = playerVersionTemplate;
-    //this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.particleVersionTemplate = particleVersionTemplate;
     this.signPromptVersionTemplate = signPromptVersionTemplate;
@@ -123,40 +121,11 @@ public class KelpPlayer extends LivingKelpEntity {
     return new SimpleChatPrompt(this.getBukkitPlayer(), this.chatPromptVersionTemplate);
   }
 
-  /**
-   * Opens a kelp sidebar with the given identifier. This method
-   * only applies to sidebars created using an annotation.
-   *
-   * @param identifier The identifier of the sidebar you want to show
-   *                   to the player
-   * @return the current instance of the player.
-   */
-  public KelpPlayer openKelpSidebar(String identifier) {
-//    this.sidebarRepository.openSidebar(identifier, bukkitPlayer);
-//    return this;
-    return this;
-  }
-
-  /**
-   * Makes the current sidebar of the player disappear.
-   *
-   * @return the current instance of the player.
-   */
-  public KelpPlayer removeKelpSidebar() {
-//    this.sidebarRepository.removeSidebar(bukkitPlayer);
-//    return this;
-    return this;
-  }
-
   public boolean hasScoreboard() {
     Scoreboard scoreboard = bukkitPlayer.getScoreboard();
     return scoreboard.getObjective(DisplaySlot.SIDEBAR) != null
       || scoreboard.getObjective(DisplaySlot.BELOW_NAME) != null
       || scoreboard.getObjective(DisplaySlot.PLAYER_LIST) != null;
-  }
-
-  public boolean hasSidebar() {
-    return false; //todo implement
   }
 
   /**
