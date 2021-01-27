@@ -36,8 +36,4 @@ public class StatefulTextComponent extends SidebarComponent {
     return output;
   }
 
-  @Override
-  public Map<Integer, String> update() {
-    return null;
-  }
 }

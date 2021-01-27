@@ -40,22 +40,7 @@ public class StatelessTextComponent extends SidebarComponent {
   public Map<Integer, String> render() {
     Map<Integer, String> output = Maps.newHashMap();
     output.put(this.line, this.text);
-//    String entry = sidebarUtils.randomEmptyEntry(parent);
-//    Objective objective = parent.getObjective(DisplaySlot.SIDEBAR);
-//
-//    objective.getScore(entry).setScore(line);
-//
-//    Team team = parent.registerNewTeam("entry_" + line);
-//    team.addEntry(entry);
-//    update(parent);
-//    return update();
     return output;
-  }
-
-  @Override
-  public Map<Integer, String> update() {
-    return null;
-    //return Collections.singletonList(text);
   }
 
 }
