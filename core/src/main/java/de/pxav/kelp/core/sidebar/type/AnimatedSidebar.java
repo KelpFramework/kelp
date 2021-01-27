@@ -1,97 +1,89 @@
 package de.pxav.kelp.core.sidebar.type;
 
-import com.google.common.collect.Lists;
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.animation.StaticTextAnimation;
 import de.pxav.kelp.core.animation.TextAnimation;
-import de.pxav.kelp.core.sidebar.component.SimpleSidebarComponent;
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.sidebar.SidebarUtils;
+import de.pxav.kelp.core.sidebar.component.SidebarComponent;
 import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
- * This is a more complex type of sidebar which can
- * hold animations like an animated title.
- *
- * Furthermore you can add simple components.
+ * A class description goes here.
  *
  * @author pxav
  */
-public class AnimatedSidebar extends KelpSidebar {
+public class AnimatedSidebar extends KelpSidebar<AnimatedSidebar> {
 
-  private TextAnimation titleAnimation;
-  private List<SimpleSidebarComponent> simpleComponents;
+  private TextAnimation title;
+  private int titleAnimationInterval = 200;
+  private String clusterId = null;
 
-  private ScoreboardManager scoreboardManager;
+  private SidebarUtils sidebarUtils;
   private SidebarVersionTemplate sidebarVersionTemplate;
 
-  AnimatedSidebar(SidebarVersionTemplate sidebarVersionTemplate) {
-    this.scoreboardManager = Bukkit.getScoreboardManager();
+  public AnimatedSidebar(SidebarUtils sidebarUtils, SidebarVersionTemplate sidebarVersionTemplate) {
+    this.sidebarUtils = sidebarUtils;
     this.sidebarVersionTemplate = sidebarVersionTemplate;
-    this.simpleComponents = Lists.newArrayList();
   }
 
-  public AnimatedSidebar addComponent(SimpleSidebarComponent components) {
-    this.simpleComponents.add(components);
+  public static AnimatedSidebar create() {
+    return new AnimatedSidebar(
+      KelpPlugin.getInjector().getInstance(SidebarUtils.class),
+      KelpPlugin.getInjector().getInstance(SidebarVersionTemplate.class)
+    );
+  }
+
+  public AnimatedSidebar title(TextAnimation title) {
+    this.title = title;
     return this;
   }
 
-  public AnimatedSidebar withTitle(TextAnimation titleAnimation) {
-    this.titleAnimation = titleAnimation;
+  public AnimatedSidebar titleAnimationInterval(int titleAnimationInterval) {
+    this.titleAnimationInterval = titleAnimationInterval;
     return this;
   }
 
-  public void updateTitleOnly(Player player, int state) {
-    Scoreboard scoreboard = player.getScoreboard();
-    scoreboard.getObjective("main").setDisplayName(titleAnimation.states().get(state));
+  public AnimatedSidebar clusterId(String clusterId) {
+    this.clusterId = clusterId;
+    return this;
+  }
+
+  public String getClusterId() {
+    return clusterId;
+  }
+
+  public TextAnimation getTitle() {
+    return title;
+  }
+
+  public int getTitleAnimationInterval() {
+    return titleAnimationInterval;
   }
 
   @Override
-  public Scoreboard renderSidebar(Player player) {
-    Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
-
-    scoreboard.getTeams().forEach(current -> {
-      if (current.getName().startsWith("entry_")) {
-        current.unregister();
-      }
-    });
-
-    if (scoreboard.getObjective("main") == null) {
-      sidebarVersionTemplate.createObjective(scoreboard, "main", titleAnimation.states().get(0));
-    }
-
-    for (SimpleSidebarComponent component : this.simpleComponents) {
-      component.render(scoreboard);
-    }
-    return scoreboard;
+  public void render(KelpPlayer player) {
+    sidebarVersionTemplate.renderSidebar(this, player);
   }
 
   @Override
-  public Scoreboard renderAndOpenSidebar(Player player) {
-    Scoreboard scoreboard = renderSidebar(player);
-    player.setScoreboard(scoreboard);
-    return scoreboard;
+  public void update(KelpPlayer player) {
+    sidebarVersionTemplate.updateSidebar(this, player);
+  }
+
+  public void lazyUpdate(KelpPlayer player) {
+    sidebarVersionTemplate.lazyUpdate(this, player);
   }
 
   @Override
-  public Scoreboard update(Player player) {
-    Scoreboard scoreboard = player.getScoreboard();
+  public void remove(KelpPlayer player) {
 
-    for (SimpleSidebarComponent component : this.simpleComponents) {
-      component.update(scoreboard);
-    }
-    return scoreboard;
-  }
-
-  @Override
-  public void hideSidebar(Player player) {
-
-  }
-
-  public int maxStates() {
-    return this.titleAnimation == null ? 0 : this.titleAnimation.states().size();
   }
 
 }
