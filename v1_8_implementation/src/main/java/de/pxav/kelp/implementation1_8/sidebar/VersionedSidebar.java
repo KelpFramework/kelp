@@ -37,6 +37,14 @@ public class VersionedSidebar extends SidebarVersionTemplate {
     this.sidebarRepository = sidebarRepository;
   }
 
+  /**
+   * Renders the sidebar to a specific player. This means it displays
+   * it for the first time (so only use this method if the player does
+   * not already see this sidebar to avoid flicker effects or similar behaviour).
+   *
+   * @param sidebar     The sidebar to render to the given player.
+   * @param kelpPlayer  The player to render the sidebar to.
+   */
   @Override
   public void renderSidebar(KelpSidebar sidebar, KelpPlayer kelpPlayer) {
     Player player = kelpPlayer.getBukkitPlayer();
@@ -57,19 +65,37 @@ public class VersionedSidebar extends SidebarVersionTemplate {
     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
     player.setScoreboard(scoreboard);
+
+    // apply all contents to the sidebar.
     this.updateSidebar(sidebar, kelpPlayer);
 
     if (sidebar.getClass().isAssignableFrom(AnimatedSidebar.class)) {
+      // if the sidebar is animated start the animation schedulers in
+      // the sidebar repository and set the first animation state as default.
       AnimatedSidebar animatedSidebar = (AnimatedSidebar) sidebar;
       objective.setDisplayName(animatedSidebar.getTitle().states().get(0));
       sidebarRepository.addAnimatedSidebar(animatedSidebar, kelpPlayer);
     } else if (sidebar.getClass().isAssignableFrom(SimpleSidebar.class)) {
+      // if the sidebar is a simple sidebar, simply set the default title.
       SimpleSidebar simpleSidebar = (SimpleSidebar) sidebar;
       objective.setDisplayName(simpleSidebar.getTitle().get());
     }
 
   }
 
+  /**
+   * Performs a lazy update on the sidebar. A lazy update does not remove all entries/lines
+   * from a scoreboard first, like it is done by {@link #updateSidebar(KelpSidebar, KelpPlayer)}. It only uses the
+   * existing entries in the sidebar, which means that you cannot use it if you know that the amount
+   * of lines in the sidebar might change with an update.
+   *
+   * However this update method is completely free from any flickering effects and it is
+   * not as performance heavy as a normal update. So if you can, you should prefer this update
+   * method over a normal update.
+   *
+   * @param sidebar     The sidebar to update.
+   * @param kelpPlayer  The player who should see the updated sidebar.
+   */
   @Override
   public void lazyUpdate(KelpSidebar sidebar, KelpPlayer kelpPlayer) {
     Scoreboard scoreboard = kelpPlayer.getBukkitPlayer().getScoreboard();
@@ -97,6 +123,14 @@ public class VersionedSidebar extends SidebarVersionTemplate {
     }
   }
 
+  /**
+   * Performs a full-update on the given sidebar, which means that all existing
+   * contents are removed and then new contents are applied. This method is safe
+   * against changing amounts of lines.
+   *
+   * @param sidebar       The sidebar you want to update.
+   * @param kelpPlayer    The player who should see the updates.
+   */
   @Override
   public void updateSidebar(KelpSidebar sidebar, KelpPlayer kelpPlayer) {
     Scoreboard scoreboard = kelpPlayer.getBukkitPlayer().getScoreboard();
@@ -107,6 +141,7 @@ public class VersionedSidebar extends SidebarVersionTemplate {
       return;
     }
 
+    // remove all old entries
     for (String entry : scoreboard.getEntries()) {
       Score score = objective.getScore(entry);
 
@@ -117,6 +152,7 @@ public class VersionedSidebar extends SidebarVersionTemplate {
       scoreboard.resetScores(entry);
     }
 
+    // unregister all teams
     scoreboard.getTeams().forEach(Team::unregister);
 
     for (Object object : sidebar.getComponents()) {

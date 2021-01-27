@@ -10,6 +10,11 @@ import org.bukkit.scoreboard.Scoreboard;
 @Versioned
 public class VersionedSidebarUpdater extends SidebarUpdaterVersionTemplate {
 
+  /**
+   * Updates the title of sidebar of the given player to the given string.
+   * @param to          The title to update to.
+   * @param kelpPlayer  The player whose sidebar's title should be updated.
+   */
   @Override
   public void updateTitleOnly(String to, KelpPlayer kelpPlayer) {
     Scoreboard scoreboard = kelpPlayer.getBukkitPlayer().getScoreboard();
