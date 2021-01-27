@@ -11,6 +11,4 @@ public abstract class SidebarComponent {
 
   public abstract Map<Integer, String> render();
 
-  public abstract Map<Integer, String> update();
-
 }
