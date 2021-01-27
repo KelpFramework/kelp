@@ -1,55 +1,62 @@
 package de.pxav.kelp.core.sidebar.type;
 
-import org.bukkit.entity.Player;
+import com.google.common.collect.Lists;
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.sidebar.component.SidebarComponent;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.util.Collection;
+
 /**
- * This class basically is the template for each sidebar.
- * If you want to make a custom sidebar,
- * your class has to inherit from this class.
- *
- * It provides essential methods used by the repository.
+ * A class description goes here.
  *
  * @author pxav
  */
-public abstract class KelpSidebar {
+public abstract class KelpSidebar<T extends KelpSidebar> {
 
-  /**
-   * Renders the sidebar and its components.
-   * That means that no existing scoreboard is modified,
-   * but a new one will be created as well as
-   * a new objective.
-   * This method does not open the sidebar automatically.
-   *
-   * @param player The player for which the sidebar should be rendered.
-   * @return The final sidebar obeject.
-   */
-  public abstract Scoreboard renderSidebar(Player player);
+  protected Collection<SidebarComponent> components = Lists.newArrayList();
+  protected int latestLines = 0;
 
-  /**
-   * Renders and opens the sidebar.
-   * This method basically executes the {@code #renderSidebar(player)} method
-   * above and directly sets the scoreboard for the given player.
-   *
-   * @param player The player who should see the scoreboard.
-   * @return The render result.
-   */
-  public abstract Scoreboard renderAndOpenSidebar(Player player);
+  public T addComponent(SidebarComponent component) {
+    this.components.add(component);
+    return (T) this;
+  }
 
-  /**
-   * Updates the given scoreboard without creating a new
-   * one.
-   *
-   * @param player The player whose scoreboard you want to update.
-   * @return The final scoreboard with the updated data.
-   */
-  public abstract Scoreboard update(Player player);
+  public T removeComponent(SidebarComponent component) {
+    this.components.remove(component);
+    return (T) this;
+  }
 
-  /**
-   * Makes the sidebar disappear from the player's screen.
-   *
-   * @param player The player whose sidebar should disappear.
-   */
-  public abstract void hideSidebar(Player player);
+  public T clearComponents() {
+    this.components.clear();
+    return (T) this;
+  }
+
+  public Collection<SidebarComponent> getComponents() {
+    return this.components;
+  }
+
+  public int getLatestLines() {
+    return latestLines;
+  }
+
+  public T setLatestLines(int latestLines) {
+    this.latestLines = latestLines;
+    return (T) this;
+  }
+
+  public abstract void render(KelpPlayer player);
+
+  public abstract void update(KelpPlayer player);
+
+  public abstract void remove(KelpPlayer player);
+//
+//  protected void unregisterAllTeams() {
+//    scoreboard.getTeams().forEach(current -> {
+//      if (current.getName().startsWith("entry_")) {
+//        current.unregister();
+//      }
+//    });
+//  }
 
 }
