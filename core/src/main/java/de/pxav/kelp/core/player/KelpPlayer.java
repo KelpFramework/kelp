@@ -121,6 +121,12 @@ public class KelpPlayer extends LivingKelpEntity {
     return new SimpleChatPrompt(this.getBukkitPlayer(), this.chatPromptVersionTemplate);
   }
 
+  /**
+   * Checks if the player has any scoreboard with content stored in any
+   * objective type ({@code SIDEBAR, PLAYER_LIST}, etc.)
+   *
+   * @return {@code true} if the player has a scoreboard with an objective.
+   */
   public boolean hasScoreboard() {
     Scoreboard scoreboard = bukkitPlayer.getScoreboard();
     return scoreboard.getObjective(DisplaySlot.SIDEBAR) != null
