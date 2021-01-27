@@ -1,8 +1,13 @@
 package de.pxav.kelp.core.sidebar.type;
 
 import com.google.common.collect.Lists;
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.animation.TextAnimation;
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.sidebar.SidebarUtils;
 import de.pxav.kelp.core.sidebar.component.SidebarComponentFactory;
-import de.pxav.kelp.core.sidebar.component.SimpleSidebarComponent;
+import de.pxav.kelp.core.sidebar.component.SimpleSidebarComponentOld;
+import de.pxav.kelp.core.sidebar.version.SidebarUpdaterVersionTemplate;
 import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
 import de.pxav.kelp.core.logger.KelpLogger;
 import org.bukkit.Bukkit;
@@ -12,6 +17,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.Collection;
+import java.util.function.Supplier;
 
 /**
  * This class represents the most simple type
@@ -22,94 +28,61 @@ import java.util.Collection;
  *
  * @author pxav
  */
-public class SimpleSidebar extends KelpSidebar {
+public class SimpleSidebar extends KelpSidebar<SimpleSidebar> {
 
-  // the title of the scoreboard (cannot be animated)
-  private String title;
+  private Supplier<String> title;
 
-  // the components that should be displayed.
-  private Collection<SimpleSidebarComponent> components;
-
-  private KelpLogger logger;
-  private JavaPlugin javaPlugin;
   private SidebarVersionTemplate sidebarVersionTemplate;
-  private SidebarComponentFactory sidebarComponentFactory;
+  private SidebarUpdaterVersionTemplate updaterVersionTemplate;
 
-  private ScoreboardManager scoreboardManager;
-
-  SimpleSidebar(KelpLogger logger,
-                JavaPlugin javaPlugin,
-                SidebarVersionTemplate sidebarVersionTemplate,
-                SidebarComponentFactory sidebarComponentFactory) {
-    this.logger = logger;
-    this.javaPlugin = javaPlugin;
+  public SimpleSidebar(SidebarVersionTemplate sidebarVersionTemplate,
+                       SidebarUpdaterVersionTemplate updaterVersionTemplate) {
     this.sidebarVersionTemplate = sidebarVersionTemplate;
-    this.sidebarComponentFactory = sidebarComponentFactory;
-
-    this.components = Lists.newArrayList();
-    this.scoreboardManager = Bukkit.getScoreboardManager();
+    this.updaterVersionTemplate = updaterVersionTemplate;
   }
 
-  public SimpleSidebar withTitle(String title) {
+  public static SimpleSidebar create() {
+    return new SimpleSidebar(
+      KelpPlugin.getInjector().getInstance(SidebarVersionTemplate.class),
+      KelpPlugin.getInjector().getInstance(SidebarUpdaterVersionTemplate.class)
+    );
+  }
+
+  public SimpleSidebar title(Supplier<String> title) {
     this.title = title;
     return this;
   }
 
-  public SimpleSidebar insertLine(int line, String text) {
-    this.components.add(sidebarComponentFactory.simpleTextComponent(text, line));
+  public SimpleSidebar staticTitle(String title) {
+    this.title = () -> title;
     return this;
   }
 
-  public SimpleSidebar addComponent(SimpleSidebarComponent sidebarComponent) {
-    this.components.add(sidebarComponent);
-    return this;
+  public Supplier<String> getTitle() {
+    return title;
   }
 
   @Override
-  public Scoreboard renderSidebar(Player player) {
-    Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
+  public void render(KelpPlayer player) {
+    sidebarVersionTemplate.renderSidebar(this, player);
+  }
 
-    scoreboard.getTeams().forEach(current -> {
-      if (current.getName().startsWith("entry_")) {
-        current.unregister();
-      }
-    });
-
-    if (scoreboard.getObjective("main") == null) {
-      sidebarVersionTemplate.createObjective(scoreboard, "main", this.title);
-    }
-
-    for (SimpleSidebarComponent component : this.components) {
-      component.render(scoreboard);
-    }
-
-    return scoreboard;
+  public void updateTitleOnly(KelpPlayer player) {
+    updaterVersionTemplate.updateTitleOnly(title.get(), player);
   }
 
   @Override
-  public Scoreboard renderAndOpenSidebar(Player player) {
-    Scoreboard scoreboard = this.renderSidebar(player);
-    player.setScoreboard(scoreboard);
-    return scoreboard;
+  public void update(KelpPlayer player) {
+    sidebarVersionTemplate.updateSidebar(this, player);
+  }
+
+  public void lazyUpdate(KelpPlayer player) {
+    sidebarVersionTemplate.lazyUpdate(this, player);
   }
 
   @Override
-  public Scoreboard update(Player player) {
-    Scoreboard scoreboard = player.getScoreboard();
+  public void remove(KelpPlayer player) {
 
-    for (SimpleSidebarComponent component : this.components) {
-      component.update(scoreboard);
-    }
-
-    return scoreboard;
-  }
-
-  @Override
-  public void hideSidebar(Player player) {
-    Bukkit.getScheduler().runTaskLater(javaPlugin, () -> {
-      Scoreboard emptyScoreboard = scoreboardManager.getNewScoreboard();
-      player.setScoreboard(emptyScoreboard);
-    }, 1L);
   }
 
 }
