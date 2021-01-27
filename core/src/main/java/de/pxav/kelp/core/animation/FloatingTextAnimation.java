@@ -16,8 +16,10 @@ public class FloatingTextAnimation implements TextAnimation {
   private boolean slideIn;
   private SlideDirection slideDirection;
 
-  public FloatingTextAnimation() {
+  public FloatingTextAnimation() {}
 
+  public static FloatingTextAnimation create() {
+    return new FloatingTextAnimation();
   }
 
   public FloatingTextAnimation text(String text) {
@@ -74,7 +76,6 @@ public class FloatingTextAnimation implements TextAnimation {
 
   @Override
   public List<String> states() {
-
     return Lists.newArrayList();
   }
 

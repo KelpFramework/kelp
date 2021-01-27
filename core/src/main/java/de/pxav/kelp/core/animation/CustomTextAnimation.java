@@ -23,6 +23,10 @@ public class CustomTextAnimation implements TextAnimation {
 
   public CustomTextAnimation() {}
 
+  public static CustomTextAnimation create() {
+    return new CustomTextAnimation();
+  }
+
   public CustomTextAnimation addStates(String... states) {
     this.states.addAll(Arrays.asList(states));
     return this;
