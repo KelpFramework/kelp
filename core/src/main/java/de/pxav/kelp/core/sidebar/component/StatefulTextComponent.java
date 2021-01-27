@@ -1,9 +1,9 @@
 package de.pxav.kelp.core.sidebar.component;
 
 import com.google.common.collect.Maps;
-import de.pxav.kelp.core.scheduler.synchronize.Retrievable;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A class description goes here.
@@ -13,7 +13,11 @@ import java.util.Map;
 public class StatefulTextComponent extends SidebarComponent {
 
   private int line;
-  private Retrievable text;
+  private Supplier<Object> text;
+
+  public StatefulTextComponent() {
+    text = () -> "StatefulTextComponent";
+  }
 
   public static StatefulTextComponent create() {
     return new StatefulTextComponent();
@@ -24,15 +28,15 @@ public class StatefulTextComponent extends SidebarComponent {
     return this;
   }
 
-  public StatefulTextComponent text(Retrievable retrievableText) {
-    this.text = retrievableText;
+  public StatefulTextComponent text(Supplier<Object> text) {
+    this.text = text;
     return this;
   }
 
   @Override
   public Map<Integer, String> render() {
     Map<Integer, String> output = Maps.newHashMap();
-    output.put(line, String.valueOf(text.retrieve()));
+    output.put(line, String.valueOf(text.get()));
     return output;
   }
 
