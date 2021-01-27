@@ -16,14 +16,8 @@ public class StatelessTextComponent extends SidebarComponent {
   private String text = "SimpleTextComponent";
   private int line;
 
-  private SidebarUtils sidebarUtils;
-
-  public StatelessTextComponent(SidebarUtils sidebarUtils) {
-    this.sidebarUtils = sidebarUtils;
-  }
-
   public static StatelessTextComponent create() {
-    return new StatelessTextComponent(KelpPlugin.getInjector().getInstance(SidebarUtils.class));
+    return new StatelessTextComponent();
   }
 
   public StatelessTextComponent text(String text) {
