@@ -1,11 +1,14 @@
 package de.pxav.kelp.core.sidebar.component;
 
+import com.google.common.collect.Maps;
 import de.pxav.kelp.core.sidebar.SidebarUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import java.util.Map;
 
 /**
  * This scoreboard component is used to easily create line separators.
@@ -22,24 +25,24 @@ import org.bukkit.scoreboard.Team;
  *
  * @author pxav
  */
-public class LineSeparatorComponent implements SimpleSidebarComponent {
+public class LineSeparatorComponent extends SidebarComponent {
 
   private int line;
   private int length;
   private char symbol;
   private ChatColor[] colors;
 
-  private SidebarUtils sidebarUtils;
-
-  LineSeparatorComponent(SidebarUtils sidebarUtils) {
-    this.sidebarUtils = sidebarUtils;
-
+  public LineSeparatorComponent() {
     this.length = SeparatorLength.FULL;
     this.symbol = '-';
     this.colors = new ChatColor[] {ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH};
   }
 
-  public LineSeparatorComponent score(int line) {
+  public static LineSeparatorComponent create() {
+    return new LineSeparatorComponent();
+  }
+
+  public LineSeparatorComponent line(int line) {
     this.line = line;
     return this;
   }
@@ -60,49 +63,20 @@ public class LineSeparatorComponent implements SimpleSidebarComponent {
   }
 
   @Override
-  public void render(Scoreboard parent) {
-    String entry = sidebarUtils.randomEmptyEntry(parent);
-    Objective objective = parent.getObjective(DisplaySlot.SIDEBAR);
-
-    objective.getScore(entry).setScore(line);
-
-    Team team = parent.registerNewTeam("entry_" + line);
-    team.addEntry(entry);
-    update(parent);
-  }
-
-  @Override
-  public void update(Scoreboard parent) {
-    Team team = parent.getTeam("entry_" + line);
-    StringBuilder prefix = new StringBuilder();
-    StringBuilder suffix = new StringBuilder();
-    int totalLength = this.length + colors.length;
+  public Map<Integer, String> render() {
+    Map<Integer, String> output = Maps.newHashMap();
+    StringBuilder builder = new StringBuilder();
 
     for (ChatColor color : colors) {
-      prefix.append(color);
-      if (totalLength > 16) {
-        suffix.append(color);
-      }
+      builder.append(color);
     }
 
     for (int i = 0; i < length; i++) {
-      prefix.append(symbol);
-      if (totalLength > 16) {
-        suffix.append(symbol);
-      }
+      builder.append(symbol);
     }
 
-    if (prefix.toString().length() > 16) {
-      if (suffix.toString().length() > 16) {
-        team.setSuffix(suffix.toString().substring(0, 16));
-      } else {
-        team.setSuffix(suffix.toString());
-      }
-      team.setPrefix(prefix.toString().substring(0, 16));
-      return;
-    }
-
-    team.setPrefix(prefix.toString());
+    output.put(line, builder.toString());
+    return output;
   }
 
   public static class SeparatorLength {
