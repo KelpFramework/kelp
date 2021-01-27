@@ -1,22 +1,10 @@
 package de.pxav.kelp.core.sidebar.type;
 
-import com.google.common.collect.Lists;
 import de.pxav.kelp.core.KelpPlugin;
-import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.sidebar.SidebarUtils;
-import de.pxav.kelp.core.sidebar.component.SidebarComponentFactory;
-import de.pxav.kelp.core.sidebar.component.SimpleSidebarComponentOld;
 import de.pxav.kelp.core.sidebar.version.SidebarUpdaterVersionTemplate;
 import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
-import de.pxav.kelp.core.logger.KelpLogger;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
@@ -48,16 +36,39 @@ public class SimpleSidebar extends KelpSidebar<SimpleSidebar> {
     );
   }
 
+  /**
+   * Sets the title of the sidebar. This method takes a {@link Supplier}, which
+   * allows you to create dynamic titles that can update every time you call
+   * {@link #updateTitleOnly(KelpPlayer)}.
+   *
+   * If you rather want a static title, choose {@link #staticTitle(String)}
+   *
+   * @param title The title do display at the top of the sidebar.
+   * @return Instance of the current component for more fluent builder design.
+   */
   public SimpleSidebar title(Supplier<String> title) {
     this.title = title;
     return this;
   }
 
+  /**
+   * Sets the title of the sidebar. This method takes a normal {@code String}, which
+   * means that the title is static and won't change if you call {@link #updateTitleOnly(KelpPlayer)}
+   *
+   * If you rather want a dynamic title, choose {@link #title(Supplier)} instead.
+   *
+   * @param title The title do display at the top of the sidebar.
+   * @return Instance of the current component for more fluent builder design.
+   */
   public SimpleSidebar staticTitle(String title) {
     this.title = () -> title;
     return this;
   }
 
+  /**
+   * Gets the {@link Supplier} holding the current title - no matter if static or dynamic.
+   * @return The current title of the sidebar.
+   */
   public Supplier<String> getTitle() {
     return title;
   }
@@ -67,6 +78,12 @@ public class SimpleSidebar extends KelpSidebar<SimpleSidebar> {
     sidebarVersionTemplate.renderSidebar(this, player);
   }
 
+  /**
+   * Updates the title of the sidebar without loading to changing any
+   * of its components.
+   *
+   * @param player The player you want to show the title update to.
+   */
   public void updateTitleOnly(KelpPlayer player) {
     updaterVersionTemplate.updateTitleOnly(title.get(), player);
   }
@@ -76,6 +93,18 @@ public class SimpleSidebar extends KelpSidebar<SimpleSidebar> {
     sidebarVersionTemplate.updateSidebar(this, player);
   }
 
+  /**
+   * Performs a lazy update on the sidebar. A lazy update does not remove all entries/lines
+   * from a scoreboard first, like it is done by {@link #update(KelpPlayer)}. It only used the
+   * existing entries in the sidebar, which means that you cannot use it if you know that the amount
+   * of lines in the sidebar might change with an update.
+   *
+   * However this update method is completely free from any flickering effects and it is
+   * not as performance heavy as a normal update. So if you can, you should prefer this update
+   * method over a normal update.
+   *
+   * @param player The player who should see the updated sidebar.
+   */
   public void lazyUpdate(KelpPlayer player) {
     sidebarVersionTemplate.lazyUpdate(this, player);
   }
