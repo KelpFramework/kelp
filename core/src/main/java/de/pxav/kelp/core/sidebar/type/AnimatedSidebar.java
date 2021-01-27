@@ -4,15 +4,7 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.animation.StaticTextAnimation;
 import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.sidebar.SidebarUtils;
-import de.pxav.kelp.core.sidebar.component.SidebarComponent;
 import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
-import org.bukkit.Bukkit;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-
-import java.util.Collection;
 
 /**
  * A class description goes here.
@@ -25,17 +17,14 @@ public class AnimatedSidebar extends KelpSidebar<AnimatedSidebar> {
   private int titleAnimationInterval = 200;
   private String clusterId = null;
 
-  private SidebarUtils sidebarUtils;
   private SidebarVersionTemplate sidebarVersionTemplate;
 
-  public AnimatedSidebar(SidebarUtils sidebarUtils, SidebarVersionTemplate sidebarVersionTemplate) {
-    this.sidebarUtils = sidebarUtils;
+  public AnimatedSidebar(SidebarVersionTemplate sidebarVersionTemplate) {
     this.sidebarVersionTemplate = sidebarVersionTemplate;
   }
 
   public static AnimatedSidebar create() {
     return new AnimatedSidebar(
-      KelpPlugin.getInjector().getInstance(SidebarUtils.class),
       KelpPlugin.getInjector().getInstance(SidebarVersionTemplate.class)
     );
   }
