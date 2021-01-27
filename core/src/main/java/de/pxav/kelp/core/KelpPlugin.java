@@ -131,6 +131,7 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(KelpNpcRepository.class).stopScheduler();
     //injector.getInstance(SidebarRepository.class).interruptAnimations();
+    injector.getInstance(SidebarRepository.class).stopAllClusters();
     injector.getInstance(ParticleEffectRepository.class).stopAllTimers();
     injector.getInstance(KelpSchedulerRepository.class).interruptAll();
 
