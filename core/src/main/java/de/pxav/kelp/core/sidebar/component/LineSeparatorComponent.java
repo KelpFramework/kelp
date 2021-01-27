@@ -29,12 +29,12 @@ public class LineSeparatorComponent extends SidebarComponent {
 
   private int line;
   private int length;
-  private char symbol;
+  private String symbol;
   private ChatColor[] colors;
 
   public LineSeparatorComponent() {
     this.length = SeparatorLength.FULL;
-    this.symbol = '-';
+    this.symbol = "-";
     this.colors = new ChatColor[] {ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH};
   }
 
@@ -65,6 +65,18 @@ public class LineSeparatorComponent extends SidebarComponent {
    * @return Instance of the current component for more fluent builder design.
    */
   public LineSeparatorComponent symbol(char symbol) {
+    this.symbol = String.valueOf(symbol);
+    return this;
+  }
+
+  /**
+   * Sets the symbol to be repeated n times by the component, while
+   * {@code n} is equal to the length set by {@link #length(int)}
+   *
+   * @param symbol The symbol you want to set.
+   * @return Instance of the current component for more fluent builder design.
+   */
+  public LineSeparatorComponent symbol(String symbol) {
     this.symbol = symbol;
     return this;
   }
