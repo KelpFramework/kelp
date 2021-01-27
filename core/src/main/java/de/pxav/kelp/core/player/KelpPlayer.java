@@ -23,6 +23,8 @@ import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -144,6 +146,17 @@ public class KelpPlayer extends LivingKelpEntity {
 //    this.sidebarRepository.removeSidebar(bukkitPlayer);
 //    return this;
     return this;
+  }
+
+  public boolean hasScoreboard() {
+    Scoreboard scoreboard = bukkitPlayer.getScoreboard();
+    return scoreboard.getObjective(DisplaySlot.SIDEBAR) != null
+      || scoreboard.getObjective(DisplaySlot.BELOW_NAME) != null
+      || scoreboard.getObjective(DisplaySlot.PLAYER_LIST) != null;
+  }
+
+  public boolean hasSidebar() {
+    return false; //todo implement
   }
 
   /**
