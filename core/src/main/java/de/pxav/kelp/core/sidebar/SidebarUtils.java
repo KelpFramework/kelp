@@ -22,12 +22,10 @@ import java.util.concurrent.ThreadLocalRandom;
 @Singleton
 public class SidebarUtils {
 
-  private KelpLogger logger;
   private StringUtils stringUtils;
 
   @Inject
-  public SidebarUtils(KelpLogger logger, StringUtils stringUtils) {
-    this.logger = logger;
+  public SidebarUtils(StringUtils stringUtils) {
     this.stringUtils = stringUtils;
   }
 
@@ -79,7 +77,6 @@ public class SidebarUtils {
    * @return The final generation result.
    */
   public String randomEmptyEntry(Scoreboard scoreboard) {
-    int index = ThreadLocalRandom.current().nextInt(1);
     int colorAmount = ThreadLocalRandom.current().nextInt(3);
     StringBuilder stringBuilder = new StringBuilder();
     Collection<String> forbidden = usedEntries(scoreboard);
