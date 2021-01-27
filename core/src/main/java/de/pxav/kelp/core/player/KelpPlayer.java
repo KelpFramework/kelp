@@ -332,6 +332,13 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
+  public KelpPlayer clearChat() {
+    for (int i = 0; i < 103; i++) {
+      sendMessage(" ");
+    }
+    return this;
+  }
+
   public boolean mayFly() {
     return playerVersionTemplate.getAllowFlight(bukkitPlayer);
   }
