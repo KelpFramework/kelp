@@ -31,6 +31,7 @@ public class SidebarRepository {
   private ConcurrentHashMap<UUID, Integer> animationStates;
   private ConcurrentHashMap<String, Set<UUID>> clusters;
   private ConcurrentHashMap<String, UUID> clusterTasks;
+  private ConcurrentHashMap<UUID, UUID> playerTasks;
   private ConcurrentHashMap<UUID, TextAnimation> animations;
 
   private KelpSchedulerRepository schedulerRepository;
@@ -46,6 +47,7 @@ public class SidebarRepository {
     this.animationStates = new ConcurrentHashMap<>();
     this.clusters = new ConcurrentHashMap<>();
     this.clusterTasks = new ConcurrentHashMap<>();
+    this.playerTasks = new ConcurrentHashMap<>();
     this.animations = new ConcurrentHashMap<>();
     this.schedulerFactory = schedulerFactory;
     this.schedulerRepository = schedulerRepository;
@@ -58,28 +60,47 @@ public class SidebarRepository {
     animationStates.put(player.getUUID(), 0);
     animations.put(player.getUUID(), sidebar.getTitle());
 
+    // add player to cluster or create a new cluster if needed
     if (sidebar.getClusterId() != null) {
       if (!clusters.containsKey(sidebar.getClusterId())) {
         this.addCluster(sidebar.getClusterId(), sidebar.getTitleAnimationInterval());
       }
       this.addPlayerToCluster(sidebar.getClusterId(), player);
+    } else {
+      // if the sidebar does not have clusters, an individual scheduler
+      // has to be set up
+      UUID task = schedulerFactory.newRepeatingScheduler()
+        .async()
+        .every(sidebar.getTitleAnimationInterval())
+        .milliseconds()
+        .run(taskId -> {
+          String updateTo = incrementAnimationState(player.getUUID());
+          updaterVersionTemplate.updateTitleOnly(updateTo, player);
+        });
+      playerTasks.put(player.getUUID(), task);
     }
 
   }
 
   public void removeAnimatedSidebar(KelpPlayer player) {
-    Maps.newHashMap(this.clusters).forEach((clusterId, playerSet)
-      -> playerSet.stream()
-      .filter(uuid -> player.getUUID() == uuid)
-      .findFirst()
-      .ifPresent(uuid -> {
-        playerSet.remove(uuid);
-        if (playerSet.isEmpty()) {
-          stopCluster(clusterId);
-          return;
-        }
-        clusters.put(clusterId, playerSet);
-      }));
+    if (playerTasks.containsKey(player.getUUID())) {
+      UUID task = playerTasks.get(player.getUUID());
+      schedulerRepository.interruptScheduler(task);
+      this.playerTasks.remove(player.getUUID());
+    } else {
+      Maps.newHashMap(this.clusters).forEach((clusterId, playerSet)
+        -> playerSet.stream()
+        .filter(uuid -> player.getUUID() == uuid)
+        .findFirst()
+        .ifPresent(uuid -> {
+          playerSet.remove(uuid);
+          if (playerSet.isEmpty()) {
+            stopCluster(clusterId);
+            return;
+          }
+          clusters.put(clusterId, playerSet);
+        }));
+    }
     this.animationStates.remove(player.getUUID());
     this.animations.remove(player.getUUID());
   }
