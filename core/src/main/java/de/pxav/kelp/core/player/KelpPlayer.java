@@ -21,6 +21,7 @@ import de.pxav.kelp.core.player.prompt.chat.SimpleChatPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
+import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sound.KelpSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -81,6 +82,8 @@ public class KelpPlayer extends LivingKelpEntity {
 
   private String tabListHeader;
   private String tabListFooter;
+
+  private KelpSidebar kelpSidebar;
 
   public KelpPlayer(Player bukkitPlayer,
                     PlayerVersionTemplate playerVersionTemplate,
@@ -143,8 +146,31 @@ public class KelpPlayer extends LivingKelpEntity {
    * of the scoreboard such as the tab list.
    */
   public void removeSidebar() {
+    setSidebarInternally(null);
     Bukkit.getPluginManager().callEvent(new KelpSidebarRemoveEvent(this));
     playerVersionTemplate.removeSidebar(bukkitPlayer);
+  }
+
+  /**
+   * Caches the sidebar object of the player locally. This does not
+   * render nor update the given sidebar. It simply changes the internal
+   * sidebar object which can then be retrieved to update it for
+   * example using {@link #getCurrentSidebar()}.
+   *
+   * @param sidebar The current sidebar of the player.
+   */
+  public void setSidebarInternally(KelpSidebar sidebar) {
+    this.kelpSidebar = sidebar;
+  }
+
+  /**
+   * Gets the sidebar the player is currently seeing.
+   * Will return {@code null} of the player has no sidebar.
+   *
+   * @return The current sidebar of the player.
+   */
+  public KelpSidebar getCurrentSidebar() {
+    return kelpSidebar;
   }
 
   /**

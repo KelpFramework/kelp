@@ -84,6 +84,8 @@ public class VersionedSidebar extends SidebarVersionTemplate {
       objective.setDisplayName(simpleSidebar.getTitle().get());
     }
 
+    kelpPlayer.setSidebarInternally(sidebar);
+
   }
 
   /**
