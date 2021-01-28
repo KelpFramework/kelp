@@ -50,7 +50,6 @@ public class PlayerCreationListener {
     KelpPlayer kelpPlayer = kelpPlayerRepository.newKelpPlayer(event.getPlayer());
     kelpPlayerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
     Bukkit.getPluginManager().callEvent(new KelpPlayerLoginEvent(
-      event.getPlayer(),
       kelpPlayer,
       event.getHostname(),
       event.getResult(),
