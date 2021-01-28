@@ -1,6 +1,8 @@
 package de.pxav.kelp.implementation1_8.sidebar;
 
 import com.google.common.base.Preconditions;
+import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRenderEvent;
+import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarUpdateEvent;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -65,6 +67,7 @@ public class VersionedSidebar extends SidebarVersionTemplate {
     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
     player.setScoreboard(scoreboard);
+    Bukkit.getPluginManager().callEvent(new KelpSidebarRenderEvent(kelpPlayer, sidebar));
 
     // apply all contents to the sidebar.
     this.updateSidebar(sidebar, kelpPlayer);
@@ -121,6 +124,8 @@ public class VersionedSidebar extends SidebarVersionTemplate {
         sidebarUtils.setTeamData(text, team);
       });
     }
+
+    Bukkit.getPluginManager().callEvent(new KelpSidebarUpdateEvent(kelpPlayer, sidebar, true));
   }
 
   /**
@@ -172,6 +177,8 @@ public class VersionedSidebar extends SidebarVersionTemplate {
       });
 
     }
+
+    Bukkit.getPluginManager().callEvent(new KelpSidebarUpdateEvent(kelpPlayer, sidebar, false));
   }
 
 }
