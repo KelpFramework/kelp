@@ -111,7 +111,7 @@ public class ShowCommand extends KelpCommand {
         sidebar3.addComponent(EmptyLineComponent.create().line(13));
 
         sidebar3.addComponent(StatelessTextComponent.create().line(12).text("§2§lTime"));
-        SimpleDateFormat dateTime2 = new SimpleDateFormat("ss:mm:HH dd.MM.yyyy");
+        SimpleDateFormat dateTime2 = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy");
         sidebar3.addComponent(StatefulTextComponent.create().line(11).text(() -> "§8» §7" + dateTime2.format(new Date())));
         sidebar3.addComponent(EmptyLineComponent.create().line(10));
 
