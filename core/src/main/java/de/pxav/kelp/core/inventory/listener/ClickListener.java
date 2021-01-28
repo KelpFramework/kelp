@@ -7,6 +7,7 @@ package de.pxav.kelp.core.inventory.listener;
  *
  * @author pxav
  */
+@FunctionalInterface
 public interface ClickListener {
 
   /**

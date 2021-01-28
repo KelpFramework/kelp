@@ -14,6 +14,7 @@ import java.util.UUID;
  *
  * @author pxav
  */
+@FunctionalInterface
 public interface KelpSchedulerRunnable {
 
   /**
