@@ -1,4 +1,4 @@
-package de.pxav.kelp.testing.command.kmaterial;
+package de.pxav.kelp.testing.inventory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -15,12 +15,12 @@ import de.pxav.kelp.testing.config.DebugCommandConfig;
  */
 @Singleton
 @CreateCommand(name = "kmaterial", executorType = ExecutorType.PLAYER_ONLY)
-public class KelpMaterialCommand extends KelpCommand {
+public class KMaterialCommand extends KelpCommand {
 
   private DebugCommandConfig config;
 
   @Inject
-  public KelpMaterialCommand(DebugCommandConfig config) {
+  public KMaterialCommand(DebugCommandConfig config) {
     this.config = config;
   }
 

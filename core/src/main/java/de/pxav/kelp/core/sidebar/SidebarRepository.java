@@ -1,342 +1,170 @@
 package de.pxav.kelp.core.sidebar;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
+import com.google.common.collect.Sets;
+import de.pxav.kelp.core.animation.TextAnimation;
+import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.player.KelpPlayerRepository;
+import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
+import de.pxav.kelp.core.scheduler.type.SchedulerFactory;
 import de.pxav.kelp.core.sidebar.type.AnimatedSidebar;
-import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
-import de.pxav.kelp.core.reflect.MethodCriterion;
-import de.pxav.kelp.core.reflect.MethodFinder;
-import de.pxav.kelp.core.sidebar.type.KelpSidebar;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import de.pxav.kelp.core.sidebar.version.SidebarUpdaterVersionTemplate;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This repository class is used to manage your sidebars.
- * You can open, close and update sidebars using the
- * unique identifier which is passed in the {@code CreateSidebar}
- * annotation.
+ * A class description goes here.
  *
  * @author pxav
  */
 @Singleton
 public class SidebarRepository {
 
-  // saves the methods which build the sidebar. Identifier -> Method
-  private final Map<String, Method> methods = Maps.newHashMap();
+  private ConcurrentHashMap<UUID, Integer> animationStates;
+  private ConcurrentHashMap<String, Set<UUID>> clusters;
+  private ConcurrentHashMap<String, UUID> clusterTasks;
+  private ConcurrentHashMap<UUID, UUID> playerTasks;
+  private ConcurrentHashMap<UUID, TextAnimation> animations;
 
-  // should the sidebar be updated asynchronously? Identifier -> async?
-  private final Map<String, Boolean> asyncMode = Maps.newHashMap();
-
-  // The sidebar which is currently opened by a player. Player -> Sidebar identifier
-  private final Map<Player, String> playerSidebars = Maps.newHashMap();
-
-  // The schedulers for the title animation of animated sidebars. Identifier -> Scheduler
-  private final Map<String, ScheduledExecutorService> titleScheduler = Maps.newHashMap();
-
-  // The current state of animation for each player. Player -> State
-  private final Map<Player, Integer> animationStates = Maps.newHashMap();
-
-  // When should the next animation state be called? Identifier -> Time in millis
-  private final Map<String, Integer> titleAnimationInterval = Maps.newHashMap();
-
-  // the identifier of the scoreboard which should be set on join.
-  private String defaultScoreboard = "NONE";
-
-  private MethodFinder methodFinder;
-  private KelpLogger kelpLogger;
-  private Injector injector;
-  private ExecutorService executorService;
+  private KelpSchedulerRepository schedulerRepository;
+  private SchedulerFactory schedulerFactory;
+  private SidebarUpdaterVersionTemplate updaterVersionTemplate;
+  private KelpPlayerRepository playerRepository;
 
   @Inject
-  public SidebarRepository(MethodFinder methodFinder,
-                           KelpLogger kelpLogger,
-                           Injector injector,
-                           ExecutorService executorService) {
-    this.methodFinder = methodFinder;
-    this.kelpLogger = kelpLogger;
-    this.injector = injector;
-    this.executorService = executorService;
+  public SidebarRepository(KelpSchedulerRepository schedulerRepository,
+                           SchedulerFactory schedulerFactory,
+                           SidebarUpdaterVersionTemplate updaterVersionTemplate,
+                           KelpPlayerRepository playerRepository) {
+    this.animationStates = new ConcurrentHashMap<>();
+    this.clusters = new ConcurrentHashMap<>();
+    this.clusterTasks = new ConcurrentHashMap<>();
+    this.playerTasks = new ConcurrentHashMap<>();
+    this.animations = new ConcurrentHashMap<>();
+    this.schedulerFactory = schedulerFactory;
+    this.schedulerRepository = schedulerRepository;
+    this.updaterVersionTemplate = updaterVersionTemplate;
+    this.playerRepository = playerRepository;
   }
 
-  /**
-   * Searches for methods annotated with a {@code CreateSidebar} annotation
-   * and saves as a sidebar.
-   *
-   * @param packageNames The packages in which you want to search.
-   * @see CreateSidebar
-   */
-  public void loadSidebars(String... packageNames) {
-    kelpLogger.log("[SIDEBAR] Loading sidebars in " + Arrays.toString(packageNames));
-    this.methodFinder.filter(packageNames, MethodCriterion.annotatedWith(CreateSidebar.class))
-            .forEach(method -> {
-              CreateSidebar annotation = method.getAnnotation(CreateSidebar.class);
-              String identifier = annotation.identifier();
-              if (identifier.equalsIgnoreCase("NONE")) {
-                kelpLogger.log(LogLevel.ERROR, "[SIDEBAR] Sidebar identifier 'NONE' is not allowed, " +
-                        "because it's reserved for the system. Please choose another name.");
-                return;
-              }
+  public void addAnimatedSidebar(AnimatedSidebar sidebar, KelpPlayer player) {
 
-              if (!identifierAvailable(identifier)) {
-                kelpLogger.log(LogLevel.ERROR, "[SIDEBAR] Sidebar identifier " + identifier
-                        + " is already in use, but identifiers must be unique!" +
-                        " Please change the identifier and reload the system.");
-                return;
-              }
+    animationStates.put(player.getUUID(), 0);
+    animations.put(player.getUUID(), sidebar.getTitle());
 
-              methods.put(identifier, method);
-              asyncMode.put(identifier, annotation.async());
-              if (annotation.titleAnimationInterval() <= 0) {
-                kelpLogger.log(LogLevel.ERROR, "[SIDEBAR] Animation interval of sidebar '" + identifier
-                        + "' is smaller than or equal to 0. Please change the delay to at least 1.");
-                return;
-              }
-              titleAnimationInterval.put(identifier, annotation.titleAnimationInterval());
-
-              if (defaultScoreboard.equalsIgnoreCase("NONE")) {
-                defaultScoreboard = annotation.identifier();
-              }
-
-              kelpLogger.log("[SIDEBAR] Sidebar " + identifier + " successfully loaded!");
-            });
-    kelpLogger.log("[SIDEBAR] Loading process complete. Loaded " + methods.size() + " sidebars in total so far.");
-  }
-
-  /**
-   * Starts the schedulers for the scoreboard animations.
-   *
-   * Each sidebar gets an own scheduler which uses the interval
-   * which is passed in the {@code CreateSidebar} annotation,
-   * while animation states are linked to each player individually,
-   * because players can have different animations in the same sidebar
-   * when for example their name is displayed in the title:
-   * §apxav -> 4 states
-   * §aOpi_CAN -> 7 states
-   */
-  public void schedule() {
-    kelpLogger.log("[SIDEBAR] Enabling animation schedulers.");
-    for (Map.Entry<String, Integer> entry : Maps.newHashMap(this.titleAnimationInterval).entrySet()) {
-      String identifier = entry.getKey();
-
-      // check if the current sidebar is really an animated one.
-      // if not, remove it from the collection and continue with the next one.
-      if (!this.isAnimated(identifier)) {
-        this.titleAnimationInterval.remove(identifier);
-        continue;
+    // add player to cluster or create a new cluster if needed
+    if (sidebar.getClusterId() != null) {
+      if (!clusters.containsKey(sidebar.getClusterId())) {
+        this.addCluster(sidebar.getClusterId(), sidebar.getTitleAnimationInterval());
       }
-
-      // create a new thread containing a new scheduler
-      ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-
-
-      // schedule using the time passed in the annotation.
-      scheduledExecutorService.scheduleAtFixedRate(() -> {
-        try {
-
-          // iterate all players on the server.
-          for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!animationStates.containsKey(player)) {
-              continue;
-            }
-
-            int state = this.animationStates.get(player);
-
-            if (this.playerSidebars.containsKey(player)
-                    && !this.playerSidebars.get(player).equalsIgnoreCase(identifier))
-              continue;
-
-            // load the sidebar for the player
-            AnimatedSidebar sidebar = (AnimatedSidebar) getSidebar(identifier, player);
-            Preconditions.checkNotNull(sidebar);
-
-            // update the state. If the state index it out of bounds, reset it to 0.
-            animationStates.put(player, animationStates.get(player) + 1);
-            if (state >= sidebar.maxStates() - 1) {
-              this.animationStates.put(player, 0);
-            }
-
-            // finally update the title.
-            sidebar.updateTitleOnly(player, state);
-
-          }
-
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }, 200L, titleAnimationInterval.get(identifier), TimeUnit.MILLISECONDS);
-
-      // save the scheduler object in the map so that it can be canceled later.
-      this.titleScheduler.put(identifier, scheduledExecutorService);
-    }
-  }
-
-  /**
-   * Iterates through all sidebars and cancels the animation
-   * scheduler if existing.
-   */
-  public void interruptAnimations() {
-    for (Map.Entry<String, ScheduledExecutorService> entry : this.titleScheduler.entrySet()) {
-      entry.getValue().shutdown();
-    }
-    kelpLogger.log("[SIDEBAR] Interrupted all animation schedulers.");
-  }
-
-  /**
-   * Open the given sidebar for the given player.
-   *
-   * @param identifier The identifier of the desired sidebar.
-   * @param player The player who should see the sidebar.
-   */
-  public void openSidebar(String identifier, Player player) {
-    checkAvailability(identifier);
-
-    KelpSidebar sidebar = getSidebar(identifier, player);
-    Preconditions.checkNotNull(sidebar);
-
-    playerSidebars.put(player, identifier);
-    animationStates.put(player, 0);
-    sidebar.renderAndOpenSidebar(player);
-  }
-
-  /**
-   * Updates the sidebar of a player.
-   * The type ((a-)sync) depends on the value
-   * passed in the {@code CreateSidebar} annotation
-   * and will be selected automatically.
-   *
-   * @param player The player whose sidebar you want to update.
-   */
-  public void updateSidebar(Player player) {
-    String identifier = playerSidebars.get(player);
-    if (isAsync(identifier)) {
-      this.updateSidebarAsynchronously(player);
+      this.addPlayerToCluster(sidebar.getClusterId(), player);
     } else {
-      this.updateSidebarSynchronously(player);
+      // if the sidebar does not have clusters, an individual scheduler
+      // has to be set up
+      UUID task = schedulerFactory.newRepeatingScheduler()
+        .async()
+        .every(sidebar.getTitleAnimationInterval())
+        .milliseconds()
+        .run(taskId -> {
+          String updateTo = incrementAnimationState(player.getUUID());
+          updaterVersionTemplate.updateTitleOnly(updateTo, player);
+        });
+      playerTasks.put(player.getUUID(), task);
+    }
+
+  }
+
+  public void removeAnimatedSidebar(KelpPlayer player) {
+    if (playerTasks.containsKey(player.getUUID())) {
+      UUID task = playerTasks.get(player.getUUID());
+      schedulerRepository.interruptScheduler(task);
+      this.playerTasks.remove(player.getUUID());
+    } else {
+      Maps.newHashMap(this.clusters).forEach((clusterId, playerSet)
+        -> playerSet.stream()
+        .filter(uuid -> player.getUUID() == uuid)
+        .findFirst()
+        .ifPresent(uuid -> {
+          playerSet.remove(uuid);
+          if (playerSet.isEmpty()) {
+            stopCluster(clusterId);
+            return;
+          }
+          clusters.put(clusterId, playerSet);
+        }));
+    }
+    this.animationStates.remove(player.getUUID());
+    this.animations.remove(player.getUUID());
+  }
+
+  public void stopAllClusters() {
+    Maps.newHashMap(this.clusters).forEach((clusterId, playerSet)
+      -> stopCluster(clusterId));
+  }
+
+  @EventHandler
+  public void handleClusterRemove(PlayerQuitEvent event) {
+    KelpPlayer player = playerRepository.getKelpPlayer(event.getPlayer());
+    if (animationStates.containsKey(player.getUUID())) {
+      removeAnimatedSidebar(player);
     }
   }
 
-  /**
-   * Updates the sidebar of the given player inside the
-   * main thread of the server.
-   *
-   * @param player The player whose sidebar you want to update.
-   */
-  public void updateSidebarSynchronously(Player player) {
-    String identifier = playerSidebars.get(player);
-    checkAvailability(identifier);
-
-    KelpSidebar kelpSidebar = getSidebar(identifier, player);
-    Preconditions.checkNotNull(kelpSidebar);
-    kelpSidebar.update(player);
+  @EventHandler
+  public void handleSidebarRemove(KelpSidebarRemoveEvent event) {
+    // stops all schedulers and removes the player from the list when
+    // their sidebar is removed.
+    this.removeAnimatedSidebar(event.getPlayer());
   }
 
-  /**
-   * Updates the sidebar of the given player in a
-   * separate thread.
-   *
-   * @param player The player whose sidebar you want to update.
-   */
-  public void updateSidebarAsynchronously(Player player) {
-    this.executorService.execute(() -> {
-      String identifier = playerSidebars.get(player);
-      checkAvailability(identifier);
-
-      KelpSidebar kelpSidebar = getSidebar(identifier, player);
-      Preconditions.checkNotNull(kelpSidebar);
-      kelpSidebar.update(player);
-    });
+  private void addPlayerToCluster(String clusterId, KelpPlayer player) {
+    Set<UUID> players = clusters.get(clusterId);
+    players.add(player.getUUID());
+    clusters.put(clusterId, players);
   }
 
-  /**
-   * Removes a player from all lists in the cache and clears
-   * its sidebar.
-   *
-   * @param player The player whose sidebar should be removed.
-   */
-  public void removeSidebar(Player player) {
-    this.playerSidebars.remove(player);
-    this.animationStates.remove(player);
+  private void addCluster(String clusterId, int interval) {
+    clusters.put(clusterId, Sets.newHashSet());
+    UUID task = schedulerFactory.newRepeatingScheduler()
+      .async()
+      .every(interval)
+      .milliseconds()
+      .run(taskId -> clusters.get(clusterId).forEach(current -> {
+        String updateTo = incrementAnimationState(current);
+        updaterVersionTemplate.updateTitleOnly(updateTo, playerRepository.getKelpPlayer(current));
+      }));
+    clusterTasks.put(clusterId, task);
   }
 
-  /**
-   * Invokes the creation method of the sidebar with the
-   * given identifier and returns the result.
-   *
-   * @param identifier The identifier of the sidebar you want to get.
-   * @param player Each sidebar method needs a player as parameter
-   *               to also load player-specific data as well.
-   *               So you need to give the player who should be passed
-   *               as parameter.
-   * @return The final sidebar object.
-   */
-  private KelpSidebar getSidebar(String identifier, Player player) {
-    if (this.identifierAvailable(identifier)) return null;
+  private String incrementAnimationState(UUID uuid) {
+    List<String> states = animations.get(uuid).states();
+    int current = animationStates.get(uuid);
+    int max = states.size();
 
-    try {
-      Method method = this.methods.get(identifier);
-      return (KelpSidebar) method.invoke(injector.getInstance(method.getDeclaringClass()), player);
-    } catch (IllegalAccessException | InvocationTargetException ignore) {}
-    return null;
-  }
-
-  /**
-   * Checks whether the requested sidebar is animated.
-   * This means if the sidebar is of type {@code AnimatedSidebar}
-   * ano not just {@code SimpleSidebar} for example.
-   *
-   * @param identifier The identifier of the sidebar you want to check.
-   * @return {@code true} if the sidebar is of type {@code AnimatedSidebar}.
-   * @see AnimatedSidebar
-   */
-  private boolean isAnimated(String identifier) {
-    checkAvailability(identifier);
-    Method method = this.methods.get(identifier);
-    return method.getReturnType() == AnimatedSidebar.class;
-  }
-
-  /**
-   * Checks if the requested identifier exits in the cache.
-   * If this is false an error message is sent to the log.
-   *
-   * @param identifier The identifier you want to check.
-   */
-  private void checkAvailability(String identifier) {
-    if (identifierAvailable(identifier)) {
-      kelpLogger.log(LogLevel.ERROR, "Cannot access sidebar: " +
-              " Sidebar with identifier " + identifier + " does not exist.");
+    current += 1;
+    if (current == max) {
+      current = 0;
     }
+
+    animationStates.put(uuid, current);
+    return states.get(current);
   }
 
-  /**
-   * @param identifier The identifier you want to check.
-   * @return {@code true} if the identifier is not in use already.
-   */
-  private boolean identifierAvailable(String identifier) {
-    return !methods.containsKey(identifier);
+  private void stopCluster(String clusterId) {
+    if (this.clusterTasks.get(clusterId) == null) {
+      return;
+    }
+    schedulerRepository.interruptScheduler(clusterTasks.get(clusterId));
+    clusterTasks.remove(clusterId);
+    clusters.remove(clusterId);
   }
 
-  /**
-   * @param identifier The identifier of the sidebar you want to check.
-   * @return {@code true} if the sidebar should be handled asynchronously.
-   */
-  private boolean isAsync(String identifier) {
-    return this.asyncMode.get(identifier);
-  }
-
-  public String getDefaultScoreboard() {
-    return defaultScoreboard;
-  }
 }

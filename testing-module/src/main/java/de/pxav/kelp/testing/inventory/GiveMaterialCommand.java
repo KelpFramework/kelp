@@ -1,4 +1,4 @@
-package de.pxav.kelp.testing.command.kmaterial;
+package de.pxav.kelp.testing.inventory;
 
 import com.google.inject.Inject;
 import de.pxav.kelp.core.command.CreateSubCommand;
@@ -18,14 +18,14 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author pxav
  */
-@CreateSubCommand(name = "give", executorType = ExecutorType.PLAYER_ONLY, parentCommand = KelpMaterialCommand.class)
-public class GiveKelpMaterialCommands extends KelpCommand {
+@CreateSubCommand(name = "give", executorType = ExecutorType.PLAYER_ONLY, parentCommand = KMaterialCommand.class)
+public class GiveMaterialCommand extends KelpCommand {
 
   private DebugCommandConfig config;
   private KelpItemFactory itemFactory;
 
   @Inject
-  public GiveKelpMaterialCommands(DebugCommandConfig config, KelpItemFactory itemFactory) {
+  public GiveMaterialCommand(DebugCommandConfig config, KelpItemFactory itemFactory) {
     this.config = config;
     this.itemFactory = itemFactory;
   }

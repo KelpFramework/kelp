@@ -5,6 +5,7 @@ import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
+import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
@@ -20,9 +21,13 @@ import de.pxav.kelp.core.player.prompt.chat.SimpleChatPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
+import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sound.KelpSound;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -78,9 +83,10 @@ public class KelpPlayer extends LivingKelpEntity {
   private String tabListHeader;
   private String tabListFooter;
 
+  private KelpSidebar kelpSidebar;
+
   public KelpPlayer(Player bukkitPlayer,
                     PlayerVersionTemplate playerVersionTemplate,
-                    SidebarRepository sidebarRepository,
                     KelpInventoryRepository inventoryRepository,
                     KelpPlayerRepository kelpPlayerRepository,
                     ParticleVersionTemplate particleVersionTemplate,
@@ -101,7 +107,6 @@ public class KelpPlayer extends LivingKelpEntity {
       bukkitPlayer);
     this.bukkitPlayer = bukkitPlayer;
     this.playerVersionTemplate = playerVersionTemplate;
-    this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.particleVersionTemplate = particleVersionTemplate;
     this.signPromptVersionTemplate = signPromptVersionTemplate;
@@ -122,26 +127,50 @@ public class KelpPlayer extends LivingKelpEntity {
   }
 
   /**
-   * Opens a kelp sidebar with the given identifier. This method
-   * only applies to sidebars created using an annotation.
+   * Checks if the player has any scoreboard with content stored in any
+   * objective type ({@code SIDEBAR, PLAYER_LIST}, etc.)
    *
-   * @param identifier The identifier of the sidebar you want to show
-   *                   to the player
-   * @return the current instance of the player.
+   * @return {@code true} if the player has a scoreboard with an objective.
    */
-  public KelpPlayer openKelpSidebar(String identifier) {
-    this.sidebarRepository.openSidebar(identifier, bukkitPlayer);
-    return this;
+  public boolean hasScoreboard() {
+    Scoreboard scoreboard = bukkitPlayer.getScoreboard();
+    return scoreboard.getObjective(DisplaySlot.SIDEBAR) != null
+      || scoreboard.getObjective(DisplaySlot.BELOW_NAME) != null
+      || scoreboard.getObjective(DisplaySlot.PLAYER_LIST) != null;
   }
 
   /**
-   * Makes the current sidebar of the player disappear.
-   *
-   * @return the current instance of the player.
+   * Removes the {@link de.pxav.kelp.core.sidebar.type.KelpSidebar} from the player.
+   * This hides the sidebar from the screen, but also stops all schedulers connected
+   * to it (such as title animation). This method does not effect other parts
+   * of the scoreboard such as the tab list.
    */
-  public KelpPlayer removeKelpSidebar() {
-    this.sidebarRepository.removeSidebar(bukkitPlayer);
-    return this;
+  public void removeSidebar() {
+    setSidebarInternally(null);
+    Bukkit.getPluginManager().callEvent(new KelpSidebarRemoveEvent(this));
+    playerVersionTemplate.removeSidebar(bukkitPlayer);
+  }
+
+  /**
+   * Caches the sidebar object of the player locally. This does not
+   * render nor update the given sidebar. It simply changes the internal
+   * sidebar object which can then be retrieved to update it for
+   * example using {@link #getCurrentSidebar()}.
+   *
+   * @param sidebar The current sidebar of the player.
+   */
+  public void setSidebarInternally(KelpSidebar sidebar) {
+    this.kelpSidebar = sidebar;
+  }
+
+  /**
+   * Gets the sidebar the player is currently seeing.
+   * Will return {@code null} of the player has no sidebar.
+   *
+   * @return The current sidebar of the player.
+   */
+  public KelpSidebar getCurrentSidebar() {
+    return kelpSidebar;
   }
 
   /**
@@ -339,6 +368,13 @@ public class KelpPlayer extends LivingKelpEntity {
 
   public KelpPlayer chat(String message) {
     playerVersionTemplate.chat(bukkitPlayer, message);
+    return this;
+  }
+
+  public KelpPlayer clearChat() {
+    for (int i = 0; i < 103; i++) {
+      sendMessage(" ");
+    }
     return this;
   }
 

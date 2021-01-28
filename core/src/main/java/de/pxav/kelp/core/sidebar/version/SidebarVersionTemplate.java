@@ -1,20 +1,15 @@
 package de.pxav.kelp.core.sidebar.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.sidebar.component.SidebarComponent;
+import de.pxav.kelp.core.sidebar.type.AnimatedSidebar;
+import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 /**
- * This basically is a template for version-specific implementations.
- * If you want to create a version specific implementation of scoreboards
- * you need to make your class inherit from this abstract class
- * and type the content of the given methods.
- *
- * Kelp always detects if there is an implementation installed and
- * automatically binds it to this class so that it can be injected
- * in your constructor. So you can always depend on this class if
- * you need version specific sidebar code.
  *
  * @author pxav
  */
@@ -22,36 +17,38 @@ import org.bukkit.scoreboard.Scoreboard;
 public abstract class SidebarVersionTemplate {
 
   /**
-   * @return A new, empty scoreboard.
+   * Renders the sidebar to a specific player. This means it displays
+   * it for the first time (so only use this method if the player does
+   * not already see this sidebar to avoid flicker effects or similar behaviour).
+   *
+   * @param sidebar The sidebar to render to the given player.
+   * @param player  The player to render the sidebar to.
    */
-  public abstract Scoreboard createScoreboard();
+  public abstract void renderSidebar(KelpSidebar sidebar, KelpPlayer player);
 
   /**
-   * Creates a scoreboard objective.
+   * Performs a lazy update on the sidebar. A lazy update does not remove all entries/lines
+   * from a scoreboard first, like it is done by {@link #updateSidebar(KelpSidebar, KelpPlayer)}. It only uses the
+   * existing entries in the sidebar, which means that you cannot use it if you know that the amount
+   * of lines in the sidebar might change with an update.
    *
-   * @param parent The scoreboard in which the objective should be wrapped.
-   * @param identifier The name/identifier of the objective.
-   * @param title The display name/title of the objective.
-   * @return The final scoreboard objective.
+   * However this update method is completely free from any flickering effects and it is
+   * not as performance heavy as a normal update. So if you can, you should prefer this update
+   * method over a normal update.
+   *
+   * @param sidebar     The sidebar to update.
+   * @param kelpPlayer  The player who should see the updated sidebar.
    */
-  public abstract Objective createObjective(Scoreboard parent,
-                                            String identifier,
-                                            String title);
+  public abstract void lazyUpdate(KelpSidebar sidebar, KelpPlayer kelpPlayer);
 
   /**
-   * Open the screboard for a player.
+   * Performs a full-update on the given sidebar, which means that all existing
+   * contents are removed and then new contents are applied. This method is safe
+   * against changing amounts of lines.
    *
-   * @param scoreboard The actual scoreboard you want to open.
-   * @param player The player who should see the scoreboard.
+   * @param sidebar   The sidebar you want to update.
+   * @param player    The player who should see the updates.
    */
-  public abstract void openScoreboard(Scoreboard scoreboard, Player player);
-
-  /**
-   * Close / hide the scoreboard for the player again.
-   *
-   * @param player The player whose scoreboard
-   *               should become invisible.
-   */
-  public abstract void closeScoreboard(Player player);
+  public abstract void updateSidebar(KelpSidebar sidebar, KelpPlayer player);
 
 }

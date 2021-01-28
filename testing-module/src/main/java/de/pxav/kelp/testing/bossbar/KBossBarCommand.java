@@ -1,4 +1,4 @@
-package de.pxav.kelp.testing.command.kbossbar;
+package de.pxav.kelp.testing.bossbar;
 
 import de.pxav.kelp.core.command.CreateCommand;
 import de.pxav.kelp.core.command.ExecutorType;
@@ -14,7 +14,7 @@ import org.bukkit.ChatColor;
  * @author pxav
  */
 @CreateCommand(name = "kbossbar", executorType = ExecutorType.PLAYER_ONLY)
-public class TestBossBarCommand extends KelpCommand {
+public class KBossBarCommand extends KelpCommand {
 
   @Override
   public void onCommandRegister() {

@@ -28,6 +28,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
@@ -1333,6 +1335,24 @@ public class VersionedPlayer extends PlayerVersionTemplate {
 
     // finally send the message to the player via spigot api call.
     player.spigot().sendMessage(componentBuilder.create());
+  }
+
+  /**
+   * If the player currently sees a sidebar, it will be hidden for the given
+   * player. This mostly happens by replacing it with a new, empty scoreboard.
+   *
+   * @param player The player whose sidebar you want to hide/remove.
+   */
+  @Override
+  public void removeSidebar(Player player) {
+    Scoreboard scoreboard = player.getScoreboard();
+    if (scoreboard.getObjective(DisplaySlot.SIDEBAR) == null) {
+      return;
+    }
+
+    scoreboard.getObjective(DisplaySlot.SIDEBAR).unregister();
+    player.setScoreboard(scoreboard);
+
   }
 
   /**

@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.animation;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.common.StringUtils;
 
 import java.util.ArrayList;
@@ -30,6 +31,12 @@ public final class BuildingTextAnimation implements TextAnimation {
 
   public BuildingTextAnimation(StringUtils stringUtils) {
     this.stringUtils = stringUtils;
+  }
+
+  public static BuildingTextAnimation create() {
+    return new BuildingTextAnimation(
+      KelpPlugin.getInjector().getInstance(StringUtils.class)
+    );
   }
 
   public BuildingTextAnimation text(String text) {

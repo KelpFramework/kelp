@@ -3,36 +3,36 @@ package de.pxav.kelp.core.sidebar.component;
 import com.google.common.collect.Maps;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.sidebar.SidebarUtils;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import java.util.Map;
 
 /**
- * This sidebar component can be used to generate empty lines.
- * You could also write them manually as a {@code StatelessTextComponent}
- * for example, this way however makes it more maintainable, because you don't
- * have to choose color codes manually:
- *
- * To display an empty line in a scoreboard you have to use invisible
- * characters like formatting codes (§6, §l) or spaces.
- * But you may not use one line twice, so when you use '§6§l' for
- * one line, you have to use §7§l for the next one and so on.
- *
- * This makes it more difficult to add new empty lines which
- * is why it's recommended to simply use this component.
+ * This component can display static text in a sidebar. So unlike
+ * the {@link StatefulListComponent} the text will not change after an
+ * update. This is useful to display static information such as a link
+ * to your website, etc.
  *
  * @author pxav
  */
-public class EmptyLineComponent extends SidebarComponent {
+public class StatelessTextComponent extends SidebarComponent {
 
-  // the line to place the component in the sidebar
+  private String text = "SimpleTextComponent";
   private int line;
 
-  public static EmptyLineComponent create() {
-    return new EmptyLineComponent();
+  public static StatelessTextComponent create() {
+    return new StatelessTextComponent();
+  }
+
+  /**
+   * Sets the text to be displayed by this component. This text cannot be changed
+   * once it has been set.
+   *
+   * @param text The static text to be displayed.
+   * @return Instance of the current component for more fluent builder design.
+   */
+  public StatelessTextComponent text(String text) {
+    this.text = text;
+    return this;
   }
 
   /**
@@ -45,7 +45,7 @@ public class EmptyLineComponent extends SidebarComponent {
    *             be visible.
    * @return The current component instance for fluent builder design.
    */
-  public EmptyLineComponent line(int line) {
+  public StatelessTextComponent line(int line) {
     this.line = line;
     return this;
   }
@@ -63,7 +63,7 @@ public class EmptyLineComponent extends SidebarComponent {
   @Override
   public Map<Integer, String> render() {
     Map<Integer, String> output = Maps.newHashMap();
-    output.put(line, " ");
+    output.put(this.line, this.text);
     return output;
   }
 

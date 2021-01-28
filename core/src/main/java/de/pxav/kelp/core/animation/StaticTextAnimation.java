@@ -1,6 +1,5 @@
 package de.pxav.kelp.core.animation;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +17,10 @@ public final class StaticTextAnimation implements TextAnimation {
   }
 
   StaticTextAnimation() {}
+
+  public static StaticTextAnimation create() {
+    return new StaticTextAnimation();
+  }
 
   public StaticTextAnimation text(String text) {
     this.text = text;
