@@ -935,4 +935,12 @@ public abstract class PlayerVersionTemplate {
    */
   public abstract void sendInteractiveMessage(Player player, InteractiveMessage interactiveMessage);
 
+  /**
+   * If the player currently sees a sidebar, it will be hidden for the given
+   * player. This mostly happens by replacing it with a new, empty scoreboard.
+   *
+   * @param player The player whose sidebar you want to hide/remove.
+   */
+  public abstract void removeSidebar(Player player);
+
 }

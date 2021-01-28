@@ -3,10 +3,10 @@ package de.pxav.kelp.core.sidebar;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.pxav.kelp.core.animation.TextAnimation;
+import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
-import de.pxav.kelp.core.scheduler.type.RepeatingScheduler;
 import de.pxav.kelp.core.scheduler.type.SchedulerFactory;
 import de.pxav.kelp.core.sidebar.type.AnimatedSidebar;
 import de.pxav.kelp.core.sidebar.version.SidebarUpdaterVersionTemplate;
@@ -116,6 +116,13 @@ public class SidebarRepository {
     if (animationStates.containsKey(player.getUUID())) {
       removeAnimatedSidebar(player);
     }
+  }
+
+  @EventHandler
+  public void handleSidebarRemove(KelpSidebarRemoveEvent event) {
+    // stops all schedulers and removes the player from the list when
+    // their sidebar is removed.
+    this.removeAnimatedSidebar(event.getPlayer());
   }
 
   private void addPlayerToCluster(String clusterId, KelpPlayer player) {

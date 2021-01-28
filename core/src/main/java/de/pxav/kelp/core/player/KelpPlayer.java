@@ -5,6 +5,7 @@ import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
+import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
@@ -21,6 +22,7 @@ import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sound.KelpSound;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -132,6 +134,17 @@ public class KelpPlayer extends LivingKelpEntity {
     return scoreboard.getObjective(DisplaySlot.SIDEBAR) != null
       || scoreboard.getObjective(DisplaySlot.BELOW_NAME) != null
       || scoreboard.getObjective(DisplaySlot.PLAYER_LIST) != null;
+  }
+
+  /**
+   * Removes the {@link de.pxav.kelp.core.sidebar.type.KelpSidebar} from the player.
+   * This hides the sidebar from the screen, but also stops all schedulers connected
+   * to it (such as title animation). This method does not effect other parts
+   * of the scoreboard such as the tab list.
+   */
+  public void removeSidebar() {
+    Bukkit.getPluginManager().callEvent(new KelpSidebarRemoveEvent(this));
+    playerVersionTemplate.removeSidebar(bukkitPlayer);
   }
 
   /**
