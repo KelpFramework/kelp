@@ -13,13 +13,10 @@ import org.bukkit.event.player.PlayerEvent;
  *
  * @author pxav
  */
-public class KelpPlayerUpdateSettingsEvent extends PlayerEvent {
+public class KelpPlayerUpdateSettingsEvent extends KelpPlayerEvent {
 
   // list of all event handlers listening for this event
   private static final HandlerList handlers = new HandlerList();
-
-  // the player whose settings changed.
-  private KelpPlayer who;
 
   // the stage when the settings changed
   private SettingsUpdateStage updateStage;
@@ -42,8 +39,7 @@ public class KelpPlayerUpdateSettingsEvent extends PlayerEvent {
                                        int viewDistance,
                                        PlayerChatVisibility playerChatVisibility,
                                        boolean chatColorEnabled) {
-    super(who.getBukkitPlayer());
-    this.who = who;
+    super(who);
     this.updateStage = updateStage;
     this.language = language;
     this.viewDistance = viewDistance;
@@ -64,7 +60,7 @@ public class KelpPlayerUpdateSettingsEvent extends PlayerEvent {
   }
 
   public boolean hasLanguageChanged() {
-    return !this.language.equalsIgnoreCase(who.getClientLanguage());
+    return !this.language.equalsIgnoreCase(player.getClientLanguage());
   }
 
   public int getViewDistance() {
@@ -72,7 +68,7 @@ public class KelpPlayerUpdateSettingsEvent extends PlayerEvent {
   }
 
   public boolean hasViewDistanceChanged() {
-    return viewDistance != who.getClientViewDistance();
+    return viewDistance != player.getClientViewDistance();
   }
 
   public boolean getChatColorEnabled() {
@@ -84,7 +80,7 @@ public class KelpPlayerUpdateSettingsEvent extends PlayerEvent {
    * @return if the chat color setting has changed.
    */
   public boolean hasChatColorChanged() {
-    return chatColorEnabled != who.isPlayerChatColorEnabled();
+    return chatColorEnabled != player.isPlayerChatColorEnabled();
   }
 
   /**
@@ -100,7 +96,7 @@ public class KelpPlayerUpdateSettingsEvent extends PlayerEvent {
    * @return if the chat visibility settings have changed.
    */
   public boolean hasChatVisibilityChanged() {
-    return playerChatVisibility != who.getPlayerChatVisibility();
+    return playerChatVisibility != player.getPlayerChatVisibility();
   }
 
   /**
@@ -108,7 +104,7 @@ public class KelpPlayerUpdateSettingsEvent extends PlayerEvent {
    * @return the kelp player instance of the player whose settings have changed.
    */
   public KelpPlayer getKelpPlayer() {
-    return who;
+    return player;
   }
 
   @Override
