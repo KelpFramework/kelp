@@ -2,11 +2,8 @@ package de.pxav.kelp.core.sidebar.type;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import de.pxav.kelp.core.sidebar.component.SidebarComponentFactory;
-import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.sidebar.version.SidebarUpdaterVersionTemplate;
 import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * This class can be used to easily build
@@ -23,22 +20,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Singleton
 public class SidebarFactory {
 
-  private KelpLogger logger;
-  private JavaPlugin javaPlugin;
   private SidebarVersionTemplate sidebarVersionTemplate;
-  private SidebarComponentFactory sidebarComponentFactory;
   private SidebarUpdaterVersionTemplate updaterVersionTemplate;
 
   @Inject
-  public SidebarFactory(KelpLogger logger,
-                        JavaPlugin javaPlugin,
-                        SidebarVersionTemplate sidebarVersionTemplate,
-                        SidebarComponentFactory sidebarComponentFactory,
+  public SidebarFactory(SidebarVersionTemplate sidebarVersionTemplate,
                         SidebarUpdaterVersionTemplate updaterVersionTemplate) {
-    this.logger = logger;
-    this.javaPlugin = javaPlugin;
     this.sidebarVersionTemplate = sidebarVersionTemplate;
-    this.sidebarComponentFactory = sidebarComponentFactory;
     this.updaterVersionTemplate = updaterVersionTemplate;
   }
 
@@ -46,8 +34,8 @@ public class SidebarFactory {
     return new SimpleSidebar(sidebarVersionTemplate, updaterVersionTemplate);
   }
 
-  public AnimatedSidebarOld newAnimatedSidebar() {
-    return new AnimatedSidebarOld(sidebarVersionTemplate);
+  public AnimatedSidebar newAnimatedSidebar() {
+    return new AnimatedSidebar(sidebarVersionTemplate);
   }
 
 }
