@@ -92,7 +92,11 @@
   <profiles>
       <!-- This plugin is only used when a deployment to the Maven Central Repo is done.
      But only project administrators have the authorization to execute deployments.
-     It can be activated by using mvn <goal> -P central-deploy
+     It can be activated by using mvn clean deploy -P central-deploy
+
+     1) Remember to disable the shade plugin in the parent pom before deploying.
+     2) Check whether public keys are available:
+       gpg (-)-keyserver hkp://keyserver.ubuntu.com (-)-search-key 'pxav.studios@gmail.com'
      -->
     <profile>
       <id>central-deploy</id>
@@ -146,7 +150,7 @@
               <executions>
                 <execution>
                   <id>sign-artifacts</id>
-                  <phase>install</phase>
+                  <phase>verify</phase>
                   <goals>
                     <goal>sign</goal>
                   </goals>
@@ -233,26 +237,11 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.5</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>install</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>2.3.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
-
   </build>
 
 </project>
