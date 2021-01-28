@@ -74,7 +74,7 @@ public class KelpInventoryRepository {
       playerAnimations.put(player.getUUID(), animatedInventory);
     }
 
-    Bukkit.getPluginManager().callEvent(new KelpInventoryOpenEvent(player.getBukkitPlayer(), inventory, animated));
+    Bukkit.getPluginManager().callEvent(new KelpInventoryOpenEvent(player, inventory, animated));
     playerInventories.put(player.getUUID(), inventory);
   }
 
@@ -97,7 +97,7 @@ public class KelpInventoryRepository {
       animatedInventory.stopUpdater();
     }
 
-    Bukkit.getPluginManager().callEvent(new KelpInventoryCloseEvent(player.getBukkitPlayer(), inventory, animated));
+    Bukkit.getPluginManager().callEvent(new KelpInventoryCloseEvent(player, inventory, animated));
     this.playerInventories.remove(player.getUUID());
     this.playerAnimations.remove(player.getUUID());
     this.kelpListenerRepository.unregisterListeners(player.getUUID());
@@ -113,7 +113,7 @@ public class KelpInventoryRepository {
   public void updateInventory(KelpPlayer player) {
     KelpInventory kelpInventory = playerInventories.get(player.getUUID());
     kelpInventory.update(player);
-    Bukkit.getPluginManager().callEvent(new KelpInventoryUpdateEvent(player.getBukkitPlayer(), kelpInventory));
+    Bukkit.getPluginManager().callEvent(new KelpInventoryUpdateEvent(player, kelpInventory));
   }
 
   public Map<UUID, Map<Pagination, Integer>> getPlayerPages() {
