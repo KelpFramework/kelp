@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.event.kelpevent;
 
 import de.pxav.kelp.core.inventory.type.KelpInventory;
+import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -10,13 +11,13 @@ import org.bukkit.event.player.PlayerEvent;
  *
  * @author pxav
  */
-public class KelpInventoryOpenEvent extends PlayerEvent {
+public class KelpInventoryOpenEvent extends KelpPlayerEvent {
 
   private static final HandlerList handlers = new HandlerList();
   private KelpInventory inventory;
   private boolean animatedInventory;
 
-  public KelpInventoryOpenEvent(Player who, KelpInventory inventory, boolean isAnimated) {
+  public KelpInventoryOpenEvent(KelpPlayer who, KelpInventory inventory, boolean isAnimated) {
     super(who);
     this.inventory = inventory;
     this.animatedInventory = isAnimated;
