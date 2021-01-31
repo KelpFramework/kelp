@@ -1,6 +1,8 @@
 package de.pxav.kelp.core.command;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.command.version.KelpConsoleSenderVersionTemplate;
+import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -29,6 +31,13 @@ public class KelpConsoleSender {
   KelpConsoleSender(CommandSender bukkitSender, KelpConsoleSenderVersionTemplate versionTemplate) {
     this.bukkitSender = bukkitSender;
     this.versionTemplate = versionTemplate;
+  }
+
+  public static KelpConsoleSender create(CommandSender bukkitSender) {
+    return new KelpConsoleSender(
+      bukkitSender,
+      KelpPlugin.getInjector().getInstance(KelpConsoleSenderVersionTemplate.class)
+    );
   }
 
   /**
