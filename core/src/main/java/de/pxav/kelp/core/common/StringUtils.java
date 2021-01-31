@@ -303,6 +303,10 @@ public class StringUtils {
     return styleCodes[ThreadLocalRandom.current().nextInt(colorCodes.length - 1)];
   }
 
+  public char randomFormattingCode() {
+    return ThreadLocalRandom.current().nextBoolean() ? randomColorCode() : randomStyleCode();
+  }
+
   /**
    * @param indicator The indicator of the code you want to check.
    * @return {@code true} if the either a color code or a style code.
