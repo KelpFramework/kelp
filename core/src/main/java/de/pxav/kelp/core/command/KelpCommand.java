@@ -54,6 +54,8 @@ public class KelpCommand {
   // resets the argument count for sub commands to 0 again.
   private boolean argumentsStartFromZero;
 
+  private boolean delegatePlayerToConsole;
+
   /**
    * This method is executed by the command registry, when the command
    * is executed by a player and {@code PLAYER_ONLY} is set as executor type.
@@ -97,6 +99,10 @@ public class KelpCommand {
    */
   public Map<KelpCommand, CreateSubCommand> getSubCommands() {
     return subCommands;
+  }
+
+  public void delegatePlayerToConsole(boolean delegate) {
+    this.delegatePlayerToConsole = delegate;
   }
 
   /**
@@ -406,4 +412,9 @@ public class KelpCommand {
   public Collection<String> getAliases() {
     return aliases;
   }
+
+  public boolean shouldDelegateToConsole() {
+    return this.delegatePlayerToConsole;
+  }
+
 }
