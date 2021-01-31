@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 public class KelpListener<T extends Event> {
 
   private int maxExecutions = -1;
-  //TODO: min executions
+  private int minExecutions = -1;
   private ConcurrentMap<ConditionalExpiryTestStage, Predicate<? super T>> conditionalExpires;
   private Consumer<? super T> handler;
 
@@ -59,21 +59,25 @@ public class KelpListener<T extends Event> {
     return this.maxExecutions;
   }
 
+  int getMinExecutions() {
+    return minExecutions;
+  }
+
   /**
    * Tests all conditions set that would let the listener expire.
    *
    * @param eventPost     The event to check the conditions against.
    * @param currentStage  The current stage of the testing process. When the event is handled
    *                      by the {@link KelpEventRepository},
-   * @return  {@code true} if all tests have passed and the listener may be executed.
-   *          {@code false} if at least one test has failed and the listener has to be unregistered.
+   * @return  {@code true} if at least one test has failed and the listener has to be unregistered.
+   *          {@code false} if all tests have passed and the listener may remain.
    */
   public boolean testConditions(Event eventPost, ConditionalExpiryTestStage currentStage) {
     boolean output = true;
 
     // check whether the given event is really handled by this listener
     if (eventPost.getClass() != eventClass) {
-      return true;
+      return false;
     }
 
     T toCheck = (T) eventPost;
@@ -106,6 +110,11 @@ public class KelpListener<T extends Event> {
 
   public KelpListener<T> expireAfterExecutions(int maxExecutions) {
     this.maxExecutions = maxExecutions;
+    return this;
+  }
+
+  public KelpListener<T> minimalExecutions(int minExecutions) {
+    this.minExecutions = minExecutions;
     return this;
   }
 

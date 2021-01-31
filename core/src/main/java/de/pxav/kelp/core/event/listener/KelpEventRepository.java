@@ -96,29 +96,34 @@ public class KelpEventRepository {
         EventPriority.NORMAL,
         (listener, event) -> {
 
-          boolean expire = kelpListener.testConditions(event, ConditionalExpiryTestStage.BEFORE_HANDLER);
+          int timesCalled = this.timesCalled.getOrDefault(uuid, 0);
 
-          if (expire) {
-            removeListener(uuid);
-            return;
+          // if it has to be executed according to the minimal execution times, ignore the
+          // expire conditions.
+
+          // if min executions are ignored          or      min executions are not relevant
+          if (kelpListener.getMinExecutions() == -1 || timesCalled >= kelpListener.getMinExecutions()) {
+            boolean expire = kelpListener.testConditions(event, ConditionalExpiryTestStage.BEFORE_HANDLER);
+
+            if (expire) {
+              removeListener(uuid);
+              return;
+            }
           }
 
           kelpListener.triggerHandler(event);
 
-          expire = kelpListener.testConditions(event, ConditionalExpiryTestStage.AFTER_HANDLER);
-
-          if (expire) {
-            removeListener(uuid);
-            return;
-          }
-
-          int timesCalled = this.timesCalled.getOrDefault(uuid, 0);
           if ((timesCalled + 1) >= kelpListener.getMaxExecutions() && kelpListener.getMaxExecutions() != -1) {
             removeListener(uuid);
             return;
           }
-
           this.timesCalled.put(uuid, timesCalled + 1);
+
+          boolean expire = kelpListener.testConditions(event, ConditionalExpiryTestStage.AFTER_HANDLER);
+
+          if (expire) {
+            removeListener(uuid);
+          }
 
         },
         javaPlugin,
