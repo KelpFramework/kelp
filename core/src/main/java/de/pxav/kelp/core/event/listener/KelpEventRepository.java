@@ -134,7 +134,13 @@ public class KelpEventRepository {
             }
           }
 
+          // if one or more filters do not match
+          if (!kelpListener.testFilters(event)) {
+            return;
+          }
+
           kelpListener.triggerHandler(event);
+
 
           if ((timesCalled + 1) >= kelpListener.getMaxExecutions()) {
             removeListener(uuid);

@@ -1,10 +1,12 @@
 package de.pxav.kelp.core.event.listener;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.pxav.kelp.core.KelpPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
@@ -16,6 +18,7 @@ public class KelpListener<T extends Event> {
   private int maxExecutions = -1;
   private int minExecutions = -1;
   private ConcurrentMap<ConditionalExpiryTestStage, Predicate<? super T>> conditionalExpires;
+  private Collection<Predicate<? super T>> filters;
   private Consumer<? super T> handler;
 
   private Listener bukkitListener;
@@ -28,6 +31,7 @@ public class KelpListener<T extends Event> {
     this.eventClass = eventClass;
     this.kelpEventRepository = eventRepository;
     this.conditionalExpires = Maps.newConcurrentMap();
+    this.filters = Lists.newArrayList();
   }
 
   public static <T extends Event> KelpListener<T> listen(Class<T> event) {
@@ -98,6 +102,26 @@ public class KelpListener<T extends Event> {
     return false;
   }
 
+  /**
+   * Tests all the given filters of the listener and checks whether
+   * the event should be handled right now.
+   *
+   * @param eventPost The event to check the filters against.
+   * @return  {@code true} if all filters match and the event can be handled.
+   *          {@code false} if at least one filter does not match.
+   */
+  public boolean testFilters(Event eventPost) {
+    T eventCheck = (T) eventPost;
+
+    for (Predicate<? super T> filter : filters) {
+      if (!filter.test(eventCheck)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public KelpListener<T> expireIf(Predicate<? super T> conditionalExpiry) {
     this.conditionalExpires.put(ConditionalExpiryTestStage.BEFORE_HANDLER, conditionalExpiry);
     return this;
@@ -105,6 +129,11 @@ public class KelpListener<T extends Event> {
 
   public KelpListener<T> expireIf(Predicate<? super T> conditionalExpiry, ConditionalExpiryTestStage conditionalExpiryTestStage) {
     this.conditionalExpires.put(conditionalExpiryTestStage, conditionalExpiry);
+    return this;
+  }
+
+  public KelpListener<T> filter(Predicate<? super T> condition) {
+    this.filters.add(condition);
     return this;
   }
 
