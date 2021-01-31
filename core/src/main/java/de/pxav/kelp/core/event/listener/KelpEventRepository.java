@@ -4,17 +4,21 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.event.kelpevent.KelpPlayerEvent;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
 import de.pxav.kelp.core.reflect.TypeFinder;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,18 +36,18 @@ import java.util.function.Predicate;
 @Singleton
 public class KelpEventRepository {
 
-  private TypeFinder typeFinder;
   private MethodFinder methodFinder;
   private JavaPlugin javaPlugin;
   private Injector injector;
   private KelpLogger logger;
+  private KelpPlayerRepository playerRepository;
 
   private Map<UUID, KelpListener<?>> kelpListeners;
   private Map<UUID, Integer> timesCalled;
 
   @Inject
-  public KelpEventRepository(TypeFinder typeFinder, MethodFinder methodFinder, JavaPlugin javaPlugin, Injector injector, KelpLogger logger) {
-    this.typeFinder = typeFinder;
+  public KelpEventRepository(KelpPlayerRepository playerRepository, MethodFinder methodFinder, JavaPlugin javaPlugin, Injector injector, KelpLogger logger) {
+    this.playerRepository = playerRepository;
     this.methodFinder = methodFinder;
     this.javaPlugin = javaPlugin;
     this.injector = injector;
@@ -67,8 +71,27 @@ public class KelpEventRepository {
               try {
                 if (current.getParameters().length == 0) {
                   current.invoke(injector.getInstance(current.getDeclaringClass()));
-                } else if (current.getParameters().length == 1 && current.getParameterTypes()[0].isAssignableFrom(KelpPlayer.class)) {
-                  // invoke with event player as parameter
+                  return;
+                }
+
+                // auto inject for specific parameters:
+
+                if (current.getParameters().length == 1
+                    && current.getParameterTypes()[0].isAssignableFrom(KelpPlayer.class)) {
+                  if (event instanceof PlayerEvent) {
+                    PlayerEvent playerEvent = (PlayerEvent) event;
+                    KelpPlayer kelpPlayer = playerRepository.getKelpPlayer(playerEvent.getPlayer());
+                    current.invoke(injector.getInstance(current.getDeclaringClass()), kelpPlayer);
+                  } else if (event instanceof KelpPlayerEvent) {
+                    KelpPlayerEvent playerEvent = (KelpPlayerEvent) event;
+                    current.invoke(injector.getInstance(current.getDeclaringClass()), playerEvent.getPlayer());
+                  }
+                }
+                if (event instanceof PlayerEvent
+                  && current.getParameters().length == 1
+                  && current.getParameterTypes()[0].isAssignableFrom(Player.class)) {
+                  PlayerEvent playerEvent = (PlayerEvent) event;
+                  current.invoke(injector.getInstance(current.getDeclaringClass()), playerEvent.getPlayer());
                 }
 
               } catch (IllegalAccessException | InvocationTargetException e) {
