@@ -1,81 +1,115 @@
 package de.pxav.kelp.core.event.listener;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.pxav.kelp.core.KelpPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-/**
- * A class description goes here.
- *
- * @author pxav
- */
-public class KelpListener {
+public class KelpListener<T extends Event> {
 
-  private Collection<Class<? extends Event>> listenedEvents = Lists.newArrayList();
   private int maxExecutions = -1;
-  private ConcurrentMap<ConditionalExpiryTestStage, Predicate<Event>> conditionalExpires = Maps.newConcurrentMap();
-  private Consumer<Event> handler;
+  //TODO: min executions
+  private ConcurrentMap<ConditionalExpiryTestStage, Predicate<? super T>> conditionalExpires;
+  private Consumer<? super T> handler;
 
-  private Collection<Listener> bukkitListeners = Lists.newArrayList();
+  private Listener bukkitListener;
 
   private KelpEventRepository kelpEventRepository;
 
-  ConcurrentMap<ConditionalExpiryTestStage, Predicate<Event>> getConditionalExpires() {
+  private Class<T> eventClass;
+
+  public KelpListener(Class<T> eventClass, KelpEventRepository eventRepository) {
+    this.eventClass = eventClass;
+    this.kelpEventRepository = eventRepository;
+    this.conditionalExpires = Maps.newConcurrentMap();
+  }
+
+  public static <T extends Event> KelpListener<T> listen(Class<T> event) {
+    return new KelpListener<>(event, KelpPlugin.getInjector().getInstance(KelpEventRepository.class));
+  }
+
+  ConcurrentMap<ConditionalExpiryTestStage, Predicate<? super T>> getConditionalExpires() {
     return this.conditionalExpires;
   }
 
-  Collection<Class<? extends Event>> getListenedEvents() {
-    return listenedEvents;
+  public void triggerHandler(Event event) {
+    T type = (T) event;
+    this.handler.accept(type);
   }
 
-  Consumer<Event> getHandler() {
-    return this.handler;
+  Listener getBukkitListener() {
+    return bukkitListener;
   }
 
-  Collection<Listener> getBukkitListeners() {
-    return bukkitListeners;
+  public void setBukkitListener(Listener bukkitListener) {
+    this.bukkitListener = bukkitListener;
+  }
+
+  public Class<T> getEventClass() {
+    return eventClass;
   }
 
   int getMaxExecutions() {
     return this.maxExecutions;
   }
 
-  KelpListener(KelpEventRepository kelpEventRepository) {
-    this.kelpEventRepository = kelpEventRepository;
+  /**
+   * Tests all conditions set that would let the listener expire.
+   *
+   * @param eventPost     The event to check the conditions against.
+   * @param currentStage  The current stage of the testing process. When the event is handled
+   *                      by the {@link KelpEventRepository},
+   * @return  {@code true} if all tests have passed and the listener may be executed.
+   *          {@code false} if at least one test has failed and the listener has to be unregistered.
+   */
+  public boolean testConditions(Event eventPost, ConditionalExpiryTestStage currentStage) {
+    boolean output = true;
+
+    // check whether the given event is really handled by this listener
+    if (eventPost.getClass() != eventClass) {
+      return true;
+    }
+
+    T toCheck = (T) eventPost;
+
+    for (Map.Entry<ConditionalExpiryTestStage, Predicate<? super T>> entry : conditionalExpires.entrySet()) {
+      ConditionalExpiryTestStage testStage = entry.getKey();
+
+      // if the current condition is not checked in the given stage, let the test pass.
+      if (currentStage != testStage && testStage != ConditionalExpiryTestStage.ALWAYS) {
+        return false;
+      }
+
+      // check the condition. If it is false, let all the following tests fail as well.
+      if (!entry.getValue().test(toCheck)) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  void addBukkitListener(Listener listener) {
-    this.bukkitListeners.add(listener);
-  }
-
-  public KelpListener to(Class<? extends Event> event) {
-    this.listenedEvents.add(event);
-    return this;
-  }
-
-  public KelpListener expireIf(Predicate<Event> conditionalExpiry) {
+  public KelpListener<T> expireIf(Predicate<? super T> conditionalExpiry) {
     this.conditionalExpires.put(ConditionalExpiryTestStage.BEFORE_HANDLER, conditionalExpiry);
     return this;
   }
 
-  public KelpListener expireIf(Predicate<Event> conditionalExpiry, ConditionalExpiryTestStage conditionalExpiryTestStage) {
+  public KelpListener<T> expireIf(Predicate<? super T> conditionalExpiry, ConditionalExpiryTestStage conditionalExpiryTestStage) {
     this.conditionalExpires.put(conditionalExpiryTestStage, conditionalExpiry);
     return this;
   }
 
-  public KelpListener expireAfterExecutions(int maxExecutions) {
+  public KelpListener<T> expireAfterExecutions(int maxExecutions) {
     this.maxExecutions = maxExecutions;
     return this;
   }
 
-  public UUID handle(Consumer<Event> handler) {
+  public UUID handle(Consumer<? super T> handler) {
     this.handler = handler;
     return kelpEventRepository.addListener(this);
   }

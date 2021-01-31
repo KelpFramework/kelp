@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 /**
@@ -37,7 +38,7 @@ public class KelpEventRepository {
   private Injector injector;
   private KelpLogger logger;
 
-  private Map<UUID, KelpListener> kelpListeners;
+  private Map<UUID, KelpListener<?>> kelpListeners;
   private Map<UUID, Integer> timesCalled;
 
   @Inject
@@ -82,62 +83,47 @@ public class KelpEventRepository {
     });
   }
 
-  public KelpListener listen() {
-    return new KelpListener(this);
-  }
-
-  UUID addListener(KelpListener kelpListener) {
+  UUID addListener(KelpListener<?> kelpListener) {
     UUID uuid = UUID.randomUUID();
-    for (Class<? extends Event> listenedEvent : kelpListener.getListenedEvents()) {
-      Listener listenerInstance = new Listener() {};
-      kelpListener.addBukkitListener(listenerInstance);
-      Bukkit.getPluginManager()
-        .registerEvent(
-          (listenedEvent),
-          listenerInstance,
-          EventPriority.NORMAL,
-          (listener, event) -> {
-            boolean execute = true;
-            for (Map.Entry<ConditionalExpiryTestStage, Predicate<Event>> entry : kelpListener.getConditionalExpires().entrySet()) {
-              if (entry.getKey() != ConditionalExpiryTestStage.BEFORE_HANDLER && entry.getKey() != ConditionalExpiryTestStage.ALWAYS) {
-                continue;
-              }
 
-              if (!entry.getValue().test(event)) {
-                execute = false;
-                removeListener(uuid);
-                break;
-              }
-            }
+    Listener listenerInstance = new Listener() {};
+    kelpListener.setBukkitListener(listenerInstance);
 
-            if (!execute) {
-              return;
-            }
+    Bukkit.getPluginManager()
+      .registerEvent(
+        (kelpListener.getEventClass()),
+        listenerInstance,
+        EventPriority.NORMAL,
+        (listener, event) -> {
 
-            kelpListener.getHandler().accept(event);
-            int timesCalled = this.timesCalled.getOrDefault(uuid, 0);
-            if ((timesCalled + 1) >= kelpListener.getMaxExecutions() && kelpListener.getMaxExecutions() != -1) {
-              removeListener(uuid);
-              return;
-            }
-            this.timesCalled.put(uuid, timesCalled + 1);
+          boolean expire = kelpListener.testConditions(event, ConditionalExpiryTestStage.BEFORE_HANDLER);
 
-            for (Map.Entry<ConditionalExpiryTestStage, Predicate<Event>> entry : kelpListener.getConditionalExpires().entrySet()) {
-              if (entry.getKey() != ConditionalExpiryTestStage.AFTER_HANDLER && entry.getKey() != ConditionalExpiryTestStage.ALWAYS) {
-                continue;
-              }
+          if (expire) {
+            removeListener(uuid);
+            return;
+          }
 
-              if (!entry.getValue().test(event)) {
-                execute = false;
-                removeListener(uuid);
-                break;
-              }
-            }
+          kelpListener.triggerHandler(event);
 
-          },
-          javaPlugin,
-          false);
-    }
+          expire = kelpListener.testConditions(event, ConditionalExpiryTestStage.AFTER_HANDLER);
+
+          if (expire) {
+            removeListener(uuid);
+            return;
+          }
+
+          int timesCalled = this.timesCalled.getOrDefault(uuid, 0);
+          if ((timesCalled + 1) >= kelpListener.getMaxExecutions() && kelpListener.getMaxExecutions() != -1) {
+            removeListener(uuid);
+            return;
+          }
+
+          this.timesCalled.put(uuid, timesCalled + 1);
+
+        },
+        javaPlugin,
+        false);
+
     this.kelpListeners.put(uuid, kelpListener);
     return uuid;
   }
@@ -149,21 +135,14 @@ public class KelpEventRepository {
     }
 
     KelpListener kelpListener = this.kelpListeners.get(listenerId);
-    kelpListener.getListenedEvents().forEach((eventClass) -> {
-      try {
-        Method method = eventClass.getMethod("getHandlerList");
+    try {
+        Method method = kelpListener.getEventClass().getMethod("getHandlerList");
         HandlerList handlerList = (HandlerList) method.invoke(null);
-        kelpListener.getBukkitListeners().forEach(handlerList::unregister);
+        handlerList.unregister(kelpListener.getBukkitListener());
       } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
         e.printStackTrace();
       }
-    });
-
     this.kelpListeners.remove(listenerId);
-  }
-
-  public void detectKelpEvents(String... packageNames) {
-
   }
 
 }
