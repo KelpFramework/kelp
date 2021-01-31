@@ -5,7 +5,13 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.common.StringUtils;
 
 /**
- * A class description goes here.
+ * This factory class is used to produce instances of
+ * new {@link TextAnimation}s.
+ *
+ * This is useful if you fully follow an object-oriented and dependency-
+ * injecting design approach. For most cases, it would probably also clean
+ * to use static factory methods of the different text animation types such
+ * as {@link BuildingTextAnimation}.
  *
  * @author pxav
  */
