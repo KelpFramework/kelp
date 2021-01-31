@@ -11,7 +11,6 @@ import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
-import de.pxav.kelp.core.reflect.TypeFinder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -25,8 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 
 /**
  * A class description goes here.
@@ -134,8 +131,8 @@ public class KelpEventRepository {
             }
           }
 
-          // if one or more filters do not match
-          if (!kelpListener.testFilters(event)) {
+          // if one or more criteria do not match, don't handle the event.
+          if (!kelpListener.testCriteria(event)) {
             return;
           }
 

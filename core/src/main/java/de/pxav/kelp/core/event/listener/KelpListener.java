@@ -18,7 +18,7 @@ public class KelpListener<T extends Event> {
   private int maxExecutions = -1;
   private int minExecutions = -1;
   private ConcurrentMap<ConditionalExpiryTestStage, Predicate<? super T>> conditionalExpires;
-  private Collection<Predicate<? super T>> filters;
+  private Collection<Predicate<? super T>> criteria;
   private Consumer<? super T> handler;
 
   private Listener bukkitListener;
@@ -31,7 +31,7 @@ public class KelpListener<T extends Event> {
     this.eventClass = eventClass;
     this.kelpEventRepository = eventRepository;
     this.conditionalExpires = Maps.newConcurrentMap();
-    this.filters = Lists.newArrayList();
+    this.criteria = Lists.newArrayList();
   }
 
   public static <T extends Event> KelpListener<T> listen(Class<T> event) {
@@ -103,18 +103,18 @@ public class KelpListener<T extends Event> {
   }
 
   /**
-   * Tests all the given filters of the listener and checks whether
+   * Tests all the given criteria of the listener and checks whether
    * the event should be handled right now.
    *
-   * @param eventPost The event to check the filters against.
-   * @return  {@code true} if all filters match and the event can be handled.
-   *          {@code false} if at least one filter does not match.
+   * @param eventPost The event to check the criteria against.
+   * @return  {@code true} if all criteria match and the event can be handled.
+   *          {@code false} if at least one criterion does not match.
    */
-  public boolean testFilters(Event eventPost) {
+  public boolean testCriteria(Event eventPost) {
     T eventCheck = (T) eventPost;
 
-    for (Predicate<? super T> filter : filters) {
-      if (!filter.test(eventCheck)) {
+    for (Predicate<? super T> criterion : criteria) {
+      if (!criterion.test(eventCheck)) {
         return false;
       }
     }
@@ -132,8 +132,8 @@ public class KelpListener<T extends Event> {
     return this;
   }
 
-  public KelpListener<T> filter(Predicate<? super T> condition) {
-    this.filters.add(condition);
+  public KelpListener<T> criterion(Predicate<? super T> condition) {
+    this.criteria.add(condition);
     return this;
   }
 
