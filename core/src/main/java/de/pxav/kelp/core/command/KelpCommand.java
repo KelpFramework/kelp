@@ -56,6 +56,8 @@ public class KelpCommand {
 
   private boolean delegatePlayerToConsole;
 
+  private boolean inheritFromMainCommand;
+
   /**
    * This method is executed by the command registry, when the command
    * is executed by a player and {@code PLAYER_ONLY} is set as executor type.
@@ -103,6 +105,10 @@ public class KelpCommand {
 
   public void delegatePlayerToConsole(boolean delegate) {
     this.delegatePlayerToConsole = delegate;
+  }
+
+  public void inheritFromMainCommand(boolean inherit) {
+    this.inheritFromMainCommand = inherit;
   }
 
   /**
@@ -415,6 +421,10 @@ public class KelpCommand {
 
   public boolean shouldDelegateToConsole() {
     return this.delegatePlayerToConsole;
+  }
+
+  public boolean shouldInheritFromMainCommand() {
+    return this.inheritFromMainCommand;
   }
 
 }
