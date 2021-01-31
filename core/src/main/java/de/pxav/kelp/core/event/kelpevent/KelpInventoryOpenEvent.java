@@ -7,7 +7,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
 /**
- * A class description goes here.
+ * This event is triggered when a player opens a {@link KelpInventory} or
+ * the inventory is opened by a plugin. This does not include opening the player's
+ * personal inventory, which is opened by pressing {@code 'E'}.
  *
  * @author pxav
  */
@@ -27,6 +29,12 @@ public class KelpInventoryOpenEvent extends KelpPlayerEvent {
     return inventory;
   }
 
+  /**
+   * Checks if the inventory is a subclass of {@link de.pxav.kelp.core.inventory.type.AnimatedInventory},
+   * which would mean that the title is animated.
+   *
+   * @return {@code true} if the inventory's title is animated.
+   */
   public boolean isAnimatedInventory() {
     return animatedInventory;
   }

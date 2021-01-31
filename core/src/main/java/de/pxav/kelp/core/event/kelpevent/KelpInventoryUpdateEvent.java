@@ -7,7 +7,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
 /**
- * A class description goes here.
+ * This event is called when a {@link KelpInventory} is updated. This does not
+ * include title updates of animated inventories.
  *
  * @author pxav
  */
@@ -21,6 +22,11 @@ public class KelpInventoryUpdateEvent extends KelpPlayerEvent {
     this.inventory = inventory;
   }
 
+  /**
+   * Gets the inventory that has been updated.
+   *
+   * @return the updated inventory
+   */
   public KelpInventory getInventory() {
     return inventory;
   }
