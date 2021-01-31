@@ -91,7 +91,7 @@ public class KelpListener<T extends Event> {
       }
 
       // check the condition. If it is false, let all the following tests fail as well.
-      if (!entry.getValue().test(toCheck)) {
+      if (entry.getValue().test(toCheck)) {
         return true;
       }
     }
