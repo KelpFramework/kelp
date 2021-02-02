@@ -38,10 +38,6 @@ public class KelpListener<T extends Event> {
     return new KelpListener<>(event, KelpPlugin.getInjector().getInstance(KelpEventRepository.class));
   }
 
-  ConcurrentMap<ConditionalExpiryTestStage, Predicate<? super T>> getConditionalExpires() {
-    return this.conditionalExpires;
-  }
-
   public void triggerHandler(Event event) {
     T type = (T) event;
     this.handler.accept(type);
