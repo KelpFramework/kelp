@@ -73,6 +73,12 @@ public class RepeatingScheduler {
     this.waitForTaskCompletion = false;
   }
 
+  public static RepeatingScheduler create() {
+    return new RepeatingScheduler(
+      KelpPlugin.getInjector().getInstance(KelpSchedulerRepository.class)
+    );
+  }
+
   /**
    * Tells the scheduler to execute the given code on a separate thread.
    * Async schedulers use {@link ScheduledExecutorService} instead of the

@@ -54,6 +54,16 @@ public class KelpCommand {
   // resets the argument count for sub commands to 0 again.
   private boolean argumentsStartFromZero;
 
+  // if 'true' the onCommand() method for console will be
+  // used although a player executes the command (if executor
+  // type is set to PLAYER_AND_CONSOLE)
+  private boolean delegatePlayerToConsole;
+
+  // whether basic properties such as error messages should be taken
+  // from the parent command, so that they don't have to be defined
+  // manually each time.
+  private boolean inheritFromMainCommand;
+
   /**
    * This method is executed by the command registry, when the command
    * is executed by a player and {@code PLAYER_ONLY} is set as executor type.
@@ -92,11 +102,52 @@ public class KelpCommand {
   public void onCommandRegister() {}
 
   /**
+   * Gets a collection of all sub commands associated with this command.
+   *
    * @return  A map of all sub commands, where the key is the command class
    *          of the command and the value is the sub command annotation.
    */
   public Map<KelpCommand, CreateSubCommand> getSubCommands() {
     return subCommands;
+  }
+
+  /**
+   * Delegates the command executor from the player to a console. Normally, if executor type
+   * is set to {@link ExecutorType#PLAYER_AND_CONSOLE} and a player executes the command,
+   * the {@link #onCommand(KelpPlayer, String[])} method is called. But if you want the same
+   * command structure to be executed for both types of users, you might not want to copy the
+   * methods for player and console. That's why you can use this method to create a kind of
+   * redirection. If this is enabled, the player will be converted to a console sender and
+   * the {@link #onCommand(KelpConsoleSender, String[])} method will be executed so that
+   * you only have to maintain one command method.
+   *
+   * @param delegate {@code true} if the described redirection/delegation
+   *                             of commands should be done.
+   */
+  public void delegatePlayerToConsole(boolean delegate) {
+    this.delegatePlayerToConsole = delegate;
+  }
+
+  /**
+   * Makes the current command inherit certain properties of the parent command.
+   * This includes:
+   * <ul>
+   *   <li>Command description</li>
+   *   <li>Command permission</li>
+   *   <li>No permission message</li>
+   *   <li>No player message</li>
+   *   <li>No console message</li>
+   * </ul>
+   *
+   * You can of course inherit properties from the parent command and overwrite
+   * them manually later, while keeping the values for the other strings. So if
+   * you only want to change the description you can inherit all properties and overwrite
+   * the description yourself.
+   *
+   * @param inherit {@code true} if you want the listed properties to be inherited from the main command.
+   */
+  public void inheritFromMainCommand(boolean inherit) {
+    this.inheritFromMainCommand = inherit;
   }
 
   /**
@@ -350,6 +401,9 @@ public class KelpCommand {
   }
 
   /**
+   * Gets the command's description used in the Kelp command
+   * overview for example.
+   *
    * @return The description of the command.
    */
   public String getDescription() {
@@ -357,6 +411,9 @@ public class KelpCommand {
   }
 
   /**
+   * Gets the custom message that is sent to a player when they do not
+   * have sufficient permissions to execute the command.
+   *
    * @return  The message which is sent to players, if they do not have enough
    *          permissions.
    */
@@ -365,6 +422,11 @@ public class KelpCommand {
   }
 
   /**
+   * Gets the custom message set by this command which is sent when
+   * a console tries to execute the command, although it is made
+   * for players only. If this is null, the default message of
+   * Kelp will be used.
+   *
    * @return The message which is sent to the console, when it
    *         executes a command, which is meant for players only.
    */
@@ -373,6 +435,10 @@ public class KelpCommand {
   }
 
   /**
+   * Gets the custom message set by this command which is sent when
+   * a player executes the command although it is meant for consoles
+   * only. If this is null, the default message will be used.
+   *
    * @return The message which is sent to players when they execute a console command.
    */
   public String getNoConsoleMessage() {
@@ -380,6 +446,9 @@ public class KelpCommand {
   }
 
   /**
+   * Gets the permission that is needed by a player to execute the command.
+   * A console does not need this permission.
+   *
    * @return Returns the permission string, which is needed for this command.
    */
   public String getPermission() {
@@ -387,6 +456,10 @@ public class KelpCommand {
   }
 
   /**
+   * Checks whether custom parameters other than sub commands are
+   * accepted by the command. If this is false, you won't be able to
+   * handle such custom user inputs.
+   *
    * @return {@code true} if custom parameters are allowed in this command.
    */
   public boolean customParametersAllowed() {
@@ -394,6 +467,9 @@ public class KelpCommand {
   }
 
   /**
+   * Checks whether the arguments should be reset when queried in a sub command.
+   * For more information see {@link #argumentsStartFromZero(boolean)}
+   *
    * @return {@code true} if the argument count should be reset to 0.
    */
   public boolean shouldArgumentsStartFromZero() {
@@ -401,9 +477,25 @@ public class KelpCommand {
   }
 
   /**
+   * Gets a collection of all aliases defined for this command.
+   *
    * @return A collection of all aliases the command has.
    */
   public Collection<String> getAliases() {
     return aliases;
   }
+
+  /**
+   * Checks if the command
+   *
+   * @return
+   */
+  public boolean shouldDelegateToConsole() {
+    return this.delegatePlayerToConsole;
+  }
+
+  public boolean shouldInheritFromMainCommand() {
+    return this.inheritFromMainCommand;
+  }
+
 }

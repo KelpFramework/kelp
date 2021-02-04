@@ -157,7 +157,11 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
     if (command.getPermission() != null) {
       if (bukkitPlayer.hasPermission(command.getPermission())) {
         if (executorType == ExecutorType.PLAYER_AND_CONSOLE) {
-          command.onCommand(player, args);
+          if (command.shouldDelegateToConsole()) {
+            command.onCommand(KelpConsoleSender.create(player.getBukkitPlayer()), args);
+          } else {
+            command.onCommand(player, args);
+          }
         } else if (executorType == ExecutorType.PLAYER_ONLY) {
           command.onCommand(player, args);
         }
@@ -170,7 +174,11 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
       return false;
     } else {
       if (executorType == ExecutorType.PLAYER_AND_CONSOLE) {
-        command.onCommand(player, args);
+        if (command.shouldDelegateToConsole()) {
+          command.onCommand(KelpConsoleSender.create(player.getBukkitPlayer()), args);
+        } else {
+          command.onCommand(player, args);
+        }
       } else if (executorType == ExecutorType.PLAYER_ONLY) {
         command.onCommand(player, args);
       }

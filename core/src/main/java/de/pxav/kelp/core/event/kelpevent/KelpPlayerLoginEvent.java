@@ -17,12 +17,9 @@ import org.bukkit.event.player.PlayerLoginEvent;
  * the {@link KelpPlayer} instances calls this event after it has finished so that
  * it is safe to use the kelp player object.
  *
- * All methods (except {@link #getKelpPlayer()}) are the same as those from the normal
- * bukkit event, so you can look for more detailed information there.
- *
  * @author pxav
  */
-public class KelpPlayerLoginEvent extends PlayerEvent {
+public class KelpPlayerLoginEvent extends KelpPlayerEvent {
 
   // list of all event handlers listening for this event
   private static final HandlerList handlers = new HandlerList();
@@ -30,21 +27,12 @@ public class KelpPlayerLoginEvent extends PlayerEvent {
   private String hostname;
   private PlayerLoginEvent.Result result;
   private String message;
-  private KelpPlayer kelpPlayer;
 
-  public KelpPlayerLoginEvent(Player who, KelpPlayer kelpPlayer, String hostname, PlayerLoginEvent.Result result, String message) {
+  public KelpPlayerLoginEvent(KelpPlayer who, String hostname, PlayerLoginEvent.Result result, String message) {
     super(who);
     this.hostname = hostname;
     this.result = result;
     this.message = message;
-    this.kelpPlayer = kelpPlayer;
-  }
-
-  /**
-   * @return The {@link KelpPlayer} instance of the player who logged in.
-   */
-  public KelpPlayer getKelpPlayer() {
-    return kelpPlayer;
   }
 
   public String getHostname() {

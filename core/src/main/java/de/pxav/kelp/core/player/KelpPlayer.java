@@ -347,6 +347,10 @@ public class KelpPlayer extends LivingKelpEntity {
     return playerVersionTemplate.getUniqueId(bukkitPlayer);
   }
 
+  public String getName() {
+    return bukkitPlayer.getName();
+  }
+
 //  @Override
 //  public KelpPlayer teleport(Location location) {
 //    playerVersionTemplate.teleport(bukkitPlayer, location);

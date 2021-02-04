@@ -88,6 +88,28 @@ public class KelpCommandRepository {
 
       commandClass.onCommandRegister();
 
+      // inherit properties from main command to sub commands if needed.
+      commandClass.getSubCommands().forEach((subCommand, subCommandAnnotation) -> {
+        if (!subCommand.shouldInheritFromMainCommand()) {
+          return;
+        }
+        if (subCommand.getNoPermissionMessage() == null) {
+          subCommand.noPermissionMessage(commandClass.getNoPermissionMessage());
+        }
+        if (subCommand.getNoConsoleMessage() == null) {
+          subCommand.noConsoleMessage(commandClass.getNoConsoleMessage());
+        }
+        if (subCommand.getNoPlayerMessage() == null) {
+          subCommand.noPlayerMessage(commandClass.getNoPlayerMessage());
+        }
+        if (subCommand.getPermission() == null) {
+          subCommand.permission(commandClass.getPermission());
+        }
+        if (subCommand.getDescription() == null) {
+          subCommand.description(commandClass.getDescription());
+        }
+      });
+
       // add command to bukkit registry
       registryVersionTemplate.registerCommand(commandClass, commandAnnotation);
       logger.log(LogLevel.DEBUG, "[COMMAND] Registered main command "

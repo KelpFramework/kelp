@@ -243,18 +243,46 @@ public class StringUtils {
     return false;
   }
 
+  /**
+   * Takes a formatting code char (without the {@code '§'} in front)
+   * and converts it to a {@link ChatColor} object of the md_5 library.
+   * If there could be no chat color found, {@link ChatColor#WHITE WHITE}
+   * will be returned.
+   *
+   * @param formattingCode The formatting code to be converted.
+   * @return The corresponding md_5 chat color.
+   */
   public ChatColor getChatColor(char formattingCode) {
     return isFormattingCode(formattingCode)
       ? ChatColor.getByChar(formattingCode)
       : ChatColor.WHITE;
   }
 
+  /**
+   * Takes a formatting code char (without the {@code '§'} in front)
+   * and converts it to a {@link org.bukkit.ChatColor} object of the bukkit library.
+   * If there could be no chat color found, {@link org.bukkit.ChatColor#WHITE WHITE}
+   * will be returned.
+   *
+   * @param formattingCode The formatting code to be converted.
+   * @return The corresponding bukkit chat color.
+   */
   public org.bukkit.ChatColor getBukkitChatColor(char formattingCode) {
     return isFormattingCode(formattingCode)
       ? org.bukkit.ChatColor.getByChar(formattingCode)
       : org.bukkit.ChatColor.WHITE;
   }
 
+  /**
+   * Takes a formatting code with syntax {@code '§x'} and converts
+   * it to a {@link ChatColor} object of spigot/md_5 library. If the
+   * given code could not be found, {@link org.bukkit.ChatColor#WHITE WHITE}
+   * is returned.
+   *
+   * @param formattingCode The formatting code to be converted.
+   * @return  The final {@link ChatColor} to be returned. {@code null} if the
+   *          color was not found.
+   */
   public ChatColor getChatColor(String formattingCode) {
     char code = formattingCode.charAt(1);
     return isFormattingCode(code) && formattingCode.charAt(0) == '§'
@@ -262,6 +290,15 @@ public class StringUtils {
       : ChatColor.WHITE;
   }
 
+  /**
+   * Takes a formatting code with syntax {@code '§x'} and converts
+   * it to a {@link org.bukkit.ChatColor} object of bukkit. If the
+   * given code could not be found, {@link org.bukkit.ChatColor#WHITE WHITE}
+   * is returned.
+   *
+   * @param formattingCode The formatting code to be converted.
+   * @return The final {@link org.bukkit.ChatColor} to be returned.
+   */
   public org.bukkit.ChatColor getBukkitChatColor(String formattingCode) {
     char code = formattingCode.charAt(1);
     return isFormattingCode(code) && formattingCode.charAt(0) == '§'
@@ -269,6 +306,14 @@ public class StringUtils {
       : org.bukkit.ChatColor.WHITE;
   }
 
+  /**
+   * Checks whether the given text ends with a color code.
+   * This does not check for style codes.
+   *
+   * @param text The text to be checked for color codes.
+   * @return The last color code of the text. {@code null} if there
+   *         was no color code to be detected.
+   */
   public String endsWithColorCode(String text) {
     if (text.length() < 2) {
       return null;
@@ -282,7 +327,17 @@ public class StringUtils {
     return null;
   }
 
+  /**
+   * Checks whether the given text ends with any formatting code
+   * (no matter if style or color).
+   *
+   * @param text The text to be checked for formatting codes.
+   * @return The last formatting code of the text. {@code null} if there
+   *         was no color code to be detected.
+   */
   public String endsWithFormattingCode(String text) {
+    // if the text is less than 2 chars long there can
+    // be no formatting code, so return immediately.
     if (text.length() < 2) {
       return null;
     }
@@ -295,12 +350,34 @@ public class StringUtils {
     return null;
   }
 
+  /**
+   * Picks a random color code id. This means the result will only be
+   * something like {@code '1', 'b', ...} without a {@code '§'} in front.
+   *
+   * @return Any random bukkit color code.
+   */
   public char randomColorCode() {
     return colorCodes[ThreadLocalRandom.current().nextInt(colorCodes.length - 1)];
   }
 
+  /**
+   * Picks a random style code. This means the result will only be
+   * something like {@code 'k', 'o', ...} without a {@code '§'} in front.
+   *
+   * @return
+   */
   public char randomStyleCode() {
     return styleCodes[ThreadLocalRandom.current().nextInt(colorCodes.length - 1)];
+  }
+
+  /**
+   * Picks any random formatting code from the list. This can either be
+   * a result of {@link #randomStyleCode()} or {@link #randomColorCode()}.
+   *
+   * @return Any random foramtting code without {@code '§'} in front.
+   */
+  public char randomFormattingCode() {
+    return ThreadLocalRandom.current().nextBoolean() ? randomColorCode() : randomStyleCode();
   }
 
   /**
