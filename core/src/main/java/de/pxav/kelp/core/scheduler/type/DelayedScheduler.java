@@ -59,6 +59,12 @@ public class DelayedScheduler {
     this.timeUnit = TimeUnit.SECONDS;
   }
 
+  public static DelayedScheduler create() {
+    return new DelayedScheduler(
+      KelpPlugin.getInjector().getInstance(KelpSchedulerRepository.class)
+    );
+  }
+
   /**
    * Tells the scheduler to execute the given code on a separate thread.
    * Async schedulers use {@link ScheduledExecutorService} instead of the
