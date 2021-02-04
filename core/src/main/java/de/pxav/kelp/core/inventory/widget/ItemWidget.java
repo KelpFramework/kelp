@@ -24,7 +24,9 @@ public class ItemWidget implements SimpleWidget {
   // caches listeners to be added to the item, when the item itself is still null.
   private Set<ClickListener> listenerCache;
 
-  ItemWidget() {}
+  ItemWidget() {
+    this.listenerCache = Sets.newHashSet();
+  }
 
   /**
    * Sets the item to be put into the inventory.
