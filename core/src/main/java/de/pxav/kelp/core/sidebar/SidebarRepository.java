@@ -113,6 +113,11 @@ public class SidebarRepository {
   @EventHandler
   public void handleClusterRemove(PlayerQuitEvent event) {
     KelpPlayer player = playerRepository.getKelpPlayer(event.getPlayer());
+
+    if (player == null) {
+      return;
+    }
+
     if (animationStates.containsKey(player.getUUID())) {
       removeAnimatedSidebar(player);
     }
