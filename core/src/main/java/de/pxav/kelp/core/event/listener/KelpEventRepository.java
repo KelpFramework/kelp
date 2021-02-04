@@ -139,9 +139,10 @@ public class KelpEventRepository {
           kelpListener.triggerHandler(event);
 
 
-          if ((timesCalled + 1) >= kelpListener.getMaxExecutions()) {
-            removeListener(uuid);
-            return;
+          if (kelpListener.getMaxExecutions() != -1
+            && (timesCalled + 1) >= kelpListener.getMaxExecutions()) {
+              removeListener(uuid);
+              return;
           }
           this.timesCalled.put(uuid, timesCalled + 1);
 
