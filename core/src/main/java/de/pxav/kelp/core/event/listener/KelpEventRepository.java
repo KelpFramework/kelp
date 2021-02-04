@@ -25,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * A class description goes here.
@@ -104,7 +106,20 @@ public class KelpEventRepository {
     });
   }
 
+  /**
+   * Adds/Registers a new dynamic listener. This method automatically
+   * creates the bukkit event handler, which then checks for expires
+   * or criteria of the listener. This method is non-api. The listener
+   * id is also returned by {@link KelpListener#handle(Consumer)} if you need
+   * it.
+   *
+   * A listener can be unregistered with {@link KelpEventRepository#removeListener(UUID)}
+   *
+   * @param kelpListener The listener you want to register.
+   * @return The id of the listener, which can be used later to remove it.
+   */
   UUID addListener(KelpListener<?> kelpListener) {
+    // generate listener id
     UUID uuid = UUID.randomUUID();
 
     Listener listenerInstance = new Listener() {};
@@ -137,9 +152,10 @@ public class KelpEventRepository {
             return;
           }
 
+          // if all criteria match and the listener did not expire, call the handler.
           kelpListener.triggerHandler(event);
 
-
+          // check if max executions are enabled and have been reached
           if (kelpListener.getMaxExecutions() != -1
             && (timesCalled + 1) >= kelpListener.getMaxExecutions()) {
               removeListener(uuid);
@@ -147,6 +163,7 @@ public class KelpEventRepository {
           }
           this.timesCalled.put(uuid, timesCalled + 1);
 
+          // test post-handler conditions and let the listener expire eventually.
           boolean expire = kelpListener.testConditions(event, ConditionalExpiryTestStage.AFTER_HANDLER);
 
           if (expire) {
@@ -174,14 +191,26 @@ public class KelpEventRepository {
     return uuid;
   }
 
+  /**
+   * Removes/unregisters a dynamic listener with a specific listener id.
+   * When registering a new dynamic listener using either {@link KelpListener#listen(Class)}
+   * or {@link KelpEventRepository#addListener(KelpListener)}, you are returned
+   * an id. This id can be used to unregister the listener, so that it won't be
+   * called again. This method is called automatically if the listener expires due to
+   * timeout or certain conditions you set using {@link KelpListener#expireIf(Predicate)} for example.
+   *
+   * @param listenerId The id of the listener you want to remove.
+   */
   public void removeListener(UUID listenerId) {
+    // check if there is anything to rremove.
     if (!this.kelpListeners.containsKey(listenerId)) {
       logger.log(LogLevel.ERROR, "Cannot remove non-existing listener (id: " + listenerId + ")");
       return;
     }
 
-    KelpListener kelpListener = this.kelpListeners.get(listenerId);
+    KelpListener<?> kelpListener = this.kelpListeners.get(listenerId);
     try {
+        // remove the listener instance saved in the KelpListener object from the event's handler list.
         Method method = kelpListener.getEventClass().getMethod("getHandlerList");
         HandlerList handlerList = (HandlerList) method.invoke(null);
         handlerList.unregister(kelpListener.getBukkitListener());
