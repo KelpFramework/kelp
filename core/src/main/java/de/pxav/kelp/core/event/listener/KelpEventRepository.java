@@ -11,6 +11,7 @@ import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.reflect.MethodCriterion;
 import de.pxav.kelp.core.reflect.MethodFinder;
+import de.pxav.kelp.core.scheduler.type.DelayedScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -155,6 +156,19 @@ public class KelpEventRepository {
         },
         javaPlugin,
         false);
+
+    // scheduled expiry if enabled
+    if (kelpListener.getExpireTime() != -1) {
+      DelayedScheduler.create()
+        .async()
+        .withDelayOf(kelpListener.getExpireTime())
+        .timeUnit(kelpListener.getExpireTimeUnit())
+        .run(taskId -> {
+          if (this.kelpListeners.containsKey(uuid)) {
+            removeListener(uuid);
+          }
+        });
+    }
 
     this.kelpListeners.put(uuid, kelpListener);
     return uuid;

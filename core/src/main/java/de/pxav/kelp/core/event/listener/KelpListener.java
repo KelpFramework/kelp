@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -30,8 +31,13 @@ public class KelpListener<T extends Event> {
 
   private int maxExecutions = -1;
   private int minExecutions = -1;
+
+  private int expireTime = -1;
+  private TimeUnit expireTimeUnit;
+
   private ConcurrentMap<ConditionalExpiryTestStage, Predicate<? super T>> conditionalExpires;
   private Collection<Predicate<? super T>> criteria;
+
   private Consumer<? super T> handler;
 
   private Listener bukkitListener;
@@ -120,6 +126,25 @@ public class KelpListener<T extends Event> {
    */
   int getMinExecutions() {
     return minExecutions;
+  }
+
+  /**
+   * Gets the time after which the listener will expire automatically.
+   * The unit for this time is provided in {@link #getExpireTimeUnit()}
+   *
+   * @return The amount of time to pass until the listener expires.
+   */
+  public int getExpireTime() {
+    return expireTime;
+  }
+
+  /**
+   * Gets the time unit of {@link #getExpireTime()}.
+   *
+   * @return The time unit after which the listener will expire.
+   */
+  public TimeUnit getExpireTimeUnit() {
+    return expireTimeUnit;
   }
 
   /**
@@ -238,6 +263,20 @@ public class KelpListener<T extends Event> {
    */
   public KelpListener<T> expireAfterExecutions(int maxExecutions) {
     this.maxExecutions = maxExecutions;
+    return this;
+  }
+
+  /**
+   * Makes the listener expire after a given amount of time.
+   * The time is counted from the moment the listener is registered.
+   *
+   * @param time      The time to wait before letting the event handler expire.
+   * @param timeUnit  The unit of the given {@code time} attribute.
+   * @return An instance of the current listener for fluent builder design.
+   */
+  public KelpListener<T> expireAfter(int time, TimeUnit timeUnit) {
+    this.expireTime = time;
+    this.expireTimeUnit = timeUnit;
     return this;
   }
 
