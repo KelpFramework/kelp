@@ -21,12 +21,12 @@ public class SneakingActivity extends NpcActivity {
     // un-sneak if necessary.
     if (npc.isSneaking() && !toImitate.isSneaking()) {
       npc.unSneak();
-      npc.refresh(toImitate);
+      npc.refresh();
 
     // sneak if necessary.
     } else if(!npc.isSneaking() && toImitate.isSneaking()) {
       npc.sneak();
-      npc.refresh(toImitate);
+      npc.refresh();
     }
   }
 
