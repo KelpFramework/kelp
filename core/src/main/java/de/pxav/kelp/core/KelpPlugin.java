@@ -126,7 +126,6 @@ public class KelpPlugin extends JavaPlugin {
   public void onDisable() {
     injector.getInstance(KelpApplicationRepository.class).disableApplications();
 
-    injector.getInstance(KelpNpcRepository.class).stopScheduler();
     injector.getInstance(SidebarRepository.class).stopAllClusters();
     logger().log("[SIDEBAR] Removed all animation clusters.");
     injector.getInstance(ParticleEffectRepository.class).stopAllTimers();

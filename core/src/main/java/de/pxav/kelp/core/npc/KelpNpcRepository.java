@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
+import de.pxav.kelp.core.scheduler.type.RepeatingScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +35,6 @@ public class KelpNpcRepository {
   // saves all spawned NPCs for each player
   // Player UUID => List of all NPCs spawned for this player
   private ConcurrentHashMap<UUID, Collection<KelpNpc>> spawnedNpcs;
-  private ScheduledExecutorService scheduledExecutorService;
 
   private KelpPlayerRepository playerRepository;
   private KelpLogger logger;
@@ -89,62 +89,50 @@ public class KelpNpcRepository {
    */
   public void startScheduler() {
     logger.log("[NPC] Starting NPC heartbeat schedulers.");
-    scheduledExecutorService = Executors.newScheduledThreadPool(0);
-    scheduledExecutorService.scheduleAtFixedRate(() -> {
-      try {
+    RepeatingScheduler.create()
+      .async()
+      .every(100)
+      .milliseconds()
+      .run(taskId -> {
+        try {
 
-        // iterate all players with spawned NPCs.
-        spawnedNpcs.forEach((uuid, npcList) -> {
+          // iterate all players with spawned NPCs.
+          spawnedNpcs.forEach((uuid, npcList) -> {
 
-          KelpPlayer player = playerRepository.getKelpPlayer(uuid);
-          Preconditions.checkNotNull(player);
+            KelpPlayer player = playerRepository.getKelpPlayer(uuid);
+            Preconditions.checkNotNull(player);
 
-          // iterate all NPCs of an individual player
-          npcList.forEach(currentNpc -> {
+            // iterate all NPCs of an individual player
+            npcList.forEach(currentNpc -> {
 
-            // un-sneak if necessary.
-            if (currentNpc.shouldImitateSneaking()
-                    && currentNpc.isSneaking()
-                    && !player.isSneaking()) {
-              currentNpc.unSneak();
-              currentNpc.refresh(player);
+              // un-sneak if necessary.
+              if (currentNpc.shouldImitateSneaking()
+                && currentNpc.isSneaking()
+                && !player.isSneaking()) {
+                currentNpc.unSneak();
+                currentNpc.refresh(player);
 
-            // sneak if necessary.
-            } else if(currentNpc.shouldImitateSneaking()
-                    && !currentNpc.isSneaking()
-                    && player.isSneaking()) {
-              currentNpc.sneak();
-              currentNpc.refresh(player);
-            }
+                // sneak if necessary.
+              } else if(currentNpc.shouldImitateSneaking()
+                && !currentNpc.isSneaking()
+                && player.isSneaking()) {
+                currentNpc.sneak();
+                currentNpc.refresh(player);
+              }
 
-            // check if the NPC should always look at the player
-            // it true, update the head rotation of the npc.
-            if (currentNpc.shouldFollowHeadRotation()) {
-              currentNpc.lookTo(player.getBukkitPlayer().getLocation());
-              currentNpc.refresh(player);
-            }
+              // check if the NPC should always look at the player
+              // it true, update the head rotation of the npc.
+              if (currentNpc.shouldFollowHeadRotation()) {
+                currentNpc.lookTo(player.getBukkitPlayer().getLocation());
+                currentNpc.refresh(player);
+              }
 
+            });
           });
-        });
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-    }, 0, 100, TimeUnit.MILLISECONDS);
-  }
-
-  /**
-   * Stops the scheduler updating the NPC heartbeat.
-   * So the head rotation, sneaking and spawning
-   * won't be updated anymore.
-   */
-  public void stopScheduler() {
-    if(scheduledExecutorService == null) {
-      return;
-    }
-
-    scheduledExecutorService.shutdownNow();
-    logger.log("[NPC] Stopped NPC heartbeat.");
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      });
   }
 
 }
