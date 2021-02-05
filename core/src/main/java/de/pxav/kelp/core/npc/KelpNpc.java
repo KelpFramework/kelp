@@ -28,6 +28,8 @@ import java.util.UUID;
  */
 public class KelpNpc {
 
+  private KelpPlayer player;
+
   private Location spawnLocation;
   private Location currentLocation;
   private KelpItem itemInHand;
@@ -338,6 +340,11 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc player(KelpPlayer player) {
+    this.player = player;
+    return this;
+  }
+
   /**
    * Makes the NPC look to the given location. So it
    * rotates its head to the given target location.
@@ -363,7 +370,7 @@ public class KelpNpc {
     return this;
   }
 
-  public void walkTo(Player player, Location target) {
+  public void walkTo(Location target) {
   }
 
   /**
@@ -373,7 +380,7 @@ public class KelpNpc {
    * @param player The player who should see the NPC.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc spawn(KelpPlayer player) {
+  public KelpNpc spawn() {
     if (this.uuid == null) {
       this.uuid = UUID.randomUUID();
     }
@@ -408,7 +415,7 @@ public class KelpNpc {
    * @param player The player whose NPC should be despawned.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc deSpawn(KelpPlayer player) {
+  public KelpNpc deSpawn() {
     // execute activities that do something when the npc is removed
     this.activities.forEach(current -> current.onStop(this));
 
@@ -427,15 +434,14 @@ public class KelpNpc {
    * or head rotation, you have to execute this method so that the updates
    * will be sent to the player.
    *
-   * @param player The player who should receive the update packets.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc refresh(KelpPlayer player) {
+  public KelpNpc refresh() {
     npcVersionTemplate.refresh(this, player.getBukkitPlayer());
     return this;
   }
 
-  public KelpNpc updateHeadRotation(Player player) {
+  public KelpNpc updateHeadRotation() {
     return this;
   }
 
