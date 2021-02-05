@@ -10,7 +10,6 @@ import de.pxav.kelp.core.npc.activity.NpcActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.List;
@@ -377,7 +376,6 @@ public class KelpNpc {
    * Spawns the NPC for the given player and automatically
    * adds it to the NPC repository.
    *
-   * @param player The player who should see the NPC.
    * @return An instance of the current NPC object.
    */
   public KelpNpc spawn() {
@@ -401,7 +399,7 @@ public class KelpNpc {
     armorStandEntityIds = npcMeta.getArmorStandEntityIds();
 
     // execute activities that do something when the npc spawns
-    this.activities.forEach(current -> current.onStart(this));
+    this.activities.forEach(current -> current.onSpawn(this));
 
     this.kelpNpcRepository.addNpc(this, player);
     return this;
@@ -412,12 +410,11 @@ public class KelpNpc {
    * from the repository and the game. So the NPC won't be rendered by the
    * player anymore. The title lines will also disappear.
    *
-   * @param player The player whose NPC should be despawned.
    * @return An instance of the current NPC object.
    */
   public KelpNpc deSpawn() {
     // execute activities that do something when the npc is removed
-    this.activities.forEach(current -> current.onStop(this));
+    this.activities.forEach(current -> current.onRemove(this));
 
     npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
     this.npcMeta = null;
@@ -426,7 +423,13 @@ public class KelpNpc {
   }
 
   public void triggerHeartbeatTick() {
-    this.activities.forEach(current -> current.onTick(this));
+    Lists.newArrayList(this.activities).forEach(current -> {
+      if (current.isFinished()) {
+        this.activities.remove(current);
+        return;
+      }
+      current.onTick(this);
+    });
   }
 
   /**
