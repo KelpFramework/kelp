@@ -352,9 +352,9 @@ public class KelpNpc {
    * @return An instance of the current NPC object.
    */
   public KelpNpc lookTo(Location target) {
-    double xDiff = target.getX() - spawnLocation.getX();
-    double yDiff = target.getY() - spawnLocation.getY();
-    double zDiff = target.getZ() - spawnLocation.getZ();
+    double xDiff = target.getX() - currentLocation.getX();
+    double yDiff = target.getY() - currentLocation.getY();
+    double zDiff = target.getZ() - currentLocation.getZ();
 
     double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
     double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
@@ -364,8 +364,8 @@ public class KelpNpc {
     if (zDiff < 0.0D) {
       yaw += Math.abs(180.0D - yaw) * 2.0D;
     }
-    spawnLocation.setYaw((float) yaw - 90.0F);
-    spawnLocation.setPitch((float) pitch);
+    currentLocation.setYaw((float) yaw - 90.0F);
+    currentLocation.setPitch((float) pitch);
     return this;
   }
 
@@ -376,7 +376,7 @@ public class KelpNpc {
    * Spawns the NPC for the given player and automatically
    * adds it to the NPC repository.
    *
-   * @return An instance of the current NPC object.
+   * @return An instance of the current NPC object. {@code null} if the npc could not be spawned.
    */
   public KelpNpc spawn() {
     if (this.uuid == null) {
@@ -390,7 +390,9 @@ public class KelpNpc {
     if (this.spawnLocation == null) {
       logger.log(LogLevel.ERROR, "To spawn an NPC, you have to define a location before." +
               " But there was no location found. Please check your code again.");
+      return null;
     }
+    this.currentLocation = spawnLocation;
 
     this.npcMeta = npcVersionTemplate.spawnNpc(this, player.getBukkitPlayer());
     gameProfile = npcMeta.getGameProfile();
