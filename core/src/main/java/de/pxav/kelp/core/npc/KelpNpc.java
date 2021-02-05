@@ -42,9 +42,8 @@ public class KelpNpc {
   private String skinSignature;
   private String skinTexture;
 
+  // behaviour
   private double removeDistance;
-  private boolean followHeadRotation;
-  private boolean imitateSneaking;
   private boolean isBurning;
   private boolean isInvisible;
 
@@ -246,33 +245,6 @@ public class KelpNpc {
   }
 
   /**
-   * If you execute this method, the NPC will start
-   * imitating the sneak state of a player. That means:
-   * If the player sneaks, the NPC will sneak as well.
-   * If the player unsneaks, the NPC will do so as well.
-   *
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc imitateSneaking() {
-    this.imitateSneaking = true;
-    return this;
-  }
-
-  /**
-   * If you execute this method, the NPC will stop
-   * imitating the sneak state of a player.
-   * So you can invert the effects of {@code #imitateSneaking}
-   * again and the NPC will ignore the player's
-   * sneaking state.
-   *
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc doNotImitateSneaking() {
-    this.imitateSneaking = false;
-    return this;
-  }
-
-  /**
    * Makes the NPC sprint. This becomes especially important
    * if you want to play a walk animation, because the walking
    * speed wil increase to sprinting speed and sprint particles
@@ -295,28 +267,6 @@ public class KelpNpc {
    */
   public KelpNpc stopSprinting() {
     this.isSprinting = false;
-    return this;
-  }
-
-  /**
-   * If you execute this method, the NPC will start
-   * looking a the player constantly.
-   *
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc followHeadRotation() {
-    this.followHeadRotation = true;
-    return this;
-  }
-
-  /**
-   * If you execute this method, the NPC will stop
-   * looking a the player constantly.
-   *
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc unfollowHeadRotation() {
-    this.imitateSneaking = false;
     return this;
   }
 
@@ -579,20 +529,6 @@ public class KelpNpc {
    */
   public boolean shouldShowInTab() {
     return showInTab;
-  }
-
-  /**
-   * @return {@code true} if the NPC should imitate the sneak state of its player.
-   */
-  public boolean shouldImitateSneaking() {
-    return imitateSneaking;
-  }
-
-  /**
-   * @return {@code true} if the NPC should always look at the player.
-   */
-  public boolean shouldFollowHeadRotation() {
-    return followHeadRotation;
   }
 
   /**
