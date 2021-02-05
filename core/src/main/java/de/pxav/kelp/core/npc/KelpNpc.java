@@ -6,6 +6,7 @@ import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
+import de.pxav.kelp.core.npc.activity.NpcActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.Location;
@@ -56,6 +57,8 @@ public class KelpNpc {
   private String tabListName;
   // armor, ...
 
+  private Collection<NpcActivity> activities;
+
   private KelpNpcMeta npcMeta;
   private KelpLogger logger;
 
@@ -70,6 +73,7 @@ public class KelpNpc {
     this.logger = logger;
 
     this.titles = Lists.newArrayList();
+    this.activities = Lists.newArrayList();
     this.removeDistance = 40;
     this.isBurning = false;
   }
@@ -379,6 +383,11 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc addActivity(NpcActivity activity) {
+    this.activities.add(activity);
+    return this;
+  }
+
   /**
    * Makes the NPC look to the given location. So it
    * rotates its head to the given target location.
@@ -434,6 +443,9 @@ public class KelpNpc {
     customName = npcMeta.getOverHeadDisplayName();
     armorStandEntityIds = npcMeta.getArmorStandEntityIds();
 
+    // execute activities that do something when the npc spawns
+    this.activities.forEach(current -> current.onStart(this));
+
     this.kelpNpcRepository.addNpc(this, player);
     return this;
   }
@@ -447,10 +459,17 @@ public class KelpNpc {
    * @return An instance of the current NPC object.
    */
   public KelpNpc deSpawn(KelpPlayer player) {
+    // execute activities that do something when the npc is removed
+    this.activities.forEach(current -> current.onStop(this));
+
     npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
     this.npcMeta = null;
     this.kelpNpcRepository.removeNpc(this, player);
     return this;
+  }
+
+  public void triggerHeartbeatTick() {
+    this.activities.forEach(current -> current.onTick(this));
   }
 
   /**

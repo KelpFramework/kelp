@@ -103,31 +103,7 @@ public class KelpNpcRepository {
             Preconditions.checkNotNull(player);
 
             // iterate all NPCs of an individual player
-            npcList.forEach(currentNpc -> {
-
-              // un-sneak if necessary.
-              if (currentNpc.shouldImitateSneaking()
-                && currentNpc.isSneaking()
-                && !player.isSneaking()) {
-                currentNpc.unSneak();
-                currentNpc.refresh(player);
-
-                // sneak if necessary.
-              } else if(currentNpc.shouldImitateSneaking()
-                && !currentNpc.isSneaking()
-                && player.isSneaking()) {
-                currentNpc.sneak();
-                currentNpc.refresh(player);
-              }
-
-              // check if the NPC should always look at the player
-              // it true, update the head rotation of the npc.
-              if (currentNpc.shouldFollowHeadRotation()) {
-                currentNpc.lookTo(player.getBukkitPlayer().getLocation());
-                currentNpc.refresh(player);
-              }
-
-            });
+            npcList.forEach(KelpNpc::triggerHeartbeatTick);
           });
         } catch (Exception e) {
           e.printStackTrace();
