@@ -46,7 +46,10 @@ public class KelpNpc {
   private boolean imitateSneaking;
   private boolean isBurning;
   private boolean isInvisible;
+
+  // movement
   private boolean isSneaking;
+  private boolean isSprinting;
 
   private boolean showCustomName = false;
   private boolean showInTab = false;
@@ -266,6 +269,32 @@ public class KelpNpc {
   }
 
   /**
+   * Makes the NPC sprint. This becomes especially important
+   * if you want to play a walk animation, because the walking
+   * speed wil increase to sprinting speed and sprint particles
+   * will be visible.
+   *
+   * @return An instance of the current NPC object.
+   */
+  public KelpNpc sprint() {
+    this.isSprinting = true;
+    return this;
+  }
+
+  /**
+   * Makes the NPC not sprint anymore. This will remove
+   * the sprint particle animation and if the npc is walking,
+   * it will be slowed down to the normal walking speed instead
+   * of the sprinting speed.
+   *
+   * @return An instance of the current NPC object.
+   */
+  public KelpNpc stopSprinting() {
+    this.isSprinting = false;
+    return this;
+  }
+
+  /**
    * If you execute this method, the NPC will start
    * looking a the player constantly.
    *
@@ -376,7 +405,6 @@ public class KelpNpc {
   }
 
   public void walkTo(Player player, Location target) {
-    npcVersionTemplate.walkTo(this, player, target, player.getLocation().getYaw(), player.getLocation().getPitch());
   }
 
   /**
@@ -567,6 +595,15 @@ public class KelpNpc {
    */
   public boolean shouldShowCustomName() {
     return this.showCustomName;
+  }
+
+  /**
+   * Checks if the npc is currently in sprint mode.
+   *
+   * @return Whether the npc is currently sprinting.
+   */
+  public boolean isSprinting() {
+    return isSprinting;
   }
 
   /**

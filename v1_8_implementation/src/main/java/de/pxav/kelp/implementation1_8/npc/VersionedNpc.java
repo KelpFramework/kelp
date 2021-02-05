@@ -116,19 +116,20 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
-  public void walkTo(KelpNpc npc, Player player, Location target, float yaw, float pitch) {
-//    Vector vector;
-//
-//    PacketPlayOutEntity.PacketPlayOutRelEntityMove movePacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMove(
-//      npc.getEntityId(),
-//      (byte) (dx * 4096),
-//      (byte) (dy * 4096),
-//      (byte) (dz * 4096),
-//      onGround
-//    );
-//
-//    ((CraftPlayer)player).getHandle().playerConnection.sendPacket(movePacket);
-    throw new UnsupportedOperationException("The #walkTo method of NPCs is not available yet.");
+  public void walkTo(KelpNpc npc, Player player, double x, double y, double z, float absoluteYaw, float absolutePitch) {
+
+
+    PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(
+      npc.getEntityId(),
+      (byte) MathHelper.floor(x * 32.0D),
+      (byte) MathHelper.floor(y * 32.0D),
+      (byte) MathHelper.floor(z * 32.0D),
+      (byte) ((int) (absoluteYaw * 256.0F / 360.0F)),
+      (byte) ((int) (absolutePitch * 256.0F / 360.0F)),
+      true
+    );
+
+    ((CraftPlayer)player).getHandle().playerConnection.sendPacket(moveLookPacket);
   }
 
   @Override
@@ -187,11 +188,15 @@ public class VersionedNpc extends NpcVersionTemplate {
       dataWatcher.a(0, (byte) 0x02);
     }
 
+    if (kelpNpc.isSprinting()) {
+      dataWatcher.a(0, (byte) 0x08);
+    }
+
     if (kelpNpc.isInvisible()) {
       dataWatcher.a(0, (byte) 0x20);
     }
 
-    if (!kelpNpc.isSneaking() && !kelpNpc.hasBurningEffect() && !kelpNpc.isInvisible()) {
+    if (!kelpNpc.isSneaking() && !kelpNpc.hasBurningEffect() && !kelpNpc.isInvisible() && !kelpNpc.isSprinting()) {
       dataWatcher.a(0, (byte) 0);
     }
 
