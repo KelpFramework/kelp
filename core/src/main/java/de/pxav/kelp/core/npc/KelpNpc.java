@@ -430,6 +430,9 @@ public class KelpNpc {
         this.activities.remove(current);
         return;
       }
+      if (!current.hasStarted()) {
+        current.start(this);
+      }
       current.onTick(this);
     });
   }
