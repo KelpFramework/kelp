@@ -51,6 +51,9 @@ public class KelpNpc {
   // movement
   private boolean isSneaking;
   private boolean isSprinting;
+  private boolean noClip;
+  private boolean falling;
+  private boolean flying;
 
   private boolean showCustomName = false;
   private boolean showInTab = false;
@@ -344,6 +347,31 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc enableNoClip() {
+    this.noClip = true;
+    return this;
+  }
+
+  public KelpNpc disableNoClip() {
+    this.noClip = false;
+    return this;
+  }
+
+  public KelpNpc noClip(boolean noClip) {
+    this.noClip = noClip;
+    return this;
+  }
+
+  public KelpNpc falling(boolean falling) {
+    this.falling = falling;
+    return this;
+  }
+
+  public KelpNpc flying(boolean flying) {
+    this.flying = flying;
+    return this;
+  }
+
   /**
    * Makes the NPC look to the given location. So it
    * rotates its head to the given target location.
@@ -574,6 +602,18 @@ public class KelpNpc {
    */
   public boolean isSprinting() {
     return isSprinting;
+  }
+
+  public boolean isFalling() {
+    return falling;
+  }
+
+  public boolean hasNoClip() {
+    return noClip;
+  }
+
+  public boolean isFlying() {
+    return flying;
   }
 
   /**
