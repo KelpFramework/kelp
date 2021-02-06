@@ -116,8 +116,7 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
-  public void walkTo(KelpNpc npc, Player player, double x, double y, double z, float absoluteYaw, float absolutePitch) {
-
+  public void moveRelativeDistance(KelpNpc npc, Player player, double x, double y, double z, float absoluteYaw, float absolutePitch) {
 
     PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(
       npc.getEntityId(),

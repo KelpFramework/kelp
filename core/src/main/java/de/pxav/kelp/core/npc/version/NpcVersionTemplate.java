@@ -40,7 +40,13 @@ public abstract class NpcVersionTemplate {
    */
   public abstract void deSpawn(KelpNpc npc, Player player);
 
-  public abstract void walkTo(KelpNpc npc, Player player, Location target, float yaw, float pitch);
+  public abstract void moveRelativeDistance(KelpNpc npc,
+                                            Player player,
+                                            double x,
+                                            double y,
+                                            double z,
+                                            float absoluteYaw,
+                                            float absolutePitch);
 
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state
