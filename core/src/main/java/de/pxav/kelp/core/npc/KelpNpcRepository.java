@@ -93,6 +93,7 @@ public class KelpNpcRepository {
       .async()
       .every(100)
       .milliseconds()
+      .waitForTaskCompletion(true)
       .run(taskId -> {
         try {
 
