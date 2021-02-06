@@ -369,7 +369,8 @@ public class KelpNpc {
     return this;
   }
 
-  public void walkTo(Location target) {
+  public void moveRelativeDistance(double x, double y, double z, float absoluteYaw, float absolutePitch) {
+    npcVersionTemplate.moveRelativeDistance(this, player.getBukkitPlayer(), x, y, z, absoluteYaw, absolutePitch);
   }
 
   /**
