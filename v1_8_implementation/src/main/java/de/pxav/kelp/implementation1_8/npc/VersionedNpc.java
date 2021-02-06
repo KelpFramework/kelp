@@ -118,6 +118,17 @@ public class VersionedNpc extends NpcVersionTemplate {
   @Override
   public void moveRelativeDistance(KelpNpc npc, Player player, double x, double y, double z, float absoluteYaw, float absolutePitch) {
 
+    npc.getArmorStandEntityIds().forEach(armorStand -> {
+      PacketPlayOutEntity.PacketPlayOutRelEntityMove movePacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMove(
+        armorStand,
+        (byte) MathHelper.floor(x * 32.0D),
+        (byte) MathHelper.floor(y * 32.0D),
+        (byte) MathHelper.floor(z * 32.0D),
+        true
+      );
+      ((CraftPlayer)player).getHandle().playerConnection.sendPacket(movePacket);
+    });
+
     PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(
       npc.getEntityId(),
       (byte) MathHelper.floor(x * 32.0D),
