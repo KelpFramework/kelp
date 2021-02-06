@@ -138,8 +138,6 @@ public class VersionedNpc extends NpcVersionTemplate {
     applyToDataWatcher(dataWatcher, npc);
     PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(npc.getEntityId(), dataWatcher, true);
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(metaPacket);
-
-    teleport(player, npc);
   }
 
   private void setValue(Object object, String fieldName, Object value) {
