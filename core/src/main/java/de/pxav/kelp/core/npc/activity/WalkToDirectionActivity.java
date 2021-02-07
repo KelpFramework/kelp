@@ -1,9 +1,11 @@
 package de.pxav.kelp.core.npc.activity;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.MovementSpeed;
+import de.pxav.kelp.core.particle.type.ParticleType;
+import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public class WalkToDirectionActivity extends NpcActivity {
@@ -48,8 +50,9 @@ public class WalkToDirectionActivity extends NpcActivity {
     double x = newLocation.getX() - previousLocation.getX();
     double y = newLocation.getY() - previousLocation.getY();
     double z = newLocation.getZ() - previousLocation.getZ();
-    kelpNpc.moveRelativeDistance(x, y, z, previousLocation.getYaw(), previousLocation.getPitch());
+    kelpNpc.moveRelativeDistance(x, y, z, newLocation.getYaw(), newLocation.getPitch());
     kelpNpc.currentLocation(newLocation);
+    kelpNpc.lookTo(newLocation.clone().add(direction));
 
     direction.normalize();
   }
