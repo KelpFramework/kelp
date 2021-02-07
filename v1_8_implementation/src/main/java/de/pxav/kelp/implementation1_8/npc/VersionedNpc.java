@@ -156,16 +156,20 @@ public class VersionedNpc extends NpcVersionTemplate {
     setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
     setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
 
-    npc.getArmorStandEntityIds().forEach(armorStand -> {
+    double yIndex = -.3;
+    for (Integer entityId : npc.getArmorStandEntityIds()) {
       PacketPlayOutEntityTeleport teleportArmorStandPacket = new PacketPlayOutEntityTeleport();
-      setValue(teleportArmorStandPacket, "a", armorStand);
+      setValue(teleportArmorStandPacket, "a", entityId);
       setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
-      setValue(teleportArmorStandPacket, "c", MathHelper.floor(location.getY() * 32.0D));
+
+      setValue(teleportArmorStandPacket, "c", MathHelper.floor((location.getY() + yIndex) * 32.0D));
+
       setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
       setValue(teleportArmorStandPacket, "e", (byte) 0);
       setValue(teleportArmorStandPacket, "f", (byte) 0);
       playerConnection.sendPacket(teleportArmorStandPacket);
-    });
+      yIndex += .25;
+    }
 
     PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
     setValue(headRotationPacket, "a", npc.getEntityId());
