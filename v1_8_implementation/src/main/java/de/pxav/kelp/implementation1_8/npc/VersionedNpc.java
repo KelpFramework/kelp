@@ -78,21 +78,21 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     KelpNpcMeta npcMeta = new KelpNpcMeta(entityId, gameProfile, npc.getCustomName(), armorStandIds);
 
-    setValue(spawnPacket, "a", entityId);
-    setValue(spawnPacket, "b", gameProfile.getId());
-    setValue(spawnPacket, "c", MathHelper.floor(npc.getSpawnLocation().getX() * 32.0D));
-    setValue(spawnPacket, "d", MathHelper.floor(npc.getSpawnLocation().getY() * 32.0D));
-    setValue(spawnPacket, "e", MathHelper.floor(npc.getSpawnLocation().getZ() * 32.0D));
-    setValue(spawnPacket, "f", (byte) ((int) (npc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
-    setValue(spawnPacket, "g", (byte) ((int) (npc.getSpawnLocation().getPitch() * 256.0F / 360.0F)));
+    reflectionUtil.setValue(spawnPacket, "a", entityId);
+    reflectionUtil.setValue(spawnPacket, "b", gameProfile.getId());
+    reflectionUtil.setValue(spawnPacket, "c", MathHelper.floor(npc.getSpawnLocation().getX() * 32.0D));
+    reflectionUtil.setValue(spawnPacket, "d", MathHelper.floor(npc.getSpawnLocation().getY() * 32.0D));
+    reflectionUtil.setValue(spawnPacket, "e", MathHelper.floor(npc.getSpawnLocation().getZ() * 32.0D));
+    reflectionUtil.setValue(spawnPacket, "f", (byte) ((int) (npc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
+    reflectionUtil.setValue(spawnPacket, "g", (byte) ((int) (npc.getSpawnLocation().getPitch() * 256.0F / 360.0F)));
 
     if (npc.getItemInHand() != null) {
-      setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
+      reflectionUtil.setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
     }
 
     DataWatcher dataWatcher = new DataWatcher(null);
     this.applyToDataWatcher(dataWatcher, npc);
-    setValue(spawnPacket, "i", dataWatcher);
+    reflectionUtil.setValue(spawnPacket, "i", dataWatcher);
 
     addToTab(npcMeta, player);
     playerConnection.sendPacket(spawnPacket);
@@ -149,31 +149,31 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport();
 
-    setValue(teleportPacket, "a", npc.getEntityId());
-    setValue(teleportPacket, "b", MathHelper.floor(location.getX() * 32.0D));
-    setValue(teleportPacket, "c", MathHelper.floor(location.getY() * 32.0D));
-    setValue(teleportPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
-    setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
-    setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
+    reflectionUtil.setValue(teleportPacket, "a", npc.getEntityId());
+    reflectionUtil.setValue(teleportPacket, "b", MathHelper.floor(location.getX() * 32.0D));
+    reflectionUtil.setValue(teleportPacket, "c", MathHelper.floor(location.getY() * 32.0D));
+    reflectionUtil.setValue(teleportPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
+    reflectionUtil.setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
+    reflectionUtil.setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
 
     double yIndex = -.3;
     for (Integer entityId : npc.getArmorStandEntityIds()) {
       PacketPlayOutEntityTeleport teleportArmorStandPacket = new PacketPlayOutEntityTeleport();
-      setValue(teleportArmorStandPacket, "a", entityId);
-      setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
+      reflectionUtil.setValue(teleportArmorStandPacket, "a", entityId);
+      reflectionUtil.setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
 
-      setValue(teleportArmorStandPacket, "c", MathHelper.floor((location.getY() + yIndex) * 32.0D));
+      reflectionUtil.setValue(teleportArmorStandPacket, "c", MathHelper.floor((location.getY() + yIndex) * 32.0D));
 
-      setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
-      setValue(teleportArmorStandPacket, "e", (byte) 0);
-      setValue(teleportArmorStandPacket, "f", (byte) 0);
+      reflectionUtil.setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
+      reflectionUtil.setValue(teleportArmorStandPacket, "e", (byte) 0);
+      reflectionUtil.setValue(teleportArmorStandPacket, "f", (byte) 0);
       playerConnection.sendPacket(teleportArmorStandPacket);
       yIndex += .25;
     }
 
     PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
-    setValue(headRotationPacket, "a", npc.getEntityId());
-    setValue(headRotationPacket, "b", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
+    reflectionUtil.setValue(headRotationPacket, "a", npc.getEntityId());
+    reflectionUtil.setValue(headRotationPacket, "b", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
 
     playerConnection.sendPacket(teleportPacket);
     playerConnection.sendPacket(headRotationPacket);
@@ -188,16 +188,6 @@ public class VersionedNpc extends NpcVersionTemplate {
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(metaPacket);
   }
 
-  private void setValue(Object object, String fieldName, Object value) {
-    try {
-      Field field = object.getClass().getDeclaredField(fieldName);
-      field.setAccessible(true);
-      field.set(object, value);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      e.printStackTrace();
-    }
-  }
-
   private void addToTab(KelpNpcMeta npc, Player player) {
     PacketPlayOutPlayerInfo infoPacket = new PacketPlayOutPlayerInfo();
     PacketPlayOutPlayerInfo.PlayerInfoData playerInfoData = infoPacket.new PlayerInfoData(npc.getGameProfile(), 1, WorldSettings.EnumGamemode.NOT_SET, CraftChatMessage.fromString(npc.getOverHeadDisplayName())[0]);
@@ -205,8 +195,8 @@ public class VersionedNpc extends NpcVersionTemplate {
     List<PacketPlayOutPlayerInfo.PlayerInfoData> players = new ArrayList<>();
     players.add(playerInfoData);
 
-    setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER);
-    setValue(infoPacket, "b", players);
+    reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER);
+    reflectionUtil.setValue(infoPacket, "b", players);
 
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(infoPacket);
   }
@@ -217,8 +207,8 @@ public class VersionedNpc extends NpcVersionTemplate {
     List<PacketPlayOutPlayerInfo.PlayerInfoData> players = new ArrayList<>();
     players.add(playerInfoData);
 
-    setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER);
-    setValue(infoPacket, "b", players);
+    reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER);
+    reflectionUtil.setValue(infoPacket, "b", players);
 
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(infoPacket);
   }
