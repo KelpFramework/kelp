@@ -649,6 +649,10 @@ public class KelpNpc {
     return currentLocation;
   }
 
+  public KelpPlayer getPlayer() {
+    return player;
+  }
+
   /**
    * This method generates a list of y-coordinates, where
    * the title lines of the NPC should appear.
