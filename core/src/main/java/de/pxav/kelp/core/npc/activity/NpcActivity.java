@@ -2,10 +2,11 @@ package de.pxav.kelp.core.npc.activity;
 
 import de.pxav.kelp.core.npc.KelpNpc;
 
-public abstract class NpcActivity {
+public abstract class NpcActivity<T extends NpcActivity<?>> {
 
   private boolean finished = false;
   protected boolean started = false;
+  private Runnable onFinish;
 
   public void onSpawn(KelpNpc kelpNpc) {}
 
@@ -15,12 +16,18 @@ public abstract class NpcActivity {
 
   public void onRemove(KelpNpc kelpNpc) {}
 
+  public T onFinish(Runnable runnable) {
+    this.onFinish = runnable;
+    return (T) this;
+  }
+
   public boolean isFinished() {
     return finished;
   }
 
   public void finish() {
     this.finished = true;
+    onFinish.run();
   }
 
   public boolean hasStarted() {
