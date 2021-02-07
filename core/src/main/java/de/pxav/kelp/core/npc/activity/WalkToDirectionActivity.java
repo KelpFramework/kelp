@@ -14,6 +14,7 @@ public class WalkToDirectionActivity extends NpcActivity<WalkToDirectionActivity
   private Vector direction;
   private double index = .01;
   private Location startLocation;
+  private boolean lookToTarget = true;
 
   public static WalkToDirectionActivity create() {
     return new WalkToDirectionActivity();
@@ -26,6 +27,11 @@ public class WalkToDirectionActivity extends NpcActivity<WalkToDirectionActivity
 
   public WalkToDirectionActivity direction(Vector direction) {
     this.direction = direction;
+    return this;
+  }
+
+  public WalkToDirectionActivity lookToTarget(boolean lookToTarget) {
+    this.lookToTarget = lookToTarget;
     return this;
   }
 
@@ -47,7 +53,9 @@ public class WalkToDirectionActivity extends NpcActivity<WalkToDirectionActivity
     Location newLocation = startLocation.clone().add(direction);
 
     kelpNpc.moveTo(newLocation);
-    kelpNpc.lookTo(newLocation.clone().add(direction));
+    if (this.lookToTarget) {
+      kelpNpc.lookTo(newLocation.clone().add(direction));
+    }
 
     direction.normalize();
   }

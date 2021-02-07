@@ -11,6 +11,7 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
   private double index = .01;
   private Location startLocation;
   private Location target;
+  private boolean lookToTarget = true;
 
   private boolean lastTick = false;
 
@@ -20,6 +21,11 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
 
   public WalkToTargetActivity target(Location target) {
     this.target = target;
+    return this;
+  }
+
+  public WalkToTargetActivity lookToTarget(boolean lookToTarget) {
+    this.lookToTarget = lookToTarget;
     return this;
   }
 
@@ -33,7 +39,9 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
   public void onTick(KelpNpc kelpNpc) {
     if (lastTick) {
       kelpNpc.moveTo(target);
-      kelpNpc.lookTo(target.clone().add(direction));
+      if (lookToTarget) {
+        kelpNpc.lookTo(target.clone().add(direction));
+      }
       finish();
       return;
     }
@@ -42,7 +50,10 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
     Location newLocation = startLocation.clone().add(direction);
 
     kelpNpc.moveTo(newLocation);
-    kelpNpc.lookTo(target);
+    if (this.lookToTarget) {
+      kelpNpc.lookTo(target);
+    }
+
 
     direction.normalize();
 
