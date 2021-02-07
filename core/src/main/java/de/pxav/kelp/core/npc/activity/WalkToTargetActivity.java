@@ -33,7 +33,7 @@ public class WalkToTargetActivity extends NpcActivity {
   public void onTick(KelpNpc kelpNpc) {
     if (lastTick) {
       kelpNpc.moveTo(target);
-      kelpNpc.lookTo(target);
+      kelpNpc.lookTo(target.clone().add(direction));
       finish();
       return;
     }
