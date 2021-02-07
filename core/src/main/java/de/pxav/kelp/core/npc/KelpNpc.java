@@ -394,6 +394,7 @@ public class KelpNpc {
     }
     currentLocation.setYaw((float) yaw - 90.0F);
     currentLocation.setPitch((float) pitch);
+    npcVersionTemplate.teleport(this, currentLocation);
     return this;
   }
 

@@ -48,6 +48,8 @@ public abstract class NpcVersionTemplate {
                                             float absoluteYaw,
                                             float absolutePitch);
 
+  public abstract void teleport(KelpNpc npc, Location location);
+
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state
    * of an NPC has updated for example, then this method has to be

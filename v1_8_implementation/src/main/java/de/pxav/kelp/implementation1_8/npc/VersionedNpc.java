@@ -143,7 +143,26 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
-  public void refresh(KelpNpc npc, Player player) {
+  public void teleport(KelpNpc npc, Location location) {
+    PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport();
+
+    setValue(teleportPacket, "a", npc.getEntityId());
+    setValue(teleportPacket, "b", MathHelper.floor(location.getX() * 32.0D));
+    setValue(teleportPacket, "c", MathHelper.floor(location.getY() * 32.0D));
+    setValue(teleportPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
+    setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
+    setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
+
+    PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
+    setValue(headRotationPacket, "a", npc.getEntityId());
+    setValue(headRotationPacket, "b", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
+
+    ((CraftPlayer)npc.getPlayer().getBukkitPlayer()).getHandle().playerConnection.sendPacket(teleportPacket);
+    ((CraftPlayer)npc.getPlayer().getBukkitPlayer()).getHandle().playerConnection.sendPacket(headRotationPacket);
+  }
+
+  @Override
+  public void refreshMetadata(KelpNpc npc, Player player) {
     DataWatcher dataWatcher = new DataWatcher(null);
 
     applyToDataWatcher(dataWatcher, npc);
@@ -218,21 +237,7 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   private void teleport(Player player, KelpNpc kelpNpc) {
-    PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport();
 
-    setValue(teleportPacket, "a", kelpNpc.getEntityId());
-    setValue(teleportPacket, "b", MathHelper.floor(kelpNpc.getSpawnLocation().getX() * 32.0D));
-    setValue(teleportPacket, "c", MathHelper.floor(kelpNpc.getSpawnLocation().getY() * 32.0D));
-    setValue(teleportPacket, "d", MathHelper.floor(kelpNpc.getSpawnLocation().getZ() * 32.0D));
-    setValue(teleportPacket, "e", (byte) ((int) (kelpNpc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
-    setValue(teleportPacket, "f", (byte) ((int) (kelpNpc.getSpawnLocation().getPitch() * 256.0F / 360.0F)));
-
-    PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
-    setValue(headRotationPacket, "a", kelpNpc.getEntityId());
-    setValue(headRotationPacket, "b", (byte) ((int) (kelpNpc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
-
-    ((CraftPlayer)player).getHandle().playerConnection.sendPacket(teleportPacket);
-    ((CraftPlayer)player).getHandle().playerConnection.sendPacket(headRotationPacket);
   }
 
 }
