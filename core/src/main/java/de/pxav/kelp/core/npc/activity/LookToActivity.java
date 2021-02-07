@@ -5,7 +5,7 @@ import org.bukkit.Location;
 
 import java.util.function.Supplier;
 
-public class LookToActivity extends NpcActivity {
+public class LookToActivity extends NpcActivity<LookToActivity> {
 
   private Supplier<Location> target;
 

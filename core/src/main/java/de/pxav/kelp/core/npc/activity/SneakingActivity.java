@@ -3,7 +3,7 @@ package de.pxav.kelp.core.npc.activity;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.player.KelpPlayer;
 
-public class SneakingActivity extends NpcActivity {
+public class SneakingActivity extends NpcActivity<SneakingActivity> {
 
   private KelpPlayer toImitate;
 

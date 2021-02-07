@@ -8,7 +8,7 @@ import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class WalkToDirectionActivity extends NpcActivity {
+public class WalkToDirectionActivity extends NpcActivity<WalkToDirectionActivity> {
 
   private double distance;
   private Vector direction;
