@@ -144,6 +144,9 @@ public class VersionedNpc extends NpcVersionTemplate {
 
   @Override
   public void teleport(KelpNpc npc, Location location) {
+    CraftPlayer craftPlayer = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+    PlayerConnection playerConnection = craftPlayer.getHandle().playerConnection;
+
     PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport();
 
     setValue(teleportPacket, "a", npc.getEntityId());
@@ -153,12 +156,23 @@ public class VersionedNpc extends NpcVersionTemplate {
     setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
     setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
 
+    npc.getArmorStandEntityIds().forEach(armorStand -> {
+      PacketPlayOutEntityTeleport teleportArmorStandPacket = new PacketPlayOutEntityTeleport();
+      setValue(teleportArmorStandPacket, "a", armorStand);
+      setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
+      setValue(teleportArmorStandPacket, "c", MathHelper.floor(location.getY() * 32.0D));
+      setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
+      setValue(teleportArmorStandPacket, "e", (byte) 0);
+      setValue(teleportArmorStandPacket, "f", (byte) 0);
+      playerConnection.sendPacket(teleportArmorStandPacket);
+    });
+
     PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
     setValue(headRotationPacket, "a", npc.getEntityId());
     setValue(headRotationPacket, "b", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
 
-    ((CraftPlayer)npc.getPlayer().getBukkitPlayer()).getHandle().playerConnection.sendPacket(teleportPacket);
-    ((CraftPlayer)npc.getPlayer().getBukkitPlayer()).getHandle().playerConnection.sendPacket(headRotationPacket);
+    playerConnection.sendPacket(teleportPacket);
+    playerConnection.sendPacket(headRotationPacket);
   }
 
   @Override
@@ -234,10 +248,6 @@ public class VersionedNpc extends NpcVersionTemplate {
     }
 
     return dataWatcher;
-  }
-
-  private void teleport(Player player, KelpNpc kelpNpc) {
-
   }
 
 }
