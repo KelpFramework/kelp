@@ -23,6 +23,6 @@ public class LookToActivity extends NpcActivity {
     // check if the NPC should always look at the player
     // it true, update the head rotation of the npc.
     npc.lookTo(target.get());
-    npc.refresh();
+    npc.refreshMetadata();
   }
 }

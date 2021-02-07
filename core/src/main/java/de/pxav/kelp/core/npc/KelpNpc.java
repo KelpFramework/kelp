@@ -473,8 +473,8 @@ public class KelpNpc {
    *
    * @return An instance of the current NPC object.
    */
-  public KelpNpc refresh() {
-    npcVersionTemplate.refresh(this, player.getBukkitPlayer());
+  public KelpNpc refreshMetadata() {
+    npcVersionTemplate.refreshMetadata(this, player.getBukkitPlayer());
     return this;
   }
 

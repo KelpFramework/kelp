@@ -58,6 +58,6 @@ public abstract class NpcVersionTemplate {
    *                Note: You must have spawned the NPC before to
    *                this very player.
    */
-  public abstract void refresh(KelpNpc npc, Player player);
+  public abstract void refreshMetadata(KelpNpc npc, Player player);
 
 }
