@@ -60,7 +60,7 @@ public class KelpNpc {
   private String tabListName;
   // armor, ...
 
-  private Collection<NpcActivity> activities;
+  private Collection<NpcActivity<?>> activities;
 
   private KelpNpcMeta npcMeta;
   private KelpLogger logger;
@@ -337,7 +337,7 @@ public class KelpNpc {
     return this;
   }
 
-  public KelpNpc addActivity(NpcActivity activity) {
+  public KelpNpc addActivity(NpcActivity<?> activity) {
     this.activities.add(activity);
     return this;
   }
@@ -484,10 +484,6 @@ public class KelpNpc {
    */
   public KelpNpc refreshMetadata() {
     npcVersionTemplate.refreshMetadata(this, player.getBukkitPlayer());
-    return this;
-  }
-
-  public KelpNpc updateHeadRotation() {
     return this;
   }
 
