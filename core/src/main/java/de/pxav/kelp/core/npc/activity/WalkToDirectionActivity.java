@@ -46,12 +46,7 @@ public class WalkToDirectionActivity extends NpcActivity {
     direction.multiply(index);
     Location newLocation = startLocation.clone().add(direction);
 
-    Location previousLocation = kelpNpc.getCurrentLocation();
-    double x = newLocation.getX() - previousLocation.getX();
-    double y = newLocation.getY() - previousLocation.getY();
-    double z = newLocation.getZ() - previousLocation.getZ();
-    kelpNpc.moveRelativeDistance(x, y, z, newLocation.getYaw(), newLocation.getPitch());
-    kelpNpc.currentLocation(newLocation);
+    kelpNpc.moveTo(newLocation);
     kelpNpc.lookTo(newLocation.clone().add(direction));
 
     direction.normalize();

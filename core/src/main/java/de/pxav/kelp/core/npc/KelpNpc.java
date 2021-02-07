@@ -402,6 +402,14 @@ public class KelpNpc {
     npcVersionTemplate.moveRelativeDistance(this, player.getBukkitPlayer(), x, y, z, absoluteYaw, absolutePitch);
   }
 
+  public void moveTo(Location target) {
+    double x = target.getX() - currentLocation.getX();
+    double y = target.getY() - currentLocation.getY();
+    double z = target.getZ() - currentLocation.getZ();
+    this.moveRelativeDistance(x, y, z, currentLocation.getYaw(), currentLocation.getPitch());
+    this.currentLocation(target);
+  }
+
   /**
    * Spawns the NPC for the given player and automatically
    * adds it to the NPC repository.

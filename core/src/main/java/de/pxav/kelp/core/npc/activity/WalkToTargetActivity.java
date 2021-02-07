@@ -10,8 +10,9 @@ public class WalkToTargetActivity extends NpcActivity {
   private Vector direction;
   private double index = .01;
   private Location startLocation;
-
   private Location target;
+
+  private boolean lastTick = false;
 
   public static WalkToTargetActivity create() {
     return new WalkToTargetActivity();
@@ -30,25 +31,26 @@ public class WalkToTargetActivity extends NpcActivity {
 
   @Override
   public void onTick(KelpNpc kelpNpc) {
+    if (lastTick) {
+      kelpNpc.moveTo(target);
+      kelpNpc.lookTo(target);
+      finish();
+      return;
+    }
+
     index += MovementSpeed.getNpcSpeed(kelpNpc);
 
     direction.multiply(index);
     Location newLocation = startLocation.clone().add(direction);
 
-    Location previousLocation = kelpNpc.getCurrentLocation();
-    double x = newLocation.getX() - previousLocation.getX();
-    double y = newLocation.getY() - previousLocation.getY();
-    double z = newLocation.getZ() - previousLocation.getZ();
-    kelpNpc.moveRelativeDistance(x, y, z, previousLocation.getYaw(), previousLocation.getPitch());
-    kelpNpc.currentLocation(newLocation);
+    kelpNpc.moveTo(newLocation);
     kelpNpc.lookTo(target);
 
-    if (kelpNpc.getCurrentLocation().distance(target) < 1) {
-      finish();
-      return;
-    }
-
     direction.normalize();
+
+    if (kelpNpc.getCurrentLocation().distance(target) < 1) {
+      lastTick = true;
+    }
 
   }
 
