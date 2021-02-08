@@ -59,39 +59,33 @@ public class VersionedNpc extends NpcVersionTemplate {
     Collections.reverse(currentTitles);
     Collection<Integer> armorStandIds = Lists.newArrayList();
     Bukkit.broadcastMessage("2");
-    npc.getTitleHeights().forEach((lineId, height) -> {
+    for (int i = 0; i < currentTitles.size(); i++) {
+      double height = npc.getTitleHeights(i);
       Bukkit.broadcastMessage("3");
-      if (currentTitles.isEmpty() || currentTitles.get(0) == null) {
-        return;
-      }
       Bukkit.broadcastMessage("4");
 
       EntityArmorStand armorStand = new EntityArmorStand(nmsWorld,
-              npc.getSpawnLocation().getX(),
-              npc.getSpawnLocation().clone().add(0, height, 0).getY(),
-              npc.getSpawnLocation().getZ());
+        npc.getSpawnLocation().getX(),
+        npc.getSpawnLocation().clone().add(0, height, 0).getY(),
+        npc.getSpawnLocation().getZ());
       Bukkit.broadcastMessage("5");
       armorStand.setInvisible(true);
       armorStand.setBasePlate(false);
       armorStand.setGravity(false);
       armorStand.setCustomNameVisible(true);
       Bukkit.broadcastMessage("6");
-      armorStand.setCustomName(currentTitles.get(0));
+      armorStand.setCustomName(currentTitles.get(i));
       Bukkit.broadcastMessage("7");
-      currentTitles.remove(0);Bukkit.broadcastMessage("8");
       armorStandIds.add(armorStand.getId());
       Bukkit.broadcastMessage("9");
 
       playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(armorStand));
       Bukkit.broadcastMessage("10");
-    });
+    }
 
     Bukkit.broadcastMessage("11");
 
     KelpNpcMeta npcMeta = new KelpNpcMeta(entityId, gameProfile, npc.getCustomName(), armorStandIds);
-    Bukkit.broadcastMessage(npc.getCustomName());
-    Bukkit.broadcastMessage(npcMeta.getOverHeadDisplayName());
-    Bukkit.broadcastMessage("12");
 
     reflectionUtil.setValue(spawnPacket, "a", entityId);
     reflectionUtil.setValue(spawnPacket, "b", gameProfile.getId());
@@ -175,27 +169,28 @@ public class VersionedNpc extends NpcVersionTemplate {
     reflectionUtil.setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
     reflectionUtil.setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
 
-    double yIndex = -.3;
-    for (Integer entityId : npc.getNpcMeta().getArmorStandEntityIds()) {
-      PacketPlayOutEntityTeleport teleportArmorStandPacket = new PacketPlayOutEntityTeleport();
-      reflectionUtil.setValue(teleportArmorStandPacket, "a", entityId);
-      reflectionUtil.setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
-
-      reflectionUtil.setValue(teleportArmorStandPacket, "c", MathHelper.floor((location.getY() + yIndex) * 32.0D));
-
-      reflectionUtil.setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
-      reflectionUtil.setValue(teleportArmorStandPacket, "e", (byte) 0);
-      reflectionUtil.setValue(teleportArmorStandPacket, "f", (byte) 0);
-      playerConnection.sendPacket(teleportArmorStandPacket);
-      yIndex += .25;
-    }
-
     PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
     reflectionUtil.setValue(headRotationPacket, "a", npc.getEntityId());
     reflectionUtil.setValue(headRotationPacket, "b", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
 
     playerConnection.sendPacket(teleportPacket);
     playerConnection.sendPacket(headRotationPacket);
+
+    int index = 0;
+    for (Integer entityId : npc.getNpcMeta().getArmorStandEntityIds()) {
+      double height = npc.getTitleHeights(index);
+      PacketPlayOutEntityTeleport teleportArmorStandPacket = new PacketPlayOutEntityTeleport();
+      reflectionUtil.setValue(teleportArmorStandPacket, "a", entityId);
+      reflectionUtil.setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
+
+      reflectionUtil.setValue(teleportArmorStandPacket, "c", MathHelper.floor((location.getY() + height) * 32.0D));
+
+      reflectionUtil.setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
+      reflectionUtil.setValue(teleportArmorStandPacket, "e", (byte) 0);
+      reflectionUtil.setValue(teleportArmorStandPacket, "f", (byte) 0);
+      playerConnection.sendPacket(teleportArmorStandPacket);
+      index++;
+    }
   }
 
   @Override
@@ -231,25 +226,30 @@ public class VersionedNpc extends NpcVersionTemplate {
     List<String> currentTitles = npc.getCurrentTitles();
     Collections.reverse(currentTitles);
     Collection<Integer> armorStandIds = Lists.newArrayList();
-    npc.getTitleHeights().forEach((lineId, height) -> {
-      if (currentTitles.isEmpty() || currentTitles.get(0) == null) {
-        return;
-      }
+    Bukkit.broadcastMessage("2");
+    for (int i = 0; i < currentTitles.size(); i++) {
+      double height = npc.getTitleHeights(i);
+      Bukkit.broadcastMessage("3");
+      Bukkit.broadcastMessage("4");
 
       EntityArmorStand armorStand = new EntityArmorStand(nmsWorld,
         npc.getCurrentLocation().getX(),
         npc.getCurrentLocation().clone().add(0, height, 0).getY(),
         npc.getCurrentLocation().getZ());
+      Bukkit.broadcastMessage("5");
       armorStand.setInvisible(true);
       armorStand.setBasePlate(false);
       armorStand.setGravity(false);
       armorStand.setCustomNameVisible(true);
-      armorStand.setCustomName(currentTitles.get(0));
-      currentTitles.remove(0);
+      Bukkit.broadcastMessage("6");
+      armorStand.setCustomName(currentTitles.get(i));
+      Bukkit.broadcastMessage("7");
       armorStandIds.add(armorStand.getId());
+      Bukkit.broadcastMessage("9");
 
       player.getHandle().playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(armorStand));
-    });
+      Bukkit.broadcastMessage("10");
+    }
     npc.setArmorStandEntityIds(armorStandIds);
   }
 

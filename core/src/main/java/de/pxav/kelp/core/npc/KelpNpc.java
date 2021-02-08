@@ -630,23 +630,13 @@ public class KelpNpc {
     this.npcMeta.setArmorStandEntityIds(armorStandEntityIds);
   }
 
-  /**
-   * This method generates a list of y-coordinates, where
-   * the title lines of the NPC should appear.
-   *
-   * @return A map, where the key is the title line id.
-   *         (1 is the nearest to the NPC's head. The higher the number, the higher the y-axis value).
-   *         The value is the y-axis itself.
-   */
-  public Map<Integer, Double> getTitleHeights() {
-    // height 1 nearest to npc
-    Map<Integer, Double> output = Maps.newHashMap();
-    double yAxis = -.3;
-    for (int i = 1; i < 15; i++) {
-      yAxis += .25;
-      output.put(i, yAxis);
+  public double getTitleHeights(int index) {
+    // index 0 nearest to npc
+    double add = 0;
+    for (int i = 0; i < index; i++) {
+      add += .25;
     }
 
-    return output;
+    return add - .1;
   }
 }
