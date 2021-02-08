@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * This is the most important class for developers
@@ -38,8 +39,7 @@ public class KelpNpc {
   private String customName;
   private GameProfile gameProfile;
 
-  private List<String> titles;
-  private Collection<Integer> armorStandEntityIds;
+  private Supplier<List<String>> titles;
   private String skinSignature;
   private String skinTexture;
 
@@ -75,7 +75,7 @@ public class KelpNpc {
     this.kelpNpcRepository = kelpNpcRepository;
     this.logger = logger;
 
-    this.titles = Lists.newArrayList();
+    this.titles = Lists::newArrayList;
     this.activities = Lists.newArrayList();
     this.removeDistance = 40;
     this.isBurning = false;
@@ -157,39 +157,6 @@ public class KelpNpc {
   }
 
   /**
-   * Adds a new title line.
-   *
-   * Title lines are lines of text above the NPC, where
-   * you can for example describe the NPC. These lines
-   * are rendered per player, which means that their text
-   * can be individual for every player.
-   *
-   * @param lineToAdd The desired {@code UUID}.
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc addTitleLine(String lineToAdd) {
-    this.titles.add(lineToAdd);
-    return this;
-  }
-
-  /**
-   * Adds multiple new title lines.
-   *
-   * Title lines are lines of text above the NPC, where
-   * you can for example describe the NPC. These lines
-   * are rendered per player, which means that their text
-   * can be individual for every player.
-   *
-   * @param linesToAdd A list of all title lines you want to add
-   *                   (should be in chronological order).
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc addTitleLine(List<String> linesToAdd) {
-    this.titles.addAll(linesToAdd);
-    return this;
-  }
-
-  /**
    * Deletes all title lines, which have been active
    * before and overwrites them with the given ones.
    *
@@ -201,7 +168,7 @@ public class KelpNpc {
    * @param lines A list of all lines to set.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc setTitleLines(List<String> lines) {
+  public KelpNpc titleLines(Supplier<List<String>> lines) {
     this.titles = lines;
     return this;
   }
@@ -329,7 +296,7 @@ public class KelpNpc {
 
   public KelpNpc showCustomName() {
     this.customNameShown = true;
-    npcVersionTemplate.showCustomName(this);
+    npcVersionTemplate.updateCustomName(this);
     return this;
   }
 
@@ -412,6 +379,10 @@ public class KelpNpc {
     this.currentLocation(target);
   }
 
+  public void updateTitleLines() {
+    npcVersionTemplate.updateTitleLines(this);
+  }
+
   /**
    * Spawns the NPC for the given player and automatically
    * adds it to the NPC repository.
@@ -434,7 +405,6 @@ public class KelpNpc {
     gameProfile = npcMeta.getGameProfile();
     entityId = npcMeta.getEntityId();
     customName = npcMeta.getOverHeadDisplayName();
-    armorStandEntityIds = npcMeta.getArmorStandEntityIds();
 
     // execute activities that do something when the npc spawns
     this.activities.forEach(current -> current.onSpawn(this));
@@ -538,7 +508,14 @@ public class KelpNpc {
   /**
    * @return A list of all title lines the NPC has.
    */
-  public List<String> getTitles() {
+  public List<String> getCurrentTitles() {
+    return titles.get();
+  }
+
+  /**
+   * @return A list of all title lines the NPC has.
+   */
+  public Supplier<List<String>> getTitles() {
     return titles;
   }
 
@@ -634,13 +611,6 @@ public class KelpNpc {
   }
 
   /**
-   * @return A list of all entity ids of the armor stands holding the title lines of the NPC.
-   */
-  public Collection<Integer> getArmorStandEntityIds() {
-    return armorStandEntityIds;
-  }
-
-  /**
    * @return The current {@code KelpNpcMeta} object.
    * @see KelpNpcMeta
    */
@@ -654,6 +624,10 @@ public class KelpNpc {
 
   public KelpPlayer getPlayer() {
     return player;
+  }
+
+  public void setArmorStandEntityIds(Collection<Integer> armorStandEntityIds) {
+    this.npcMeta.setArmorStandEntityIds(armorStandEntityIds);
   }
 
   /**
