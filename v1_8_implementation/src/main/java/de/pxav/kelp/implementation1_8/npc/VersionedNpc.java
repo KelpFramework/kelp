@@ -198,7 +198,7 @@ public class VersionedNpc extends NpcVersionTemplate {
     CraftPlayer craftPlayer = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
     PlayerConnection playerConnection = craftPlayer.getHandle().playerConnection;
 
-    ScoreboardTeam team = new ScoreboardTeam(((CraftScoreboard) Bukkit.getScoreboardManager().getMainScoreboard()).getHandle(), craftPlayer.getName());
+    ScoreboardTeam team = new ScoreboardTeam(((CraftScoreboard) Bukkit.getScoreboardManager().getMainScoreboard()).getHandle(), npc.getCustomName());
 
     if (npc.isCustomNameShown()) {
       team.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS);
@@ -208,6 +208,10 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     Collection<String> toHide = Lists.newArrayList(npc.getCustomName());
 
+    // the int stands for the mode:
+    // 0 = create
+    // 1 = remove
+    // 3 = add/remove players
     playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, 1));
     playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, 0));
     playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, toHide,3));
