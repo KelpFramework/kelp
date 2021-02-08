@@ -15,15 +15,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -76,6 +71,9 @@ public class VersionedNpc extends NpcVersionTemplate {
       playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(armorStand));
     });
 
+    if (npc.getCustomName() == null || npc.getCustomName().equalsIgnoreCase("")) {
+      npc.customName("KelpNpc" + ThreadLocalRandom.current().nextInt(10_000));
+    }
     KelpNpcMeta npcMeta = new KelpNpcMeta(entityId, gameProfile, npc.getCustomName(), armorStandIds);
 
     reflectionUtil.setValue(spawnPacket, "a", entityId);
@@ -180,6 +178,26 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
+  public void updateCustomName(KelpNpc npc) {
+    CraftPlayer craftPlayer = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+    PlayerConnection playerConnection = craftPlayer.getHandle().playerConnection;
+
+    ScoreboardTeam team = new ScoreboardTeam(((CraftScoreboard) Bukkit.getScoreboardManager().getMainScoreboard()).getHandle(), craftPlayer.getName());
+
+    if (npc.isCustomNameShown()) {
+      team.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS);
+    } else {
+      team.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
+    }
+
+    Collection<String> toHide = Lists.newArrayList(npc.getCustomName());
+
+    playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, 1));
+    playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, 0));
+    playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, toHide,3));
+  }
+
+  @Override
   public void refreshMetadata(KelpNpc npc, Player player) {
     DataWatcher dataWatcher = new DataWatcher(null);
 
@@ -235,7 +253,7 @@ public class VersionedNpc extends NpcVersionTemplate {
       dataWatcher.a(0, (byte) 0);
     }
 
-    if (kelpNpc.shouldShowCustomName()) {
+    if (kelpNpc.isCustomNameShown()) {
       dataWatcher.a(11, (byte) 2);
     } else {
       dataWatcher.a(11, (byte) 0);

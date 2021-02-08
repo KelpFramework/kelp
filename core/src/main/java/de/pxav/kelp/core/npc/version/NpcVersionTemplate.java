@@ -50,6 +50,8 @@ public abstract class NpcVersionTemplate {
 
   public abstract void teleport(KelpNpc npc, Location location);
 
+  public abstract void updateCustomName(KelpNpc npc);
+
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state
    * of an NPC has updated for example, then this method has to be

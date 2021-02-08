@@ -55,7 +55,7 @@ public class KelpNpc {
   private boolean falling;
   private boolean flying;
 
-  private boolean showCustomName = false;
+  private boolean customNameShown = false;
   private boolean showInTab = false;
   private String tabListName;
   // armor, ...
@@ -328,12 +328,14 @@ public class KelpNpc {
   }
 
   public KelpNpc showCustomName() {
-    this.showCustomName = true;
+    this.customNameShown = true;
+    npcVersionTemplate.showCustomName(this);
     return this;
   }
 
   public KelpNpc hideCustomName() {
-    this.showCustomName = false;
+    this.customNameShown = false;
+    npcVersionTemplate.updateCustomName(this);
     return this;
   }
 
@@ -419,10 +421,6 @@ public class KelpNpc {
   public KelpNpc spawn() {
     if (this.uuid == null) {
       this.uuid = UUID.randomUUID();
-    }
-
-    if (this.customName == null) {
-      this.customName = " ";
     }
 
     if (this.spawnLocation == null) {
@@ -596,8 +594,8 @@ public class KelpNpc {
   /**
    * @return {@code true} if the custom name above the NPC's head should be displayed.
    */
-  public boolean shouldShowCustomName() {
-    return this.showCustomName;
+  public boolean isCustomNameShown() {
+    return this.customNameShown;
   }
 
   /**
