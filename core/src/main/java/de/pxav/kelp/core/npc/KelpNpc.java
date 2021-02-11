@@ -42,6 +42,7 @@ public class KelpNpc {
 
   // behaviour
   private boolean isSpawned = false;
+  private boolean initiallySpawned = false;
   private boolean isBurning;
   private boolean isInvisible;
 
@@ -138,7 +139,7 @@ public class KelpNpc {
    */
   public KelpNpc tabListName(String tabListName) {
     this.tabListName = tabListName;
-    if (isSpawned) {
+    if (initiallySpawned) {
       npcVersionTemplate.updateTab(this, null);
     }
     return this;
@@ -146,7 +147,7 @@ public class KelpNpc {
 
   public KelpNpc showInTab(boolean show) {
     this.showInTab = show;
-    if (isSpawned) {
+    if (initiallySpawned) {
       npcVersionTemplate.updateTab(this, null);
     }
     return this;
@@ -410,6 +411,7 @@ public class KelpNpc {
 
     this.npcMeta = npcVersionTemplate.spawnNpc(this, player.getBukkitPlayer());
     isSpawned = true;
+    initiallySpawned = true;
     gameProfile = npcMeta.getGameProfile();
     entityId = npcMeta.getEntityId();
     customName = npcMeta.getOverHeadDisplayName();
@@ -440,6 +442,9 @@ public class KelpNpc {
   public KelpNpc remove() {
     // execute activities that do something when the npc is removed
     this.activities.forEach(current -> current.onRemove(this));
+
+    this.showInTab = false;
+    npcVersionTemplate.updateTab(this, null);
 
     npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
     this.npcMeta = null;
@@ -582,6 +587,10 @@ public class KelpNpc {
 
   public boolean isSpawned() {
     return isSpawned;
+  }
+
+  public boolean isInitiallySpawned() {
+    return initiallySpawned;
   }
 
   /**
