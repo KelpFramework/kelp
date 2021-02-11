@@ -18,6 +18,8 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -54,7 +56,6 @@ public class VersionedNpc extends NpcVersionTemplate {
       gameProfile.getProperties().put("textures", new Property("textures", npc.getSkinTexture(), npc.getSkinSignature()));
     }
 
-    Bukkit.broadcastMessage("1");
     List<String> currentTitles = npc.getCurrentTitles();
     Collections.reverse(currentTitles);
     Collection<Integer> armorStandIds = Lists.newArrayList();
@@ -74,7 +75,6 @@ public class VersionedNpc extends NpcVersionTemplate {
 
       playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(armorStand));
     }
-    Bukkit.broadcastMessage("2");
 
     KelpNpcMeta npcMeta = new KelpNpcMeta(entityId, gameProfile, npc.getCustomName(), armorStandIds);
 
@@ -95,20 +95,28 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     reflectionUtil.setValue(spawnPacket, "i", dataWatcher);
 
-    addToTab(npcMeta, player);
+    // add npc to tab
+    if (!npc.shouldShowInTab()) {
+      System.out.println("tab name not shown");
+      npc.showInTab(true);
+      updateTab(npc, gameProfile);
+      npc.showInTab(false);
+    } else {
+      updateTab(npc, gameProfile);
+    }
 
-    playerConnection.sendPacket(spawnPacket);
-    Bukkit.broadcastMessage("3");
-
-    Bukkit.broadcastMessage("4");
+    // remove npc from tab and hide custom name if needed
     Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
-      removeFromTab(npcMeta, player);
+      if (!npc.shouldShowInTab()) {
+        updateTab(npc, gameProfile);
+      }
       if (!npc.isCustomNameShown()) {
         updateCustomName(npc);
       }
-      Bukkit.broadcastMessage("remove tab");
     }, 2L);
-    Bukkit.broadcastMessage("5");
+
+    playerConnection.sendPacket(spawnPacket);
+
     return npcMeta;
   }
 
@@ -255,33 +263,34 @@ public class VersionedNpc extends NpcVersionTemplate {
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(metaPacket);
   }
 
-  private void addToTab(KelpNpcMeta npcMeta, Player player) {
+  @Override
+  public void updateTab(KelpNpc npc, @Nullable GameProfile gameProfile) {
+    CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
     PacketPlayOutPlayerInfo infoPacket = new PacketPlayOutPlayerInfo();
+
+    // if no custom tab name is set, use the npc's custom name
+    String listName = npc.getTabListName() == null ? npc.getCustomName() : npc.getTabListName();
+
+    GameProfile profile = gameProfile == null ? npc.getNpcMeta().getGameProfile() : gameProfile;
+
     PacketPlayOutPlayerInfo.PlayerInfoData playerInfoData = infoPacket.new PlayerInfoData(
-      npcMeta.getGameProfile(),
+      profile,
       1,
       WorldSettings.EnumGamemode.NOT_SET,
-      CraftChatMessage.fromString(npcMeta.getOverHeadDisplayName())[0]);
+      CraftChatMessage.fromString(listName)[0]);
 
     List<PacketPlayOutPlayerInfo.PlayerInfoData> players = new ArrayList<>();
     players.add(playerInfoData);
 
-    reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER);
+    if (npc.shouldShowInTab()) {
+      reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER);
+    } else {
+      reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER);
+    }
+
     reflectionUtil.setValue(infoPacket, "b", players);
 
-    ((CraftPlayer)player).getHandle().playerConnection.sendPacket(infoPacket);
-  }
-
-  private void removeFromTab(KelpNpcMeta npc, Player player) {
-    PacketPlayOutPlayerInfo infoPacket = new PacketPlayOutPlayerInfo();
-    PacketPlayOutPlayerInfo.PlayerInfoData playerInfoData = infoPacket.new PlayerInfoData(npc.getGameProfile(), 1, WorldSettings.EnumGamemode.NOT_SET, CraftChatMessage.fromString(npc.getOverHeadDisplayName())[0]);
-    List<PacketPlayOutPlayerInfo.PlayerInfoData> players = new ArrayList<>();
-    players.add(playerInfoData);
-
-    reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER);
-    reflectionUtil.setValue(infoPacket, "b", players);
-
-    ((CraftPlayer)player).getHandle().playerConnection.sendPacket(infoPacket);
+    player.getHandle().playerConnection.sendPacket(infoPacket);
   }
 
   private DataWatcher applyToDataWatcher(DataWatcher dataWatcher, KelpNpc kelpNpc) {

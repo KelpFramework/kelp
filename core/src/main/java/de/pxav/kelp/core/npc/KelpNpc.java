@@ -154,6 +154,17 @@ public class KelpNpc {
    */
   public KelpNpc tabListName(String tabListName) {
     this.tabListName = tabListName;
+    if (isSpawned) {
+      npcVersionTemplate.updateTab(this, null);
+    }
+    return this;
+  }
+
+  public KelpNpc showInTab(boolean show) {
+    this.showInTab = show;
+    if (isSpawned) {
+      npcVersionTemplate.updateTab(this, null);
+    }
     return this;
   }
 

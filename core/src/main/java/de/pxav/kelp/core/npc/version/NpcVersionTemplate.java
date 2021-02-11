@@ -1,10 +1,13 @@
 package de.pxav.kelp.core.npc.version;
 
+import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
 
 /**
  * This version implementation is responsible for all
@@ -65,5 +68,6 @@ public abstract class NpcVersionTemplate {
    *                this very player.
    */
   public abstract void refreshMetadata(KelpNpc npc, Player player);
+  public abstract void updateTab(KelpNpc npc, @Nullable GameProfile gameProfile);
 
 }
