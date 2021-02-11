@@ -7,6 +7,7 @@ import com.mojang.authlib.properties.Property;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
+import de.pxav.kelp.core.npc.NpcAnimation;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
@@ -251,6 +252,61 @@ public class VersionedNpc extends NpcVersionTemplate {
       player.getHandle().playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(armorStand));
     }
     npc.setArmorStandEntityIds(armorStandIds);
+  }
+
+  @Override
+  public void playAnimation(KelpNpc npc, NpcAnimation animation) {
+    CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+    PlayerConnection connection = player.getHandle().playerConnection;
+
+    PacketPlayOutAnimation animationPacket = new PacketPlayOutAnimation();
+    reflectionUtil.setValue(animationPacket, "a", npc.getEntityId());
+
+    PacketPlayOutEntityStatus statusPacket = new PacketPlayOutEntityStatus();
+    reflectionUtil.setValue(statusPacket, "a", npc.getEntityId());
+
+    if (animation == NpcAnimation.TAKE_DAMAGE) {
+      reflectionUtil.setValue(animationPacket, "b", 1);
+      connection.sendPacket(animationPacket);
+      return;
+    }
+
+    if (animation == NpcAnimation.MAIN_HAND_SWING) {
+      reflectionUtil.setValue(animationPacket, "b", 0);
+      connection.sendPacket(animationPacket);
+      return;
+    }
+
+    if (animation == NpcAnimation.LEAVE_BED) {
+      reflectionUtil.setValue(animationPacket, "b", 2);
+      connection.sendPacket(animationPacket);
+      return;
+    }
+
+    if (animation == NpcAnimation.EAT) {
+      reflectionUtil.setValue(animationPacket, "b", 3);
+      connection.sendPacket(animationPacket);
+      return;
+    }
+
+    if (animation == NpcAnimation.CRITICAL_EFFECT) {
+      reflectionUtil.setValue(animationPacket, "b", 4);
+      connection.sendPacket(animationPacket);
+      return;
+    }
+
+    if (animation == NpcAnimation.MAGIC_CRITICAL_EFFECT) {
+      reflectionUtil.setValue(animationPacket, "b", 5);
+      connection.sendPacket(animationPacket);
+      return;
+    }
+
+    if (animation == NpcAnimation.ENTITY_DEATH) {
+      reflectionUtil.setValue(statusPacket, "b", (byte) 3);
+      connection.sendPacket(statusPacket);
+      return;
+    }
+
   }
 
   @Override

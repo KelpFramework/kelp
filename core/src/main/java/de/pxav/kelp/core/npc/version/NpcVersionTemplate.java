@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
+import de.pxav.kelp.core.npc.NpcAnimation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -56,6 +57,8 @@ public abstract class NpcVersionTemplate {
   public abstract void updateCustomName(KelpNpc npc);
 
   public abstract void updateTitleLines(KelpNpc npc);
+
+  public abstract void playAnimation(KelpNpc npc, NpcAnimation animation);
 
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state

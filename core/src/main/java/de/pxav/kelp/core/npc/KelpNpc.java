@@ -482,6 +482,14 @@ public class KelpNpc {
     }
   }
 
+  public void playAnimation(NpcAnimation animation) {
+    if (!isSpawned) {
+      return;
+    }
+
+    npcVersionTemplate.playAnimation(this, animation);
+  }
+
   /**
    * Refreshes all NPC properties. When you for example changed the sneak state
    * or head rotation, you have to execute this method so that the updates
