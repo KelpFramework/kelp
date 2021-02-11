@@ -28,7 +28,6 @@ public class KelpNpc {
 
   private KelpPlayer player;
 
-  private Location spawnLocation;
   private Location currentLocation;
   private KelpItem itemInHand;
 
@@ -78,18 +77,7 @@ public class KelpNpc {
     this.isBurning = false;
   }
 
-  /**
-   * Sets the location, where the NPC will spawn later.
-   *
-   * @param location The desired location
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc spawnLocation(Location location) {
-    this.spawnLocation = location;
-    return this;
-  }
-
-  public KelpNpc currentLocation(Location location) {
+  public KelpNpc location(Location location) {
     this.currentLocation = location;
     return this;
   }
@@ -396,7 +384,7 @@ public class KelpNpc {
     double y = target.getY() - currentLocation.getY();
     double z = target.getZ() - currentLocation.getZ();
     this.moveRelativeDistance(x, y, z, currentLocation.getYaw(), currentLocation.getPitch());
-    this.currentLocation(target);
+    this.location(target);
   }
 
   public void updateTitleLines() {
@@ -414,12 +402,11 @@ public class KelpNpc {
       this.uuid = UUID.randomUUID();
     }
 
-    if (this.spawnLocation == null) {
+    if (this.currentLocation == null) {
       logger.log(LogLevel.ERROR, "To spawn an NPC, you have to define a location before." +
               " But there was no location found. Please check your code again.");
       return null;
     }
-    this.currentLocation = spawnLocation;
 
     this.npcMeta = npcVersionTemplate.spawnNpc(this, player.getBukkitPlayer());
     isSpawned = true;
@@ -528,13 +515,6 @@ public class KelpNpc {
    */
   public String getCustomName() {
     return customName;
-  }
-
-  /**
-   * @return The location, where the NPC is spawned/will be spawned.
-   */
-  public Location getSpawnLocation() {
-    return spawnLocation;
   }
 
   /**
@@ -654,7 +634,7 @@ public class KelpNpc {
     return npcMeta;
   }
 
-  public Location getCurrentLocation() {
+  public Location getLocation() {
     return currentLocation;
   }
 

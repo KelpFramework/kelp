@@ -20,7 +20,7 @@ public class AutoSpawnActivity extends NpcActivity<AutoSpawnActivity> {
   @Override
   public void onTick(KelpNpc kelpNpc) {
     KelpPlayer player = kelpNpc.getPlayer();
-    Location npcLocation = kelpNpc.getCurrentLocation();
+    Location npcLocation = kelpNpc.getLocation();
 
     if (player.getLocation().distanceSquared(npcLocation) <= (distanceThreshold * distanceThreshold)
       && !kelpNpc.isSpawned()) {

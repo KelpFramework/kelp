@@ -63,9 +63,9 @@ public class VersionedNpc extends NpcVersionTemplate {
       double height = npc.getTitleHeights(i);
 
       EntityArmorStand armorStand = new EntityArmorStand(nmsWorld,
-        npc.getSpawnLocation().getX(),
-        npc.getSpawnLocation().clone().add(0, height, 0).getY(),
-        npc.getSpawnLocation().getZ());
+        npc.getLocation().getX(),
+        npc.getLocation().clone().add(0, height, 0).getY(),
+        npc.getLocation().getZ());
       armorStand.setInvisible(true);
       armorStand.setBasePlate(false);
       armorStand.setGravity(false);
@@ -80,11 +80,11 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     reflectionUtil.setValue(spawnPacket, "a", entityId);
     reflectionUtil.setValue(spawnPacket, "b", gameProfile.getId());
-    reflectionUtil.setValue(spawnPacket, "c", MathHelper.floor(npc.getSpawnLocation().getX() * 32.0D));
-    reflectionUtil.setValue(spawnPacket, "d", MathHelper.floor(npc.getSpawnLocation().getY() * 32.0D));
-    reflectionUtil.setValue(spawnPacket, "e", MathHelper.floor(npc.getSpawnLocation().getZ() * 32.0D));
-    reflectionUtil.setValue(spawnPacket, "f", (byte) ((int) (npc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
-    reflectionUtil.setValue(spawnPacket, "g", (byte) ((int) (npc.getSpawnLocation().getPitch() * 256.0F / 360.0F)));
+    reflectionUtil.setValue(spawnPacket, "c", MathHelper.floor(npc.getLocation().getX() * 32.0D));
+    reflectionUtil.setValue(spawnPacket, "d", MathHelper.floor(npc.getLocation().getY() * 32.0D));
+    reflectionUtil.setValue(spawnPacket, "e", MathHelper.floor(npc.getLocation().getZ() * 32.0D));
+    reflectionUtil.setValue(spawnPacket, "f", (byte) ((int) (npc.getLocation().getYaw() * 256.0F / 360.0F)));
+    reflectionUtil.setValue(spawnPacket, "g", (byte) ((int) (npc.getLocation().getPitch() * 256.0F / 360.0F)));
 
     if (npc.getItemInHand() != null) {
       reflectionUtil.setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
@@ -223,7 +223,7 @@ public class VersionedNpc extends NpcVersionTemplate {
   @Override
   public void updateTitleLines(KelpNpc npc) {
     CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
-    WorldServer nmsWorld = ((CraftWorld) npc.getCurrentLocation().getWorld()).getHandle();
+    WorldServer nmsWorld = ((CraftWorld) npc.getLocation().getWorld()).getHandle();
 
     npc.getNpcMeta().getArmorStandEntityIds().forEach(current -> {
       PacketPlayOutEntityDestroy armorStandDestroyPacket = new PacketPlayOutEntityDestroy(current);
@@ -238,9 +238,9 @@ public class VersionedNpc extends NpcVersionTemplate {
       double height = npc.getTitleHeights(i);
 
       EntityArmorStand armorStand = new EntityArmorStand(nmsWorld,
-        npc.getCurrentLocation().getX(),
-        npc.getCurrentLocation().clone().add(0, height, 0).getY(),
-        npc.getCurrentLocation().getZ());
+        npc.getLocation().getX(),
+        npc.getLocation().clone().add(0, height, 0).getY(),
+        npc.getLocation().getZ());
       armorStand.setInvisible(true);
       armorStand.setBasePlate(false);
       armorStand.setGravity(false);

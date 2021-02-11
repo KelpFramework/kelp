@@ -31,7 +31,7 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
 
   @Override
   public void onStart(KelpNpc kelpNpc) {
-    this.startLocation = kelpNpc.getCurrentLocation();
+    this.startLocation = kelpNpc.getLocation();
     this.direction = target.clone().toVector().subtract(startLocation.toVector());
   }
 
@@ -57,7 +57,7 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
 
     direction.normalize();
 
-    if (kelpNpc.getCurrentLocation().distance(target) < 1) {
+    if (kelpNpc.getLocation().distance(target) < 1) {
       lastTick = true;
     }
 

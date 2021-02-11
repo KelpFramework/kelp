@@ -1,10 +1,7 @@
 package de.pxav.kelp.core.npc.activity;
 
-import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.MovementSpeed;
-import de.pxav.kelp.core.particle.type.ParticleType;
-import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -37,7 +34,7 @@ public class WalkToDirectionActivity extends NpcActivity<WalkToDirectionActivity
 
   @Override
   public void onStart(KelpNpc kelpNpc) {
-    startLocation = kelpNpc.getCurrentLocation();
+    startLocation = kelpNpc.getLocation();
   }
 
   @Override
