@@ -461,10 +461,12 @@ public class KelpNpc {
         this.activities.remove(current);
         return;
       }
-      if (!current.hasStarted()) {
+      if (!current.hasStarted() && (isSpawned || current.alwaysActive())) {
         current.start(this);
       }
-      current.onTick(this);
+      if (isSpawned || current.alwaysActive()) {
+        current.onTick(this);
+      }
     });
   }
 

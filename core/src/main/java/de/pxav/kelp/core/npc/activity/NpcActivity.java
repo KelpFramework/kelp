@@ -39,4 +39,8 @@ public abstract class NpcActivity<T extends NpcActivity<?>> {
     this.onStart(kelpNpc);
   }
 
+  public boolean alwaysActive() {
+    return false;
+  }
+
 }
