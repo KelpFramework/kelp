@@ -114,4 +114,11 @@ public class KelpNpcRepository {
       });
   }
 
+  public boolean playerHasNpc(UUID player) {
+    return spawnedNpcs.containsKey(player);
+  }
+
+  public Set<KelpNpc> getSpawnedNpcsFor(UUID player) {
+    return spawnedNpcs.get(player);
+  }
 }

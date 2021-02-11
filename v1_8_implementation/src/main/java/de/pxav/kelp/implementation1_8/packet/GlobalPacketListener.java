@@ -5,6 +5,10 @@ import com.google.inject.Inject;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerUpdateSettingsEvent;
 import de.pxav.kelp.core.event.kelpevent.SettingsUpdateStage;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractAction;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
+import de.pxav.kelp.core.npc.KelpNpc;
+import de.pxav.kelp.core.npc.KelpNpcRepository;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
@@ -23,6 +27,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -36,16 +41,19 @@ public class GlobalPacketListener {
   private ReflectionUtil reflectionUtil;
   private VersionedSignPrompt signPrompt;
   private KelpSchedulerRepository schedulerRepository;
+  private KelpNpcRepository npcRepository;
 
   @Inject
   public GlobalPacketListener(KelpPlayerRepository playerRepository,
                               ReflectionUtil reflectionUtil,
                               VersionedSignPrompt signPrompt,
-                              KelpSchedulerRepository schedulerRepository) {
+                              KelpSchedulerRepository schedulerRepository,
+                              KelpNpcRepository npcRepository) {
     this.playerRepository = playerRepository;
     this.reflectionUtil = reflectionUtil;
     this.signPrompt = signPrompt;
     this.schedulerRepository = schedulerRepository;
+    this.npcRepository = npcRepository;
   }
 
   @EventHandler
@@ -132,6 +140,40 @@ public class GlobalPacketListener {
           UUID taskId = signPrompt.getTimeout(player.getUniqueId()).getTaskId();
           schedulerRepository.interruptScheduler(taskId);
           signPrompt.resetBlockAndRemove(player.getUniqueId());
+
+        }
+
+        if (packet instanceof PacketPlayInUseEntity) {
+          if (!npcRepository.playerHasNpc(player.getUniqueId())) {
+            return;
+          }
+
+          PacketPlayInUseEntity usePacket = (PacketPlayInUseEntity) packet;
+          int rawEntityId = Integer.parseInt(String.valueOf(reflectionUtil.getValue(usePacket, "a")));
+          PacketPlayInUseEntity.EnumEntityUseAction packetAction = PacketPlayInUseEntity.EnumEntityUseAction.valueOf(
+            String.valueOf(reflectionUtil.getValue(usePacket, "action"))
+          );
+
+          if (packetAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT) {
+            return;
+          }
+
+          Optional<KelpNpc> rawNpc = npcRepository.getSpawnedNpcsFor(player.getUniqueId())
+            .stream()
+            .filter(npc -> npc.getEntityId() == rawEntityId)
+            .findAny();
+
+          if (!rawNpc.isPresent()) {
+            return;
+          }
+
+          KelpNpc npc = rawNpc.get();
+
+          NpcInteractAction action = packetAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK
+            ? NpcInteractAction.LEFT_CLICK
+            : NpcInteractAction.RIGHT_CLICK;
+
+          Bukkit.getPluginManager().callEvent(new NpcInteractEvent(npc, action));
 
         }
 
