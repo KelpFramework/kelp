@@ -482,6 +482,12 @@ public class KelpNpc {
     }
   }
 
+  public void removeActivity(Class<? extends NpcActivity<?>> activityType) {
+    Lists.newArrayList(this.activities).stream()
+      .filter(activity -> activity.getClass() == activityType)
+      .forEach(currentActivity -> activities.remove(currentActivity));
+  }
+
   public void playAnimation(NpcAnimation animation) {
     if (!isSpawned) {
       return;
