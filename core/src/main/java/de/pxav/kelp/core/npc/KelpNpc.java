@@ -1,7 +1,6 @@
 package de.pxav.kelp.core.npc;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -13,7 +12,6 @@ import org.bukkit.Location;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -45,7 +43,6 @@ public class KelpNpc {
 
   // behaviour
   private boolean isSpawned = false;
-  private double removeDistance;
   private boolean isBurning;
   private boolean isInvisible;
 
@@ -78,7 +75,6 @@ public class KelpNpc {
 
     this.titles = Lists::newArrayList;
     this.activities = Lists.newArrayList();
-    this.removeDistance = 40;
     this.isBurning = false;
   }
 
@@ -439,13 +435,22 @@ public class KelpNpc {
   }
 
   /**
-   * De-Spawns the NPC for the given player. This completely removes the NPC
-   * from the repository and the game. So the NPC won't be rendered by the
-   * player anymore. The title lines will also disappear.
+   * De-Spawns the NPC for the given player. This won't remove it completely
+   * as it can be respawned at any time. If you want to completely remove an
+   * npc, use {@link #remove()}
    *
    * @return An instance of the current NPC object.
    */
   public KelpNpc deSpawn() {
+    // execute activities that do something when the npc is removed
+    this.activities.forEach(current -> current.onRemove(this));
+
+    this.isSpawned = false;
+    npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
+    return this;
+  }
+
+  public KelpNpc remove() {
     // execute activities that do something when the npc is removed
     this.activities.forEach(current -> current.onRemove(this));
 

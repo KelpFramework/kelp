@@ -12,9 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,7 +32,7 @@ public class KelpNpcRepository {
 
   // saves all spawned NPCs for each player
   // Player UUID => List of all NPCs spawned for this player
-  private ConcurrentHashMap<UUID, Collection<KelpNpc>> spawnedNpcs;
+  private ConcurrentHashMap<UUID, Set<KelpNpc>> spawnedNpcs;
 
   private KelpPlayerRepository playerRepository;
   private KelpLogger logger;
@@ -64,7 +62,7 @@ public class KelpNpcRepository {
    *                who receives the spawn packet.
    */
   public void addNpc(KelpNpc npc, KelpPlayer player) {
-    Collection<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUUID(), new ArrayList<>());
+    Set<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUUID(), new HashSet<>());
     npcs.add(npc);
     spawnedNpcs.put(player.getUUID(), npcs);
   }
@@ -77,7 +75,7 @@ public class KelpNpcRepository {
    * @param player  The player for whom the NPC was visible, when it was visible.
    */
   public void removeNpc(KelpNpc npc, KelpPlayer player) {
-    Collection<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUUID(), new ArrayList<>());
+    Set<KelpNpc> npcs = spawnedNpcs.getOrDefault(player.getUUID(), new HashSet<>());
     npcs.remove(npc);
     spawnedNpcs.put(player.getUUID(), npcs);
   }
@@ -102,9 +100,13 @@ public class KelpNpcRepository {
 
             KelpPlayer player = playerRepository.getKelpPlayer(uuid);
             Preconditions.checkNotNull(player);
+            player.sendActionbar("§eTotal Npcs: §7" + npcList.size() + " §8|| §eSpawned NPCs: §7" + npcList.stream().filter(npc -> npc.isSpawned()).count());
 
             // iterate all NPCs of an individual player
-            npcList.forEach(KelpNpc::triggerHeartbeatTick);
+            for (KelpNpc kelpNpc : npcList) {
+              kelpNpc.triggerHeartbeatTick();
+            }
+
           });
         } catch (Exception e) {
           e.printStackTrace();

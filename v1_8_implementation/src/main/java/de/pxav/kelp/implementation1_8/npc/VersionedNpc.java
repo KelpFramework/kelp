@@ -97,7 +97,6 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     // add npc to tab
     if (!npc.shouldShowInTab()) {
-      System.out.println("tab name not shown");
       npc.showInTab(true);
       updateTab(npc, gameProfile);
       npc.showInTab(false);
