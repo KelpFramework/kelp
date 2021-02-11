@@ -58,32 +58,23 @@ public class VersionedNpc extends NpcVersionTemplate {
     List<String> currentTitles = npc.getCurrentTitles();
     Collections.reverse(currentTitles);
     Collection<Integer> armorStandIds = Lists.newArrayList();
-    Bukkit.broadcastMessage("2");
     for (int i = 0; i < currentTitles.size(); i++) {
       double height = npc.getTitleHeights(i);
-      Bukkit.broadcastMessage("3");
-      Bukkit.broadcastMessage("4");
 
       EntityArmorStand armorStand = new EntityArmorStand(nmsWorld,
         npc.getSpawnLocation().getX(),
         npc.getSpawnLocation().clone().add(0, height, 0).getY(),
         npc.getSpawnLocation().getZ());
-      Bukkit.broadcastMessage("5");
       armorStand.setInvisible(true);
       armorStand.setBasePlate(false);
       armorStand.setGravity(false);
       armorStand.setCustomNameVisible(true);
-      Bukkit.broadcastMessage("6");
       armorStand.setCustomName(currentTitles.get(i));
-      Bukkit.broadcastMessage("7");
       armorStandIds.add(armorStand.getId());
-      Bukkit.broadcastMessage("9");
 
       playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(armorStand));
-      Bukkit.broadcastMessage("10");
     }
-
-    Bukkit.broadcastMessage("11");
+    Bukkit.broadcastMessage("2");
 
     KelpNpcMeta npcMeta = new KelpNpcMeta(entityId, gameProfile, npc.getCustomName(), armorStandIds);
 
@@ -94,26 +85,30 @@ public class VersionedNpc extends NpcVersionTemplate {
     reflectionUtil.setValue(spawnPacket, "e", MathHelper.floor(npc.getSpawnLocation().getZ() * 32.0D));
     reflectionUtil.setValue(spawnPacket, "f", (byte) ((int) (npc.getSpawnLocation().getYaw() * 256.0F / 360.0F)));
     reflectionUtil.setValue(spawnPacket, "g", (byte) ((int) (npc.getSpawnLocation().getPitch() * 256.0F / 360.0F)));
-    Bukkit.broadcastMessage("13");
+
     if (npc.getItemInHand() != null) {
       reflectionUtil.setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
-    }Bukkit.broadcastMessage("14");
+    }
 
     DataWatcher dataWatcher = new DataWatcher(null);
     this.applyToDataWatcher(dataWatcher, npc);
-    Bukkit.broadcastMessage("15");
-    reflectionUtil.setValue(spawnPacket, "i", dataWatcher);
-    Bukkit.broadcastMessage("16");
-    addToTab(npcMeta, player);
-    Bukkit.broadcastMessage("17");
-    playerConnection.sendPacket(spawnPacket);
-    Bukkit.broadcastMessage("18");
 
+    reflectionUtil.setValue(spawnPacket, "i", dataWatcher);
+
+    addToTab(npcMeta, player);
+
+    playerConnection.sendPacket(spawnPacket);
+    Bukkit.broadcastMessage("3");
+
+    Bukkit.broadcastMessage("4");
     Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
       removeFromTab(npcMeta, player);
-      Bukkit.broadcastMessage("20");
-    }, 30L);
-    Bukkit.broadcastMessage("19");
+      if (!npc.isCustomNameShown()) {
+        updateCustomName(npc);
+      }
+      Bukkit.broadcastMessage("remove tab");
+    }, 2L);
+    Bukkit.broadcastMessage("5");
     return npcMeta;
   }
 
@@ -198,6 +193,7 @@ public class VersionedNpc extends NpcVersionTemplate {
     CraftPlayer craftPlayer = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
     PlayerConnection playerConnection = craftPlayer.getHandle().playerConnection;
 
+    // parameters: scoreboard, team name
     ScoreboardTeam team = new ScoreboardTeam(((CraftScoreboard) Bukkit.getScoreboardManager().getMainScoreboard()).getHandle(), npc.getCustomName());
 
     if (npc.isCustomNameShown()) {
@@ -230,29 +226,22 @@ public class VersionedNpc extends NpcVersionTemplate {
     List<String> currentTitles = npc.getCurrentTitles();
     Collections.reverse(currentTitles);
     Collection<Integer> armorStandIds = Lists.newArrayList();
-    Bukkit.broadcastMessage("2");
+
     for (int i = 0; i < currentTitles.size(); i++) {
       double height = npc.getTitleHeights(i);
-      Bukkit.broadcastMessage("3");
-      Bukkit.broadcastMessage("4");
 
       EntityArmorStand armorStand = new EntityArmorStand(nmsWorld,
         npc.getCurrentLocation().getX(),
         npc.getCurrentLocation().clone().add(0, height, 0).getY(),
         npc.getCurrentLocation().getZ());
-      Bukkit.broadcastMessage("5");
       armorStand.setInvisible(true);
       armorStand.setBasePlate(false);
       armorStand.setGravity(false);
       armorStand.setCustomNameVisible(true);
-      Bukkit.broadcastMessage("6");
       armorStand.setCustomName(currentTitles.get(i));
-      Bukkit.broadcastMessage("7");
       armorStandIds.add(armorStand.getId());
-      Bukkit.broadcastMessage("9");
 
       player.getHandle().playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(armorStand));
-      Bukkit.broadcastMessage("10");
     }
     npc.setArmorStandEntityIds(armorStandIds);
   }
@@ -267,28 +256,20 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   private void addToTab(KelpNpcMeta npcMeta, Player player) {
-    Bukkit.broadcastMessage("meta " + npcMeta);
-    Bukkit.broadcastMessage("o " + npcMeta.getOverHeadDisplayName());
-    Bukkit.broadcastMessage("o1 " + CraftChatMessage.fromString(npcMeta.getOverHeadDisplayName())[0]);
-
     PacketPlayOutPlayerInfo infoPacket = new PacketPlayOutPlayerInfo();
     PacketPlayOutPlayerInfo.PlayerInfoData playerInfoData = infoPacket.new PlayerInfoData(
       npcMeta.getGameProfile(),
       1,
       WorldSettings.EnumGamemode.NOT_SET,
       CraftChatMessage.fromString(npcMeta.getOverHeadDisplayName())[0]);
-    Bukkit.broadcastMessage("16.1");
 
     List<PacketPlayOutPlayerInfo.PlayerInfoData> players = new ArrayList<>();
     players.add(playerInfoData);
-    Bukkit.broadcastMessage("16.2");
 
     reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER);
     reflectionUtil.setValue(infoPacket, "b", players);
-    Bukkit.broadcastMessage("16.3");
 
     ((CraftPlayer)player).getHandle().playerConnection.sendPacket(infoPacket);
-    Bukkit.broadcastMessage("16.4");
   }
 
   private void removeFromTab(KelpNpcMeta npc, Player player) {

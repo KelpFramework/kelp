@@ -44,6 +44,7 @@ public class KelpNpc {
   private String skinTexture;
 
   // behaviour
+  private boolean isSpawned = false;
   private double removeDistance;
   private boolean isBurning;
   private boolean isInvisible;
@@ -296,13 +297,25 @@ public class KelpNpc {
 
   public KelpNpc showCustomName() {
     this.customNameShown = true;
-    npcVersionTemplate.updateCustomName(this);
+    if (isSpawned) {
+      npcVersionTemplate.updateCustomName(this);
+    }
     return this;
   }
 
   public KelpNpc hideCustomName() {
     this.customNameShown = false;
-    npcVersionTemplate.updateCustomName(this);
+    if (isSpawned) {
+      npcVersionTemplate.updateCustomName(this);
+    }
+    return this;
+  }
+
+  public KelpNpc customNameShown(boolean shown) {
+    this.customNameShown = shown;
+    if (isSpawned) {
+      npcVersionTemplate.updateCustomName(this);
+    }
     return this;
   }
 
@@ -402,6 +415,7 @@ public class KelpNpc {
     this.currentLocation = spawnLocation;
 
     this.npcMeta = npcVersionTemplate.spawnNpc(this, player.getBukkitPlayer());
+    isSpawned = true;
     gameProfile = npcMeta.getGameProfile();
     entityId = npcMeta.getEntityId();
     customName = npcMeta.getOverHeadDisplayName();
@@ -566,6 +580,10 @@ public class KelpNpc {
    */
   public boolean isInvisible() {
     return isInvisible;
+  }
+
+  public boolean isSpawned() {
+    return isSpawned;
   }
 
   /**
