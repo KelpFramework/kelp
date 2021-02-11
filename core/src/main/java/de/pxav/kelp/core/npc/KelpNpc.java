@@ -2,6 +2,8 @@ package de.pxav.kelp.core.npc;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractAction;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
@@ -13,6 +15,7 @@ import org.bukkit.Location;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -59,6 +62,7 @@ public class KelpNpc {
   // armor, ...
 
   private Collection<NpcActivity<?>> activities;
+  private Consumer<NpcInteractEvent> onInteract;
 
   private KelpNpcMeta npcMeta;
   private KelpLogger logger;
@@ -350,6 +354,11 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc onInteract(Consumer<NpcInteractEvent> event) {
+    this.onInteract = event;
+    return this;
+  }
+
   /**
    * Makes the NPC look to the given location. So it
    * rotates its head to the given target location.
@@ -465,6 +474,12 @@ public class KelpNpc {
         current.onTick(this);
       }
     });
+  }
+
+  public void triggerInteraction(NpcInteractEvent event) {
+    if (this.onInteract != null) {
+      this.onInteract.accept(event);
+    }
   }
 
   /**

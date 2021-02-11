@@ -173,7 +173,10 @@ public class GlobalPacketListener {
             ? NpcInteractAction.LEFT_CLICK
             : NpcInteractAction.RIGHT_CLICK;
 
-          Bukkit.getPluginManager().callEvent(new NpcInteractEvent(npc, action));
+          NpcInteractEvent event = new NpcInteractEvent(npc, action);
+          npc.triggerInteraction(event);
+
+          Bukkit.getPluginManager().callEvent(event);
 
         }
 
