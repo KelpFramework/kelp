@@ -27,7 +27,9 @@ public abstract class NpcActivity<T extends NpcActivity<?>> {
 
   public void finish() {
     this.finished = true;
-    onFinish.run();
+    if (onFinish != null) {
+      onFinish.run();
+    }
   }
 
   public boolean hasStarted() {
