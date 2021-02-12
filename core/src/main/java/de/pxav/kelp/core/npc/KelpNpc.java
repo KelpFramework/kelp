@@ -381,7 +381,7 @@ public class KelpNpc {
     }
     currentLocation.setYaw((float) yaw - 90.0F);
     currentLocation.setPitch((float) pitch);
-    npcVersionTemplate.teleport(this, currentLocation);
+    teleport(currentLocation);
     return this;
   }
 
@@ -395,6 +395,11 @@ public class KelpNpc {
     double z = target.getZ() - currentLocation.getZ();
     this.moveRelativeDistance(x, y, z, currentLocation.getYaw(), currentLocation.getPitch());
     this.location(target);
+  }
+
+  public void teleport(Location location) {
+    this.currentLocation = location;
+    npcVersionTemplate.teleport(this, currentLocation);
   }
 
   public void updateTitleLines() {
