@@ -8,16 +8,19 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
 import de.pxav.kelp.core.npc.NpcAnimation;
+import de.pxav.kelp.core.npc.NpcSleepState;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -307,6 +310,27 @@ public class VersionedNpc extends NpcVersionTemplate {
       return;
     }
 
+  }
+
+  @Override
+  public void sleep(KelpNpc npc, NpcSleepState sleepState) {
+    System.out.println("sleeping");
+    CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+    Location bedLocation = new Location(
+      npc.getLocation().getWorld(),
+      npc.getLocation().getX(),
+      npc.getLocation().getY(),
+      npc.getLocation().getZ());
+    BlockPosition blockPosition = new BlockPosition(bedLocation.getX(), bedLocation.getY(), bedLocation.getZ());
+    player.sendBlockChange(bedLocation, Material.BED_BLOCK, (byte) 0);
+
+    PacketPlayOutBed bedPacket = new PacketPlayOutBed();
+    reflectionUtil.setValue(bedPacket, "a", npc.getEntityId());
+    reflectionUtil.setValue(bedPacket, "b", blockPosition);
+
+    System.out.println("2");
+    player.getHandle().playerConnection.sendPacket(bedPacket);
+    System.out.println("3");
   }
 
   @Override

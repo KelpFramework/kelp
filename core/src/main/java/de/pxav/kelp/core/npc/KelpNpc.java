@@ -48,6 +48,8 @@ public class KelpNpc {
   private boolean initiallySpawned = false;
   private boolean isBurning;
   private boolean isInvisible;
+  private boolean sleeping;
+  private boolean corpse;
 
   // movement
   private boolean isSneaking;
@@ -356,6 +358,23 @@ public class KelpNpc {
 
   public KelpNpc onInteract(Consumer<NpcInteractEvent> event) {
     this.onInteract = event;
+    return this;
+  }
+
+  public KelpNpc sleep(NpcSleepState sleepState) {
+    this.sleeping = true;
+    if (sleepState == NpcSleepState.CORPSE) {
+      this.corpse = true;
+    }
+
+    npcVersionTemplate.sleep(this, sleepState);
+    return this;
+  }
+
+  public KelpNpc wakeUp() {
+    this.sleeping = false;
+    this.corpse = false;
+    playAnimation(NpcAnimation.LEAVE_BED);
     return this;
   }
 
