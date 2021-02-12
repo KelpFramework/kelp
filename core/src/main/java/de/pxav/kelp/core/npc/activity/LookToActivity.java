@@ -20,9 +20,6 @@ public class LookToActivity extends NpcActivity<LookToActivity> {
 
   @Override
   public void onTick(KelpNpc npc) {
-    // check if the NPC should always look at the player
-    // it true, update the head rotation of the npc.
     npc.lookTo(target.get());
-    npc.refreshMetadata();
   }
 }
