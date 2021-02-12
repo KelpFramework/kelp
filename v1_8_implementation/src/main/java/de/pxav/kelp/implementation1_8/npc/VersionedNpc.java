@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcSpawnEvent;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
@@ -125,6 +126,7 @@ public class VersionedNpc extends NpcVersionTemplate {
     }, 2L);
 
     playerConnection.sendPacket(spawnPacket);
+    Bukkit.getPluginManager().callEvent(new NpcSpawnEvent(npc, !npc.isInitiallySpawned()));
 
     return npcMeta;
   }

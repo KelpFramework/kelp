@@ -2,13 +2,16 @@ package de.pxav.kelp.core.npc;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcDespawnEvent;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcToggleSneakEvent;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.npc.activity.NpcActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.Collection;
@@ -513,6 +516,7 @@ public class KelpNpc {
 
     this.isSpawned = false;
     npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
+    Bukkit.getPluginManager().callEvent(new NpcDespawnEvent(this, false));
     return this;
   }
 
@@ -524,6 +528,7 @@ public class KelpNpc {
     npcVersionTemplate.updateTab(this, null);
 
     npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
+    Bukkit.getPluginManager().callEvent(new NpcDespawnEvent(this, true));
     this.npcMeta = null;
     this.kelpNpcRepository.removeNpc(this, player);
     return this;
@@ -583,6 +588,8 @@ public class KelpNpc {
    */
   public KelpNpc sneak() {
     this.isSneaking = true;
+    refreshMetadata();
+    Bukkit.getPluginManager().callEvent(new NpcToggleSneakEvent(this));
     return this;
   }
 
@@ -593,6 +600,8 @@ public class KelpNpc {
    */
   public KelpNpc unSneak() {
     this.isSneaking = false;
+    refreshMetadata();
+    Bukkit.getPluginManager().callEvent(new NpcToggleSneakEvent(this));
     return this;
   }
 
