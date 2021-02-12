@@ -9,6 +9,7 @@ import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
 import de.pxav.kelp.core.npc.NpcAnimation;
 import de.pxav.kelp.core.npc.NpcSleepState;
+import de.pxav.kelp.core.npc.activity.WalkToTargetActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
@@ -362,7 +363,8 @@ public class VersionedNpc extends NpcVersionTemplate {
       player.sendBlockChange(npc.getLocation(), serverMaterial, npc.getLocation().getBlock().getData());
     }
 
-    teleport(npc, npc.getLocation());
+    // walk back to initial location for a more smooth transition
+    npc.addActivity(WalkToTargetActivity.create().target(npc.getLocation()));
   }
 
   @Override
