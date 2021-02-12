@@ -5,7 +5,6 @@ import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
 import de.pxav.kelp.core.npc.NpcAnimation;
-import de.pxav.kelp.core.npc.NpcSleepState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
