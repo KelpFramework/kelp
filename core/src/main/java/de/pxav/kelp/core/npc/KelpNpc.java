@@ -2,7 +2,6 @@ package de.pxav.kelp.core.npc;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
-import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractAction;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -361,20 +360,26 @@ public class KelpNpc {
     return this;
   }
 
-  public KelpNpc sleep(NpcSleepState sleepState) {
+  public KelpNpc sleep(Location bedLocation) {
     this.sleeping = true;
-    if (sleepState == NpcSleepState.CORPSE) {
-      this.corpse = true;
-    }
+    npcVersionTemplate.sleep(this, bedLocation);
+    return this;
+  }
 
-    npcVersionTemplate.sleep(this, sleepState);
+  public KelpNpc makeCorpse() {
+    this.sleeping = true;
+    this.corpse = true;
+    npcVersionTemplate.makeCorpse(this);
     return this;
   }
 
   public KelpNpc wakeUp() {
+    npcVersionTemplate.wakeUp(this);
+
+    // set the data after the npc has actually woken up as
+    // this data is needed by the version implementation class.
     this.sleeping = false;
     this.corpse = false;
-    playAnimation(NpcAnimation.LEAVE_BED);
     return this;
   }
 
@@ -672,6 +677,14 @@ public class KelpNpc {
 
   public boolean isFlying() {
     return flying;
+  }
+
+  public boolean isCorpse() {
+    return corpse;
+  }
+
+  public boolean isSleeping() {
+    return sleeping;
   }
 
   /**

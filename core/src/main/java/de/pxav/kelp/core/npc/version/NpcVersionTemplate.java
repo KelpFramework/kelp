@@ -61,7 +61,11 @@ public abstract class NpcVersionTemplate {
 
   public abstract void playAnimation(KelpNpc npc, NpcAnimation animation);
 
-  public abstract void sleep(KelpNpc npc, NpcSleepState sleepState);
+  public abstract void makeCorpse(KelpNpc npc);
+
+  public abstract void sleep(KelpNpc npc, Location bedLocation);
+
+  public abstract void wakeUp(KelpNpc npc);
 
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state

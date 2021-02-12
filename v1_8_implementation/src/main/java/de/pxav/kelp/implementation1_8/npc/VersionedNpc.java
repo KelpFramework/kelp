@@ -313,24 +313,56 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
-  public void sleep(KelpNpc npc, NpcSleepState sleepState) {
-    System.out.println("sleeping");
+  public void makeCorpse(KelpNpc npc) {
     CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+
     Location bedLocation = new Location(
       npc.getLocation().getWorld(),
       npc.getLocation().getX(),
       npc.getLocation().getY(),
       npc.getLocation().getZ());
-    BlockPosition blockPosition = new BlockPosition(bedLocation.getX(), bedLocation.getY(), bedLocation.getZ());
+
+    BlockPosition blockPosition = new BlockPosition(
+      bedLocation.getX(),
+      bedLocation.getY(),
+      bedLocation.getZ());
+
     player.sendBlockChange(bedLocation, Material.BED_BLOCK, (byte) 0);
 
     PacketPlayOutBed bedPacket = new PacketPlayOutBed();
     reflectionUtil.setValue(bedPacket, "a", npc.getEntityId());
     reflectionUtil.setValue(bedPacket, "b", blockPosition);
 
-    System.out.println("2");
     player.getHandle().playerConnection.sendPacket(bedPacket);
-    System.out.println("3");
+  }
+
+  @Override
+  public void sleep(KelpNpc npc, Location bedLocation) {
+    CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+
+    BlockPosition blockPosition = new BlockPosition(
+      bedLocation.getX(),
+      bedLocation.getY(),
+      bedLocation.getZ());
+
+    PacketPlayOutBed bedPacket = new PacketPlayOutBed();
+    reflectionUtil.setValue(bedPacket, "a", npc.getEntityId());
+    reflectionUtil.setValue(bedPacket, "b", blockPosition);
+
+    player.getHandle().playerConnection.sendPacket(bedPacket);
+  }
+
+  @Override
+  public void wakeUp(KelpNpc npc) {
+    CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+    playAnimation(npc, NpcAnimation.LEAVE_BED);
+
+    if (npc.isCorpse()) {
+      Material serverMaterial = npc.getLocation().getBlock().getType();
+      player.sendBlockChange(npc.getLocation(), serverMaterial, npc.getLocation().getBlock().getData());
+    }
+
+    teleport(npc, npc.getLocation());
   }
 
   @Override
