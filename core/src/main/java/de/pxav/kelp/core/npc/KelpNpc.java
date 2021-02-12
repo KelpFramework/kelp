@@ -60,7 +60,11 @@ public class KelpNpc {
   private boolean customNameShown = false;
   private boolean showInTab = false;
   private String tabListName;
-  // armor, ...
+
+  private KelpItem helmet;
+  private KelpItem chestPlate;
+  private KelpItem leggings;
+  private KelpItem boots;
 
   private Collection<NpcActivity<?>> activities;
   private Consumer<NpcInteractEvent> onInteract;
@@ -96,6 +100,41 @@ public class KelpNpc {
    */
   public KelpNpc itemInHand(KelpItem itemInHand) {
     this.itemInHand = itemInHand;
+    if (isSpawned) {
+      npcVersionTemplate.setItemInHand(this);
+    }
+    return this;
+  }
+
+  public KelpNpc helmet(KelpItem helmet) {
+    this.helmet = helmet;
+    if (isSpawned) {
+      npcVersionTemplate.setHelmet(this);
+    }
+    return this;
+  }
+
+  public KelpNpc chestPlate(KelpItem chestPlate) {
+    this.chestPlate = chestPlate;
+    if (isSpawned) {
+      npcVersionTemplate.setChestPlate(this);
+    }
+    return this;
+  }
+
+  public KelpNpc leggings(KelpItem leggings) {
+    this.leggings = leggings;
+    if (isSpawned) {
+      npcVersionTemplate.setLeggings(this);
+    }
+    return this;
+  }
+
+  public KelpNpc boots(KelpItem boots) {
+    this.boots = boots;
+    if (isSpawned) {
+      npcVersionTemplate.setBoots(this);
+    }
     return this;
   }
 
@@ -685,6 +724,22 @@ public class KelpNpc {
 
   public boolean isSleeping() {
     return sleeping;
+  }
+
+  public KelpItem getHelmet() {
+    return helmet;
+  }
+
+  public KelpItem getChestPlate() {
+    return chestPlate;
+  }
+
+  public KelpItem getBoots() {
+    return boots;
+  }
+
+  public KelpItem getLeggings() {
+    return leggings;
   }
 
   /**

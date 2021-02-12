@@ -66,6 +66,16 @@ public abstract class NpcVersionTemplate {
 
   public abstract void wakeUp(KelpNpc npc);
 
+  public abstract void setItemInHand(KelpNpc npc);
+
+  public abstract void setHelmet(KelpNpc npc);
+
+  public abstract void setChestPlate(KelpNpc npc);
+
+  public abstract void setLeggings(KelpNpc npc);
+
+  public abstract void setBoots(KelpNpc npc);
+
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state
    * of an NPC has updated for example, then this method has to be

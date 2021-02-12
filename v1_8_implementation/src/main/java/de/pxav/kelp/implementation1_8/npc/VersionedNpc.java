@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
 import de.pxav.kelp.core.npc.NpcAnimation;
@@ -18,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
@@ -115,6 +117,11 @@ public class VersionedNpc extends NpcVersionTemplate {
       if (!npc.isCustomNameShown()) {
         updateCustomName(npc);
       }
+
+      setHelmet(npc);
+      setChestPlate(npc);
+      setLeggings(npc);
+      setBoots(npc);
     }, 2L);
 
     playerConnection.sendPacket(spawnPacket);
@@ -366,6 +373,34 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
+  public void setItemInHand(KelpNpc npc) {
+    if (npc.getItemInHand() == null) {
+      return;
+    }
+    giveEquipment(npc, 0, npc.getItemInHand());
+  }
+
+  @Override
+  public void setHelmet(KelpNpc npc) {
+    giveEquipment(npc, 4, npc.getHelmet());
+  }
+
+  @Override
+  public void setChestPlate(KelpNpc npc) {
+    giveEquipment(npc, 3, npc.getChestPlate());
+  }
+
+  @Override
+  public void setLeggings(KelpNpc npc) {
+    giveEquipment(npc, 2, npc.getLeggings());
+  }
+
+  @Override
+  public void setBoots(KelpNpc npc) {
+    giveEquipment(npc, 1, npc.getBoots());
+  }
+
+  @Override
   public void refreshMetadata(KelpNpc npc, Player player) {
     DataWatcher dataWatcher = new DataWatcher(null);
 
@@ -402,6 +437,20 @@ public class VersionedNpc extends NpcVersionTemplate {
     reflectionUtil.setValue(infoPacket, "b", players);
 
     player.getHandle().playerConnection.sendPacket(infoPacket);
+  }
+
+  private void giveEquipment(KelpNpc npc, int slot, KelpItem item) {
+    if (item == null) {
+      return;
+    }
+    CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
+    ItemStack itemStack = CraftItemStack.asNMSCopy(item.getItemStack());
+    PacketPlayOutEntityEquipment equipmentPacket = new PacketPlayOutEntityEquipment(
+      npc.getEntityId(),
+      slot,
+      itemStack
+    );
+    player.getHandle().playerConnection.sendPacket(equipmentPacket);
   }
 
   private DataWatcher applyToDataWatcher(DataWatcher dataWatcher, KelpNpc kelpNpc) {
