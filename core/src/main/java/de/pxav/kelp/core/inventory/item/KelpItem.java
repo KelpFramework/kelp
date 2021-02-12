@@ -48,11 +48,8 @@ public class KelpItem {
   // have their own item sorting methods.
   private int slot;
 
-  // the inventory where the item is stored in
-  private Inventory parent;
-
   // the display name of the item
-  private String displayName = " ";
+  private String displayName;
 
   // the item description - aka. the item lore.
   // Those are some lines of text below the display name.
@@ -295,8 +292,6 @@ public class KelpItem {
     // make the item unbreakable if needed.
     if (this.unbreakable) {
       itemStack = itemVersionTemplate.makeUnbreakable(itemStack);
-    } else {
-      itemStack = itemVersionTemplate.makeBreakable(itemStack);
     }
 
     // add a flag to cancel interactions by default, if nothing else has been defined
@@ -315,10 +310,6 @@ public class KelpItem {
     }
 
     return itemStack;
-  }
-
-  public Inventory getParent() {
-    return this.parent;
   }
 
   /**
