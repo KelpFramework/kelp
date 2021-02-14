@@ -62,6 +62,11 @@ public class AnimatedInventory extends KelpInventory {
     return this;
   }
 
+  public AnimatedInventory rows(int rows) {
+    this.size = rows * 9;
+    return this;
+  }
+
   public AnimatedInventory title(TextAnimation textAnimation) {
     this.title = textAnimation;
     return this;
