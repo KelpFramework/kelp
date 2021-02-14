@@ -2,6 +2,7 @@ package de.pxav.kelp.core.npc;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcDespawnEvent;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcToggleSneakEvent;
@@ -88,6 +89,14 @@ public class KelpNpc {
     this.titles = Lists::newArrayList;
     this.activities = Lists.newArrayList();
     this.isBurning = false;
+  }
+
+  public static KelpNpc create() {
+    return new KelpNpc(
+      KelpPlugin.getInjector().getInstance(NpcVersionTemplate.class),
+      KelpPlugin.getInjector().getInstance(KelpNpcRepository.class),
+      KelpPlugin.getInjector().getInstance(KelpLogger.class)
+    );
   }
 
   public KelpNpc location(Location location) {
