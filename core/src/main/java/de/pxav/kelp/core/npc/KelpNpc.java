@@ -614,6 +614,13 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc setSneaking(boolean sneaking) {
+    this.isSneaking = sneaking;
+    refreshMetadata();
+    Bukkit.getPluginManager().callEvent(new NpcToggleSneakEvent(this));
+    return this;
+  }
+
   /**
    * @return {@code true} if the NPC is currently supposed to sneak.
    */
