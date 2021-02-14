@@ -28,6 +28,10 @@ public class ItemWidget implements SimpleWidget {
     this.listenerCache = Sets.newHashSet();
   }
 
+  public static ItemWidget create() {
+    return new ItemWidget();
+  }
+
   /**
    * Sets the item to be put into the inventory.
    *

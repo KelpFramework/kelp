@@ -44,6 +44,10 @@ public class ToggleableWidget implements SimpleWidget {
 
   ToggleableWidget() {}
 
+  public static ToggleableWidget create() {
+    return new ToggleableWidget();
+  }
+
   /**
    * Defines the slot, where the widget should be located
    * later in the final inventory.
