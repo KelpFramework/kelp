@@ -1,6 +1,8 @@
 package de.pxav.kelp.core.inventory.type;
 
 import com.google.common.collect.Lists;
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.animation.StaticTextAnimation;
 import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.animation.TextAnimationFactory;
 import de.pxav.kelp.core.inventory.item.KelpItem;
@@ -38,17 +40,21 @@ public class AnimatedInventory extends KelpInventory {
 
   private WindowPacketTemplate windowPacketTemplate;
   private InventoryVersionTemplate inventoryVersionTemplate;
-  private TextAnimationFactory textAnimationFactory;
 
   public AnimatedInventory(WindowPacketTemplate windowPacketTemplate,
-                           InventoryVersionTemplate inventoryVersionTemplate,
-                           TextAnimationFactory textAnimationFactory) {
+                           InventoryVersionTemplate inventoryVersionTemplate) {
     this.windowPacketTemplate = windowPacketTemplate;
     this.inventoryVersionTemplate = inventoryVersionTemplate;
-    this.textAnimationFactory = textAnimationFactory;
     this.simpleWidgets = Lists.newArrayList();
     this.groupedWidgets = Lists.newArrayList();
     this.size = 54;
+  }
+
+  public static AnimatedInventory create() {
+    return new AnimatedInventory(
+      KelpPlugin.getInjector().getInstance(WindowPacketTemplate.class),
+      KelpPlugin.getInjector().getInstance(InventoryVersionTemplate.class)
+    );
   }
 
   public AnimatedInventory size(int size) {
@@ -78,7 +84,7 @@ public class AnimatedInventory extends KelpInventory {
   @Override
   public Inventory render() {
     if (this.title == null) {
-      this.title = textAnimationFactory.newStaticTextAnimation("§8Inventory");
+      this.title = StaticTextAnimation.create().text("§8Inventory");
     }
 
     Inventory inventory = inventoryVersionTemplate.createInventory(this.size, title.states().get(0));
