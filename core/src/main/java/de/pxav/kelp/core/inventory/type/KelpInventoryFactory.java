@@ -17,19 +17,16 @@ public class KelpInventoryFactory {
 
   private WindowPacketTemplate windowPacketTemplate;
   private InventoryVersionTemplate inventoryVersionTemplate;
-  private TextAnimationFactory textAnimationFactory;
 
   @Inject
   public KelpInventoryFactory(WindowPacketTemplate windowPacketTemplate,
-                              InventoryVersionTemplate inventoryVersionTemplate,
-                              TextAnimationFactory textAnimationFactory) {
+                              InventoryVersionTemplate inventoryVersionTemplate) {
     this.windowPacketTemplate = windowPacketTemplate;
     this.inventoryVersionTemplate = inventoryVersionTemplate;
-    this.textAnimationFactory = textAnimationFactory;
   }
 
   public AnimatedInventory newAnimatedInventory() {
-    return new AnimatedInventory(windowPacketTemplate, inventoryVersionTemplate, textAnimationFactory);
+    return new AnimatedInventory(windowPacketTemplate, inventoryVersionTemplate);
   }
 
 }
