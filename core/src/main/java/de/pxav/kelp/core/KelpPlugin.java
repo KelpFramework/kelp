@@ -35,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author pxav
  */
-@Plugin(name = "Kelp", version = "0.1.1")
+@Plugin(name = "Kelp", version = "0.2.0")
 @Author("pxav")
 @Description("A cross version spigot framework.")
 @Singleton
