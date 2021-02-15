@@ -35,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author pxav
  */
-@Plugin(name = "Kelp", version = "0.1.1")
+@Plugin(name = "Kelp", version = "0.2.0")
 @Author("pxav")
 @Description("A cross version spigot framework.")
 @Singleton
@@ -126,7 +126,6 @@ public class KelpPlugin extends JavaPlugin {
   public void onDisable() {
     injector.getInstance(KelpApplicationRepository.class).disableApplications();
 
-    injector.getInstance(KelpNpcRepository.class).stopScheduler();
     injector.getInstance(SidebarRepository.class).stopAllClusters();
     logger().log("[SIDEBAR] Removed all animation clusters.");
     injector.getInstance(ParticleEffectRepository.class).stopAllTimers();

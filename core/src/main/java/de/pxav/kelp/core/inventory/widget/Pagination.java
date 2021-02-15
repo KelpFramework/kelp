@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.math.DoubleMath;
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -44,6 +45,12 @@ public class Pagination implements GroupedWidget {
     this.inventoryRepository = inventoryRepository;
     this.contentSlots = Lists.newArrayList();
     this.contentItems = Lists.newArrayList();
+  }
+
+  public static Pagination create() {
+    return new Pagination(
+      KelpPlugin.getInjector().getInstance(KelpInventoryRepository.class)
+    );
   }
 
   /**

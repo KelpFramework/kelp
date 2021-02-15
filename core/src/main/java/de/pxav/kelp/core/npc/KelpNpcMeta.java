@@ -69,4 +69,8 @@ public class KelpNpcMeta {
     return armorStandEntityIds;
   }
 
+  public void setArmorStandEntityIds(Collection<Integer> armorStandEntityIds) {
+    this.armorStandEntityIds = armorStandEntityIds;
+  }
+
 }

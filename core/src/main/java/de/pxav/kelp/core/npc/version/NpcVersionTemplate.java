@@ -1,10 +1,14 @@
 package de.pxav.kelp.core.npc.version;
 
+import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
+import de.pxav.kelp.core.npc.NpcAnimation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
 
 /**
  * This version implementation is responsible for all
@@ -40,7 +44,37 @@ public abstract class NpcVersionTemplate {
    */
   public abstract void deSpawn(KelpNpc npc, Player player);
 
-  public abstract void walkTo(KelpNpc npc, Player player, Location target, float yaw, float pitch);
+  public abstract void moveRelativeDistance(KelpNpc npc,
+                                            Player player,
+                                            double x,
+                                            double y,
+                                            double z,
+                                            float absoluteYaw,
+                                            float absolutePitch);
+
+  public abstract void teleport(KelpNpc npc, Location location);
+
+  public abstract void updateCustomName(KelpNpc npc);
+
+  public abstract void updateTitleLines(KelpNpc npc);
+
+  public abstract void playAnimation(KelpNpc npc, NpcAnimation animation);
+
+  public abstract void makeCorpse(KelpNpc npc);
+
+  public abstract void sleep(KelpNpc npc, Location bedLocation);
+
+  public abstract void wakeUp(KelpNpc npc);
+
+  public abstract void setItemInHand(KelpNpc npc);
+
+  public abstract void setHelmet(KelpNpc npc);
+
+  public abstract void setChestPlate(KelpNpc npc);
+
+  public abstract void setLeggings(KelpNpc npc);
+
+  public abstract void setBoots(KelpNpc npc);
 
   /**
    * Refreshes the NPC data and all meta packets. When the sneak state
@@ -52,6 +86,7 @@ public abstract class NpcVersionTemplate {
    *                Note: You must have spawned the NPC before to
    *                this very player.
    */
-  public abstract void refresh(KelpNpc npc, Player player);
+  public abstract void refreshMetadata(KelpNpc npc, Player player);
+  public abstract void updateTab(KelpNpc npc, @Nullable GameProfile gameProfile);
 
 }

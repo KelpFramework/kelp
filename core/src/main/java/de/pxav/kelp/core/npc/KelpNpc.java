@@ -1,20 +1,25 @@
 package de.pxav.kelp.core.npc;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcDespawnEvent;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
+import de.pxav.kelp.core.event.kelpevent.npc.NpcToggleSneakEvent;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
+import de.pxav.kelp.core.npc.activity.NpcActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * This is the most important class for developers
@@ -27,7 +32,8 @@ import java.util.UUID;
  */
 public class KelpNpc {
 
-  private Location spawnLocation;
+  private KelpPlayer player;
+
   private Location currentLocation;
   private KelpItem itemInHand;
 
@@ -36,22 +42,36 @@ public class KelpNpc {
   private String customName;
   private GameProfile gameProfile;
 
-  private List<String> titles;
-  private Collection<Integer> armorStandEntityIds;
+  private Supplier<List<String>> titles;
   private String skinSignature;
   private String skinTexture;
 
-  private double removeDistance;
-  private boolean followHeadRotation;
-  private boolean imitateSneaking;
+  // behaviour
+  private boolean isSpawned = false;
+  private boolean initiallySpawned = false;
   private boolean isBurning;
   private boolean isInvisible;
-  private boolean isSneaking;
+  private boolean sleeping;
+  private boolean corpse;
 
-  private boolean showCustomName = false;
+  // movement
+  private boolean isSneaking;
+  private boolean isSprinting;
+  private boolean noClip;
+  private boolean falling;
+  private boolean flying;
+
+  private boolean customNameShown = false;
   private boolean showInTab = false;
   private String tabListName;
-  // armor, ...
+
+  private KelpItem helmet;
+  private KelpItem chestPlate;
+  private KelpItem leggings;
+  private KelpItem boots;
+
+  private Collection<NpcActivity<?>> activities;
+  private Consumer<NpcInteractEvent> onInteract;
 
   private KelpNpcMeta npcMeta;
   private KelpLogger logger;
@@ -66,23 +86,20 @@ public class KelpNpc {
     this.kelpNpcRepository = kelpNpcRepository;
     this.logger = logger;
 
-    this.titles = Lists.newArrayList();
-    this.removeDistance = 40;
+    this.titles = Lists::newArrayList;
+    this.activities = Lists.newArrayList();
     this.isBurning = false;
   }
 
-  /**
-   * Sets the location, where the NPC will spawn later.
-   *
-   * @param location The desired location
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc spawnLocation(Location location) {
-    this.spawnLocation = location;
-    return this;
+  public static KelpNpc create() {
+    return new KelpNpc(
+      KelpPlugin.getInjector().getInstance(NpcVersionTemplate.class),
+      KelpPlugin.getInjector().getInstance(KelpNpcRepository.class),
+      KelpPlugin.getInjector().getInstance(KelpLogger.class)
+    );
   }
 
-  public KelpNpc currentLocation(Location location) {
+  public KelpNpc location(Location location) {
     this.currentLocation = location;
     return this;
   }
@@ -95,6 +112,41 @@ public class KelpNpc {
    */
   public KelpNpc itemInHand(KelpItem itemInHand) {
     this.itemInHand = itemInHand;
+    if (isSpawned) {
+      npcVersionTemplate.setItemInHand(this);
+    }
+    return this;
+  }
+
+  public KelpNpc helmet(KelpItem helmet) {
+    this.helmet = helmet;
+    if (isSpawned) {
+      npcVersionTemplate.setHelmet(this);
+    }
+    return this;
+  }
+
+  public KelpNpc chestPlate(KelpItem chestPlate) {
+    this.chestPlate = chestPlate;
+    if (isSpawned) {
+      npcVersionTemplate.setChestPlate(this);
+    }
+    return this;
+  }
+
+  public KelpNpc leggings(KelpItem leggings) {
+    this.leggings = leggings;
+    if (isSpawned) {
+      npcVersionTemplate.setLeggings(this);
+    }
+    return this;
+  }
+
+  public KelpNpc boots(KelpItem boots) {
+    this.boots = boots;
+    if (isSpawned) {
+      npcVersionTemplate.setBoots(this);
+    }
     return this;
   }
 
@@ -143,39 +195,17 @@ public class KelpNpc {
    */
   public KelpNpc tabListName(String tabListName) {
     this.tabListName = tabListName;
+    if (initiallySpawned) {
+      npcVersionTemplate.updateTab(this, null);
+    }
     return this;
   }
 
-  /**
-   * Adds a new title line.
-   *
-   * Title lines are lines of text above the NPC, where
-   * you can for example describe the NPC. These lines
-   * are rendered per player, which means that their text
-   * can be individual for every player.
-   *
-   * @param lineToAdd The desired {@code UUID}.
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc addTitleLine(String lineToAdd) {
-    this.titles.add(lineToAdd);
-    return this;
-  }
-
-  /**
-   * Adds multiple new title lines.
-   *
-   * Title lines are lines of text above the NPC, where
-   * you can for example describe the NPC. These lines
-   * are rendered per player, which means that their text
-   * can be individual for every player.
-   *
-   * @param linesToAdd A list of all title lines you want to add
-   *                   (should be in chronological order).
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc addTitleLine(List<String> linesToAdd) {
-    this.titles.addAll(linesToAdd);
+  public KelpNpc showInTab(boolean show) {
+    this.showInTab = show;
+    if (initiallySpawned) {
+      npcVersionTemplate.updateTab(this, null);
+    }
     return this;
   }
 
@@ -191,7 +221,7 @@ public class KelpNpc {
    * @param lines A list of all lines to set.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc setTitleLines(List<String> lines) {
+  public KelpNpc titleLines(Supplier<List<String>> lines) {
     this.titles = lines;
     return this;
   }
@@ -239,51 +269,28 @@ public class KelpNpc {
   }
 
   /**
-   * If you execute this method, the NPC will start
-   * imitating the sneak state of a player. That means:
-   * If the player sneaks, the NPC will sneak as well.
-   * If the player unsneaks, the NPC will do so as well.
+   * Makes the NPC sprint. This becomes especially important
+   * if you want to play a walk animation, because the walking
+   * speed wil increase to sprinting speed and sprint particles
+   * will be visible.
    *
    * @return An instance of the current NPC object.
    */
-  public KelpNpc imitateSneaking() {
-    this.imitateSneaking = true;
+  public KelpNpc sprint() {
+    this.isSprinting = true;
     return this;
   }
 
   /**
-   * If you execute this method, the NPC will stop
-   * imitating the sneak state of a player.
-   * So you can invert the effects of {@code #imitateSneaking}
-   * again and the NPC will ignore the player's
-   * sneaking state.
+   * Makes the NPC not sprint anymore. This will remove
+   * the sprint particle animation and if the npc is walking,
+   * it will be slowed down to the normal walking speed instead
+   * of the sprinting speed.
    *
    * @return An instance of the current NPC object.
    */
-  public KelpNpc doNotImitateSneaking() {
-    this.imitateSneaking = false;
-    return this;
-  }
-
-  /**
-   * If you execute this method, the NPC will start
-   * looking a the player constantly.
-   *
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc followHeadRotation() {
-    this.followHeadRotation = true;
-    return this;
-  }
-
-  /**
-   * If you execute this method, the NPC will stop
-   * looking a the player constantly.
-   *
-   * @return An instance of the current NPC object.
-   */
-  public KelpNpc unfollowHeadRotation() {
-    this.imitateSneaking = false;
+  public KelpNpc stopSprinting() {
+    this.isSprinting = false;
     return this;
   }
 
@@ -341,12 +348,89 @@ public class KelpNpc {
   }
 
   public KelpNpc showCustomName() {
-    this.showCustomName = true;
+    this.customNameShown = true;
+    if (isSpawned) {
+      npcVersionTemplate.updateCustomName(this);
+    }
     return this;
   }
 
   public KelpNpc hideCustomName() {
-    this.showCustomName = false;
+    this.customNameShown = false;
+    if (isSpawned) {
+      npcVersionTemplate.updateCustomName(this);
+    }
+    return this;
+  }
+
+  public KelpNpc customNameShown(boolean shown) {
+    this.customNameShown = shown;
+    if (isSpawned) {
+      npcVersionTemplate.updateCustomName(this);
+    }
+    return this;
+  }
+
+  public KelpNpc addActivity(NpcActivity<?> activity) {
+    this.activities.add(activity);
+    return this;
+  }
+
+  public KelpNpc player(KelpPlayer player) {
+    this.player = player;
+    return this;
+  }
+
+  public KelpNpc enableNoClip() {
+    this.noClip = true;
+    return this;
+  }
+
+  public KelpNpc disableNoClip() {
+    this.noClip = false;
+    return this;
+  }
+
+  public KelpNpc noClip(boolean noClip) {
+    this.noClip = noClip;
+    return this;
+  }
+
+  public KelpNpc falling(boolean falling) {
+    this.falling = falling;
+    return this;
+  }
+
+  public KelpNpc flying(boolean flying) {
+    this.flying = flying;
+    return this;
+  }
+
+  public KelpNpc onInteract(Consumer<NpcInteractEvent> event) {
+    this.onInteract = event;
+    return this;
+  }
+
+  public KelpNpc sleep(Location bedLocation) {
+    this.sleeping = true;
+    npcVersionTemplate.sleep(this, bedLocation);
+    return this;
+  }
+
+  public KelpNpc makeCorpse() {
+    this.sleeping = true;
+    this.corpse = true;
+    npcVersionTemplate.makeCorpse(this);
+    return this;
+  }
+
+  public KelpNpc wakeUp() {
+    npcVersionTemplate.wakeUp(this);
+
+    // set the data after the npc has actually woken up as
+    // this data is needed by the version implementation class.
+    this.sleeping = false;
+    this.corpse = false;
     return this;
   }
 
@@ -358,9 +442,9 @@ public class KelpNpc {
    * @return An instance of the current NPC object.
    */
   public KelpNpc lookTo(Location target) {
-    double xDiff = target.getX() - spawnLocation.getX();
-    double yDiff = target.getY() - spawnLocation.getY();
-    double zDiff = target.getZ() - spawnLocation.getZ();
+    double xDiff = target.getX() - currentLocation.getX();
+    double yDiff = target.getY() - currentLocation.getY();
+    double zDiff = target.getZ() - currentLocation.getZ();
 
     double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
     double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
@@ -370,59 +454,128 @@ public class KelpNpc {
     if (zDiff < 0.0D) {
       yaw += Math.abs(180.0D - yaw) * 2.0D;
     }
-    spawnLocation.setYaw((float) yaw - 90.0F);
-    spawnLocation.setPitch((float) pitch);
+    currentLocation.setYaw((float) yaw - 90.0F);
+    currentLocation.setPitch((float) pitch);
+    teleport(currentLocation);
     return this;
   }
 
-  public void walkTo(Player player, Location target) {
-    npcVersionTemplate.walkTo(this, player, target, player.getLocation().getYaw(), player.getLocation().getPitch());
+  public void moveRelativeDistance(double x, double y, double z, float absoluteYaw, float absolutePitch) {
+    npcVersionTemplate.moveRelativeDistance(this, player.getBukkitPlayer(), x, y, z, absoluteYaw, absolutePitch);
+  }
+
+  public void moveTo(Location target) {
+    double x = target.getX() - currentLocation.getX();
+    double y = target.getY() - currentLocation.getY();
+    double z = target.getZ() - currentLocation.getZ();
+    this.moveRelativeDistance(x, y, z, currentLocation.getYaw(), currentLocation.getPitch());
+    this.location(target);
+  }
+
+  public void teleport(Location location) {
+    this.currentLocation = location;
+    npcVersionTemplate.teleport(this, currentLocation);
+  }
+
+  public void updateTitleLines() {
+    npcVersionTemplate.updateTitleLines(this);
   }
 
   /**
    * Spawns the NPC for the given player and automatically
    * adds it to the NPC repository.
    *
-   * @param player The player who should see the NPC.
-   * @return An instance of the current NPC object.
+   * @return An instance of the current NPC object. {@code null} if the npc could not be spawned.
    */
-  public KelpNpc spawn(KelpPlayer player) {
+  public KelpNpc spawn() {
     if (this.uuid == null) {
       this.uuid = UUID.randomUUID();
     }
 
-    if (this.customName == null) {
-      this.customName = " ";
-    }
-
-    if (this.spawnLocation == null) {
+    if (this.currentLocation == null) {
       logger.log(LogLevel.ERROR, "To spawn an NPC, you have to define a location before." +
               " But there was no location found. Please check your code again.");
+      return null;
     }
 
     this.npcMeta = npcVersionTemplate.spawnNpc(this, player.getBukkitPlayer());
+    isSpawned = true;
+    initiallySpawned = true;
     gameProfile = npcMeta.getGameProfile();
     entityId = npcMeta.getEntityId();
     customName = npcMeta.getOverHeadDisplayName();
-    armorStandEntityIds = npcMeta.getArmorStandEntityIds();
+
+    // execute activities that do something when the npc spawns
+    this.activities.forEach(current -> current.onSpawn(this));
 
     this.kelpNpcRepository.addNpc(this, player);
     return this;
   }
 
   /**
-   * De-Spawns the NPC for the given player. This completely removes the NPC
-   * from the repository and the game. So the NPC won't be rendered by the
-   * player anymore. The title lines will also disappear.
+   * De-Spawns the NPC for the given player. This won't remove it completely
+   * as it can be respawned at any time. If you want to completely remove an
+   * npc, use {@link #remove()}
    *
-   * @param player The player whose NPC should be despawned.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc deSpawn(KelpPlayer player) {
+  public KelpNpc deSpawn() {
+    // execute activities that do something when the npc is removed
+    this.activities.forEach(current -> current.onRemove(this));
+
+    this.isSpawned = false;
     npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
+    Bukkit.getPluginManager().callEvent(new NpcDespawnEvent(this, false));
+    return this;
+  }
+
+  public KelpNpc remove() {
+    // execute activities that do something when the npc is removed
+    this.activities.forEach(current -> current.onRemove(this));
+
+    this.showInTab = false;
+    npcVersionTemplate.updateTab(this, null);
+
+    npcVersionTemplate.deSpawn(this, player.getBukkitPlayer());
+    Bukkit.getPluginManager().callEvent(new NpcDespawnEvent(this, true));
     this.npcMeta = null;
     this.kelpNpcRepository.removeNpc(this, player);
     return this;
+  }
+
+  public void triggerHeartbeatTick() {
+    Lists.newArrayList(this.activities).forEach(current -> {
+      if (current.isFinished()) {
+        this.activities.remove(current);
+        return;
+      }
+      if (!current.hasStarted() && (isSpawned || current.alwaysActive())) {
+        current.start(this);
+      }
+      if (isSpawned || current.alwaysActive()) {
+        current.onTick(this);
+      }
+    });
+  }
+
+  public void triggerInteraction(NpcInteractEvent event) {
+    if (this.onInteract != null) {
+      this.onInteract.accept(event);
+    }
+  }
+
+  public void removeActivity(Class<? extends NpcActivity<?>> activityType) {
+    Lists.newArrayList(this.activities).stream()
+      .filter(activity -> activity.getClass() == activityType)
+      .forEach(currentActivity -> activities.remove(currentActivity));
+  }
+
+  public void playAnimation(NpcAnimation animation) {
+    if (!isSpawned) {
+      return;
+    }
+
+    npcVersionTemplate.playAnimation(this, animation);
   }
 
   /**
@@ -430,15 +583,10 @@ public class KelpNpc {
    * or head rotation, you have to execute this method so that the updates
    * will be sent to the player.
    *
-   * @param player The player who should receive the update packets.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc refresh(KelpPlayer player) {
-    npcVersionTemplate.refresh(this, player.getBukkitPlayer());
-    return this;
-  }
-
-  public KelpNpc updateHeadRotation(Player player) {
+  public KelpNpc refreshMetadata() {
+    npcVersionTemplate.refreshMetadata(this, player.getBukkitPlayer());
     return this;
   }
 
@@ -449,6 +597,8 @@ public class KelpNpc {
    */
   public KelpNpc sneak() {
     this.isSneaking = true;
+    refreshMetadata();
+    Bukkit.getPluginManager().callEvent(new NpcToggleSneakEvent(this));
     return this;
   }
 
@@ -459,6 +609,15 @@ public class KelpNpc {
    */
   public KelpNpc unSneak() {
     this.isSneaking = false;
+    refreshMetadata();
+    Bukkit.getPluginManager().callEvent(new NpcToggleSneakEvent(this));
+    return this;
+  }
+
+  public KelpNpc setSneaking(boolean sneaking) {
+    this.isSneaking = sneaking;
+    refreshMetadata();
+    Bukkit.getPluginManager().callEvent(new NpcToggleSneakEvent(this));
     return this;
   }
 
@@ -486,16 +645,16 @@ public class KelpNpc {
   }
 
   /**
-   * @return The location, where the NPC is spawned/will be spawned.
+   * @return A list of all title lines the NPC has.
    */
-  public Location getSpawnLocation() {
-    return spawnLocation;
+  public List<String> getCurrentTitles() {
+    return titles.get();
   }
 
   /**
    * @return A list of all title lines the NPC has.
    */
-  public List<String> getTitles() {
+  public Supplier<List<String>> getTitles() {
     return titles;
   }
 
@@ -535,20 +694,6 @@ public class KelpNpc {
   }
 
   /**
-   * @return {@code true} if the NPC should imitate the sneak state of its player.
-   */
-  public boolean shouldImitateSneaking() {
-    return imitateSneaking;
-  }
-
-  /**
-   * @return {@code true} if the NPC should always look at the player.
-   */
-  public boolean shouldFollowHeadRotation() {
-    return followHeadRotation;
-  }
-
-  /**
    * @return {@code true} if the NPC is supposed to burn.
    */
   public boolean hasBurningEffect() {
@@ -562,11 +707,64 @@ public class KelpNpc {
     return isInvisible;
   }
 
+  public boolean isSpawned() {
+    return isSpawned;
+  }
+
+  public boolean isInitiallySpawned() {
+    return initiallySpawned;
+  }
+
   /**
    * @return {@code true} if the custom name above the NPC's head should be displayed.
    */
-  public boolean shouldShowCustomName() {
-    return this.showCustomName;
+  public boolean isCustomNameShown() {
+    return this.customNameShown;
+  }
+
+  /**
+   * Checks if the npc is currently in sprint mode.
+   *
+   * @return Whether the npc is currently sprinting.
+   */
+  public boolean isSprinting() {
+    return isSprinting;
+  }
+
+  public boolean isFalling() {
+    return falling;
+  }
+
+  public boolean hasNoClip() {
+    return noClip;
+  }
+
+  public boolean isFlying() {
+    return flying;
+  }
+
+  public boolean isCorpse() {
+    return corpse;
+  }
+
+  public boolean isSleeping() {
+    return sleeping;
+  }
+
+  public KelpItem getHelmet() {
+    return helmet;
+  }
+
+  public KelpItem getChestPlate() {
+    return chestPlate;
+  }
+
+  public KelpItem getBoots() {
+    return boots;
+  }
+
+  public KelpItem getLeggings() {
+    return leggings;
   }
 
   /**
@@ -584,13 +782,6 @@ public class KelpNpc {
   }
 
   /**
-   * @return A list of all entity ids of the armor stands holding the title lines of the NPC.
-   */
-  public Collection<Integer> getArmorStandEntityIds() {
-    return armorStandEntityIds;
-  }
-
-  /**
    * @return The current {@code KelpNpcMeta} object.
    * @see KelpNpcMeta
    */
@@ -598,27 +789,25 @@ public class KelpNpc {
     return npcMeta;
   }
 
-  public Location getCurrentLocation() {
+  public Location getLocation() {
     return currentLocation;
   }
 
-  /**
-   * This method generates a list of y-coordinates, where
-   * the title lines of the NPC should appear.
-   *
-   * @return A map, where the key is the title line id.
-   *         (1 is the nearest to the NPC's head. The higher the number, the higher the y-axis value).
-   *         The value is the y-axis itself.
-   */
-  public Map<Integer, Double> getTitleHeights() {
-    // height 1 nearest to npc
-    Map<Integer, Double> output = Maps.newHashMap();
-    double yAxis = -.3;
-    for (int i = 1; i < 15; i++) {
-      yAxis += .25;
-      output.put(i, yAxis);
+  public KelpPlayer getPlayer() {
+    return player;
+  }
+
+  public void setArmorStandEntityIds(Collection<Integer> armorStandEntityIds) {
+    this.npcMeta.setArmorStandEntityIds(armorStandEntityIds);
+  }
+
+  public double getTitleHeights(int index) {
+    // index 0 nearest to npc
+    double add = 0;
+    for (int i = 0; i < index; i++) {
+      add += .25;
     }
 
-    return output;
+    return add - .1;
   }
 }

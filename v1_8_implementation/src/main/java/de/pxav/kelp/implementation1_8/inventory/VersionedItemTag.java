@@ -39,14 +39,19 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
   @Override
   public ItemStack tagItem(ItemStack itemStack, String key, String value) {
     Preconditions.checkNotNull(itemStack);
+    Preconditions.checkNotNull(key);
+    Preconditions.checkNotNull(value);
     if (itemStack.getType() == Material.AIR) {
       this.logAirError();
       return null;
     }
 
     net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-    NBTTagCompound nbtTagCompound = nmsItemStack.getTag();
+    NBTTagCompound nbtTagCompound = nmsItemStack.getTag() == null
+      ? new NBTTagCompound()
+      : nmsItemStack.getTag();
     nbtTagCompound.setString(key, value);
+    nmsItemStack.setTag(nbtTagCompound);
     return CraftItemStack.asBukkitCopy(nmsItemStack);
   }
 

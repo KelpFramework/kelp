@@ -2,6 +2,7 @@ package de.pxav.kelp.core.inventory.item;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.listener.ClickListener;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
@@ -37,6 +38,14 @@ public class KelpItem {
     this.listenerRepository = listenerRepository;
   }
 
+  public static KelpItem create() {
+    return new KelpItem(
+      KelpPlugin.getInjector().getInstance(ItemVersionTemplate.class),
+      KelpPlugin.getInjector().getInstance(ItemTagVersionTemplate.class),
+      KelpPlugin.getInjector().getInstance(KelpListenerRepository.class)
+    );
+  }
+
   // the material of the item. If none is set, stone will be used
   private KelpMaterial material = KelpMaterial.STONE;
 
@@ -48,11 +57,8 @@ public class KelpItem {
   // have their own item sorting methods.
   private int slot;
 
-  // the inventory where the item is stored in
-  private Inventory parent;
-
   // the display name of the item
-  private String displayName = " ";
+  private String displayName;
 
   // the item description - aka. the item lore.
   // Those are some lines of text below the display name.
@@ -295,8 +301,6 @@ public class KelpItem {
     // make the item unbreakable if needed.
     if (this.unbreakable) {
       itemStack = itemVersionTemplate.makeUnbreakable(itemStack);
-    } else {
-      itemStack = itemVersionTemplate.makeBreakable(itemStack);
     }
 
     // add a flag to cancel interactions by default, if nothing else has been defined
@@ -315,10 +319,6 @@ public class KelpItem {
     }
 
     return itemStack;
-  }
-
-  public Inventory getParent() {
-    return this.parent;
   }
 
   /**
