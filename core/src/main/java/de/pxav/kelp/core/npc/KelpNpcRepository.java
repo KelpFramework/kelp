@@ -100,7 +100,6 @@ public class KelpNpcRepository {
 
             KelpPlayer player = playerRepository.getKelpPlayer(uuid);
             Preconditions.checkNotNull(player);
-            player.sendActionbar("§eTotal Npcs: §7" + npcList.size() + " §8|| §eSpawned NPCs: §7" + npcList.stream().filter(npc -> npc.isSpawned()).count());
 
             // iterate all NPCs of an individual player
             for (KelpNpc kelpNpc : npcList) {
