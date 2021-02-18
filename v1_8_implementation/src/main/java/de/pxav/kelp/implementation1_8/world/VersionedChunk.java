@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.*;
+import de.pxav.kelp.core.world.version.ChunkVersionTemplate;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
 import org.bukkit.entity.Player;

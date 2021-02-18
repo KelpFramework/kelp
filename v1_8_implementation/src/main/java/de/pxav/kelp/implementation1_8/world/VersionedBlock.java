@@ -3,17 +3,10 @@ package de.pxav.kelp.implementation1_8.world;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialContainer;
 import de.pxav.kelp.core.version.Versioned;
-import de.pxav.kelp.core.world.BlockVersionTemplate;
+import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
-import net.minecraft.server.v1_8_R3.Item;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.Player;
 
 @Versioned
 public class VersionedBlock extends BlockVersionTemplate {
