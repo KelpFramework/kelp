@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.player;
 
 import com.google.common.base.Preconditions;
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
@@ -112,6 +113,23 @@ public class KelpPlayer extends LivingKelpEntity {
     this.signPromptVersionTemplate = signPromptVersionTemplate;
     this.chatPromptVersionTemplate = chatPromptVersionTemplate;
     this.anvilPromptVersionTemplate = anvilPromptVersionTemplate;
+  }
+
+  public static KelpPlayer from(UUID player) {
+    KelpPlayerRepository repository = KelpPlugin.getInjector().getInstance(KelpPlayerRepository.class);
+    return repository.getKelpPlayer(player);
+  }
+
+  public static KelpPlayer from(String name) {
+    Player player = Bukkit.getPlayer(name);
+    if (player == null) {
+      return null;
+    }
+    return KelpPlayer.from(player);
+  }
+
+  public static KelpPlayer from(Player player) {
+    return KelpPlayer.from(player.getUniqueId());
   }
 
   public SignPrompt openSignPrompt() {
