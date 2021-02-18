@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.world.version.ChunkVersionTemplate;
 import org.bukkit.Chunk;
 
 public class KelpChunk {

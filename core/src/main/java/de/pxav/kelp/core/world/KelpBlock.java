@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
+import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import org.bukkit.block.Block;
 
 public class KelpBlock {

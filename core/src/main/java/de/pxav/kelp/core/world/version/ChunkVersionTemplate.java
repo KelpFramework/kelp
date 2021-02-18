@@ -1,7 +1,11 @@
-package de.pxav.kelp.core.world;
+package de.pxav.kelp.core.world.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.world.KelpBlock;
+import de.pxav.kelp.core.world.KelpChunk;
+import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.KelpWorld;
 
 import java.util.Collection;
 

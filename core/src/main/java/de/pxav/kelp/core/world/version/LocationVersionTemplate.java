@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.world;
+package de.pxav.kelp.core.world.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 

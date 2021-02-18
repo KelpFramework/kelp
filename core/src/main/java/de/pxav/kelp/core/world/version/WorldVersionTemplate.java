@@ -1,10 +1,11 @@
-package de.pxav.kelp.core.world;
+package de.pxav.kelp.core.world.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.entity.type.DroppedItemEntity;
 import de.pxav.kelp.core.entity.type.ItemDropType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.world.*;
 import org.bukkit.Difficulty;
 
 import java.util.Collection;

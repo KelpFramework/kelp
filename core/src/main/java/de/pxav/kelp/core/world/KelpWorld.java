@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.world.version.WorldVersionTemplate;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
