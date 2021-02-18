@@ -6,6 +6,8 @@ import de.pxav.kelp.core.entity.type.ItemDropType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.*;
+import de.pxav.kelp.core.world.util.ExplosionPower;
+import de.pxav.kelp.core.world.util.WorldType;
 import org.bukkit.Difficulty;
 
 import java.util.Collection;

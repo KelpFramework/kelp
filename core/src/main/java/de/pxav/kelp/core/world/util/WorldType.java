@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.world;
+package de.pxav.kelp.core.world.util;
 
 public enum WorldType {
 
