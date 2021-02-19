@@ -78,6 +78,10 @@ public class KelpChunk {
     return getWorld().getBlockAt(location);
   }
 
+  public boolean equals(KelpChunk compareTo) {
+    return compareTo.getX() == getX() && compareTo.getZ() == getZ();
+  }
+
   public Chunk getBukkitChunk() {
     return bukkitChunk;
   }
