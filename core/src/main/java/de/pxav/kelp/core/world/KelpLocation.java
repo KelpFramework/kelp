@@ -156,6 +156,48 @@ public class KelpLocation implements Serializable {
     return this;
   }
 
+  public KelpLocation addAndCloneX(double x) {
+    return KelpLocation.from(
+      this.worldName,
+      this.x + x,
+      this.y,
+      this.z
+    );
+  }
+
+  public KelpLocation addX(double x) {
+    this.x += x;
+    return this;
+  }
+
+  public KelpLocation addY(double y) {
+    this.y += y;
+    return this;
+  }
+
+  public KelpLocation addAndCloneY(double y) {
+    return KelpLocation.from(
+      this.worldName,
+      this.x,
+      this.y + y,
+      this.z
+    );
+  }
+
+  public KelpLocation addZ(double z) {
+    this.z += z;
+    return this;
+  }
+
+  public KelpLocation addAndCloneZ(double z) {
+    return KelpLocation.from(
+      this.worldName,
+      this.x,
+      this.y,
+      this.z + z
+    );
+  }
+
   public KelpLocation subtractAndClone(double x, double y, double z) {
     return KelpLocation.from(
       this.worldName,
@@ -168,6 +210,48 @@ public class KelpLocation implements Serializable {
   public KelpLocation subtract(double x, double y, double z) {
     this.x -= x;
     this.y -= y;
+    this.z -= z;
+    return this;
+  }
+
+  public KelpLocation subtractAndCloneX(double x) {
+    return KelpLocation.from(
+      this.worldName,
+      this.x - x,
+      this.y,
+      this.z
+    );
+  }
+
+  public KelpLocation subtractX(double x) {
+    this.x -= x;
+    return this;
+  }
+
+  public KelpLocation subtractAndCloneY(double y) {
+    return KelpLocation.from(
+      this.worldName,
+      this.x,
+      this.y - y,
+      this.z
+    );
+  }
+
+  public KelpLocation subtractY(double y) {
+    this.y -= y;
+    return this;
+  }
+
+  public KelpLocation subtractAndCloneZ(double z) {
+    return KelpLocation.from(
+      this.worldName,
+      this.x,
+      this.y,
+      this.z - z
+    );
+  }
+
+  public KelpLocation subtractZ(double z) {
     this.z -= z;
     return this;
   }
