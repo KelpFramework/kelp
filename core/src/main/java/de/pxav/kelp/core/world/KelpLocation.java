@@ -140,7 +140,7 @@ public class KelpLocation implements Serializable {
     return KelpBlock.from(getBukkitLocation().getBlock());
   }
 
-  public KelpLocation addToClone(double x, double y, double z) {
+  public KelpLocation addAndClone(double x, double y, double z) {
     return KelpLocation.from(
       this.worldName,
       this.x + x,
@@ -153,6 +153,22 @@ public class KelpLocation implements Serializable {
     this.x += x;
     this.y += y;
     this.z += z;
+    return this;
+  }
+
+  public KelpLocation subtractAndClone(double x, double y, double z) {
+    return KelpLocation.from(
+      this.worldName,
+      this.x - x,
+      this.y - y,
+      this.z - z
+    );
+  }
+
+  public KelpLocation subtract(double x, double y, double z) {
+    this.x -= x;
+    this.y -= y;
+    this.z -= z;
     return this;
   }
 
