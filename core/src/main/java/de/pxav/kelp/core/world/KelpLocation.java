@@ -373,6 +373,25 @@ public class KelpLocation implements Serializable {
     );
   }
 
+  public double length() {
+    return Math.sqrt(NumberConversions.square(this.x) + NumberConversions.square(this.y) + NumberConversions.square(this.z));
+  }
+
+  public double lengthSquared() {
+    return NumberConversions.square(this.x) + NumberConversions.square(this.y) + NumberConversions.square(this.z);
+  }
+
+  public double distanceSquared(KelpLocation to) {
+    Preconditions.checkNotNull(to, "Cannot measure distance between 'null' and a KelpLocation");
+    if (!to.getWorldName().equalsIgnoreCase(worldName)) {
+      throw new IllegalArgumentException("Cannot measure distance between KelpLocations from differing worlds");
+    }
+    return NumberConversions.square(this.x - o.x) + NumberConversions.square(this.y - o.y) + NumberConversions.square(this.z - o.z);
+  }
+
+  public double distance(KelpLocation to) {
+    return Math.sqrt(this.distanceSquared(to));
+  }
 
   public KelpLocation zeroAxis() {
     setX(0.0D);
