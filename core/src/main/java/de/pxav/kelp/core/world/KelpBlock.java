@@ -26,6 +26,23 @@ public class KelpBlock {
     return versionTemplate.getChunk(this);
   }
 
+  public KelpLocation getLocation() {
+    return versionTemplate.getLocation(this);
+  }
+
+
+  public int getX() {
+    return bukkitBlock.getX();
+  }
+
+  public int getY() {
+    return bukkitBlock.getY();
+  }
+
+  public int getZ() {
+    return bukkitBlock.getZ();
+  }
+
   public KelpMaterial getMaterial() {
     return versionTemplate.getMaterial(this);
   }
