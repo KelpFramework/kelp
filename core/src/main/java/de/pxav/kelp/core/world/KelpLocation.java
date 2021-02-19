@@ -132,6 +132,10 @@ public class KelpLocation implements Serializable {
     this.z = Location.locToBlock(this.z);
   }
 
+  public KelpChunk getChunk() {
+    return KelpChunk.from(getBukkitLocation().getChunk());
+  }
+
   public KelpLocation addToClone(double x, double y, double z) {
     return KelpLocation.from(
       this.worldName,
