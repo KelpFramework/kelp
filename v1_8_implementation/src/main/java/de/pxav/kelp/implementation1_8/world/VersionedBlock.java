@@ -3,6 +3,7 @@ package de.pxav.kelp.implementation1_8.world;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialContainer;
 import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
@@ -11,13 +12,14 @@ import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 @Versioned
 public class VersionedBlock extends BlockVersionTemplate {
 
-  public void f() {
-
-  }
-
   @Override
   public KelpChunk getChunk(KelpBlock block) {
     return KelpChunk.from(block.getBukkitBlock().getChunk());
+  }
+
+  @Override
+  public KelpLocation getLocation(KelpBlock block) {
+    return KelpLocation.from(block.getBukkitBlock().getLocation());
   }
 
   @Override
