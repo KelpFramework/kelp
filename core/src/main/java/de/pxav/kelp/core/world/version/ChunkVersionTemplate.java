@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world.version;
 
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
@@ -9,12 +10,13 @@ import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @KelpVersionTemplate
 public abstract class ChunkVersionTemplate {
 
-  public abstract boolean contains(KelpChunk chunk, KelpBlock block);
+  public abstract boolean contains(KelpChunk chunk, KelpLocation location);
 
   public abstract KelpBlock getBlockAt(KelpChunk chunk, KelpLocation location);
 

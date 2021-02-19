@@ -2,6 +2,7 @@ package de.pxav.kelp.implementation1_8.world;
 
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.application.KelpApplication;
+import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.*;
@@ -12,10 +13,7 @@ import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @Versioned
 @Singleton
@@ -24,7 +22,24 @@ public class VersionedChunk extends ChunkVersionTemplate {
   @Inject private ForcedChunkLoader forcedChunkLoader;
 
   @Override
-  public boolean contains(KelpChunk chunk, KelpBlock block) {
+  public boolean contains(KelpChunk chunk, KelpLocation location) {
+    KelpLocation firstPosition = chunk.getNorthEasternBlock(0).getLocation();
+    KelpLocation secondPosition = chunk.getSouthWesternBlock(256).getLocation();
+
+    double maxX = Math.max(firstPosition.getX(), secondPosition.getX());
+    double minX = Math.min(firstPosition.getX(), secondPosition.getX());
+
+    double maxY = Math.max(firstPosition.getY(), secondPosition.getY());
+    double minY = Math.min(firstPosition.getY(), secondPosition.getY());
+
+    double maxZ = Math.max(firstPosition.getZ(), secondPosition.getZ());
+    double minZ = Math.min(firstPosition.getZ(), secondPosition.getZ());
+
+    if(location.getX() <= maxX && location.getX() >= minX) {
+      if(location.getY() <= maxY && location.getY() >= minY)
+        return location.getZ() <= maxZ && location.getZ() >= minZ;
+    }
+
     return false;
   }
 
@@ -109,7 +124,11 @@ public class VersionedChunk extends ChunkVersionTemplate {
     long seed = chunk.getBukkitChunk().getWorld().getSeed();
     int x = chunk.getX();
     int y = chunk.getZ();
-    return (new Random(seed + ((long) x * x * 4987142) + (x * 5947611L) + (long) y * y * 4392871L + (y * 389711L) ^ 987234911L)).nextInt(10) == 0;
+    return (new Random(
+      seed
+        + ((long) x * x * 4987142) + (x * 5947611L)
+        + (long) y * y * 4392871L + (y * 389711L) ^ 987234911L)
+    ).nextInt(10) == 0;
   }
 
   private CraftChunk craftChunk(KelpChunk chunk) {

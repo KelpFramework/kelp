@@ -42,6 +42,14 @@ public class KelpChunk {
     return versionTemplate.getBlockAt(this, location);
   }
 
+  public boolean contains(KelpLocation location) {
+    return this.versionTemplate.contains(this, location);
+  }
+
+  public boolean contains(KelpBlock block) {
+    return this.versionTemplate.contains(this, block.getLocation());
+  }
+
   public boolean isSlimeChunk() {
     return versionTemplate.isSlimeChunk(this);
   }
