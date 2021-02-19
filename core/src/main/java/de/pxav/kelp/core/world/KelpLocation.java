@@ -341,6 +341,37 @@ public class KelpLocation implements Serializable {
     );
   }
 
+  public KelpLocation add(Vector vector) {
+    this.x += vector.getX();
+    this.y += vector.getY();
+    this.z += vector.getZ();
+    return this;
+  }
+
+  public KelpLocation addAndClone(Vector vector) {
+    return KelpLocation.from(
+      worldName,
+      this.x += vector.getX(),
+      this.y += vector.getY(),
+      this.z += vector.getZ()
+    );
+  }
+
+  public KelpLocation subtract(Vector vector) {
+    this.x -= vector.getX();
+    this.y -= vector.getY();
+    this.z -= vector.getZ();
+    return this;
+  }
+
+  public KelpLocation subtractAndClone(Vector vector) {
+    return KelpLocation.from(
+      worldName,
+      this.x -= vector.getX(),
+      this.y -= vector.getY(),
+      this.z -= vector.getZ()
+    );
+  }
 
 
   public KelpLocation zeroAxis() {
