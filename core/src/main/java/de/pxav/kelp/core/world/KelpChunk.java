@@ -82,6 +82,10 @@ public class KelpChunk {
     return compareTo.getX() == getX() && compareTo.getZ() == getZ();
   }
 
+  public boolean equals(Chunk compareTo) {
+    return compareTo.getX() == getX() && compareTo.getZ() == getZ();
+  }
+
   public Chunk getBukkitChunk() {
     return bukkitChunk;
   }
