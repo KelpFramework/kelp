@@ -62,6 +62,38 @@ public class KelpChunk {
     return KelpLocation.from(getWorld().getName(), getX() << 4, height, getZ() << 4).add(7, 0, 7);
   }
 
+  public KelpChunk getWestEnclosedChunk() {
+    return getNorthWesternBlock(10).getLocation().add(-2, 0, 2).getChunk();
+  }
+
+  public KelpChunk getNorthEnclosedChunk() {
+    return getNorthEasternBlock(10).getLocation().add(-2, 0, -2).getChunk();
+  }
+
+  public KelpChunk getEastEnclosedChunk() {
+    return getNorthEasternBlock(10).getLocation().add(2, 0, 2).getChunk();
+  }
+
+  public KelpChunk getSouthEnclosedChunk() {
+    return getSouthWesternBlock(10).getLocation().add(2, 0, 2).getChunk();
+  }
+
+  public KelpChunk getSouthWestEnclosedChunk() {
+    return getSouthWesternBlock(10).getLocation().add(-2, 0, 2).getChunk();
+  }
+
+  public KelpChunk getNorthWestEnclosedChunk() {
+    return getNorthWesternBlock(10).getLocation().add(-2, 0, -2).getChunk();
+  }
+
+  public KelpChunk getNorthEastEnclosedChunk() {
+    return getNorthEasternBlock(10).getLocation().add(2, 0, -2).getChunk();
+  }
+
+  public KelpChunk getSouthEastEnclosedChunk() {
+    return getSouthEasternBlock(10).getLocation().add(2, 0, 2).getChunk();
+  }
+
   public KelpBlock getNorthEasternBlock(int height) {
     KelpLocation location = KelpLocation.from(
       getWorld().getName(),
