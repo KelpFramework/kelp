@@ -1,6 +1,7 @@
 package de.pxav.kelp.implementation1_8.world;
 
 import com.google.common.collect.Lists;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.*;
@@ -9,12 +10,18 @@ import net.minecraft.server.v1_8_R3.EntityHuman;
 import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
+import java.util.Set;
 
 @Versioned
+@Singleton
 public class VersionedChunk extends ChunkVersionTemplate {
+
+  @Inject private ForcedChunkLoader forcedChunkLoader;
 
   @Override
   public boolean contains(KelpChunk chunk, KelpBlock block) {
@@ -80,6 +87,21 @@ public class VersionedChunk extends ChunkVersionTemplate {
   @Override
   public void unload(KelpChunk chunk) {
     chunk.getBukkitChunk().unload();
+  }
+
+  @Override
+  public void addForceLoadFlag(KelpChunk chunk, Class<? extends KelpApplication> plugin) {
+    forcedChunkLoader.forceLoadChunk(plugin, chunk);
+  }
+
+  @Override
+  public void removeForceLoadFlag(KelpChunk chunk, Class<? extends KelpApplication> plugin) {
+    forcedChunkLoader.removeForceLoadFlag(plugin, chunk);
+  }
+
+  @Override
+  public Set<Class<? extends KelpApplication>> getForceLoadFlagPlugins(KelpChunk chunk) {
+    return forcedChunkLoader.getForceLoadingPluginsOf(chunk);
   }
 
   @Override
