@@ -3,6 +3,8 @@ package de.pxav.kelp.core.world;
 import com.google.common.base.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.util.NumberConversions;
+import org.bukkit.util.Vector;
 
 import java.io.Serializable;
 
@@ -255,6 +257,91 @@ public class KelpLocation implements Serializable {
     this.z -= z;
     return this;
   }
+
+  public Vector getDirection() {
+    Vector vector = new Vector();
+
+    double rotY = this.getPitch();
+    vector.setY(-Math.sin(Math.toRadians(rotY)));
+
+    double xz = Math.cos(Math.toRadians(rotY));
+    double rotX = this.getYaw();
+    vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
+    vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
+
+    return vector;
+  }
+
+  public KelpLocation setDirection(Vector vector) {
+    double _2PI = 6.283185307179586D;
+    double x = vector.getX();
+    double z = vector.getZ();
+    if (x == 0.0D && z == 0.0D) {
+      this.pitch = (float)(vector.getY() > 0.0D ? -90 : 90);
+    } else {
+      double theta = Math.atan2(-x, z);
+      this.yaw = (float)Math.toDegrees((theta + 6.283185307179586D) % 6.283185307179586D);
+      double x2 = NumberConversions.square(x);
+      double z2 = NumberConversions.square(z);
+      double xz = Math.sqrt(x2 + z2);
+      this.pitch = (float)Math.toDegrees(Math.atan(-vector.getY() / xz));
+    }
+    return this;
+  }
+
+  public KelpLocation add(KelpLocation location) {
+    Preconditions.checkNotNull(location, "Cannot add 'null' to a KelpLocation");
+    if (!location.getWorldName().equalsIgnoreCase(getWorldName())) {
+      throw new IllegalArgumentException("Cannot add two locations of differing worlds!");
+    }
+
+    this.x += location.getX();
+    this.y += location.getY();
+    this.z += location.getZ();
+    return this;
+  }
+
+  public KelpLocation addAndClone(KelpLocation location) {
+    Preconditions.checkNotNull(location, "Cannot add 'null' to a KelpLocation");
+    if (!location.getWorldName().equalsIgnoreCase(getWorldName())) {
+      throw new IllegalArgumentException("Cannot add two locations of differing worlds!");
+    }
+
+    return KelpLocation.from(
+      worldName,
+      this.x += location.getX(),
+      this.y += location.getY(),
+      this.z += location.getZ()
+    );
+  }
+
+  public KelpLocation subtract(KelpLocation location) {
+    Preconditions.checkNotNull(location, "Cannot subtract 'null' from a KelpLocation");
+    if (!location.getWorldName().equalsIgnoreCase(getWorldName())) {
+      throw new IllegalArgumentException("Cannot subtract two locations of differing worlds!");
+    }
+
+    this.x -= location.getX();
+    this.y -= location.getY();
+    this.z -= location.getZ();
+    return this;
+  }
+
+  public KelpLocation subtractAndClone(KelpLocation location) {
+    Preconditions.checkNotNull(location, "Cannot subtract 'null' from a KelpLocation");
+    if (!location.getWorldName().equalsIgnoreCase(getWorldName())) {
+      throw new IllegalArgumentException("Cannot subtract two locations of differing worlds!");
+    }
+
+    return KelpLocation.from(
+      worldName,
+      this.x -= location.getX(),
+      this.y -= location.getY(),
+      this.z -= location.getZ()
+    );
+  }
+
+
 
   public KelpLocation zeroAxis() {
     setX(0.0D);
