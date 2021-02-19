@@ -36,9 +36,7 @@ public class KelpChunk {
     return KelpLocation.from(getWorld().getName(), getX() << 4, height, getZ() << 4).add(7, 0, 7);
   }
 
-  //todo rename methods! top left might also mean that its the y=256 block
-
-  public KelpBlock getTopLeftBlock(int height) {
+  public KelpBlock getNorthEasternBlock(int height) {
     KelpLocation location = KelpLocation.from(
       getWorld().getName(),
       getX() * 16 + 15,
@@ -48,7 +46,7 @@ public class KelpChunk {
     return getWorld().getBlockAt(location);
   }
 
-  public KelpBlock getBottomLeftBlock(int height) {
+  public KelpBlock getNorthWesternBlock(int height) {
     KelpLocation location = KelpLocation.from(
       getWorld().getName(),
       getX() * 16,
@@ -58,7 +56,7 @@ public class KelpChunk {
     return getWorld().getBlockAt(location);
   }
 
-  public KelpBlock getTopRightBlock(int height) {
+  public KelpBlock getSouthEasternBlock(int height) {
     KelpLocation location = KelpLocation.from(
       getWorld().getName(),
       getX() * 16 + 15,
@@ -68,7 +66,7 @@ public class KelpChunk {
     return getWorld().getBlockAt(location);
   }
 
-  public KelpBlock getBottomRightBlock(int height) {
+  public KelpBlock getSouthWesternBlock(int height) {
     KelpLocation location = KelpLocation.from(
       getWorld().getName(),
       getX() * 16,
