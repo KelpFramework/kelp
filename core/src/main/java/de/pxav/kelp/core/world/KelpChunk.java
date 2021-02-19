@@ -1,8 +1,11 @@
 package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.world.version.ChunkVersionTemplate;
 import org.bukkit.Chunk;
+
+import java.util.Set;
 
 public class KelpChunk {
 
@@ -28,6 +31,7 @@ public class KelpChunk {
   public int getX() {
     return versionTemplate.getX(this);
   }
+
   public int getZ() {
     return versionTemplate.getZ(this);
   }
@@ -74,6 +78,30 @@ public class KelpChunk {
       getZ() * 16 + 15
     );
     return getWorld().getBlockAt(location);
+  }
+
+  public void load() {
+    versionTemplate.load(this);
+  }
+
+  public void unload() {
+    versionTemplate.unload(this);
+  }
+
+  public boolean isLoaded() {
+    return versionTemplate.isLoaded(this);
+  }
+
+  public void addForceLoadFlag(Class<? extends KelpApplication> plugin) {
+    versionTemplate.addForceLoadFlag(this, plugin);
+  }
+
+  public void removeForceLoadFlag(Class<? extends KelpApplication> plugin) {
+    versionTemplate.removeForceLoadFlag(this, plugin);
+  }
+
+  public Set<Class<? extends KelpApplication>> getForceLoadingPlugins() {
+    return versionTemplate.getForceLoadFlagPlugins(this);
   }
 
   public boolean equals(KelpChunk compareTo) {
