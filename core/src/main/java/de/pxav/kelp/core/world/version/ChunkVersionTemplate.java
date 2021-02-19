@@ -20,7 +20,7 @@ public abstract class ChunkVersionTemplate {
 
   //todo getEntities()
 
-  public abstract Collection<KelpPlayer> getPlayers(KelpChunk chunk, KelpLocation location);
+  public abstract Collection<KelpPlayer> getPlayers(KelpChunk chunk);
 
   public abstract KelpWorld getWorld(KelpChunk chunk);
 

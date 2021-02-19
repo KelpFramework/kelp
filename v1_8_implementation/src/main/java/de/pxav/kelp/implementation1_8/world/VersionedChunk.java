@@ -38,7 +38,7 @@ public class VersionedChunk extends ChunkVersionTemplate {
   }
 
   @Override
-  public Collection<KelpPlayer> getPlayers(KelpChunk chunk, KelpLocation location) {
+  public Collection<KelpPlayer> getPlayers(KelpChunk chunk) {
     Collection<KelpPlayer> output = Lists.newArrayList();
     net.minecraft.server.v1_8_R3.Chunk nmsChunk = craftChunk(chunk).getHandle();
 

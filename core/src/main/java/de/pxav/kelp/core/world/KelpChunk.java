@@ -2,9 +2,11 @@ package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
+import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.version.ChunkVersionTemplate;
 import org.bukkit.Chunk;
 
+import java.util.Collection;
 import java.util.Set;
 
 public class KelpChunk {
@@ -34,6 +36,18 @@ public class KelpChunk {
 
   public int getZ() {
     return versionTemplate.getZ(this);
+  }
+
+  public KelpBlock getBlockAt(KelpLocation location) {
+    return versionTemplate.getBlockAt(this, location);
+  }
+
+  public boolean isSlimeChunk() {
+    return versionTemplate.isSlimeChunk(this);
+  }
+
+  public Collection<KelpPlayer> getPlayers() {
+    return versionTemplate.getPlayers(this);
   }
 
   public KelpLocation getCenter(int height) {
