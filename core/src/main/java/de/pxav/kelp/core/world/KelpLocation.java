@@ -386,11 +386,52 @@ public class KelpLocation implements Serializable {
     if (!to.getWorldName().equalsIgnoreCase(worldName)) {
       throw new IllegalArgumentException("Cannot measure distance between KelpLocations from differing worlds");
     }
-    return NumberConversions.square(this.x - o.x) + NumberConversions.square(this.y - o.y) + NumberConversions.square(this.z - o.z);
+    return NumberConversions.square(
+      this.x - to.x)
+      + NumberConversions.square(this.y - to.y)
+      + NumberConversions.square(this.z - to.z
+    );
   }
 
   public double distance(KelpLocation to) {
     return Math.sqrt(this.distanceSquared(to));
+  }
+
+  public KelpLocation multiply(double multiplier) {
+    this.x *= multiplier;
+    this.y *= multiplier;
+    this.z *= multiplier;
+    return this;
+  }
+
+  public KelpLocation multiplyX(double multiplier) {
+    this.x *= multiplier;
+    return this;
+  }
+
+  public KelpLocation multiplyZ(double multiplier) {
+    this.z *= multiplier;
+    return this;
+  }
+
+  public KelpLocation multiplyXZ(double multiplier) {
+    this.x *= multiplier;
+    this.z *= multiplier;
+    return this;
+  }
+
+  public KelpLocation multiply(Vector multiplier) {
+    this.x *= multiplier.getX();
+    this.y *= multiplier.getY();
+    this.z *= multiplier.getZ();
+    return this;
+  }
+
+  public KelpLocation multiply(KelpLocation multiplier) {
+    this.x *= multiplier.getX();
+    this.y *= multiplier.getY();
+    this.z *= multiplier.getZ();
+    return this;
   }
 
   public KelpLocation zeroAxis() {
