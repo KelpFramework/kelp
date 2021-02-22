@@ -8,7 +8,7 @@ import org.bukkit.util.Vector;
 
 import java.io.Serializable;
 
-public class KelpLocation implements Serializable {
+public class KelpLocation implements Serializable, Cloneable {
 
   private String worldName = "world";
 
