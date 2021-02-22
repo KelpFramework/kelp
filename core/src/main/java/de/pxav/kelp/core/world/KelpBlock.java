@@ -4,6 +4,7 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 
 public class KelpBlock {
 
@@ -30,6 +31,37 @@ public class KelpBlock {
     return versionTemplate.getLocation(this);
   }
 
+  public KelpBlock getBlockBelow() {
+    return getLocation().subtractY(1).getBlock();
+  }
+
+  public KelpBlock getBlockAbove() {
+    return getLocation().addY(1).getBlock();
+  }
+
+  public KelpBlock getSouthernBlock() {
+    return getLocation().addZ(1).getBlock();
+  }
+
+  public KelpBlock getNorthernBlock() {
+    return getLocation().subtractZ(1).getBlock();
+  }
+
+  public KelpBlock getWesternBlock() {
+    return getLocation().subtractX(1).getBlock();
+  }
+
+  public KelpBlock getEasternBlock() {
+    return getLocation().addX(1).getBlock();
+  }
+
+  public KelpBlock getFrontBlock(Vector direction) {
+    return getLocation().add(direction).getBlock();
+  }
+
+  public KelpBlock getBackBlock(Vector direction) {
+    return getLocation().subtract(direction).getBlock();
+  }
 
   public int getX() {
     return bukkitBlock.getX();
