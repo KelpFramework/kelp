@@ -272,6 +272,14 @@ public class KelpLocation implements Serializable {
     return vector;
   }
 
+  public KelpLocation getFrontLocation() {
+    return this.clone().add(getDirection());
+  }
+
+  public KelpLocation getBackLocation() {
+    return this.clone().subtract(getDirection());
+  }
+
   public KelpLocation setDirection(Vector vector) {
     double _2PI = 6.283185307179586D;
     double x = vector.getX();
@@ -454,6 +462,16 @@ public class KelpLocation implements Serializable {
     setYaw(0.0F);
     setPitch(0.0F);
     return this;
+  }
+
+  @Override
+  public KelpLocation clone() {
+    try {
+      return (KelpLocation) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   public Location getBukkitLocation() {
