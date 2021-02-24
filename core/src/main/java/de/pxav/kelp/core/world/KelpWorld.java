@@ -40,7 +40,10 @@ public class KelpWorld {
     return bukkitWorld;
   }
 
-  public WorldType getWorldType() { //todo NULL!!
+  public WorldType getWorldType() {
+    if (this.worldType == null) {
+      this.worldType = versionTemplate.getWorldType(this);
+    }
     return worldType;
   }
 
