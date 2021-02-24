@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.world;
 
 import com.google.common.base.Preconditions;
+import de.pxav.kelp.core.world.util.CardinalDirection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -300,6 +301,36 @@ public class KelpLocation implements Serializable, Cloneable {
   public KelpLocation getFrontLocationKeepHeight(double distance) {
     double yawRadians = Math.PI * getYaw() / 180;
     return this.subtract(distance * Math.sin(yawRadians), 0, -distance * Math.cos(yawRadians));
+  }
+
+  public CardinalDirection getCardinalDirection() {
+    double rotation = (getYaw() - 180) % 360;
+
+    if (rotation < 0) {
+      rotation += 360.0;
+    }
+
+    if (0 <= rotation && rotation < 22.5) {
+      return CardinalDirection.NORTH;
+    } else if (22.5 <= rotation && rotation < 67.5) {
+      return CardinalDirection.NORTH_EAST;
+    } else if (67.5 <= rotation && rotation < 112.5) {
+      return CardinalDirection.EAST;
+    } else if (112.5 <= rotation && rotation < 157.5) {
+      return CardinalDirection.SOUTH_EAST;
+    } else if (157.5 <= rotation && rotation < 202.5) {
+      return CardinalDirection.SOUTH;
+    } else if (202.5 <= rotation && rotation < 247.5) {
+      return CardinalDirection.SOUTH_WEST;
+    } else if (247.5 <= rotation && rotation < 292.5) {
+      return CardinalDirection.WEST;
+    } else if (292.5 <= rotation && rotation < 337.5) {
+      return CardinalDirection.NORTH_WEST;
+    } else if (337.5 <= rotation && rotation < 360.0) {
+      return CardinalDirection.NORTH;
+    } else {
+      return null;
+    }
   }
 
   public KelpLocation setDirection(Vector vector) {
