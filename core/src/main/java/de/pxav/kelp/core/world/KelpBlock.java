@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
+import de.pxav.kelp.core.world.util.CardinalDirection;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
@@ -55,12 +56,56 @@ public class KelpBlock {
     return getLocation().addX(1).getBlock();
   }
 
+  public KelpBlock getNorthEasternBlock() {
+    return getLocation().add(1, 0, -1).getBlock();
+  }
+
+  public KelpBlock getNorthWesternBlock() {
+    return getLocation().add(-1, 0, -1).getBlock();
+  }
+
+  public KelpBlock getSouthWesternBlock() {
+    return getLocation().add(-1, 0, 1).getBlock();
+  }
+
+  public KelpBlock getSouthEasternBlock() {
+    return getLocation().add(1, 0, 1).getBlock();
+  }
+
+  public KelpBlock getRelative(CardinalDirection direction) {
+    switch (direction) {
+      case NORTH:
+        return getNorthernBlock();
+      case NORTH_EAST:
+        return getNorthEasternBlock();
+      case EAST:
+        return getEasternBlock();
+      case SOUTH_EAST:
+        return getSouthEasternBlock();
+      case SOUTH:
+        return getSouthernBlock();
+      case SOUTH_WEST:
+        return getSouthWesternBlock();
+      case WEST:
+        return getWesternBlock();
+      case NORTH_WEST:
+        return getNorthWesternBlock();
+    }
+    return null;
+  }
+
   public KelpBlock getFrontBlock(Vector direction) {
-    return getLocation().add(direction).getBlock();
+    KelpLocation location = getLocation();
+    location.setDirection(direction);
+
+    return getRelative(location.getCardinalDirection());
   }
 
   public KelpBlock getBackBlock(Vector direction) {
-    return getLocation().subtract(direction).getBlock();
+    KelpLocation location = getLocation();
+    location.setDirection(direction.multiply(-1));
+
+    return getRelative(location.getCardinalDirection());
   }
 
   public int getX() {
