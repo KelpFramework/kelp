@@ -5,7 +5,7 @@ import de.pxav.kelp.core.player.bossbar.BossBarColor;
 import de.pxav.kelp.core.player.bossbar.BossBarStyle;
 import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.sound.KelpSound;
-import org.bukkit.*;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -70,7 +70,7 @@ public abstract class PlayerVersionTemplate {
    * @param volume    How loud the sound should be.
    * @param pitch     How strong the sound should be pitched.
    */
-  public abstract void playSound(Player player, KelpSound sound, Location location, float volume, float pitch);
+  public abstract void playSound(Player player, KelpSound sound, KelpLocation location, float volume, float pitch);
 
   /**
    * Sets the player's health.
@@ -87,20 +87,6 @@ public abstract class PlayerVersionTemplate {
    * @return The player's uuid.
    */
   public abstract UUID getUniqueId(Player player);
-
-  /**
-   * @param player The player whose location you want to get
-   * @return The location the player is currently at.
-   */
-  public abstract Location getLocation(Player player);
-
-  /**
-   * Teleports the player to the given location.
-   *
-   * @param player    The player you want to teleport.
-   * @param location  The location you want to teleport the player to.
-   */
-  public abstract void teleport(Player player, Location location);
 
   /**
    * Checks if the player is currently stuck in a cobweb.
@@ -250,7 +236,7 @@ public abstract class PlayerVersionTemplate {
    * @param player The player whose target location you want to update.
    * @param target The location, where the compass should point to.
    */
-  public abstract void setCompassTarget(Player player, Location target);
+  public abstract void setCompassTarget(Player player, KelpLocation target);
 
   /**
    * Gets the compass target of the player.
@@ -260,9 +246,7 @@ public abstract class PlayerVersionTemplate {
    * @param player The player whose compass target you want to set.
    * @return The target location of the player's compass.
    */
-  public abstract Location getCompassTarget(Player player);
-
-  // TODO send raw message, handle conversations (Bukkit conversation API)
+  public abstract KelpLocation getCompassTarget(Player player);
 
   /**
    * Kicks the given player from the server.
@@ -875,7 +859,7 @@ public abstract class PlayerVersionTemplate {
    * @param player The player you want to get the bed spawn location of.
    * @return The spawn location, {@code null} if the player has not slept or location is invalid.
    */
-  public abstract Location getBedSpawnLocation(Player player);
+  public abstract KelpLocation getBedSpawnLocation(Player player);
 
   /**
    * Sends the given player a message into their chat.
