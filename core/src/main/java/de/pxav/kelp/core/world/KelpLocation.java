@@ -3,6 +3,7 @@ package de.pxav.kelp.core.world;
 import com.google.common.base.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
@@ -272,12 +273,33 @@ public class KelpLocation implements Serializable, Cloneable {
     return vector;
   }
 
-  public KelpLocation getFrontLocation() {
+  public KelpLocation getFrontLookLocation() {
     return this.clone().add(getDirection());
   }
 
-  public KelpLocation getBackLocation() {
+
+  public KelpLocation getBackLookLocation() {
     return this.clone().subtract(getDirection());
+  }
+
+  public KelpLocation getBackLocationKeepHeight() {
+    double yawRadians = Math.PI * getYaw() / 180;
+    return this.add(Math.sin(yawRadians), 0, -Math.cos(yawRadians));
+  }
+
+  public KelpLocation getFrontLocationKeepHeight() {
+    double yawRadians = Math.PI * getYaw() / 180;
+    return this.subtract(Math.sin(yawRadians), 0, -Math.cos(yawRadians));
+  }
+
+  public KelpLocation getBackLocationKeepHeight(double distance) {
+    double yawRadians = Math.PI * getYaw() / 180;
+    return this.add(distance * Math.sin(yawRadians), 0, -distance * Math.cos(yawRadians));
+  }
+
+  public KelpLocation getFrontLocationKeepHeight(double distance) {
+    double yawRadians = Math.PI * getYaw() / 180;
+    return this.subtract(distance * Math.sin(yawRadians), 0, -distance * Math.cos(yawRadians));
   }
 
   public KelpLocation setDirection(Vector vector) {
@@ -288,7 +310,7 @@ public class KelpLocation implements Serializable, Cloneable {
       this.pitch = (float)(vector.getY() > 0.0D ? -90 : 90);
     } else {
       double theta = Math.atan2(-x, z);
-      this.yaw = (float)Math.toDegrees((theta + 6.283185307179586D) % 6.283185307179586D);
+      this.yaw = (float)Math.toDegrees((theta + _2PI) % _2PI);
       double x2 = NumberConversions.square(x);
       double z2 = NumberConversions.square(z);
       double xz = Math.sqrt(x2 + z2);
