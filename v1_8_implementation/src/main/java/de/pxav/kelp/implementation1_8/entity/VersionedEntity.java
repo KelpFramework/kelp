@@ -8,6 +8,7 @@ import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.SinceKelpVersion;
 import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.core.world.KelpLocation;
 import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -46,20 +47,20 @@ public class VersionedEntity extends EntityVersionTemplate {
    */
   @Override
   public void spawnEntity(KelpEntity entity) {
-    CraftWorld craftWorld = (CraftWorld) entity.getInitialLocation().getWorld();
+    CraftWorld craftWorld = (CraftWorld) entity.getInitialBukkitLocation().getWorld();
 
     if (entity.getEntityType() == KelpEntityType.DROPPED_ITEM) {
       DroppedItemEntity kelpEntity = (DroppedItemEntity) entity;
       if (kelpEntity.getItemDropType() == ItemDropType.NATURAL) {
-        craftWorld.dropItemNaturally(entity.getInitialLocation(), kelpEntity.getItem().getItemStack());
+        craftWorld.dropItemNaturally(entity.getInitialBukkitLocation(), kelpEntity.getItem().getItemStack());
       } else {
-        craftWorld.dropItem(entity.getInitialLocation(), kelpEntity.getItem().getItemStack());
+        craftWorld.dropItem(entity.getInitialBukkitLocation(), kelpEntity.getItem().getItemStack());
       }
       return;
     }
 
     Entity minecraftEntity = (Entity) entity.getMinecraftEntity();
-    ((Entity) entity.getMinecraftEntity()).setPositionRotation(entity.getInitialLocation().getX(), entity.getInitialLocation().getY(), entity.getInitialLocation().getZ(), entity.getInitialLocation().getYaw(), entity.getInitialLocation().getPitch());
+    ((Entity) entity.getMinecraftEntity()).setPositionRotation(entity.getInitialBukkitLocation().getX(), entity.getInitialBukkitLocation().getY(), entity.getInitialBukkitLocation().getZ(), entity.getInitialBukkitLocation().getYaw(), entity.getInitialBukkitLocation().getPitch());
 
     craftWorld.addEntity(minecraftEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
   }
@@ -76,8 +77,8 @@ public class VersionedEntity extends EntityVersionTemplate {
    * @return The location of the given entity.
    */
   @Override
-  public Location getLocation(org.bukkit.entity.Entity entity) {
-    return entity.getLocation();
+  public KelpLocation getLocation(org.bukkit.entity.Entity entity) {
+    return KelpLocation.from(entity.getLocation());
   }
 
   /**
@@ -175,8 +176,8 @@ public class VersionedEntity extends EntityVersionTemplate {
    * @return {@code true} if the teleport action was successful.
    */
   @Override
-  public boolean teleport(org.bukkit.entity.Entity entity, Location location, PlayerTeleportEvent.TeleportCause teleportCause) {
-    return entity.teleport(location, teleportCause);
+  public boolean teleport(org.bukkit.entity.Entity entity, KelpLocation location, PlayerTeleportEvent.TeleportCause teleportCause) {
+    return entity.teleport(location.getBukkitLocation(), teleportCause);
   }
 
   /**
