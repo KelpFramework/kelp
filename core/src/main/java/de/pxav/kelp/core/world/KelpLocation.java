@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.world.util.CardinalDirection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
@@ -58,6 +59,22 @@ public class KelpLocation implements Serializable, Cloneable {
     location.setWorldName(worldName);
 
     return location;
+  }
+
+  public static KelpLocation from(KelpWorld world, double x, double y, double z, float yaw, float pitch) {
+    return from(world.getName(), x, y, z, yaw, pitch);
+  }
+
+  public static KelpLocation from(KelpWorld world, double x, double y, double z) {
+    return from(world.getName(), x, y, z);
+  }
+
+  public static KelpLocation from(World world, double x, double y, double z, float yaw, float pitch) {
+    return from(world.getName(), x, y, z, yaw, pitch);
+  }
+
+  public static KelpLocation from(World world, double x, double y, double z) {
+    return from(world.getName(), x, y, z);
   }
 
   public static KelpLocation create() {
