@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.entity.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
@@ -12,6 +13,6 @@ import org.bukkit.entity.LivingEntity;
 @KelpVersionTemplate
 public abstract class LivingEntityVersionTemplate {
 
-  public abstract Location getEyeLocation(LivingEntity livingEntity);
+  public abstract KelpLocation getEyeLocation(LivingEntity livingEntity);
 
 }
