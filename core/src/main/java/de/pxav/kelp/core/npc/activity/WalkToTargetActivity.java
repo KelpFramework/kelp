@@ -2,6 +2,7 @@ package de.pxav.kelp.core.npc.activity;
 
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.MovementSpeed;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -9,8 +10,8 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
 
   private Vector direction;
   private double index = .01;
-  private Location startLocation;
-  private Location target;
+  private KelpLocation startLocation;
+  private KelpLocation target;
   private boolean lookToTarget = true;
 
   private boolean lastTick = false;
@@ -19,7 +20,7 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
     return new WalkToTargetActivity();
   }
 
-  public WalkToTargetActivity target(Location target) {
+  public WalkToTargetActivity target(KelpLocation target) {
     this.target = target;
     return this;
   }
@@ -47,13 +48,12 @@ public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
     }
 
     direction.multiply(index);
-    Location newLocation = startLocation.clone().add(direction);
+    KelpLocation newLocation = startLocation.clone().add(direction);
 
     kelpNpc.moveTo(newLocation);
     if (this.lookToTarget) {
       kelpNpc.lookTo(target);
     }
-
 
     direction.normalize();
 

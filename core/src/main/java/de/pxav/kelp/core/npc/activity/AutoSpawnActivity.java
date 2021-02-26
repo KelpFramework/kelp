@@ -2,6 +2,7 @@ package de.pxav.kelp.core.npc.activity;
 
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 
 public class AutoSpawnActivity extends NpcActivity<AutoSpawnActivity> {
@@ -20,7 +21,7 @@ public class AutoSpawnActivity extends NpcActivity<AutoSpawnActivity> {
   @Override
   public void onTick(KelpNpc kelpNpc) {
     KelpPlayer player = kelpNpc.getPlayer();
-    Location npcLocation = kelpNpc.getLocation();
+    KelpLocation npcLocation = kelpNpc.getLocation();
 
     if (player.getLocation().distanceSquared(npcLocation) <= (distanceThreshold * distanceThreshold)
       && !kelpNpc.isSpawned()) {
