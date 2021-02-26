@@ -14,6 +14,7 @@ import de.pxav.kelp.core.npc.activity.WalkToTargetActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.core.world.KelpLocation;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -170,7 +171,7 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
-  public void teleport(KelpNpc npc, Location location) {
+  public void teleport(KelpNpc npc, KelpLocation location) {
     CraftPlayer craftPlayer = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
     PlayerConnection playerConnection = craftPlayer.getHandle().playerConnection;
 
@@ -235,7 +236,8 @@ public class VersionedNpc extends NpcVersionTemplate {
   @Override
   public void updateTitleLines(KelpNpc npc) {
     CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
-    WorldServer nmsWorld = ((CraftWorld) npc.getLocation().getWorld()).getHandle();
+    CraftWorld craftWorld = (CraftWorld) Bukkit.getWorld(npc.getLocation().getWorldName());
+    WorldServer nmsWorld = craftWorld.getHandle();
 
     npc.getNpcMeta().getArmorStandEntityIds().forEach(current -> {
       PacketPlayOutEntityDestroy armorStandDestroyPacket = new PacketPlayOutEntityDestroy(current);
@@ -325,7 +327,7 @@ public class VersionedNpc extends NpcVersionTemplate {
     CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
 
     Location bedLocation = new Location(
-      npc.getLocation().getWorld(),
+      Bukkit.getWorld(npc.getLocation().getWorldName()),
       npc.getLocation().getX(),
       npc.getLocation().getY(),
       npc.getLocation().getZ());
@@ -345,7 +347,7 @@ public class VersionedNpc extends NpcVersionTemplate {
   }
 
   @Override
-  public void sleep(KelpNpc npc, Location bedLocation) {
+  public void sleep(KelpNpc npc, KelpLocation bedLocation) {
     CraftPlayer player = (CraftPlayer) npc.getPlayer().getBukkitPlayer();
 
     BlockPosition blockPosition = new BlockPosition(
@@ -366,8 +368,11 @@ public class VersionedNpc extends NpcVersionTemplate {
     playAnimation(npc, NpcAnimation.LEAVE_BED);
 
     if (npc.isCorpse()) {
-      Material serverMaterial = npc.getLocation().getBlock().getType();
-      player.sendBlockChange(npc.getLocation(), serverMaterial, npc.getLocation().getBlock().getData());
+      Material serverMaterial = npc.getLocation().getBlock().getBukkitBlock().getType();
+      player.sendBlockChange(
+        npc.getLocation().getBukkitLocation(),
+        serverMaterial,
+        npc.getLocation().getBlock().getBukkitBlock().getData());
     }
 
     // walk back to initial location for a more smooth transition
