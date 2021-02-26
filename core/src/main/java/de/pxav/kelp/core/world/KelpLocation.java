@@ -367,6 +367,23 @@ public class KelpLocation implements Serializable, Cloneable {
     return this;
   }
 
+  /**
+   * Creates a new {@link Vector} representing this location.
+   *
+   * @return A new vectors containing the coordinates of this location.
+   */
+  public Vector toVector() {
+    return new Vector(this.x, this.y, this.z);
+  }
+
+  /**
+   * Adds another location to this location. This will add all axis
+   * of the locations but not the facing.
+   *
+   * @param location The location to add to this location.
+   * @throws IllegalArgumentException if the worlds of the both locations are not the same.
+   * @return The new location with the added values.
+   */
   public KelpLocation add(KelpLocation location) {
     Preconditions.checkNotNull(location, "Cannot add 'null' to a KelpLocation");
     if (!location.getWorldName().equalsIgnoreCase(getWorldName())) {
