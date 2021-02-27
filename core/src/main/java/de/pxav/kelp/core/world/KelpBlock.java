@@ -5,6 +5,7 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.util.CardinalDirection;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 /**
@@ -266,6 +267,43 @@ public class KelpBlock {
    */
   public void setMaterial(KelpMaterial material) {
     versionTemplate.setMaterial(this, material);
+  }
+
+  /**
+   * Simulates the application of bone meal on a block.
+   * This means if the block is a sapling for example, it
+   * might grow to a tree or grass might spawn random flowers
+   * and so on.
+   *
+   * This method by default applies the bone meal on the upper side of a block.   */
+  public void applyBoneMeal() {
+    versionTemplate.applyBoneMeal(this, BlockFace.UP);
+  }
+
+  /**
+   * Simulates the application of bone meal on a block.
+   * This means if the block is a sapling for example, it
+   * might grow to a tree or grass might spawn random flowers
+   * and so on.
+   *
+   * @param blockFace The face of the block to apply the bone meal on.
+   */
+  public void applyBoneMeal(BlockFace blockFace) {
+    versionTemplate.applyBoneMeal(this, blockFace);
+  }
+
+  /**
+   * Checks whether bone meal will have an effect on this block.
+   * This means it will check whether the block is a sapling
+   * or a plant that will grow if you right click it with bone
+   * meal. More information about that can be found
+   * <a href="https://minecraft.gamepedia.com/Bone_Meal">in this wiki
+   * article</a>
+   *
+   * @return {@code true} whether bone meal is applicable.
+   */
+  public boolean canApplyBoneMeal() {
+    return versionTemplate.canApplyBoneMeal(this);
   }
 
   /**

@@ -5,6 +5,7 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
+import org.bukkit.block.BlockFace;
 
 /**
  * This version template is used for version-dependent operations
@@ -48,5 +49,28 @@ public abstract class BlockVersionTemplate {
    * @param material  The new material you want the block to have.
    */
   public abstract void setMaterial(KelpBlock block, KelpMaterial material);
+
+  /**
+   * Checks whether bone meal will have an effect on this block.
+   * This means it will check whether the block is a sapling
+   * or a plant that will grow if you right click it with bone
+   * meal. More information about that can be found
+   * <a href="https://minecraft.gamepedia.com/Bone_Meal">in this wiki
+   * article</a>
+   *
+   * @param block The block you want to check the application state of.
+   * @return {@code true} whether bone meal is applicable.
+   */
+  public abstract boolean canApplyBoneMeal(KelpBlock block);
+
+  /**
+   * Simulates the application of bone meal on a block.
+   * This means if the block is a sapling for example, it
+   * might grow to a tree or grass might spawn random flowers
+   * and so on.
+   *
+   * @param block The block you want to simulate the application of.
+   */
+  public abstract void applyBoneMeal(KelpBlock block, BlockFace blockFace);
 
 }
