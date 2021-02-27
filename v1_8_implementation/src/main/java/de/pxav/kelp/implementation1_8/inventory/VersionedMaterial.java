@@ -579,7 +579,6 @@ public class VersionedMaterial extends MaterialVersionTemplate {
     materialRepository.addMaterial(KelpMaterial.LAPIS_BLOCK, Material.LAPIS_BLOCK.toString());
     materialRepository.addMaterial(KelpMaterial.LAPIS_LAZULI, Material.INK_SACK.toString() + ":4");
     materialRepository.addMaterial(KelpMaterial.LAPIS_ORE, Material.LAPIS_ORE.toString());
-    materialRepository.addMaterial(KelpMaterial.LARGE_FERN_UPPER, Material.DOUBLE_PLANT.toString() + ":10");
     materialRepository.addMaterial(KelpMaterial.LARGE_FERN_LOWER, Material.DOUBLE_PLANT.toString() + ":3");
     materialRepository.addMaterial(KelpMaterial.LAVA, Material.LAVA.toString());
     materialRepository.addMaterial(KelpMaterial.LAVA_BUCKET, Material.LAVA_BUCKET.toString());

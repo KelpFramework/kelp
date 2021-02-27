@@ -933,7 +933,6 @@ public enum KelpMaterial {
   LAPIS_LAZULI(KelpVersion.MC_1_8_0),
   LAPIS_ORE(KelpVersion.MC_1_8_0),
   LARGE_FERN_LOWER(KelpVersion.MC_1_8_0),
-  LARGE_FERN_UPPER(KelpVersion.MC_1_8_0),
   LAVA(KelpVersion.MC_1_8_0),
   LAVA_BUCKET(KelpVersion.MC_1_8_0),
   LEAD(KelpVersion.MC_1_8_0),
