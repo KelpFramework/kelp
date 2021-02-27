@@ -2,6 +2,7 @@ package de.pxav.kelp.core.particle.effect;
 
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -15,8 +16,8 @@ import java.util.Collection;
 public class ParticleLineEffect extends ParticleEffect {
 
   private ParticleType particleType;
-  private Location firstPoint;
-  private Location secondPoint;
+  private KelpLocation firstPoint;
+  private KelpLocation secondPoint;
   private double particleDensity;
 
   ParticleLineEffect(ParticleEffectRepository particleEffectRepository) {
@@ -28,12 +29,12 @@ public class ParticleLineEffect extends ParticleEffect {
     return this;
   }
 
-  public ParticleLineEffect firstPoint(Location firstPoint) {
+  public ParticleLineEffect firstPoint(KelpLocation firstPoint) {
     this.firstPoint = firstPoint;
     return this;
   }
 
-  public ParticleLineEffect secondPoint(Location secondPoint) {
+  public ParticleLineEffect secondPoint(KelpLocation secondPoint) {
     this.secondPoint = secondPoint;
     return this;
   }
@@ -50,7 +51,7 @@ public class ParticleLineEffect extends ParticleEffect {
 
   @Override
   protected void playAnimationOnce(Collection<KelpPlayer> player) {
-    Location firstPointBackup = firstPoint.clone();
+    KelpLocation firstPointBackup = firstPoint.clone();
 
     Vector line = secondPoint.clone().toVector().subtract(firstPointBackup.toVector());
     double length = line.length();
