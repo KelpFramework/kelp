@@ -59,12 +59,32 @@ public class VersionedBlock extends BlockVersionTemplate {
     }
   }
 
+  /**
+   * Checks whether bone meal will have an effect on this block.
+   * This means it will check whether the block is a sapling
+   * or a plant that will grow if you right click it with bone
+   * meal. More information about that can be found
+   * <a href="https://minecraft.gamepedia.com/Bone_Meal">in this wiki
+   * article</a>
+   *
+   * @param block The block you want to check the application state of.
+   * @return {@code true} whether bone meal is applicable.
+   */
   @Override
-  public boolean canApplyBoneMeal(KelpBlock kBlock) {
+  public boolean canApplyBoneMeal(KelpBlock block) {
     // kelp material checks!
     return false;
   }
 
+  /**
+   * Simulates the application of bone meal on a block.
+   * This means if the block is a sapling for example, it
+   * might grow to a tree or grass might spawn random flowers
+   * and so on.
+   *
+   * @param kBlock    The block you want to simulate the application of.
+   * @param blockFace The face of the block to apply the bone meal to.
+   */
   @Override
   public void applyBoneMeal(KelpBlock kBlock, BlockFace blockFace) {
     Block block = kBlock.getBukkitBlock();
