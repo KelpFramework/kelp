@@ -75,12 +75,20 @@ public class VersionedBlock extends BlockVersionTemplate {
       || craftBlock(kBlock).getType() == Material.CROPS
       || craftBlock(kBlock).getType() == Material.MELON_STEM
       || craftBlock(kBlock).getType() == Material.PUMPKIN_STEM) {
-        byte data = kBlock.getBukkitBlock().getData();
-        byte newData = (byte) (data + ThreadLocalRandom.current().nextInt(2, 5));
-        if (newData > 7) {
-          newData = (byte) 7;
-        }
-        kBlock.getBukkitBlock().setData(newData);
+
+      // generate a random growth value between 2 and 5 which
+      // is equal to the natural bone meal growth
+      byte data = kBlock.getBukkitBlock().getData();
+      byte newData = (byte) (data + ThreadLocalRandom.current().nextInt(2, 5));
+
+      // a crop can only grow up to age 7, so set
+      // it back there if the value should exceed that number
+      if (newData > 7) {
+        newData = (byte) 7;
+      }
+
+      // update the block data
+      kBlock.getBukkitBlock().setData(newData);
       return;
     }
 
@@ -89,14 +97,22 @@ public class VersionedBlock extends BlockVersionTemplate {
       byte data = block.getData();
       KelpMaterial material;
 
+      // if the block is the upper part of a plant, get
+      // the lower part to fetch the exact item dropped by
+      // this plant
       if (data == 10) {
         KelpBlock baseBlock = kBlock.getBlockBelow();
         byte baseData = baseBlock.getBukkitBlock().getData();
         material = getDoublePlantMaterial(baseData);
+
+      // if the block is the lower part of the plant
+      // immediately get the item material
       } else {
         material = getDoublePlantMaterial(data);
       }
 
+      // if there could not be any material fetched,
+      // return.
       if (material == KelpMaterial.AIR) {
         return;
       }
@@ -115,6 +131,8 @@ public class VersionedBlock extends BlockVersionTemplate {
       && kBlock.getBlockAbove().getMaterial() == KelpMaterial.AIR) {
 
       byte data = kBlock.getBukkitBlock().getData();
+
+      // if it is small grass, build both tall grass blocks
       if (data == 1) {
         block.setType(Material.DOUBLE_PLANT);
         block.setData((byte) 2);
@@ -124,6 +142,7 @@ public class VersionedBlock extends BlockVersionTemplate {
         above.setData((byte) 10);
       }
 
+      // if it is small fern, build both large fern blocks
       if (data == 2) {
         block.setType(Material.DOUBLE_PLANT);
         block.setData((byte) 3);
@@ -135,6 +154,9 @@ public class VersionedBlock extends BlockVersionTemplate {
       return;
     }
 
+    // if a player clicks on a sapling there is a 45% chance
+    // that it will grow by 1 stage. When it is on the second stage,
+    // a real tree will grow
     if (kBlock.getBukkitBlock().getType() == Material.SAPLING) {
       byte data = kBlock.getBukkitBlock().getData();
       boolean grow = MathUtils.perCentChance(45);
@@ -145,6 +167,11 @@ public class VersionedBlock extends BlockVersionTemplate {
 
       boolean spawned = false;
 
+      // if the id is below 8, the tree is too young to
+      // grow immediately, so it is set to the next growth stage.
+
+      // if the id is higher than or equal to 8, try spawning
+      // the tree
       switch (data) {
         case 0: // oak
           kBlock.getBukkitBlock().setData((byte) 8);
@@ -218,6 +245,14 @@ public class VersionedBlock extends BlockVersionTemplate {
 
   }
 
+  /**
+   * Converts the block data of a flower type double plant and converts
+   * it to the corresponding item which is dropped by the plant.
+   *
+   * @param data The data of the plant (either sub id of an item or
+   *             data of a block)
+   * @return The kelp material of the plant.
+   */
   private KelpMaterial getDoublePlantMaterial(byte data) {
     KelpMaterial material = KelpMaterial.AIR;
     switch (data) {
@@ -237,6 +272,13 @@ public class VersionedBlock extends BlockVersionTemplate {
     return material;
   }
 
+  /**
+   * Converts the given kelp block to a craftbukkit
+   * block allowing for better NMS integration.
+   *
+   * @param block The block to convert
+   * @return The final craftbukkit block
+   */
   private CraftBlock craftBlock(KelpBlock block) {
     return (CraftBlock) block.getBukkitBlock();
   }
