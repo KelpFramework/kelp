@@ -1,6 +1,8 @@
 package de.pxav.kelp.core.inventory.material;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.version.KelpVersion;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -930,7 +932,7 @@ public enum KelpMaterial {
   LAPIS_BLOCK(KelpVersion.MC_1_8_0),
   LAPIS_LAZULI(KelpVersion.MC_1_8_0),
   LAPIS_ORE(KelpVersion.MC_1_8_0),
-  LARGE_FERN(KelpVersion.MC_1_8_0),
+  LARGE_FERN_LOWER(KelpVersion.MC_1_8_0),
   LAVA(KelpVersion.MC_1_8_0),
   LAVA_BUCKET(KelpVersion.MC_1_8_0),
   LEAD(KelpVersion.MC_1_8_0),
@@ -1133,6 +1135,27 @@ public enum KelpMaterial {
 
   public KelpVersion since() {
     return since;
+  }
+
+  public static KelpMaterial from(Material bukkitMaterial) {
+    MaterialRepository repository = KelpPlugin.getInjector().getInstance(MaterialRepository.class);
+    return repository.getKelpMaterial(bukkitMaterial.toString());
+  }
+
+  public static KelpMaterial from(Material bukkitMaterial, int subId) {
+    MaterialRepository repository = KelpPlugin.getInjector().getInstance(MaterialRepository.class);
+    return repository.getKelpMaterial(bukkitMaterial.toString(), subId);
+  }
+
+  public static MaterialContainer convert(KelpMaterial kelpMaterial) {
+    MaterialRepository repository = KelpPlugin.getInjector().getInstance(MaterialRepository.class);
+    return repository.getBukkitMaterial(kelpMaterial);
+  }
+
+  public static Material convertUnsafe(KelpMaterial kelpMaterial) {
+    MaterialRepository repository = KelpPlugin.getInjector().getInstance(MaterialRepository.class);
+    String[] materialData = repository.getMaterial(kelpMaterial).split(":");
+    return Material.valueOf(materialData[0]);
   }
 
   /**

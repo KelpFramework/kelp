@@ -7,6 +7,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 /**
  * A class description goes here.
  *
@@ -34,7 +36,7 @@ public class VersionedItem extends ItemVersionTemplate {
   }
 
   @Override
-  public ItemStack setLore(ItemStack itemStack, String itemLore) {
+  public ItemStack setLore(ItemStack itemStack, List<String> itemLore) {
     return null;
   }
 

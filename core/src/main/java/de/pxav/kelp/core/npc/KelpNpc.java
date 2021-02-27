@@ -12,6 +12,7 @@ import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.npc.activity.NpcActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -34,7 +35,7 @@ public class KelpNpc {
 
   private KelpPlayer player;
 
-  private Location currentLocation;
+  private KelpLocation currentLocation;
   private KelpItem itemInHand;
 
   private int entityId;
@@ -99,7 +100,7 @@ public class KelpNpc {
     );
   }
 
-  public KelpNpc location(Location location) {
+  public KelpNpc location(KelpLocation location) {
     this.currentLocation = location;
     return this;
   }
@@ -411,7 +412,7 @@ public class KelpNpc {
     return this;
   }
 
-  public KelpNpc sleep(Location bedLocation) {
+  public KelpNpc sleep(KelpLocation bedLocation) {
     this.sleeping = true;
     npcVersionTemplate.sleep(this, bedLocation);
     return this;
@@ -441,7 +442,7 @@ public class KelpNpc {
    * @param target The location where the NPC should look to.
    * @return An instance of the current NPC object.
    */
-  public KelpNpc lookTo(Location target) {
+  public KelpNpc lookTo(KelpLocation target) {
     double xDiff = target.getX() - currentLocation.getX();
     double yDiff = target.getY() - currentLocation.getY();
     double zDiff = target.getZ() - currentLocation.getZ();
@@ -464,7 +465,7 @@ public class KelpNpc {
     npcVersionTemplate.moveRelativeDistance(this, player.getBukkitPlayer(), x, y, z, absoluteYaw, absolutePitch);
   }
 
-  public void moveTo(Location target) {
+  public void moveTo(KelpLocation target) {
     double x = target.getX() - currentLocation.getX();
     double y = target.getY() - currentLocation.getY();
     double z = target.getZ() - currentLocation.getZ();
@@ -472,7 +473,7 @@ public class KelpNpc {
     this.location(target);
   }
 
-  public void teleport(Location location) {
+  public void teleport(KelpLocation location) {
     this.currentLocation = location;
     npcVersionTemplate.teleport(this, currentLocation);
   }
@@ -789,7 +790,7 @@ public class KelpNpc {
     return npcMeta;
   }
 
-  public Location getLocation() {
+  public KelpLocation getLocation() {
     return currentLocation;
   }
 

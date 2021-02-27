@@ -7,6 +7,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 /**
  * A class description goes here.
  *
@@ -23,7 +25,7 @@ public abstract class ItemVersionTemplate {
 
   public abstract ItemStack setDisplayName(ItemStack itemStack, String displayName);
 
-  public abstract ItemStack setLore(ItemStack itemStack, String itemLore);
+  public abstract ItemStack setLore(ItemStack itemStack, List<String> itemLore);
 
   public abstract ItemStack makeUnbreakable(ItemStack itemStack);
 

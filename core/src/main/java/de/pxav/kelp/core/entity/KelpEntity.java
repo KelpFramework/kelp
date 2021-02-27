@@ -1,10 +1,10 @@
 package de.pxav.kelp.core.entity;
 
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
-import org.bukkit.Bukkit;
+import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.KelpWorld;
 import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
@@ -61,12 +61,21 @@ public class KelpEntity {
     return this;
   }
 
-  public Location getInitialLocation() {
+  public Location getInitialBukkitLocation() {
     return initialLocation;
   }
 
-  public KelpEntity initialLocation(Location currentLocation) {
-    this.initialLocation = currentLocation;
+  public KelpLocation getInitialLocation() {
+    return KelpLocation.from(initialLocation);
+  }
+
+  public KelpEntity initialLocation(KelpLocation currentLocation) {
+    this.initialLocation = currentLocation.getBukkitLocation();
+    return this;
+  }
+
+  public KelpEntity initialLocation(Location location) {
+    this.initialLocation = location;
     return this;
   }
 
@@ -104,7 +113,7 @@ public class KelpEntity {
    *
    * @return The current location of the current entity.
    */
-  public Location getLocation() {
+  public KelpLocation getLocation() {
     return entityVersionTemplate.getLocation(toBukkitEntity());
   }
 
@@ -162,8 +171,8 @@ public class KelpEntity {
    *
    * @return The world where the entity is currently located.
    */
-  public World getWorld() {
-    return entityVersionTemplate.getWorld(toBukkitEntity());
+  public KelpWorld getWorld() {
+    return KelpWorld.from(getLocation().getWorldName());
   }
 
   /**
@@ -183,7 +192,7 @@ public class KelpEntity {
    *
    * @param to The location you want the entity to be teleported to.
    */
-  public KelpEntity teleport(Location to) {
+  public KelpEntity teleport(KelpLocation to) {
     entityVersionTemplate.teleport(toBukkitEntity(), to, PlayerTeleportEvent.TeleportCause.PLUGIN);
     return this;
   }
@@ -198,42 +207,7 @@ public class KelpEntity {
    * @param z The exact value of the location's z axis.
    */
   public KelpEntity teleport(double x, double y, double z) {
-    World world = entityVersionTemplate.getWorld(toBukkitEntity());
-    Location to = new Location(world, x, y, z);
-    teleport(to);
-    return this;
-  }
-
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates. As there is no world passed, this method
-   * will use the current world of the entity.
-   *
-   * @param x The block value of the location's x axis.
-   * @param y The block value of the location's y axis.
-   * @param z The block value of the location's z axis.
-   */
-  public KelpEntity teleport(int x, int y, int z) {
-    World world = entityVersionTemplate.getWorld(toBukkitEntity());
-    Location to = new Location(world, x, y, z);
-    teleport(to);
-    return this;
-  }
-
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates. As there is no world passed, this method
-   * will use the current world of the entity.
-   *
-   * @param x     The block value of the location's x axis.
-   * @param y     The block value of the location's y axis.
-   * @param z     The block value of the location's z axis.
-   * @param yaw   The yaw rotation of the entity.
-   * @param pitch The location's pitch
-   */
-  public KelpEntity teleport(int x, int y, int z, float yaw, float pitch) {
-    World world = entityVersionTemplate.getWorld(toBukkitEntity());
-    Location to = new Location(world, x, y, z, yaw, pitch);
+    KelpLocation to = KelpLocation.from(getWorld(), x, y, z);
     teleport(to);
     return this;
   }
@@ -250,8 +224,7 @@ public class KelpEntity {
    * @param pitch The location's pitch
    */
   public KelpEntity teleport(double x, double y, double z, float yaw, float pitch) {
-    World world = entityVersionTemplate.getWorld(toBukkitEntity());
-    Location to = new Location(world, x, y, z, yaw, pitch);
+    KelpLocation to = KelpLocation.from(getWorld(), x, y, z, yaw, pitch);
     teleport(to);
     return this;
   }
@@ -267,40 +240,8 @@ public class KelpEntity {
    * @param yaw   The yaw rotation of the entity.
    * @param pitch The location's pitch
    */
-  public KelpEntity teleport(World world, double x, double y, double z, float yaw, float pitch) {
-    Location to = new Location(world, x, y, z, yaw, pitch);
-    teleport(to);
-    return this;
-  }
-
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates.
-   *
-   * @param world The world where the entity should be teleported to.
-   * @param x     The block value of the location's x axis.
-   * @param y     The block value of the location's y axis.
-   * @param z     The block value of the location's z axis.
-   * @param yaw   The yaw rotation of the entity.
-   * @param pitch The location's pitch
-   */
-  public KelpEntity teleport(World world, int x, int y, int z, float yaw, float pitch) {
-    Location to = new Location(world, x, y, z, yaw, pitch);
-    teleport(to);
-    return this;
-  }
-
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates.
-   *
-   * @param world The world where the entity should be teleported to.
-   * @param x     The block value of the location's x axis.
-   * @param y     The block value of the location's y axis.
-   * @param z     The block value of the location's z axis.
-   */
-  public KelpEntity teleport(World world, int x, int y, int z) {
-    Location to = new Location(world, x, y, z);
+  public KelpEntity teleport(KelpWorld world, double x, double y, double z, float yaw, float pitch) {
+    KelpLocation to = KelpLocation.from(world, x, y, z, yaw, pitch);
     teleport(to);
     return this;
   }
@@ -314,8 +255,8 @@ public class KelpEntity {
    * @param y     The exact value of the location's y axis.
    * @param z     The exact value of the location's z axis.
    */
-  public KelpEntity teleport(World world, double x, double y, double z) {
-    Location to = new Location(world, x, y, z);
+  public KelpEntity teleport(KelpWorld world, double x, double y, double z) {
+    KelpLocation to = KelpLocation.from(world, x, y, z);
     teleport(to);
     return this;
   }
@@ -332,39 +273,7 @@ public class KelpEntity {
    * @param pitch     The location's pitch
    */
   public KelpEntity teleport(String worldName, double x, double y, double z, float yaw, float pitch) {
-    Location to = new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
-    teleport(to);
-    return this;
-  }
-
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates.
-   *
-   * @param worldName The name of the world where the entity should be teleported to.
-   * @param x         The block value of the location's x axis.
-   * @param y         The block value of the location's y axis.
-   * @param z         The block value of the location's z axis.
-   * @param yaw       The yaw rotation of the entity.
-   * @param pitch     The location's pitch
-   */
-  public KelpEntity teleport(String worldName, int x, int y, int z, float yaw, float pitch) {
-    Location to = new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
-    teleport(to);
-    return this;
-  }
-
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates.
-   *
-   * @param worldName The name of the world where the entity should be teleported to.
-   * @param x         The block value of the location's x axis.
-   * @param y         The block value of the location's y axis.
-   * @param z         The block value of the location's z axis.
-   */
-  public KelpEntity teleport(String worldName, int x, int y, int z) {
-    Location to = new Location(Bukkit.getWorld(worldName), x, y, z);
+    KelpLocation to = KelpLocation.from(worldName, x, y, z, yaw, pitch);
     teleport(to);
     return this;
   }
@@ -379,7 +288,7 @@ public class KelpEntity {
    * @param z         The exact value of the location's z axis.
    */
   public KelpEntity teleport(String worldName, double x, double y, double z) {
-    Location to = new Location(Bukkit.getWorld(worldName), x, y, z);
+    KelpLocation to = KelpLocation.from(worldName, x, y, z);
     teleport(to);
     return this;
   }

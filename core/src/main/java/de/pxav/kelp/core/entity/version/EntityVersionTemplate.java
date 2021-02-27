@@ -4,6 +4,7 @@ import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.SinceKelpVersion;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -46,7 +47,7 @@ public abstract class EntityVersionTemplate {
    * @param entity The entity whose location you want to get.
    * @return The location of the given entity.
    */
-  public abstract Location getLocation(Entity entity);
+  public abstract KelpLocation getLocation(Entity entity);
 
   /**
    * Sets the entity's velocity to the given vector.
@@ -103,14 +104,6 @@ public abstract class EntityVersionTemplate {
   public abstract boolean isOnGround(Entity entity);
 
   /**
-   * Gets the current world of the entity.
-   *
-   * @param entity The entity whose world you want to get.
-   * @return The world where the entity is currently located.
-   */
-  public abstract World getWorld(Entity entity);
-
-  /**
    * Sets the rotation of the given entity. This does not
    * affect the location x, y and z axes.
    *
@@ -128,7 +121,7 @@ public abstract class EntityVersionTemplate {
    * @param teleportCause The cause for the teleportation.
    * @return {@code true} if the teleport action was successful.
    */
-  public abstract boolean teleport(Entity entity, Location location, PlayerTeleportEvent.TeleportCause teleportCause);
+  public abstract boolean teleport(Entity entity, KelpLocation location, PlayerTeleportEvent.TeleportCause teleportCause);
 
   /**
    * Gets all entities within the given radius centered around
