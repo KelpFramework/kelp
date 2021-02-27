@@ -24,19 +24,44 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * This class implements all version-dependent methods
+ * of a {@link KelpBlock}.
+ *
+ * @author pxav
+ */
 @Versioned
 public class VersionedBlock extends BlockVersionTemplate {
 
+  /**
+   * Gets the {@link KelpChunk} the given block is located in.
+   *
+   * @param block The block you want to get the chunk of.
+   * @return The {@link KelpChunk} the given block is located in.
+   */
   @Override
   public KelpChunk getChunk(KelpBlock block) {
     return KelpChunk.from(block.getBukkitBlock().getChunk());
   }
 
+  /**
+   * Gets the {@link KelpLocation} of the given block. This also
+   * contains information like the current world.
+   *
+   * @param block The block you want to get the location of.
+   * @return The {@link KelpLocation} of this world.
+   */
   @Override
   public KelpLocation getLocation(KelpBlock block) {
     return KelpLocation.from(block.getBukkitBlock().getLocation());
   }
 
+  /**
+   * Gets the material of the current block.
+   *
+   * @param block The block you want to get the material of.
+   * @return The {@link KelpMaterial} the given block is made of.
+   */
   @Override
   public KelpMaterial getMaterial(KelpBlock block) {
     // if block has a sub id
@@ -48,6 +73,13 @@ public class VersionedBlock extends BlockVersionTemplate {
     return KelpMaterial.from(block.getBukkitBlock().getType());
   }
 
+  /**
+   * Sets the material of the given block to the given {@link KelpMaterial}.
+   * So if you had an {@link KelpMaterial#AIR} block for example,
+   *
+   * @param block     The block you want to change the material of.
+   * @param material  The new material you want the block to have.
+   */
   @Override
   public void setMaterial(KelpBlock block, KelpMaterial material) {
     MaterialContainer newMaterial = KelpMaterial.convert(material);
