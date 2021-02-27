@@ -69,7 +69,8 @@ public abstract class BlockVersionTemplate {
    * might grow to a tree or grass might spawn random flowers
    * and so on.
    *
-   * @param block The block you want to simulate the application of.
+   * @param block     The block you want to simulate the application of.
+   * @param blockFace The face of the block to apply the bone meal to.
    */
   public abstract void applyBoneMeal(KelpBlock block, BlockFace blockFace);
 
