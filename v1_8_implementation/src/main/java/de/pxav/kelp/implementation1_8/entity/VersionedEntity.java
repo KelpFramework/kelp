@@ -9,6 +9,7 @@ import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.SinceKelpVersion;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.KelpWorld;
 import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -135,17 +136,6 @@ public class VersionedEntity extends EntityVersionTemplate {
   @Override
   public boolean isOnGround(org.bukkit.entity.Entity entity) {
     return entity.isOnGround();
-  }
-
-  /**
-   * Gets the current world of the entity.
-   *
-   * @param entity The entity whose world you want to get.
-   * @return The world where the entity is currently located.
-   */
-  @Override
-  public World getWorld(org.bukkit.entity.Entity entity) {
-    return entity.getWorld();
   }
 
   /**
