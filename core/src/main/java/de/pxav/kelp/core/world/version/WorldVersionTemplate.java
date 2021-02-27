@@ -53,6 +53,7 @@ public abstract class WorldVersionTemplate {
 
   /**
    * Creates an explosion at the given location.
+   *
    * @param world         The world to spawn the explosion at.
    * @param location      The center of the explosion
    * @param power         The power of the explosion. More information on explosion powers can be
@@ -402,7 +403,7 @@ public abstract class WorldVersionTemplate {
   public abstract void setTime(KelpWorld world, long time);
 
   /**
-   * Spawns a strike lightning in the given world at the given location. This
+   * Spawns a lightning in the given world at the given location. This
    * lightning will be visible for all players who are in the world and in range.
    *
    * @param world       The world you want to spawn the lightning on.
