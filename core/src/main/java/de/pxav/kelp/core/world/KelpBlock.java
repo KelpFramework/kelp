@@ -34,6 +34,24 @@ public class KelpBlock {
   }
 
   /**
+   * Gets the {@link KelpWorld} this block is located in.
+   *
+   * @return The world this block is located in.
+   */
+  public KelpWorld getWorld() {
+    return KelpWorld.from(getBukkitBlock().getWorld());
+  }
+
+  /**
+   * Gets the name of the world this block is located in.
+   *
+   * @return The name of the world this block is located in.
+   */
+  public String getWorldName() {
+    return getBukkitBlock().getWorld().getName();
+  }
+
+  /**
    * Gets the {@link KelpChunk} the given block is located in.
    *
    * @return The {@link KelpChunk} the given block is located in.
