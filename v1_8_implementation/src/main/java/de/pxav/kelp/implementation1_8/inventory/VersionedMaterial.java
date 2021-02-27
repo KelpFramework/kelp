@@ -709,7 +709,7 @@ public class VersionedMaterial extends MaterialVersionTemplate {
     materialRepository.addMaterial(KelpMaterial.SUGAR_CANE, Material.SUGAR_CANE.toString());
     materialRepository.addMaterial(KelpMaterial.SUGAR_CANE_BLOCK, Material.SUGAR_CANE_BLOCK.toString());
     materialRepository.addMaterial(KelpMaterial.SUNFLOWER, Material.DOUBLE_PLANT.toString());
-    materialRepository.addMaterial(KelpMaterial.TALL_GRASS, Material.LONG_GRASS.toString());
+    materialRepository.addMaterial(KelpMaterial.TALL_GRASS, Material.DOUBLE_PLANT.toString() + ":2");
     materialRepository.addMaterial(KelpMaterial.TNT, Material.TNT.toString());
     materialRepository.addMaterial(KelpMaterial.TNT_MINECART, Material.EXPLOSIVE_MINECART.toString());
     materialRepository.addMaterial(KelpMaterial.TORCH, Material.TORCH.toString());
