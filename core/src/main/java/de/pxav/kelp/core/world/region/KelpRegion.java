@@ -68,17 +68,17 @@ public abstract class KelpRegion implements Cloneable {
 
   public int[] getBlockDimensions() {
     return new int[] {
-      maxPos.getBlockX() - minPos.getBlockX(),
-      maxPos.getBlockY() - minPos.getBlockY(),
-      maxPos.getBlockZ() - minPos.getBlockZ()
+      maxPos.getBlockX() - minPos.getBlockX() + 1,
+      maxPos.getBlockY() - minPos.getBlockY() + 1,
+      maxPos.getBlockZ() - minPos.getBlockZ() + 1
     };
   }
 
   public double[] getDimensions() {
     return new double[] {
-      maxPos.getX() - minPos.getX(),
-      maxPos.getY() - minPos.getY(),
-      maxPos.getZ() - minPos.getZ()
+      maxPos.getX() - minPos.getX() + 1,
+      maxPos.getY() - minPos.getY() + 1,
+      maxPos.getZ() - minPos.getZ() + 1
     };
   }
 
