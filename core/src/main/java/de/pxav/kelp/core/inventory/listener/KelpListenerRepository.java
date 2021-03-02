@@ -50,8 +50,13 @@ public class KelpListenerRepository {
    */
   public String registerListener(UUID playerFor, ClickListener listener) {
     String listenerId = this.newListenerId();
+
     listeners.put(listenerId, listener);
-    listenerOwners.put(playerFor, listenerId);
+
+    if(playerFor != GLOBAL_LISTENER_ID) {
+      listenerOwners.put(playerFor, listenerId);
+    }
+
     return listenerId;
   }
 
