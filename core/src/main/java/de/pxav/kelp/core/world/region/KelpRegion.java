@@ -1,0 +1,124 @@
+package de.pxav.kelp.core.world.region;
+
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.world.KelpBlock;
+import de.pxav.kelp.core.world.KelpChunk;
+import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.KelpWorld;
+import de.pxav.kelp.core.world.util.KelpBlockFace;
+import org.bukkit.util.Vector;
+
+import java.util.Set;
+
+public abstract class KelpRegion implements Cloneable {
+
+  protected String worldName;
+  protected KelpLocation minPos;
+  protected KelpLocation maxPos;
+
+  public abstract void move(Vector vector);
+
+  public abstract void move(double dx, double dy, double dz);
+
+  public abstract double getVolume();
+
+  public abstract int getBlockVolume();
+
+  public abstract KelpLocation getCenter();
+
+  public abstract boolean intersectsWith(KelpRegion region);
+
+  public abstract Set<KelpBlock> getIntersectionWith(KelpRegion region);
+
+  public abstract Set<KelpBlock> getSurfaceBlocks();
+
+  public abstract Set<KelpBlock> getBlocks();
+
+  public abstract Set<KelpChunk> getChunks();
+
+  public abstract Set<KelpChunk> getLoadedChunks();
+
+  public abstract void expand(double amount);
+
+  public abstract void expand(KelpBlockFace direction, double amount);
+
+  public abstract void expand(double negativeX,
+                              double positiveX,
+                              double negativeY,
+                              double positiveY,
+                              double negativeZ,
+                              double positiveZ);
+
+  public abstract boolean contains(KelpLocation location);
+
+  public boolean contains(KelpPlayer player) {
+    return contains(player.getLocation());
+  }
+
+  public boolean contains(KelpBlock block) {
+    return contains(block.getLocation());
+  }
+
+  public boolean contains(double x, double y, double z) {
+    if (worldName == null) {
+      return false;
+    }
+    return contains(KelpLocation.from(worldName, x, y, z));
+  }
+
+  public int[] getBlockDimensions() {
+    return new int[] {
+      maxPos.getBlockX() - minPos.getBlockX(),
+      maxPos.getBlockY() - minPos.getBlockY(),
+      maxPos.getBlockZ() - minPos.getBlockZ()
+    };
+  }
+
+  public double[] getDimensions() {
+    return new double[] {
+      maxPos.getX() - minPos.getX(),
+      maxPos.getY() - minPos.getY(),
+      maxPos.getZ() - minPos.getZ()
+    };
+  }
+
+  public KelpLocation[] getOuterCorners() {
+    return new KelpLocation[] {
+      minPos,
+      maxPos,
+      KelpLocation.from(getWorld().getName(), minPos.getX(), minPos.getY(), maxPos.getZ()),
+      KelpLocation.from(getWorld().getName(), minPos.getX(), maxPos.getY(), minPos.getZ()),
+      KelpLocation.from(getWorld().getName(), maxPos.getX(), minPos.getY(), minPos.getZ()),
+      KelpLocation.from(getWorld().getName(), minPos.getX(), maxPos.getY(), maxPos.getZ()),
+      KelpLocation.from(getWorld().getName(), maxPos.getX(), maxPos.getY(), minPos.getZ()),
+      KelpLocation.from(getWorld().getName(), maxPos.getX(), minPos.getY(), maxPos.getZ())
+    };
+  }
+
+  public String getWorldName() {
+    return worldName;
+  }
+
+  public void setWorldName(String worldName) {
+    this.worldName = worldName;
+  }
+
+  public KelpWorld getWorld() {
+    if (this.worldName == null) {
+      return null;
+    }
+    return KelpWorld.from(worldName);
+  }
+
+  public KelpLocation getMinPos() {
+    return minPos;
+  }
+
+  public KelpLocation getMaxPos() {
+    return maxPos;
+  }
+
+  @Override
+  public abstract KelpRegion clone();
+
+}
