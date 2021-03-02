@@ -4,18 +4,14 @@ import com.google.common.collect.Lists;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.animation.StaticTextAnimation;
 import de.pxav.kelp.core.animation.TextAnimation;
-import de.pxav.kelp.core.animation.TextAnimationFactory;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.inventory.version.WindowPacketTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.sidebar.type.AnimatedSidebar;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -87,7 +83,7 @@ public class AnimatedInventory extends KelpInventory {
   }
 
   @Override
-  public Inventory render() {
+  public Inventory render(KelpPlayer player) {
     if (this.title == null) {
       this.title = StaticTextAnimation.create().text("§8Inventory");
     }
@@ -100,7 +96,7 @@ public class AnimatedInventory extends KelpInventory {
     }
 
     for (GroupedWidget current : groupedWidgets) {
-      current.render().forEach(item -> {
+      current.render(player).forEach(item -> {
         inventory.setItem(item.getSlot(), item.getItemStack());
       });
     }
@@ -119,7 +115,7 @@ public class AnimatedInventory extends KelpInventory {
     }
 
     for (GroupedWidget current : groupedWidgets) {
-      current.render().forEach(item -> {
+      current.render(toUpdate).forEach(item -> {
         playerInventory.setItem(item.getSlot(), item.getItemStack());
       });
     }

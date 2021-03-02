@@ -25,9 +25,7 @@ import java.util.Map;
  *
  * @author pxav
  */
-public class Pagination implements GroupedWidget {
-
-  private KelpPlayer player;
+public class Pagination extends AbstractWidget<Pagination> implements GroupedWidget {
 
   // the slots which should be used for the pages
   private List<Integer> contentSlots;
@@ -93,9 +91,12 @@ public class Pagination implements GroupedWidget {
 
   public Pagination nextButton(KelpItem nextButton, Runnable onLastPage) {
     this.nextButton = nextButton;
-    nextButton.addListener(player, event -> {
+
+    addClickListener(nextButton, event -> {
+      KelpPlayer player = event.getPlayer();
       Map<Pagination, Integer> playerPages = inventoryRepository.getPlayerPages().getOrDefault(player.getUUID(), Maps.newHashMap());
       int currentPage = playerPages.getOrDefault(this, 0);
+
       if (currentPage >= this.getMaxPage() - 1) {
         playerPages.put(this, currentPage);
         onLastPage.run();
@@ -107,14 +108,18 @@ public class Pagination implements GroupedWidget {
       inventoryRepository.getPlayerPages().put(player.getUUID(), playerPages);
       player.updateKelpInventory();
     });
+
     return this;
   }
 
   public Pagination previousButton(KelpItem previousButton, Runnable onFirstPage) {
     this.previousButton = previousButton;
-    previousButton.addListener(player, event -> {
+
+    addClickListener(previousButton, event -> {
+      KelpPlayer player = event.getPlayer();
       Map<Pagination, Integer> playerPages = inventoryRepository.getPlayerPages().getOrDefault(player.getUUID(), Maps.newHashMap());
       int currentPage = playerPages.getOrDefault(this, 0);
+
       if (currentPage == 0) {
         playerPages.put(this, currentPage);
         onFirstPage.run();
@@ -125,6 +130,7 @@ public class Pagination implements GroupedWidget {
       player.updateKelpInventory();
       inventoryRepository.getPlayerPages().put(player.getUUID(), playerPages);
     });
+
     return this;
   }
 
@@ -149,7 +155,9 @@ public class Pagination implements GroupedWidget {
    * @return The collection of items representing the widget.
    */
   @Override
-  public Collection<KelpItem> render() {
+  public Collection<KelpItem> render(KelpPlayer player) {
+    player = this.player != null ? this.player : player;
+
     Collection<KelpItem> output = Lists.newArrayList();
 
     // Iterate all items and check to which page they belong
@@ -182,27 +190,4 @@ public class Pagination implements GroupedWidget {
 
     return output;
   }
-
-  /**
-   * Sets the player to whom the current widget is currently dedicated.
-   *
-   * @param player The player you want to choose.
-   * @return The current instance of the widget.
-   */
-  @Override
-  public Pagination player(KelpPlayer player) {
-    this.player = player;
-    return this;
-  }
-
-  /**
-   * Gets the player to whom the current widget is dedicated.
-   *
-   * @return The {@code KelpPlayer} - "owner" of the widget.
-   */
-  @Override
-  public KelpPlayer getPlayer() {
-    return this.player;
-  }
-
 }
