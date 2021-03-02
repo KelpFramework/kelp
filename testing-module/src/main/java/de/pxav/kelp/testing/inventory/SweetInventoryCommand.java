@@ -11,7 +11,6 @@ import de.pxav.kelp.core.inventory.type.AnimatedInventory;
 import de.pxav.kelp.core.inventory.type.KelpInventoryFactory;
 import de.pxav.kelp.core.inventory.widget.ItemWidget;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.sound.KelpSound;
 
 /**
  * @author Etrayed
@@ -22,13 +21,26 @@ public class SweetInventoryCommand extends KelpCommand {
 
   private AnimatedInventory inventory;
 
+  private int clickIdx;
+
   @Inject
   public SweetInventoryCommand(KelpInventoryFactory factory) {
     inventory = factory.newAnimatedInventory();
 
-    inventory.addWidget(ItemWidget.create().item(KelpItem.create().material(KelpMaterial.STONE)).addItemListener(event -> {
-      event.getPlayer().sendMessage("You Clicked " + event.getClickedItem().getMaterial());
-      event.getPlayer().playSound(KelpSound.LEVEL_UP);
+    KelpItem widgetItem = KelpItem.create().material(KelpMaterial.STONE).displayName("Hello World");
+
+    inventory.addWidget(ItemWidget.create().item(widgetItem).addItemListener(event -> {
+      String displayName = "Hello World";
+
+      widgetItem.displayName(clickIdx == 0 ? " " : displayName.substring(0, clickIdx));
+
+      event.getPlayer().updateKelpInventory();
+
+      clickIdx++;
+
+      if(clickIdx > displayName.length()) {
+        clickIdx = 0;
+      }
     }));
   }
 
