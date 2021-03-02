@@ -262,6 +262,12 @@ public class KelpItem {
     return addListener(player.getUUID(), listener);
   }
 
+  /**
+   * Adds a global listener, which does not depend on any player.
+   *
+   * @param listener The listener.
+   * @return Instance of the current {@code KelpItem} object.
+   */
   public KelpItem addGlobalListener(ClickListener listener) {
     return addListener(KelpListenerRepository.GLOBAL_LISTENER_ID, listener);
   }
