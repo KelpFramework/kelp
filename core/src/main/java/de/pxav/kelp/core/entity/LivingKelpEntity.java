@@ -2,6 +2,7 @@ package de.pxav.kelp.core.entity;
 
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
@@ -43,7 +44,7 @@ public class LivingKelpEntity extends KelpEntity {
     return bukkitLivingEntity;
   }
 
-  public Location getEyeLocation() {
+  public KelpLocation getEyeLocation() {
     return this.livingEntityVersionTemplate.getEyeLocation(bukkitLivingEntity);
   }
 

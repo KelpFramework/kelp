@@ -305,6 +305,10 @@ public class KelpItem {
       itemStack = itemVersionTemplate.setDisplayName(itemStack, displayName);
     }
 
+    if (this.itemDescription != null && !this.itemDescription.isEmpty()) {
+      itemVersionTemplate.setLore(itemStack, itemDescription);
+    }
+
     // make the item unbreakable if needed.
     if (this.unbreakable) {
       itemStack = itemVersionTemplate.makeUnbreakable(itemStack);

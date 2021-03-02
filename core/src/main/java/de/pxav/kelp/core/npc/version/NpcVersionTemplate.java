@@ -5,6 +5,7 @@ import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcMeta;
 import de.pxav.kelp.core.npc.NpcAnimation;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -52,7 +53,7 @@ public abstract class NpcVersionTemplate {
                                             float absoluteYaw,
                                             float absolutePitch);
 
-  public abstract void teleport(KelpNpc npc, Location location);
+  public abstract void teleport(KelpNpc npc, KelpLocation location);
 
   public abstract void updateCustomName(KelpNpc npc);
 
@@ -62,7 +63,7 @@ public abstract class NpcVersionTemplate {
 
   public abstract void makeCorpse(KelpNpc npc);
 
-  public abstract void sleep(KelpNpc npc, Location bedLocation);
+  public abstract void sleep(KelpNpc npc, KelpLocation bedLocation);
 
   public abstract void wakeUp(KelpNpc npc);
 
@@ -87,6 +88,7 @@ public abstract class NpcVersionTemplate {
    *                this very player.
    */
   public abstract void refreshMetadata(KelpNpc npc, Player player);
+
   public abstract void updateTab(KelpNpc npc, @Nullable GameProfile gameProfile);
 
 }

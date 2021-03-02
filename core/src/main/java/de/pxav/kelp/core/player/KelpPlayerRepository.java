@@ -236,7 +236,7 @@ public class KelpPlayerRepository {
       entityVersionTemplate,
       livingEntityVersionTemplate,
       playerVersionTemplate.getUniqueId(bukkitPlayer),
-      entityVersionTemplate.getLocation(bukkitPlayer),
+      entityVersionTemplate.getLocation(bukkitPlayer).getBukkitLocation(),
       entityVersionTemplate.getEntityId(bukkitPlayer)
     );
   }

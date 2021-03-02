@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.player;
 
 import com.google.common.base.Preconditions;
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
@@ -23,6 +24,7 @@ import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sound.KelpSound;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -112,6 +114,23 @@ public class KelpPlayer extends LivingKelpEntity {
     this.signPromptVersionTemplate = signPromptVersionTemplate;
     this.chatPromptVersionTemplate = chatPromptVersionTemplate;
     this.anvilPromptVersionTemplate = anvilPromptVersionTemplate;
+  }
+
+  public static KelpPlayer from(UUID player) {
+    KelpPlayerRepository repository = KelpPlugin.getInjector().getInstance(KelpPlayerRepository.class);
+    return repository.getKelpPlayer(player);
+  }
+
+  public static KelpPlayer from(String name) {
+    Player player = Bukkit.getPlayer(name);
+    if (player == null) {
+      return null;
+    }
+    return KelpPlayer.from(player);
+  }
+
+  public static KelpPlayer from(Player player) {
+    return KelpPlayer.from(player.getUniqueId());
   }
 
   public SignPrompt openSignPrompt() {
@@ -229,26 +248,26 @@ public class KelpPlayer extends LivingKelpEntity {
   }
 
   public KelpPlayer playSound(KelpSound sound) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, playerVersionTemplate.getLocation(bukkitPlayer), 3, 0);
+    playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), 3, 0);
     return this;
   }
 
-  public KelpPlayer playSound(KelpSound sound, Location location) {
+  public KelpPlayer playSound(KelpSound sound, KelpLocation location) {
     playerVersionTemplate.playSound(bukkitPlayer, sound, location, 3, 0);
     return this;
   }
 
   public KelpPlayer playSound(KelpSound sound, float volume) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, playerVersionTemplate.getLocation(bukkitPlayer), volume, 0);
+    playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), volume, 0);
     return this;
   }
 
   public KelpPlayer playSound(KelpSound sound, float volume, float pitch) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, playerVersionTemplate.getLocation(bukkitPlayer), volume, pitch);
+    playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), volume, pitch);
     return this;
   }
 
-  public KelpPlayer playSound(KelpSound sound, Location location, float volume, float pitch) {
+  public KelpPlayer playSound(KelpSound sound, KelpLocation location, float volume, float pitch) {
     playerVersionTemplate.playSound(bukkitPlayer, sound, location, volume, pitch);
     return this;
   }
@@ -313,7 +332,7 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
-  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, Location location, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
+  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, KelpLocation location, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
     particleVersionTemplate.spawnParticle(this,
       particleType,
       longDistance,
@@ -350,12 +369,6 @@ public class KelpPlayer extends LivingKelpEntity {
   public String getName() {
     return bukkitPlayer.getName();
   }
-
-//  @Override
-//  public KelpPlayer teleport(Location location) {
-//    playerVersionTemplate.teleport(bukkitPlayer, location);
-//    return this;
-//  }
 
   public KelpPlayer setHealth(int health) {
     playerVersionTemplate.setHealth(bukkitPlayer, health);
@@ -408,7 +421,7 @@ public class KelpPlayer extends LivingKelpEntity {
 
   // TODO TAB LIST HEADER AND FOOTER
 
-  public KelpPlayer setCompassTarget(Location target) {
+  public KelpPlayer setCompassTarget(KelpLocation target) {
     playerVersionTemplate.setCompassTarget(bukkitPlayer, target);
     return this;
   }

@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
+
 /**
  * A class description goes here.
  *
@@ -81,8 +83,11 @@ public class VersionedItem extends ItemVersionTemplate {
   }
 
   @Override
-  public ItemStack setLore(ItemStack itemStack, String itemLore) {
-    return null;
+  public ItemStack setLore(ItemStack itemStack, List<String> itemLore) {
+    ItemMeta itemMeta = itemStack.getItemMeta();
+    itemMeta.setLore(itemLore);
+    itemStack.setItemMeta(itemMeta);
+    return itemStack;
   }
 
   @Override

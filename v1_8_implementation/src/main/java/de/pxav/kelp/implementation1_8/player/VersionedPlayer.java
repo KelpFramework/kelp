@@ -17,6 +17,7 @@ import de.pxav.kelp.core.scheduler.synchronize.ServerMainThread;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.core.world.KelpLocation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import net.minecraft.server.v1_8_R3.*;
@@ -150,7 +151,7 @@ public class VersionedPlayer extends PlayerVersionTemplate {
    * @param pitch     How strong the sound should be pitched.
    */
   @Override
-  public void playSound(Player player, KelpSound sound, Location location, float volume, float pitch) {
+  public void playSound(Player player, KelpSound sound, KelpLocation location, float volume, float pitch) {
     Sound bukkitSound = Sound.valueOf(soundRepository.getSound(sound));
     player.playSound(player.getLocation(), bukkitSound, volume, pitch);
   }
@@ -169,31 +170,11 @@ public class VersionedPlayer extends PlayerVersionTemplate {
   }
 
   /**
-   * Teleports the player to the given location.
-   *
-   * @param player    The player you want to teleport.
-   * @param location  The location you want to teleport the player to.
-   */
-  @Override
-  public void teleport(Player player, Location location) {
-    player.teleport(location);
-  }
-
-  /**
    * @param player The player whose UUID you want to get.
    * @return The player's uuid.
    */
   public UUID getUniqueId(Player player) {
     return player.getUniqueId();
-  }
-
-  /**
-   * @param player The player whose location you want to get
-   * @return The location the player is currently at.
-   */
-  @Override
-  public Location getLocation(Player player) {
-    return null;
   }
 
   /**
@@ -378,8 +359,8 @@ public class VersionedPlayer extends PlayerVersionTemplate {
    * @param target The location, where the compass should point to.
    */
   @Override
-  public void setCompassTarget(Player player, Location target) {
-    player.setCompassTarget(target);
+  public void setCompassTarget(Player player, KelpLocation target) {
+    player.setCompassTarget(target.getBukkitLocation());
   }
 
   /**
@@ -391,8 +372,8 @@ public class VersionedPlayer extends PlayerVersionTemplate {
    * @return The target location of the player's compass.
    */
   @Override
-  public Location getCompassTarget(Player player) {
-    return player.getCompassTarget();
+  public KelpLocation getCompassTarget(Player player) {
+    return KelpLocation.from(player.getCompassTarget());
   }
 
   /**
@@ -1135,8 +1116,8 @@ public class VersionedPlayer extends PlayerVersionTemplate {
    * @return The spawn location, {@code null} if the player has not slept or location is invalid.
    */
   @Override
-  public Location getBedSpawnLocation(Player player) {
-    return player.getBedSpawnLocation();
+  public KelpLocation getBedSpawnLocation(Player player) {
+    return KelpLocation.from(player.getBedSpawnLocation());
   }
 
   @Override
