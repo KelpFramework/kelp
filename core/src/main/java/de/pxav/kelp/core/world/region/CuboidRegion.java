@@ -173,16 +173,8 @@ public class CuboidRegion extends KelpRegion {
   }
 
   public CuboidRegion getFace(KelpBlockFace direction) {
-    System.out.println("opposite face: " + direction.getOppositeFace());
-    System.out.println("expand amount: " + -measureBlocks(direction) + 1);
-    System.out.println("expand amount -1: " + -measureBlocks(direction));
-    System.out.println("measure down: " + measureBlocks(KelpBlockFace.DOWN));
-    System.out.println("measure east: " + measureBlocks(KelpBlockFace.EAST));
-    System.out.println("measure north: " + measureBlocks(KelpBlockFace.NORTH));
-    System.out.println("measure up: " + measureBlocks(KelpBlockFace.UP));
-    System.out.println("measure south: " + measureBlocks(KelpBlockFace.SOUTH));
     CuboidRegion output = this.clone();
-    output.expand(direction.getOppositeFace(), -output.measure(direction) + 1);
+    output.expand(direction.getOppositeFace(), -output.measureBlocks(direction) + 1);
     return output;
   }
 
