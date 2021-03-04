@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
  */
 public abstract class KelpInventory {
 
-  public abstract Inventory render();
+  public abstract Inventory render(KelpPlayer player);
 
   public abstract void update(KelpPlayer toUpdate);
 

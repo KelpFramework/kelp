@@ -3,7 +3,6 @@ package de.pxav.kelp.core.inventory.widget;
 import com.google.common.collect.Sets;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.listener.ClickListener;
-import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.Set;
 
@@ -14,9 +13,7 @@ import java.util.Set;
  *
  * @author pxav
  */
-public class ItemWidget implements SimpleWidget {
-
-  private KelpPlayer player;
+public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidget {
 
   // the item to be set into the inventory.
   private KelpItem item;
@@ -65,30 +62,9 @@ public class ItemWidget implements SimpleWidget {
     }
 
     // if the item exists, nothing has to be cached
-    item.addListener(player, listener);
-    return this;
-  }
+    addClickListener(item, listener);
 
-  /**
-   * Sets the player to whom the current widget is currently dedicated.
-   *
-   * @param player The player you want to choose.
-   * @return The current instance of the widget.
-   */
-  @Override
-  public ItemWidget player(KelpPlayer player) {
-    this.player = player;
     return this;
-  }
-
-  /**
-   * Gets the player to whom the current widget is dedicated.
-   *
-   * @return The {@code KelpPlayer} - "owner" of the widget.
-   */
-  @Override
-  public KelpPlayer getPlayer() {
-    return this.player;
   }
 
   /**
@@ -102,9 +78,7 @@ public class ItemWidget implements SimpleWidget {
   public KelpItem render() {
     // add cached listeners which were created when then item
     // did not exist.
-    for (ClickListener listener : listenerCache) {
-      item.addListener(player, listener);
-    }
+    listenerCache.forEach(listener -> addClickListener(item, listener));
 
     return item;
   }

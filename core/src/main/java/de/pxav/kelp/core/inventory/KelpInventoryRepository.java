@@ -63,7 +63,7 @@ public class KelpInventoryRepository {
    * @param player    The player who should see the inventory.
    */
   public void openInventory(KelpInventory inventory, KelpPlayer player) {
-    Inventory renderedInventory = inventory.render();
+    Inventory renderedInventory = inventory.render(player);
     player.getBukkitPlayer().openInventory(renderedInventory);
     boolean animated = false;
 

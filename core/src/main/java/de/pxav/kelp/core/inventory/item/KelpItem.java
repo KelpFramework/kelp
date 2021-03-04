@@ -9,7 +9,6 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -260,9 +259,17 @@ public class KelpItem {
    * @return Instance of the current {@code KelpItem} object.
    */
   public KelpItem addListener(KelpPlayer player, ClickListener listener) {
-    String listenerId = listenerRepository.registerListener(player.getUUID(), listener);
-    this.addTag("listener-" + ThreadLocalRandom.current().nextInt(1, 1000), listenerId);
-    return this;
+    return addListener(player.getUUID(), listener);
+  }
+
+  /**
+   * Adds a global listener, which does not depend on any player.
+   *
+   * @param listener The listener.
+   * @return Instance of the current {@code KelpItem} object.
+   */
+  public KelpItem addGlobalListener(ClickListener listener) {
+    return addListener(KelpListenerRepository.GLOBAL_LISTENER_ID, listener);
   }
 
   /**

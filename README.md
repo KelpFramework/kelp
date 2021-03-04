@@ -125,13 +125,13 @@ There are version implementations for the following version implementations avai
 <dependency>
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>core</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
 ### Gradle
 ```shell script
-compile group: 'com.github.pxav.kelp', name: 'core', version: '0.3.0'
+compile group: 'com.github.pxav.kelp', name: 'core', version: '0.3.1'
 ```
 
 ### Other build tools
