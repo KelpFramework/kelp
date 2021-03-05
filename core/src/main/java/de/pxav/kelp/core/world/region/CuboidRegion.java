@@ -98,7 +98,7 @@ public class CuboidRegion extends KelpRegion {
 
   @Override
   public Set<KelpBlock> getSurfaceBlocks() {
-    Set<KelpBlock> output = Sets.newHashSet();
+    Set<KelpBlock> output = Sets.newConcurrentHashSet();
     output.addAll(getFaceBlocks(KelpBlockFace.UP));
     output.addAll(getFaceBlocks(KelpBlockFace.DOWN));
     output.addAll(getFaceBlocks(KelpBlockFace.EAST));
@@ -110,7 +110,7 @@ public class CuboidRegion extends KelpRegion {
 
   @Override
   public Set<KelpBlock> getBlocks() {
-    Set<KelpBlock> output = Sets.newHashSet();
+    Set<KelpBlock> output = Sets.newConcurrentHashSet();
     for (int y = minPos.getBlockY(); y <= maxPos.getBlockY(); y++) {
       for (int x = minPos.getBlockX(); x <= maxPos.getBlockX(); x++) {
         for (int z = minPos.getBlockZ(); z <= maxPos.getBlockZ(); z++) {
