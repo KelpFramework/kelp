@@ -7,3 +7,4 @@
     - `KelpInventory.render(KelpPlayer)`
     - `GroupedWidget.render(KelpPlayer)`
 * To summarize and cleanup all `Widget` implementations, the abstract class `AbstractWidget<W extends AbstractWidget<?>>` was added. It's responsible for player-specific actions like adding a `ClickListener` to a certain item.
+* Add `/sweetinv` command to testing module demonstrating the new feature
