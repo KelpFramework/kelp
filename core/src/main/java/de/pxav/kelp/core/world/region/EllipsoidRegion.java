@@ -5,6 +5,7 @@ import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
@@ -60,12 +61,12 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public double getVolume() {
-    return 0;
+    return (4d / 3d) * Math.PI * xRadius * yRadius * zRadius;
   }
 
   @Override
   public int getBlockVolume() {
-    return 0;
+    return NumberConversions.floor(getVolume());
   }
 
   public EllipsoidRegion setCenter(KelpLocation center) {
@@ -80,7 +81,14 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public Set<KelpBlock> getSurfaceBlocks() {
-    return null;
+    Set<KelpBlock> output = Sets.newConcurrentHashSet();
+    this.clone().toCuboid()
+      .getBlocks()
+      .parallelStream()
+      .filter(this::contains)
+      .filter(b -> getCostAt(b.getLocation()) > 0.55)
+      .forEach(output::add);
+    return output;
   }
 
   @Override
@@ -121,10 +129,13 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public boolean contains(KelpLocation location) {
-    double length = ((location.getX() - center.getX()) / xRadius) * ((location.getX() - center.getX()) / xRadius)
+    return getCostAt(location) <= 1;
+  }
+
+  public double getCostAt(KelpLocation location) {
+    return ((location.getX() - center.getX()) / xRadius) * ((location.getX() - center.getX()) / xRadius)
       + ((location.getY() - center.getY()) / yRadius) * ((location.getY() - center.getY()) / yRadius)
       + ((location.getZ() - center.getZ()) / zRadius) * ((location.getZ() - center.getZ()) / zRadius);
-    return length <= 1;
   }
 
   public boolean isSphere() {
