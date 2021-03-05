@@ -651,6 +651,10 @@ public class KelpLocation implements Serializable, Cloneable {
     }
   }
 
+  public KelpLocation findMidpoint(KelpLocation to) {
+    return getMinimalLocation(to).add(getMaximalLocation(to)).multiply(0.5);
+  }
+
   /**
    * Sets the yaw and pitch value of this location based on any
    * vector. The length of the vector is ignored for this operation.
@@ -889,6 +893,8 @@ public class KelpLocation implements Serializable, Cloneable {
    * coordinate values (x, y, z) are smaller. The yaw and pitch
    * value is ignored in this calculation.
    *
+   * This method will automatically clone the source location.
+   *
    * @param compareTo The location to compare the current location to.
    * @return The location that is lower in the world grid.
    */
@@ -910,6 +916,8 @@ public class KelpLocation implements Serializable, Cloneable {
    * When a location is 'higher' than another it means that its
    * coordinate values (x, y, z) are bigger. The yaw and pitch
    * value is ignored in this calculation.
+   *
+   * This method will automatically clone the source location.
    *
    * @param compareTo The location to compare the current location to.
    * @return The location that is higher in the world grid.
