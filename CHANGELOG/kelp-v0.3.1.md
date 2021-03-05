@@ -1,5 +1,5 @@
 # v0.3.1
-> Release date: 04.03.2021
+> Release date: 05.03.2021
 
 **Independent Widgets**:
 * Widgets _can_ now independent from players (#44)
