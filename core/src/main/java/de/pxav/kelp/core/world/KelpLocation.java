@@ -111,9 +111,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * when working with the location. This might cause lag to the server.
    *
    * @param worldName The name of the new world for this location.
+   * @return Instance of the current location
    */
-  public void setWorldName(String worldName) {
+  public KelpLocation setWorldName(String worldName) {
     this.worldName = worldName;
+    return this;
   }
 
   /**
@@ -129,9 +131,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's exact value on the world's X-axis.
    *
    * @param x The new value on the world's X-axis for the location.
+   * @return Instance of the current location
    */
-  public void setX(double x) {
+  public KelpLocation setX(double x) {
     this.x = x;
+    return this;
   }
 
   /**
@@ -147,9 +151,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's exact value on the world's Y-axis (height).
    *
    * @param y The new value on the world's Y-axis for the location.
+   * @return Instance of the current location
    */
-  public void setY(double y) {
+  public KelpLocation setY(double y) {
     this.y = y;
+    return this;
   }
 
   /**
@@ -165,9 +171,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's exact value on the world's Y-axis.
    *
    * @param z The new value on the world's Y-axis for the location.
+   * @return Instance of the current location
    */
-  public void setZ(double z) {
+  public KelpLocation setZ(double z) {
     this.z = z;
+    return this;
   }
 
   /**
@@ -194,9 +202,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's yaw (rotation around the y-Axis).
    *
    * @param yaw The new yaw to set for this location.
+   * @return Instance of the current location
    */
-  public void setYaw(float yaw) {
+  public KelpLocation setYaw(float yaw) {
     this.yaw = yaw;
+    return this;
   }
 
   /**
@@ -218,9 +228,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the locations pitch. This is the angle in which the entity is facing up or down.
    *
    * @param pitch The new pitch for the location.
+   * @return Instance of the current location
    */
-  public void setPitch(float pitch) {
+  public KelpLocation setPitch(float pitch) {
     this.pitch = pitch;
+    return this;
   }
 
   /**
@@ -263,9 +275,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * so be careful if you still need the exact value.
    *
    * @param x The new block x-value of this location.
+   * @return Instance of the current location
    */
-  public void setBlockX(double x) {
+  public KelpLocation setBlockX(double x) {
     this.x = Location.locToBlock(this.x);
+    return this;
   }
 
   /**
@@ -275,9 +289,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * so be careful if you still need the exact value.
    *
    * @param y The new block y-value of this location.
+   * @return Instance of the current location
    */
-  public void setBlockY(double y) {
+  public KelpLocation setBlockY(double y) {
     this.y = Location.locToBlock(this.y);
+    return this;
   }
 
   /**
@@ -287,9 +303,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * so be careful if you still need the exact value.
    *
    * @param z The new block z-value of this location.
+   * @return Instance of the current location
    */
-  public void setBlockZ(double z) {
+  public KelpLocation setBlockZ(double z) {
     this.z = Location.locToBlock(this.z);
+    return this;
   }
 
   /**
@@ -834,6 +852,13 @@ public class KelpLocation implements Serializable, Cloneable {
     this.z *= multiplier.getZ();
     return this;
   }
+//
+//  public KelpLocation getMinimalLocation(KelpLocation compareTo) {
+//    double minX = Math.max(compareTo.getX(), getX());
+//    double minY = Math.max(compareTo.getY(), getY());
+//    double minZ = Math.max(compareTo.getZ(), getZ());
+//    return this.clone().setX(minX);
+//  }
 
   /**
    * Zeros all axis of the location. This sets the x, y, and z
