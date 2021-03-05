@@ -95,6 +95,10 @@ public class KelpLocation implements Serializable, Cloneable {
     return new KelpLocation();
   }
 
+  public static double magnitude(double x, double y, double z) {
+    return (x * x) + (y * y) + (z * z);
+  }
+
   /**
    * Gets the name of the world this location is valid for.
    *
