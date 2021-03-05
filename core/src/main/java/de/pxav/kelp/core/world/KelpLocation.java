@@ -852,13 +852,49 @@ public class KelpLocation implements Serializable, Cloneable {
     this.z *= multiplier.getZ();
     return this;
   }
-//
-//  public KelpLocation getMinimalLocation(KelpLocation compareTo) {
-//    double minX = Math.max(compareTo.getX(), getX());
-//    double minY = Math.max(compareTo.getY(), getY());
-//    double minZ = Math.max(compareTo.getZ(), getZ());
-//    return this.clone().setX(minX);
-//  }
+
+  /**
+   * Compares the current location with the given location
+   * and returns the location that is lower in the world's grid.
+   * When a location is 'lower' than another it means that its
+   * coordinate values (x, y, z) are smaller. The yaw and pitch
+   * value is ignored in this calculation.
+   *
+   * @param compareTo The location to compare the current location to.
+   * @return The location that is lower in the world grid.
+   */
+  public KelpLocation getMinimalLocation(KelpLocation compareTo) {
+    double minX = Math.min(compareTo.getX(), getX());
+    double minY = Math.min(compareTo.getY(), getY());
+    double minZ = Math.min(compareTo.getZ(), getZ());
+
+    return this.clone()
+      .setX(minX)
+      .setY(minY)
+      .setZ(minZ);
+  }
+
+
+  /**
+   * Compares the current location with the given location
+   * and returns the location that is higher in the world's grid.
+   * When a location is 'higher' than another it means that its
+   * coordinate values (x, y, z) are bigger. The yaw and pitch
+   * value is ignored in this calculation.
+   *
+   * @param compareTo The location to compare the current location to.
+   * @return The location that is higher in the world grid.
+   */
+  public KelpLocation getMaximalLocation(KelpLocation compareTo) {
+    double maxX = Math.max(compareTo.getX(), getX());
+    double maxY = Math.max(compareTo.getY(), getY());
+    double maxZ = Math.max(compareTo.getZ(), getZ());
+
+    return this.clone()
+      .setX(maxX)
+      .setY(maxY)
+      .setZ(maxZ);
+  }
 
   /**
    * Zeros all axis of the location. This sets the x, y, and z
