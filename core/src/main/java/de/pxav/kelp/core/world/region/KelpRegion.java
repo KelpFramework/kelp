@@ -118,6 +118,10 @@ public abstract class KelpRegion implements Cloneable {
     return CuboidRegion.create(minPos, maxPos);
   }
 
+  public EllipsoidRegion toEllipsoid() {
+    return EllipsoidRegion.create(minPos, maxPos);
+  }
+
   @Override
   public abstract KelpRegion clone();
 
