@@ -46,7 +46,11 @@ public class CuboidRegion extends KelpRegion {
   }
 
   @Override
-  public boolean contains(KelpLocation location) {//todo world check
+  public boolean contains(KelpLocation location) {
+    if (!worldName.equalsIgnoreCase(location.getWorldName())) {
+      return false;
+    }
+
     // X
     double maxX = Math.max(this.minPos.getX(), this.maxPos.getX());
     double minX = Math.min(this.minPos.getX(), this.maxPos.getX());
