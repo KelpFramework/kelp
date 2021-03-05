@@ -36,6 +36,18 @@ public class EllipsoidRegion extends KelpRegion {
     return region;
   }
 
+  public static EllipsoidRegion create(KelpLocation pos1, KelpLocation pos2) {
+    EllipsoidRegion region = new EllipsoidRegion();
+    region.maxPos = pos1.getMaximalLocation(pos2);
+    region.minPos = pos1.getMinimalLocation(pos2);
+
+    region.setCenter(pos1.findMidpoint(pos2));
+    region.setXRadius(Math.abs(region.minPos.getX() - region.maxPos.getX()) * 0.5);
+    region.setYRadius(Math.abs(region.minPos.getY() - region.maxPos.getY()) * 0.5);
+    region.setZRadius(Math.abs(region.minPos.getZ() - region.maxPos.getZ()) * 0.5);
+    return region;
+  }
+
   @Override
   public void move(Vector vector) {
 
@@ -84,12 +96,12 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public Set<KelpChunk> getChunks() {
-    return null;
+    return toCuboid().getChunks();
   }
 
   @Override
   public Set<KelpChunk> getLoadedChunks() {
-    return null;
+    return toCuboid().getLoadedChunks();
   }
 
   @Override
