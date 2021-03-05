@@ -51,12 +51,12 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public void move(Vector vector) {
-
+    center.add(vector);
   }
 
   @Override
   public void move(double dx, double dy, double dz) {
-
+    center.add(new Vector(dx, dy, dz));
   }
 
   @Override
@@ -114,17 +114,36 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public void expand(double amount) {
-
+    xRadius += amount;
+    yRadius += amount;
+    zRadius += amount;
   }
 
   @Override
   public void expand(KelpBlockFace direction, double amount) {
-
+    switch (direction) {
+      case UP:
+      case DOWN:
+        yRadius += amount / 2;
+        break;
+      case EAST:
+      case WEST:
+        xRadius += amount / 2;
+        break;
+      case NORTH:
+      case SOUTH:
+        zRadius += amount / 2;
+        break;
+      default:
+        throw new IllegalArgumentException("Error when expanding EllipsoidRegion: BlockFace must be one of UP, DOWN, NORTH, SOUTH, EAST, WEST");
+    }
   }
 
   @Override
   public void expand(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {
-
+    this.xRadius = positiveX + negativeX;
+    this.yRadius = positiveY + negativeY;
+    this.zRadius = positiveZ + negativeZ;
   }
 
   @Override
