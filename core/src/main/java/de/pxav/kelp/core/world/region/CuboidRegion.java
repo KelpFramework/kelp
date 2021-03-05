@@ -46,7 +46,7 @@ public class CuboidRegion extends KelpRegion {
   }
 
   @Override
-  public boolean contains(KelpLocation location) {
+  public boolean contains(KelpLocation location) {//todo world check
     // X
     double maxX = Math.max(this.minPos.getX(), this.maxPos.getX());
     double minX = Math.min(this.minPos.getX(), this.maxPos.getX());
@@ -72,14 +72,24 @@ public class CuboidRegion extends KelpRegion {
     return this.minPos.clone().add(this.maxPos).multiply(0.5);
   }
 
-  @Override
-  public boolean intersectsWith(KelpRegion region) {
-    return false;
+  public boolean hasCuboidIntersection(CuboidRegion region) {
+    if (!region.getWorldName().equalsIgnoreCase(worldName)) {
+      return false;
+    }
+
+    return (!(minPos.getX() > region.getMaxPos().getX() || region.getMinPos().getX() > maxPos.getX()
+      || minPos.getY() > region.getMaxPos().getY() || region.getMinPos().getY() > maxPos.getY()
+      || minPos.getZ() > region.getMaxPos().getZ() || region.getMinPos().getZ() > maxPos.getZ()));
   }
 
-  @Override
-  public Set<KelpBlock> getIntersectionWith(KelpRegion region) {
-    return null;
+  public CuboidRegion cuboidIntersection(CuboidRegion region) {
+    if (!hasCuboidIntersection(region)) {
+      return null;
+    }
+
+    return CuboidRegion.create(
+      getMinPos().getMaximalLocation(region.getMinPos()),
+      getMaxPos().getMinimalLocation(region.getMaxPos()));
   }
 
   @Override

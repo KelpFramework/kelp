@@ -26,10 +26,6 @@ public abstract class KelpRegion implements Cloneable {
 
   public abstract KelpLocation getCenter();
 
-  public abstract boolean intersectsWith(KelpRegion region);
-
-  public abstract Set<KelpBlock> getIntersectionWith(KelpRegion region);
-
   public abstract Set<KelpBlock> getSurfaceBlocks();
 
   public abstract Set<KelpBlock> getBlocks();
