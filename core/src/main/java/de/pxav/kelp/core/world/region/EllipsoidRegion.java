@@ -81,24 +81,71 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public Set<KelpBlock> getSurfaceBlocks() {
-    Set<KelpBlock> output = Sets.newConcurrentHashSet();
-    this.clone().toCuboid()
-      .getBlocks()
-      .parallelStream()
-      .filter(this::contains)
-      .filter(b -> getCostAt(b.getLocation()) > 0.55)
-      .forEach(output::add);
-    return output;
+    return getBlocks(true);
   }
 
   @Override
   public Set<KelpBlock> getBlocks() {
+    return getBlocks(false);
+  }
+
+  private Set<KelpBlock> getBlocks(boolean surface) {
     Set<KelpBlock> output = Sets.newConcurrentHashSet();
-    this.clone().toCuboid()
-      .getBlocks()
-      .parallelStream()
-      .filter(this::contains)
-      .forEach(output::add);
+    double rX = xRadius + 0.5;
+    double rY = yRadius + 0.5;
+    double rZ = zRadius + 0.5;
+
+    final double invRadiusX = 1 / rX;
+    final double invRadiusY = 1 / rY;
+    final double invRadiusZ = 1 / rZ;
+
+    final int ceilRadiusX = (int) Math.ceil(rX);
+    final int ceilRadiusY = (int) Math.ceil(rY);
+    final int ceilRadiusZ = (int) Math.ceil(rZ);
+
+    double nextXn = 0;
+    forX: for (int x = 0; x <= ceilRadiusX; ++x) {
+      final double xn = nextXn;
+      nextXn = (x + 1) * invRadiusX;
+      double nextYn = 0;
+      forY: for (int y = 0; y <= ceilRadiusY; ++y) {
+        final double yn = nextYn;
+        nextYn = (y + 1) * invRadiusY;
+        double nextZn = 0;
+        forZ: for (int z = 0; z <= ceilRadiusZ; ++z) {
+          final double zn = nextZn;
+          nextZn = (z + 1) * invRadiusZ;
+
+          double magnitude = KelpLocation.magnitude(xn, yn, zn);
+          if (magnitude > 1) {
+            if (z == 0) {
+              if (y == 0) {
+                break forX;
+              }
+              break forY;
+            }
+            break forZ;
+          }
+
+          if (surface) {
+            if (KelpLocation.magnitude(nextXn, yn, zn) <= 1
+              && KelpLocation.magnitude(xn, nextYn, zn) <= 1
+              && KelpLocation.magnitude(xn, yn, nextZn) <= 1) {
+              continue;
+            }
+          }
+
+          output.add(center.clone().add(x, y, z).getBlock());
+          output.add(center.clone().add(-x, y, z).getBlock());
+          output.add(center.clone().add(x, -y, z).getBlock());
+          output.add(center.clone().add(x, y, -z).getBlock());
+          output.add(center.clone().add(-x, -y, z).getBlock());
+          output.add(center.clone().add(x, -y, -z).getBlock());
+          output.add(center.clone().add(-x, y, -z).getBlock());
+          output.add(center.clone().add(-x, -y, -z).getBlock());
+        }
+      }
+    }
     return output;
   }
 
