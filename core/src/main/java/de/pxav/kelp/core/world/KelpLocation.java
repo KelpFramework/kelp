@@ -348,6 +348,21 @@ public class KelpLocation implements Serializable, Cloneable {
   }
 
   /**
+   * Adds the given value to all coordinate values of this location.
+   * This means that all axis {@code x, y and z} will grow
+   * by {@code value}.
+   *
+   * @param value The value to add to all location coordinates.
+   * @return The current location object with the added values.
+   */
+  public KelpLocation add(double value) {
+    this.x += value;
+    this.y += value;
+    this.z += value;
+    return this;
+  }
+
+  /**
    * Only adds the x-coordinate of this location.
    * Other coordinates are not affected by this method.
    *
@@ -411,6 +426,20 @@ public class KelpLocation implements Serializable, Cloneable {
     this.x -= x;
     this.y -= y;
     this.z -= z;
+    return this;
+  }
+
+  /**
+   * Subtracts the given value from all the locations coordinates.
+   * So all axis {@code x, y and z} will be smaller by {@code value}.
+   *
+   * @param value The value to subtract from all coordinate values.
+   * @return The current location object with the subtracted values.
+   */
+  public KelpLocation subtract(double value) {
+    this.x -= value;
+    this.y -= value;
+    this.z -= value;
     return this;
   }
 
