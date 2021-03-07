@@ -12,6 +12,8 @@ import java.util.Set;
 
 public class EllipsoidRegion extends KelpRegion {
 
+  private static final double FOUR_THIRDS = 1.33333333333333333333d;
+
   private KelpLocation center;
   private double xRadius;
   private double yRadius;
@@ -61,7 +63,7 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public double getVolume() {
-    return (4d / 3d) * Math.PI * xRadius * yRadius * zRadius;
+    return FOUR_THIRDS * Math.PI * xRadius * yRadius * zRadius;
   }
 
   @Override
