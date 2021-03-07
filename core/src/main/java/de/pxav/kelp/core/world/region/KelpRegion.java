@@ -125,4 +125,8 @@ public abstract class KelpRegion implements Cloneable {
   @Override
   public abstract KelpRegion clone();
 
+  public abstract boolean equals(Object object);
+
+  public abstract int hashCode();
+
 }
