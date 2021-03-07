@@ -11,6 +11,7 @@ import de.pxav.kelp.core.world.version.WorldVersionTemplate;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -638,6 +639,25 @@ public class KelpWorld {
   public KelpWorld strikeLightningEffect(KelpLocation location) {
     versionTemplate.strikeLightning(this, location, true);
     return this;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+
+    if (!(object instanceof KelpWorld)) {
+      return false;
+    }
+
+    KelpWorld world = (KelpWorld) object;
+    return world.hashCode() == this.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return getUUID().hashCode();
   }
 
 }
