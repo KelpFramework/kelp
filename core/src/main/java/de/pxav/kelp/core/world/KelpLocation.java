@@ -998,4 +998,30 @@ public class KelpLocation implements Serializable, Cloneable {
     return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
   }
 
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+
+    if (!(object instanceof KelpLocation)) {
+      return false;
+    }
+
+    KelpLocation location = (KelpLocation) object;
+    return location.hashCode() == this.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 19 * 3 + (worldName != null ? worldName.hashCode() : 0);
+    hash = 19 * hash + (int)(Double.doubleToLongBits(this.x) ^ Double.doubleToLongBits(this.x) >>> 32);
+    hash = 19 * hash + (int)(Double.doubleToLongBits(this.y) ^ Double.doubleToLongBits(this.y) >>> 32);
+    hash = 19 * hash + (int)(Double.doubleToLongBits(this.z) ^ Double.doubleToLongBits(this.z) >>> 32);
+    hash = 19 * hash + Float.floatToIntBits(this.pitch);
+    hash = 19 * hash + Float.floatToIntBits(this.yaw);
+
+    return hash;
+  }
+
 }
