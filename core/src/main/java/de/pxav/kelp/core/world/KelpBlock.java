@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.world;
 
+import com.google.common.base.Objects;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.util.CardinalDirection;
@@ -314,6 +315,25 @@ public class KelpBlock {
    */
   public Block getBukkitBlock() {
     return bukkitBlock;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+
+    if (!(object instanceof KelpBlock)) {
+      return false;
+    }
+
+    KelpBlock kelpBlock = (KelpBlock) object;
+    return kelpBlock.hashCode() == this.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return getX() * getX() + getY() * getY() + getZ() * getZ() + getWorldName().hashCode();
   }
 
 }
