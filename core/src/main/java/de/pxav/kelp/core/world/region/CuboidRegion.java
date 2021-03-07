@@ -222,6 +222,21 @@ public class CuboidRegion extends KelpRegion {
     return CuboidRegion.create(this.minPos, this.maxPos);
   }
 
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof CuboidRegion)) {
+      return false;
+    }
+
+    CuboidRegion region = (CuboidRegion) object;
+    return region.hashCode() == this.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return "CUBOID".hashCode() + minPos.hashCode() + maxPos.hashCode();
+  }
+
   public void setBoundingPositions(KelpLocation pos1, KelpLocation pos2) {
     if (!pos1.getWorldName().equals(pos2.getWorldName())) {
       throw new IllegalArgumentException("Cannot build CuboidRegion from locations of differing worlds!");
