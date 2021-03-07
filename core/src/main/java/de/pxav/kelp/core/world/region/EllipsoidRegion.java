@@ -18,6 +18,9 @@ public class EllipsoidRegion extends KelpRegion {
   private double xRadius;
   private double yRadius;
   private double zRadius;
+  private double limitX = 0;
+  private double limitY = 0;
+  private double limitZ = 0;
 
   public static EllipsoidRegion create(KelpLocation center, double radius) {
     EllipsoidRegion region = new EllipsoidRegion();
@@ -49,6 +52,24 @@ public class EllipsoidRegion extends KelpRegion {
     region.setYRadius(Math.abs(region.minPos.getY() - region.maxPos.getY()) * 0.5);
     region.setZRadius(Math.abs(region.minPos.getZ() - region.maxPos.getZ()) * 0.5);
     return region;
+  }
+
+  public void limitRadius(double limiter) {
+    this.limitX = limiter;
+    this.limitY = limiter;
+    this.limitZ = limiter;
+  }
+
+  public void limitXRadius(double limiter) {
+    this.limitX = limiter;
+  }
+
+  public void limitYRadius(double limiter) {
+    this.limitY = limiter;
+  }
+
+  public void limitZRadius(double limiter) {
+    this.limitZ = limiter;
   }
 
   @Override
@@ -148,6 +169,25 @@ public class EllipsoidRegion extends KelpRegion {
         }
       }
     }
+
+    if (limitX > 0 || limitY > 0 || limitZ > 0) {
+      output.parallelStream()
+        .filter(block -> {
+          if (limitX > 0) {
+            return block.getX() > center.addX(limitX).getX() || block.getX() < center.subtractX(limitX).getX();
+          }
+          if (limitY > 0) {
+            return block.getY() > center.addY(limitY).getY() || block.getY() < center.subtractY(limitY).getY();
+          }
+          if (limitZ > 0) {
+            return block.getZ() > center.addZ(limitZ).getZ() || block.getZ() < center.subtractZ(limitZ).getZ();
+          }
+
+          return false;
+        })
+        .forEach(output::remove);
+    }
+
     return output;
   }
 
