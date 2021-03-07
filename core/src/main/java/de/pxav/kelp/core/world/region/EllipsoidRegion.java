@@ -186,11 +186,21 @@ public class EllipsoidRegion extends KelpRegion {
     }
   }
 
+  public void expandAndMove(KelpBlockFace direction, double amount) {
+    expand(direction, amount);
+    move(direction.getDirection().multiply(amount / 2));
+  }
+
   @Override
   public void expand(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {
     this.xRadius = positiveX + negativeX;
     this.yRadius = positiveY + negativeY;
     this.zRadius = positiveZ + negativeZ;
+  }
+
+  public void expandAndMove(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {
+    expand(negativeX, positiveX, negativeY, positiveY, negativeZ, positiveZ);
+    move(positiveX - negativeX, positiveY - negativeY, positiveZ - negativeZ);
   }
 
   @Override
