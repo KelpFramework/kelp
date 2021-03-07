@@ -266,4 +266,23 @@ public class EllipsoidRegion extends KelpRegion {
   public KelpRegion clone() {
     return EllipsoidRegion.create(this.center, xRadius, yRadius, zRadius);
   }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof EllipsoidRegion)) {
+      return false;
+    }
+
+    EllipsoidRegion region = (EllipsoidRegion) object;
+    return region.hashCode() == this.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return (int) ("ELLIPSOID".hashCode()
+          + center.hashCode()
+          + ((int) xRadius * xRadius)
+          + ((int) yRadius * yRadius)
+          + ((int) zRadius * zRadius));
+  }
 }
