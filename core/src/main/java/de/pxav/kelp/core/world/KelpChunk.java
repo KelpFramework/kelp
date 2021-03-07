@@ -169,4 +169,27 @@ public class KelpChunk {
   public Chunk getBukkitChunk() {
     return bukkitChunk;
   }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+
+    if (!(object instanceof KelpChunk)) {
+      return false;
+    }
+
+    KelpChunk chunk = (KelpChunk) object;
+    return chunk.hashCode() == this.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 19 * 3 + (getWorld() != null ? getWorld().hashCode() : 0);
+    hash *= getX() * getX();
+    hash *= getZ() * getZ();
+
+    return hash;
+  }
 }
