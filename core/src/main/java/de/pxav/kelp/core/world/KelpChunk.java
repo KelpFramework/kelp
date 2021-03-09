@@ -4,6 +4,7 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.version.ChunkVersionTemplate;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.Chunk;
 
 import java.util.Collection;
@@ -181,15 +182,17 @@ public class KelpChunk {
     }
 
     KelpChunk chunk = (KelpChunk) object;
-    return chunk.hashCode() == this.hashCode();
+    return chunk.getZ() == this.getZ()
+      && chunk.getX() == this.getX()
+      && chunk.getWorld().getName().equalsIgnoreCase(this.getWorld().getName());
   }
 
   @Override
   public int hashCode() {
-    int hash = 19 * 3 + (getWorld() != null ? getWorld().hashCode() : 0);
-    hash *= getX() * getX();
-    hash *= getZ() * getZ();
-
-    return hash;
+    return new HashCodeBuilder(17, 37)
+      .append(this.getWorld().getName())
+      .append(this.getX())
+      .append(this.getZ())
+      .toHashCode();
   }
 }

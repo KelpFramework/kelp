@@ -6,7 +6,9 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.util.CardinalDirection;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.util.Vector;
 
 /**
@@ -328,12 +330,20 @@ public class KelpBlock {
     }
 
     KelpBlock kelpBlock = (KelpBlock) object;
-    return kelpBlock.hashCode() == this.hashCode();
+    return kelpBlock.getX() == this.getX()
+      && kelpBlock.getY() == this.getY()
+      && kelpBlock.getZ() == this.getZ()
+      && kelpBlock.getWorldName().equalsIgnoreCase(this.getWorldName());
   }
 
   @Override
   public int hashCode() {
-    return getX() * getX() + getY() * getY() + getZ() * getZ() + getWorldName().hashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(this.getWorldName())
+      .append(getX())
+      .append(getY())
+      .append(getZ())
+      .toHashCode();
   }
 
 }

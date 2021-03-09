@@ -652,7 +652,7 @@ public class KelpWorld {
     }
 
     KelpWorld world = (KelpWorld) object;
-    return world.hashCode() == this.hashCode();
+    return world.getName().equalsIgnoreCase(this.getName());
   }
 
   @Override

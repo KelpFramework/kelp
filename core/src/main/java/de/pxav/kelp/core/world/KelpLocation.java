@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world;
 
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.world.util.CardinalDirection;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -1009,19 +1010,24 @@ public class KelpLocation implements Serializable, Cloneable {
     }
 
     KelpLocation location = (KelpLocation) object;
-    return location.hashCode() == this.hashCode();
+    return this.getWorldName().equalsIgnoreCase(location.getWorldName())
+      && this.getX() == location.getX()
+      && this.getY() == location.getY()
+      && this.getZ() == location.getZ()
+      && this.getYaw() == location.getYaw()
+      && this.getPitch() == location.getPitch();
   }
 
   @Override
   public int hashCode() {
-    int hash = 19 * 3 + (worldName != null ? worldName.hashCode() : 0);
-    hash = 19 * hash + (int)(Double.doubleToLongBits(this.x) ^ Double.doubleToLongBits(this.x) >>> 32);
-    hash = 19 * hash + (int)(Double.doubleToLongBits(this.y) ^ Double.doubleToLongBits(this.y) >>> 32);
-    hash = 19 * hash + (int)(Double.doubleToLongBits(this.z) ^ Double.doubleToLongBits(this.z) >>> 32);
-    hash = 19 * hash + Float.floatToIntBits(this.pitch);
-    hash = 19 * hash + Float.floatToIntBits(this.yaw);
-
-    return hash;
+    return new HashCodeBuilder(17, 37)
+      .append(this.worldName)
+      .append(this.x)
+      .append(this.y)
+      .append(this.z)
+      .append(this.yaw)
+      .append(this.pitch)
+      .toHashCode();
   }
 
 }
