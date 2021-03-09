@@ -5,6 +5,7 @@ import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
@@ -229,12 +230,19 @@ public class CuboidRegion extends KelpRegion {
     }
 
     CuboidRegion region = (CuboidRegion) object;
-    return region.hashCode() == this.hashCode();
+    return region.getWorldName().equalsIgnoreCase(worldName)
+      && minPos.equals(region.getMinPos())
+      && maxPos.equals(region.getMaxPos());
   }
 
   @Override
   public int hashCode() {
-    return "CUBOID".hashCode() + minPos.hashCode() + maxPos.hashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(this.worldName)
+      .append("CUBOID")
+      .append(maxPos.hashCode())
+      .append(minPos.hashCode())
+      .toHashCode();
   }
 
   public void setBoundingPositions(KelpLocation pos1, KelpLocation pos2) {
