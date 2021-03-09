@@ -5,6 +5,7 @@ import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.Location;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
@@ -370,15 +371,22 @@ public class EllipsoidRegion extends KelpRegion {
     }
 
     EllipsoidRegion region = (EllipsoidRegion) object;
-    return region.hashCode() == this.hashCode();
+    return region.getWorldName().equalsIgnoreCase(worldName)
+      && region.getXRadius() == this.getXRadius()
+      && region.getYRadius() == this.getYRadius()
+      && region.getZRadius() == this.getZRadius()
+      && region.getCenter().equals(this.center);
   }
 
   @Override
   public int hashCode() {
-    return (int) ("ELLIPSOID".hashCode()
-          + center.hashCode()
-          + ((int) xRadius * xRadius)
-          + ((int) yRadius * yRadius)
-          + ((int) zRadius * zRadius));
+    return new HashCodeBuilder(17, 37)
+      .append(getWorldName())
+      .append("ELLIPSOID")
+      .append(xRadius)
+      .append(xRadius)
+      .append(yRadius)
+      .append(center.hashCode())
+      .toHashCode();
   }
 }
