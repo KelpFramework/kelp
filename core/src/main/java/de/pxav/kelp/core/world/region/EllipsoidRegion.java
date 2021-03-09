@@ -5,6 +5,7 @@ import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import org.bukkit.Location;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
@@ -112,7 +113,7 @@ public class EllipsoidRegion extends KelpRegion {
     return getBlocks(false);
   }
 
-  private Set<KelpBlock> getBlocks(boolean surface) {
+  private Set<KelpBlock> getBlocks(boolean surfaceOnly) {
     Set<KelpBlock> output = Sets.newConcurrentHashSet();
     double rX = xRadius + 0.5;
     double rY = yRadius + 0.5;
@@ -150,7 +151,7 @@ public class EllipsoidRegion extends KelpRegion {
             break forZ;
           }
 
-          if (surface) {
+          if (surfaceOnly) {
             if (KelpLocation.magnitude(nextXn, yn, zn) <= 1
               && KelpLocation.magnitude(xn, nextYn, zn) <= 1
               && KelpLocation.magnitude(xn, yn, nextZn) <= 1) {
@@ -170,25 +171,66 @@ public class EllipsoidRegion extends KelpRegion {
       }
     }
 
+
     if (limitX > 0 || limitY > 0 || limitZ > 0) {
       output.parallelStream()
         .filter(block -> {
           if (limitX > 0) {
-            return block.getX() > center.addX(limitX).getX() || block.getX() < center.subtractX(limitX).getX();
+            return block.getX() > center.clone().addX(limitX).getX() || block.getX() < center.clone().subtractX(limitX).getX();
           }
           if (limitY > 0) {
-            return block.getY() > center.addY(limitY).getY() || block.getY() < center.subtractY(limitY).getY();
+            return block.getY() > center.clone().addY(limitY).getY() || block.getY() < center.clone().subtractY(limitY).getY();
           }
           if (limitZ > 0) {
-            return block.getZ() > center.addZ(limitZ).getZ() || block.getZ() < center.subtractZ(limitZ).getZ();
+            return block.getZ() > center.clone().addZ(limitZ).getZ() || block.getZ() < center.clone().subtractZ(limitZ).getZ();
           }
 
           return false;
         })
         .forEach(output::remove);
+
+      if (surfaceOnly) {
+        if (limitX > 0) {
+          output.addAll(getZSliceAt(center.getBlockX() + limitX));
+          output.addAll(getZSliceAt(center.getBlockX() - limitX));
+        }
+        if (limitY > 0) {
+          output.addAll(getYSliceAt(center.getBlockY() + limitY));
+          output.addAll(getYSliceAt(center.getBlockY() - limitY));
+        }
+        if (limitZ > 0) {
+          output.addAll(getXSliceAt(center.getBlockZ() + limitZ));
+          output.addAll(getXSliceAt(center.getBlockZ() - limitZ));
+        }
+      }
+
     }
 
     return output;
+  }
+
+  public Set<KelpBlock> getYSliceAt(double y) {
+    Set<KelpBlock> blocks = Sets.newConcurrentHashSet();
+    getBlocks().parallelStream()
+      .filter(block -> block.getY() == Location.locToBlock(y))
+      .forEach(blocks::add);
+    return blocks;
+  }
+
+  public Set<KelpBlock> getXSliceAt(double x) {
+    Set<KelpBlock> blocks = Sets.newConcurrentHashSet();
+    getBlocks().parallelStream()
+      .filter(block -> block.getX() == Location.locToBlock(x))
+      .forEach(blocks::add);
+    return blocks;
+  }
+
+  public Set<KelpBlock> getZSliceAt(double z) {
+    Set<KelpBlock> blocks = Sets.newConcurrentHashSet();
+    getBlocks().parallelStream()
+      .filter(block -> block.getZ() == Location.locToBlock(z))
+      .forEach(blocks::add);
+    return blocks;
   }
 
   @Override
@@ -247,7 +289,21 @@ public class EllipsoidRegion extends KelpRegion {
 
   @Override
   public boolean contains(KelpLocation location) {
-    return getCostAt(location) <= 1;
+
+    // if the location is excluded due to a limited radius
+    boolean limitCriteria = false;
+
+    if (limitX > 0) {
+      limitCriteria = location.getX() > center.clone().addX(limitX).getX() || location.getX() < center.clone().subtractX(limitX).getX();
+    }
+    if (limitY > 0) {
+      limitCriteria = location.getY() > center.clone().addY(limitY).getY() || location.getY() < center.clone().subtractY(limitY).getY();
+    }
+    if (limitZ > 0) {
+      limitCriteria = location.getZ() > center.clone().addZ(limitZ).getZ() || location.getZ() < center.clone().subtractZ(limitZ).getZ();
+    }
+
+    return getCostAt(location) <= 1 && !limitCriteria;
   }
 
   public double getCostAt(KelpLocation location) {
