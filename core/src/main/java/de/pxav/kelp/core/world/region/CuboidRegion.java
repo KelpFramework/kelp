@@ -13,14 +13,18 @@ import java.util.Set;
 public class CuboidRegion extends KelpRegion {
 
   public static CuboidRegion create(KelpLocation pos1, KelpLocation pos2) {
-    CuboidRegion region = new CuboidRegion();
+    CuboidRegion region = new CuboidRegion(getRegionRepository());
     region.setBoundingPositions(pos1, pos2);
     region.setWorldName(pos1.getWorldName());
     return region;
   }
 
   public static CuboidRegion create() {
-    return new CuboidRegion();
+    return new CuboidRegion(getRegionRepository());
+  }
+
+  public CuboidRegion(KelpRegionRepository regionRepository) {
+    super(regionRepository);
   }
 
   @Override

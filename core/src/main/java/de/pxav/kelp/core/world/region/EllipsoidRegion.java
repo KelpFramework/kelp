@@ -1,6 +1,8 @@
 package de.pxav.kelp.core.world.region;
 
 import com.google.common.collect.Sets;
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.application.KelpApplicationRepository;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
@@ -25,7 +27,7 @@ public class EllipsoidRegion extends KelpRegion {
   private double limitZ = 0;
 
   public static EllipsoidRegion create(KelpLocation center, double radius) {
-    EllipsoidRegion region = new EllipsoidRegion();
+    EllipsoidRegion region = new EllipsoidRegion(getRegionRepository());
     region.setCenter(center);
     region.setRadius(radius);
     region.minPos = center.clone().subtract(radius);
@@ -34,7 +36,7 @@ public class EllipsoidRegion extends KelpRegion {
   }
 
   public static EllipsoidRegion create(KelpLocation center, double xRadius, double yRadius, double zRadius) {
-    EllipsoidRegion region = new EllipsoidRegion();
+    EllipsoidRegion region = new EllipsoidRegion(getRegionRepository());
     region.setCenter(center);
     region.setXRadius(xRadius);
     region.setYRadius(yRadius);
@@ -45,7 +47,7 @@ public class EllipsoidRegion extends KelpRegion {
   }
 
   public static EllipsoidRegion create(KelpLocation pos1, KelpLocation pos2) {
-    EllipsoidRegion region = new EllipsoidRegion();
+    EllipsoidRegion region = new EllipsoidRegion(getRegionRepository());
     region.maxPos = pos1.getMaximalLocation(pos2);
     region.minPos = pos1.getMinimalLocation(pos2);
 
@@ -54,6 +56,10 @@ public class EllipsoidRegion extends KelpRegion {
     region.setYRadius(Math.abs(region.minPos.getY() - region.maxPos.getY()) * 0.5);
     region.setZRadius(Math.abs(region.minPos.getZ() - region.maxPos.getZ()) * 0.5);
     return region;
+  }
+
+  public EllipsoidRegion(KelpRegionRepository regionRepository) {
+    super(regionRepository);
   }
 
   public void limitRadius(double limiter) {
