@@ -55,7 +55,14 @@ public abstract class KelpRegion implements Cloneable {
                               double negativeZ,
                               double positiveZ);
 
-  public abstract boolean contains(KelpLocation location);
+  public abstract boolean contains(double x, double y, double z);
+
+  public boolean contains(KelpLocation location) {
+    if (!worldName.equalsIgnoreCase(location.getWorldName())) {
+      return false;
+    }
+    return contains(location.getX(), location.getZ(), location.getZ());
+  }
 
   public boolean contains(KelpPlayer player) {
     return contains(player.getLocation());
@@ -63,13 +70,6 @@ public abstract class KelpRegion implements Cloneable {
 
   public boolean contains(KelpBlock block) {
     return contains(block.getLocation());
-  }
-
-  public boolean contains(double x, double y, double z) {
-    if (worldName == null) {
-      return false;
-    }
-    return contains(KelpLocation.from(worldName, x, y, z));
   }
 
   public int[] getBlockDimensions() {

@@ -51,11 +51,7 @@ public class CuboidRegion extends KelpRegion {
   }
 
   @Override
-  public boolean contains(KelpLocation location) {
-    if (!worldName.equalsIgnoreCase(location.getWorldName())) {
-      return false;
-    }
-
+  public boolean contains(double x, double y, double z) {
     // X
     double maxX = Math.max(this.minPos.getX(), this.maxPos.getX());
     double minX = Math.min(this.minPos.getX(), this.maxPos.getX());
@@ -68,12 +64,20 @@ public class CuboidRegion extends KelpRegion {
     double maxZ = Math.max(this.minPos.getZ(), this.maxPos.getZ());
     double minZ = Math.min(this.minPos.getZ(), this.maxPos.getZ());
 
-    if(location.getX() <= maxX && location.getX() >= minX) {
-      if(location.getY() <= maxY && location.getY() >= minY) {
-        return location.getZ() <= maxZ && location.getZ() >= minZ;
+    if(x <= maxX && x >= minX) {
+      if(y <= maxY && y >= minY) {
+        return z <= maxZ && z >= minZ;
       }
     }
     return false;
+  }
+
+  @Override
+  public boolean contains(KelpLocation location) {
+    if (!worldName.equalsIgnoreCase(location.getWorldName())) {
+      return false;
+    }
+    return contains(location.getX(), location.getY(), location.getZ());
   }
 
   @Override
