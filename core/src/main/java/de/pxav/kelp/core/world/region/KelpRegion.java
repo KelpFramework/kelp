@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.world.region;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
@@ -8,13 +9,22 @@ import de.pxav.kelp.core.world.KelpWorld;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
 import org.bukkit.util.Vector;
 
+import javax.inject.Singleton;
 import java.util.Set;
+import java.util.UUID;
 
+@Singleton
 public abstract class KelpRegion implements Cloneable {
 
+  protected KelpRegionRepository regionRepository;
+  protected UUID regionId = UUID.randomUUID();
   protected String worldName;
   protected KelpLocation minPos;
   protected KelpLocation maxPos;
+
+  public KelpRegion(KelpRegionRepository regionRepository) {
+    this.regionRepository = regionRepository;
+  }
 
   public abstract void move(Vector vector);
 
@@ -122,11 +132,19 @@ public abstract class KelpRegion implements Cloneable {
     return EllipsoidRegion.create(minPos, maxPos);
   }
 
+  public UUID getRegionId() {
+    return regionId;
+  }
+
   @Override
   public abstract KelpRegion clone();
 
   public abstract boolean equals(Object object);
 
   public abstract int hashCode();
+
+  protected static KelpRegionRepository getRegionRepository() {
+    return KelpPlugin.getInjector().getInstance(KelpRegionRepository.class);
+  }
 
 }
