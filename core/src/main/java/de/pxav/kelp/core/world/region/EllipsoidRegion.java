@@ -32,6 +32,7 @@ public class EllipsoidRegion extends KelpRegion {
     region.setRadius(radius);
     region.minPos = center.clone().subtract(radius);
     region.maxPos = center.clone().add(radius);
+    region.worldName = center.getWorldName();
     return region;
   }
 
@@ -43,15 +44,20 @@ public class EllipsoidRegion extends KelpRegion {
     region.setZRadius(zRadius);
     region.minPos = center.clone().subtract(xRadius, yRadius, zRadius);
     region.maxPos = center.clone().add(xRadius, yRadius, zRadius);
+    region.worldName = center.getWorldName();
     return region;
   }
 
   public static EllipsoidRegion create(KelpLocation pos1, KelpLocation pos2) {
+    if (!pos1.getWorldName().equalsIgnoreCase(pos2.getWorldName())) {
+      throw new IllegalArgumentException("Cannot create region from locations of differing worlds!");
+    }
     EllipsoidRegion region = new EllipsoidRegion(getRegionRepository());
     region.maxPos = pos1.getMaximalLocation(pos2);
     region.minPos = pos1.getMinimalLocation(pos2);
 
     region.setCenter(pos1.findMidpoint(pos2));
+    region.worldName = pos1.getWorldName();
     region.setXRadius(Math.abs(region.minPos.getX() - region.maxPos.getX()) * 0.5);
     region.setYRadius(Math.abs(region.minPos.getY() - region.maxPos.getY()) * 0.5);
     region.setZRadius(Math.abs(region.minPos.getZ() - region.maxPos.getZ()) * 0.5);
