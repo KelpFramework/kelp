@@ -27,12 +27,6 @@ public class ApproximateLocation {
     return create(world.getName(), x, z);
   }
 
-  private ApproximateLocation(KelpLocation location) {
-    this.x = location.getBlockX() / 100;
-    this.z = location.getBlockZ() / 100;
-    this.worldName = location.getWorldName();
-  }
-
   private ApproximateLocation(String worldName, int x, int z) {
     this.x =  x / 100;
     this.z =  z / 100;
