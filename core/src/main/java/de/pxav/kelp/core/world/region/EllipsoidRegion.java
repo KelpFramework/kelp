@@ -303,19 +303,23 @@ public class EllipsoidRegion extends KelpRegion {
   @Override
   public boolean contains(double x, double y, double z) {
     // if the location is excluded due to a limited radius
-    boolean limitCriteria = false;
+    boolean limitCriteriaX = false, limitCriteriaY = false, limitCriteriaZ = false;
 
     if (limitX > 0) {
-      limitCriteria = x > center.clone().addX(limitX).getX() || x < center.clone().subtractX(limitX).getX();
-    }
-    if (limitY > 0) {
-      limitCriteria = y > center.clone().addY(limitY).getY() || y < center.clone().subtractY(limitY).getY();
-    }
-    if (limitZ > 0) {
-      limitCriteria = z > center.clone().addZ(limitZ).getZ() || z < center.clone().subtractZ(limitZ).getZ();
+      System.out.println(x + " > " + center.getX() + " + " + limitX + " (" + ((center.getX() + limitX)) + ")");
+      System.out.println(x + " < " + center.getX() + " - " + limitX + " (" + ((center.getX() - limitX)) + ")");
+      limitCriteriaX = x > (center.getX() + limitX) || x < (center.getX() - limitX);
     }
 
-    return getCostAt(x, y, z) <= 1 && !limitCriteria;
+    if (limitY > 0) {
+      limitCriteriaY = y > (center.getY() + limitY) || y < (center.getY() - limitY);
+    }
+
+    if (limitZ > 0) {
+      limitCriteriaZ = z > (center.getZ() + limitZ) || z < (center.getZ() - limitZ);
+    }
+
+    return getCostAt(x, y, z) <= 1 && !limitCriteriaX && !limitCriteriaY && !limitCriteriaZ;
   }
 
   public double getCostAt(KelpLocation location) {
