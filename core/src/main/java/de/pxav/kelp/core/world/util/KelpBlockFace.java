@@ -1,8 +1,19 @@
 package de.pxav.kelp.core.world.util;
 
+import de.pxav.kelp.core.world.KelpBlock;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
+/**
+ * Represents the face of a given block. This face can point
+ * in a cardinal direction such as {@code NORTH} or {@code SOUTH}
+ * or around the y-axis with {@link KelpBlockFace#UP} and {@link KelpBlockFace#DOWN}.
+ *
+ * This can be used to get neighbouring blocks of another block for example
+ * with {@link KelpBlock#getBlockBelow()}.
+ *
+ * @author pxav
+ */
 public enum KelpBlockFace {
 
   NORTH(0, 0, -1),
@@ -23,6 +34,10 @@ public enum KelpBlockFace {
   SOUTH_SOUTH_EAST(SOUTH, SOUTH_EAST),
   SOUTH_SOUTH_WEST(SOUTH, SOUTH_WEST),
   WEST_SOUTH_WEST(WEST, SOUTH_WEST),
+
+  /**
+   * Represents the current block and no specific face of it.
+   */
   SELF(0, 0, 0);
 
   private final int deltaX;
@@ -45,18 +60,42 @@ public enum KelpBlockFace {
     this.deltaZ = face1.getDeltaZ() + face2.getDeltaZ();
   }
 
+  /**
+   * Gets the difference from the original block to the
+   * current block face in the x direction.
+   *
+   * @return The distance from the original block to the current face on the x-axis.
+   */
   public int getDeltaX() {
     return this.deltaX;
   }
 
+  /**
+   * Gets the difference from the original block to the
+   * current block face in the y direction.
+   *
+   * @return The distance from the original block to the current face on the y-axis.
+   */
   public int getDeltaY() {
     return this.deltaY;
   }
 
+  /**
+   * Gets the difference from the original block to the
+   * current block face in the z direction.
+   *
+   * @return The distance from the original block to the current face on the z-axis.
+   */
   public int getDeltaZ() {
     return this.deltaZ;
   }
 
+  /**
+   * Converts the current block face into a {@link Vector}.
+   * This vector will point in the cardinal direction of the face.
+   *
+   * @return A vector pointing in the direction of the current block face.
+   */
   public Vector getDirection() {
     Vector direction = new Vector(this.deltaX, this.deltaY, this.deltaZ);
     if (this.deltaX != 0 || this.deltaY != 0 || this.deltaZ != 0) {
@@ -66,6 +105,13 @@ public enum KelpBlockFace {
     return direction;
   }
 
+  /**
+   * Gets the block face that is opposite of the current block face.
+   * If the current block face is {@code NORTH} for example, this will return
+   * {@code SOUTH}. If it is {@code NORTH_EAST}, it will return {@code SOUTH_WEST} and so on.
+   *
+   * @return The block face opposite to the current block face.
+   */
   public KelpBlockFace getOppositeFace() {
     switch(this) {
       case NORTH:
@@ -109,6 +155,12 @@ public enum KelpBlockFace {
     }
   }
 
+  /**
+   * Converts the current block face into a block face of
+   * the bukkit library.
+   *
+   * @return The bukkit block face equivalent to the current block face.
+   */
   public BlockFace getBukkitFace() {
     return BlockFace.valueOf(this.toString());
   }
