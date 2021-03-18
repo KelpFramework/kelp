@@ -210,4 +210,13 @@ public class ConcurrentSetMultimap<K, V> implements ConcurrentMultimap<K, V> {
   public Set<V> getOrEmpty(K key) {
     return this.map.getOrDefault(key, Sets.newHashSet());
   }
+
+  @Override
+  public void removeWithValue(V value) {
+    this.map.forEach((key, valueSet) -> valueSet.forEach(current -> {
+      if (current.equals(value)) {
+        this.remove(key, current);
+      }
+    }));
+  }
 }

@@ -13,6 +13,8 @@ public interface ConcurrentMultimap<K, V> extends Multimap<K, V> {
 
   Collection<V> getOrEmpty(K key);
 
+  void removeWithValue(V value);
+
   void putAll(Map<K, V> newMap);
 
 }

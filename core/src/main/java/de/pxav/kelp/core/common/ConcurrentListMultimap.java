@@ -211,4 +211,13 @@ public class ConcurrentListMultimap<K, V> implements ConcurrentMultimap<K, V> {
     return this.map.getOrDefault(key, Lists.newArrayList());
   }
 
+  @Override
+  public void removeWithValue(V value) {
+    this.map.forEach((key, valueSet) -> valueSet.forEach(current -> {
+      if (current.equals(value)) {
+        this.remove(key, current);
+      }
+    }));
+  }
+
 }
