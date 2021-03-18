@@ -202,12 +202,12 @@ public class ConcurrentSetMultimap<K, V> implements ConcurrentMultimap<K, V> {
   }
 
   @Override
-  public Collection<V> getOrDefault(K key, Collection<V> defaultCollection) {
+  public Set<V> getOrDefault(K key, Collection<V> defaultCollection) {
     return this.map.getOrDefault(key, Sets.newHashSet(defaultCollection));
   }
 
   @Override
-  public Collection<V> getOrEmpty(K key) {
+  public Set<V> getOrEmpty(K key) {
     return this.map.getOrDefault(key, Sets.newHashSet());
   }
 }
