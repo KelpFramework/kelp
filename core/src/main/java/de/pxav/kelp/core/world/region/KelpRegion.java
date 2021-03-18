@@ -136,6 +136,18 @@ public abstract class KelpRegion implements Cloneable {
     return regionId;
   }
 
+  public void enableListeners() {
+    regionRepository.listenTo(this);
+  }
+
+  public void disableListeners() {
+    regionRepository.stopListeningTo(this);
+  }
+
+  public boolean listenersEnabled() {
+    return regionRepository.isListeningTo(this);
+  }
+
   @Override
   public abstract KelpRegion clone();
 
