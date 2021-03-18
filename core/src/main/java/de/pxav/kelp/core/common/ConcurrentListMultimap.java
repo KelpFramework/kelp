@@ -1,7 +1,6 @@
 package de.pxav.kelp.core.common;
 
 import com.google.common.collect.*;
-import com.sun.istack.internal.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -48,12 +47,12 @@ public class ConcurrentListMultimap<K, V> implements ConcurrentMultimap<K, V> {
   }
 
   @Override
-  public boolean containsKey(@NotNull Object o) {
+  public boolean containsKey(Object o) {
     return this.map.containsKey(o);
   }
 
   @Override
-  public boolean containsValue(@NotNull Object o) {
+  public boolean containsValue(Object o) {
     Iterator<Collection<V>> iterator = this.asMap().values().iterator();
 
     Collection<V> collection;
@@ -70,13 +69,13 @@ public class ConcurrentListMultimap<K, V> implements ConcurrentMultimap<K, V> {
   }
 
   @Override
-  public boolean containsEntry(@NotNull Object o, @NotNull Object o1) {
+  public boolean containsEntry(Object o, Object o1) {
     Collection<V> collection = this.map.get(o);
     return collection != null && collection.contains(o1);
   }
 
   @Override
-  public boolean put(@NotNull K k, @NotNull V v) {
+  public boolean put(K k, V v) {
     if (this.get(k) == null) {
       this.map.put(k, Lists.newArrayList());
     }
@@ -84,7 +83,7 @@ public class ConcurrentListMultimap<K, V> implements ConcurrentMultimap<K, V> {
   }
 
   @Override
-  public boolean remove(@NotNull Object key, @NotNull Object value) {
+  public boolean remove(Object key, Object value) {
     if (this.map.get(key) == null) {
       return false;
     }
@@ -92,7 +91,7 @@ public class ConcurrentListMultimap<K, V> implements ConcurrentMultimap<K, V> {
   }
 
   @Override
-  public boolean putAll(@NotNull K k, Iterable<? extends V> iterable) {
+  public boolean putAll(K k, Iterable<? extends V> iterable) {
     if (iterable instanceof Collection) {
       Collection<V> collection = (Collection<V>) iterable;
       if (collection.isEmpty()) {
@@ -132,14 +131,14 @@ public class ConcurrentListMultimap<K, V> implements ConcurrentMultimap<K, V> {
   }
 
   @Override
-  public Collection<V> replaceValues(@NotNull K k, Iterable<? extends V> iterable) {
+  public Collection<V> replaceValues(K k, Iterable<? extends V> iterable) {
     Collection<V> result = this.removeAll(k);
     this.putAll(k, iterable);
     return result;
   }
 
   @Override
-  public Collection<V> removeAll(@NotNull Object key) {
+  public Collection<V> removeAll(Object key) {
     if (this.map.get(key) == null) {
       return Lists.newArrayList();
     }
