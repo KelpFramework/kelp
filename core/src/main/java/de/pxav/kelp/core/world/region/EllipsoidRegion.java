@@ -188,17 +188,22 @@ public class EllipsoidRegion extends KelpRegion {
     if (limitX > 0 || limitY > 0 || limitZ > 0) {
       output.parallelStream()
         .filter(block -> {
+          // if the location is excluded due to a limited radius
+          boolean limitCriteriaX = false, limitCriteriaY = false, limitCriteriaZ = false;
+
           if (limitX > 0) {
-            return block.getX() > center.clone().addX(limitX).getX() || block.getX() < center.clone().subtractX(limitX).getX();
-          }
-          if (limitY > 0) {
-            return block.getY() > center.clone().addY(limitY).getY() || block.getY() < center.clone().subtractY(limitY).getY();
-          }
-          if (limitZ > 0) {
-            return block.getZ() > center.clone().addZ(limitZ).getZ() || block.getZ() < center.clone().subtractZ(limitZ).getZ();
+            limitCriteriaX = block.getX() > (center.getX() + limitX) || block.getX() < (center.getX() - limitX);
           }
 
-          return false;
+          if (limitY > 0) {
+            limitCriteriaY = block.getY() > (center.getY() + limitY) || block.getY() < (center.getY() - limitY);
+          }
+
+          if (limitZ > 0) {
+            limitCriteriaZ = block.getZ() > (center.getZ() + limitZ) || block.getZ() < (center.getZ() - limitZ);
+          }
+
+          return limitCriteriaX || limitCriteriaY || limitCriteriaZ;
         })
         .forEach(output::remove);
 
@@ -306,8 +311,6 @@ public class EllipsoidRegion extends KelpRegion {
     boolean limitCriteriaX = false, limitCriteriaY = false, limitCriteriaZ = false;
 
     if (limitX > 0) {
-      System.out.println(x + " > " + center.getX() + " + " + limitX + " (" + ((center.getX() + limitX)) + ")");
-      System.out.println(x + " < " + center.getX() + " - " + limitX + " (" + ((center.getX() - limitX)) + ")");
       limitCriteriaX = x > (center.getX() + limitX) || x < (center.getX() - limitX);
     }
 
