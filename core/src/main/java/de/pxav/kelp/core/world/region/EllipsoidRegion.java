@@ -87,13 +87,18 @@ public class EllipsoidRegion extends KelpRegion {
   }
 
   @Override
-  public void move(Vector vector) {
+  protected void moveIgnoreListeners(Vector vector) {
     center.add(vector);
+    minPos.add(vector);
+    maxPos.add(vector);
   }
 
   @Override
-  public void move(double dx, double dy, double dz) {
-    center.add(new Vector(dx, dy, dz));
+  protected void moveIgnoreListeners(double dx, double dy, double dz) {
+    Vector vector = new Vector(dx, dy, dz);
+    center.add(vector);
+    minPos.add(vector);
+    maxPos.add(vector);
   }
 
   @Override
@@ -262,14 +267,15 @@ public class EllipsoidRegion extends KelpRegion {
   }
 
   @Override
-  public void expand(double amount) {
+  protected void expandIgnoreListeners(double amount) {
     xRadius += amount;
     yRadius += amount;
     zRadius += amount;
+    updateMinMax();
   }
 
   @Override
-  public void expand(KelpBlockFace direction, double amount) {
+  protected void expandIgnoreListeners(KelpBlockFace direction, double amount) {
     switch (direction) {
       case UP:
       case DOWN:
@@ -286,6 +292,7 @@ public class EllipsoidRegion extends KelpRegion {
       default:
         throw new IllegalArgumentException("Error when expanding EllipsoidRegion: BlockFace must be one of UP, DOWN, NORTH, SOUTH, EAST, WEST");
     }
+    updateMinMax();
   }
 
   public void expandAndMove(KelpBlockFace direction, double amount) {
@@ -294,10 +301,16 @@ public class EllipsoidRegion extends KelpRegion {
   }
 
   @Override
-  public void expand(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {
+  protected void expandIgnoreListener(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {
     this.xRadius = positiveX + negativeX;
     this.yRadius = positiveY + negativeY;
     this.zRadius = positiveZ + negativeZ;
+    updateMinMax();
+  }
+
+  private void updateMinMax() {
+    minPos = center.clone().subtract(xRadius, yRadius, zRadius);
+    maxPos = center.clone().add(xRadius, yRadius, zRadius);
   }
 
   public void expandAndMove(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {

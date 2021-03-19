@@ -60,7 +60,20 @@ public abstract class KelpRegion implements Cloneable {
    * @param vector The vector providing the direction and
    *               power of the movement.
    */
-  public abstract void move(Vector vector);
+  public void move(Vector vector) {
+    this.disableListeners();
+    this.moveIgnoreListeners(vector);
+    this.enableListeners();
+  }
+
+  /**
+   * Moves the region into the direction of the given
+   * {@link Vector}.
+   *
+   * @param vector The vector providing the direction and
+   *               power of the movement.
+   */
+  protected abstract void moveIgnoreListeners(Vector vector);
 
   /**
    * Moves the region into a certain direction defined by
@@ -70,7 +83,21 @@ public abstract class KelpRegion implements Cloneable {
    * @param dy How far the region should be moved on the y-axis
    * @param dz How far the region should be moved on the z-axis
    */
-  public abstract void move(double dx, double dy, double dz);
+  public void move(double dx, double dy, double dz) {
+    this.disableListeners();
+    this.moveIgnoreListeners(dx, dy, dz);
+    this.enableListeners();
+  }
+
+  /**
+   * Moves the region into a certain direction defined by
+   * the different axis values.
+   *
+   * @param dx How far the region should be moved on the x-axis
+   * @param dy How far the region should be moved on the y-axis
+   * @param dz How far the region should be moved on the z-axis
+   */
+  protected abstract void moveIgnoreListeners(double dx, double dy, double dz);
 
   /**
    * Gets the total volume of this region, which depends
@@ -129,6 +156,8 @@ public abstract class KelpRegion implements Cloneable {
    * Gets all chunks that are loaded and covered by this region.
    * If you want to include unloaded chunks as well, use {@link #getChunks()}
    * instead.
+   * This method automatically applies the changes to the listener system
+   * if it is enabled for this region.
    *
    * @return A set of all loaded chunks covered by this region.
    */
@@ -139,19 +168,49 @@ public abstract class KelpRegion implements Cloneable {
    *
    * @param amount The amount of expansion in blocks.
    */
-  public abstract void expand(double amount);
+  public void expand(double amount) {
+    this.disableListeners();
+    this.expandIgnoreListeners(amount);
+    this.enableListeners();
+  }
+
+  /**
+   * Expands the current region by a certain multiplier.
+   * This method does not update the listeners for the region.
+   *
+   * @param amount The amount of expansion in blocks.
+   */
+  protected abstract void expandIgnoreListeners(double amount);
 
   /**
    * Expands the current region into a specific direction by
    * a given multiplier.
+   * This method automatically applies the changes to the listener system
+   * if it is enabled for this region.
    *
    * @param direction The direction to expand the region in.
    * @param amount The amount of expansion in blocks.
    */
-  public abstract void expand(KelpBlockFace direction, double amount);
+  public void expand(KelpBlockFace direction, double amount) {
+    this.disableListeners();
+    this.expandIgnoreListeners(direction, amount);
+    this.enableListeners();
+  }
+
+  /**
+   * Expands the current region into a specific direction by
+   * a given multiplier.
+   * This method does not update the listeners for the region.
+   *
+   * @param direction The direction to expand the region in.
+   * @param amount The amount of expansion in blocks.
+   */
+  protected abstract void expandIgnoreListeners(KelpBlockFace direction, double amount);
 
   /**
    * Expands the current region in the given axis.
+   * This method automatically applies the changes to the listener system
+   * if it is enabled for this region.
    *
    * @param negativeX The expansion on the negative x-axis (equal to west)
    * @param positiveX The expansion on the positive x-axis (equal to east)
@@ -160,7 +219,29 @@ public abstract class KelpRegion implements Cloneable {
    * @param negativeZ The expansion on the negative z-axis (equal to north)
    * @param positiveZ  The expansion on the positive z-axis (equal to south)
    */
-  public abstract void expand(double negativeX,
+  public void expand(double negativeX,
+                              double positiveX,
+                              double negativeY,
+                              double positiveY,
+                              double negativeZ,
+                              double positiveZ) {
+    this.disableListeners();
+    this.expandIgnoreListener(negativeX, positiveX, negativeY, positiveY, negativeZ, positiveZ);
+    this.enableListeners();
+  }
+
+  /**
+   * Expands the current region in the given axis.
+   * This method does not update the listeners for the region.
+   *
+   * @param negativeX The expansion on the negative x-axis (equal to west)
+   * @param positiveX The expansion on the positive x-axis (equal to east)
+   * @param negativeY The expansion on the negative y-axis (equal to down)
+   * @param positiveY The expansion on the positive y-axis (equal to up)
+   * @param negativeZ The expansion on the negative z-axis (equal to north)
+   * @param positiveZ  The expansion on the positive z-axis (equal to south)
+   */
+  protected abstract void expandIgnoreListener(double negativeX,
                               double positiveX,
                               double negativeY,
                               double positiveY,
@@ -360,6 +441,9 @@ public abstract class KelpRegion implements Cloneable {
    * They can be disabled at any time using {@link #disableListeners()}
    */
   public void enableListeners() {
+    if (listenersEnabled()) {
+      return;
+    }
     regionRepository.listenTo(this);
   }
 
@@ -371,6 +455,9 @@ public abstract class KelpRegion implements Cloneable {
    * Disabled listeners are the default for all regions.
    */
   public void disableListeners() {
+    if (!listenersEnabled()) {
+      return;
+    }
     regionRepository.stopListeningTo(this);
   }
 

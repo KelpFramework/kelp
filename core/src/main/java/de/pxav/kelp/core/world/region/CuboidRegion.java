@@ -28,14 +28,14 @@ public class CuboidRegion extends KelpRegion {
   }
 
   @Override
-  public void move(Vector vector) {
-    this.minPos.add(vector);
-    this.maxPos.add(vector);
+  protected void moveIgnoreListeners(double dx, double dy, double dz) {
+    move(new Vector(dx, dy, dz));
   }
 
   @Override
-  public void move(double dx, double dy, double dz) {
-    move(new Vector(dx, dy, dz));
+  protected void moveIgnoreListeners(Vector vector) {
+    this.minPos.add(vector);
+    this.maxPos.add(vector);
   }
 
   @Override
@@ -202,12 +202,12 @@ public class CuboidRegion extends KelpRegion {
   }
 
   @Override
-  public void expand(double amount) {
+  protected void expandIgnoreListeners(double amount) {
     expand(amount, amount, amount, amount, amount, amount);
   }
 
   @Override
-  public void expand(KelpBlockFace direction, double amount) {
+  protected void expandIgnoreListeners(KelpBlockFace direction, double amount) {
     Vector vector = direction.getDirection();
     if (vector.getX() + vector.getY() + vector.getZ() > 0) {
       vector = vector.multiply(amount);
@@ -220,7 +220,7 @@ public class CuboidRegion extends KelpRegion {
   }
 
   @Override
-  public void expand(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {
+  protected void expandIgnoreListener(double negativeX, double positiveX, double negativeY, double positiveY, double negativeZ, double positiveZ) {
     this.minPos.subtract(negativeX, negativeY, negativeZ);
     this.maxPos.add(positiveX, positiveY, positiveZ);
     setBoundingPositions(minPos, maxPos);

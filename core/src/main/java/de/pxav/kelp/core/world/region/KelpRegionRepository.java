@@ -63,14 +63,11 @@ public class KelpRegionRepository {
    * @param region The region to enable the listeners for.
    */
   void listenTo(KelpRegion region) {
-    ApproximateLocation maxPos = ApproximateLocation.from(region.getMaxPos());
-    ApproximateLocation minPos = ApproximateLocation.from(region.getMinPos());
-
     // go through all coordinates on the x/z plane and add their approximate
     // location to the map.
     for (int x = region.getMinPos().getBlockX(); x <= region.getMaxPos().getBlockX(); x++) {
       for (int z = region.getMinPos().getBlockZ(); z <= region.getMaxPos().getBlockZ(); z++) {
-        ApproximateLocation current = ApproximateLocation.fromExact(maxPos.getWorldName(), x, z);
+        ApproximateLocation current = ApproximateLocation.fromExact(region.getWorldName(), x, z);
         nearRegions.put(current, region);
       }
     }
@@ -88,12 +85,9 @@ public class KelpRegionRepository {
    * @param region The region to remove the listener of.
    */
   void stopListeningTo(KelpRegion region) {
-    ApproximateLocation maxPos = ApproximateLocation.from(region.getMaxPos());
-    ApproximateLocation minPos = ApproximateLocation.from(region.getMinPos());
-
     for (int x = region.getMinPos().getBlockX(); x <= region.getMaxPos().getBlockX(); x++) {
       for (int z = region.getMinPos().getBlockZ(); z <= region.getMaxPos().getBlockZ(); z++) {
-        ApproximateLocation current = ApproximateLocation.fromExact(maxPos.getWorldName(), x, z);
+        ApproximateLocation current = ApproximateLocation.fromExact(region.getWorldName(), x, z);
         nearRegions.remove(current, region);
       }
     }
