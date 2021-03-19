@@ -7,6 +7,7 @@ import de.pxav.kelp.core.event.kelpevent.PlayerLeaveRegionEvent;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
 import de.pxav.kelp.core.scheduler.type.RepeatingScheduler;
+import de.pxav.kelp.core.world.util.ApproximateLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
