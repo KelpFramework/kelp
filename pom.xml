@@ -7,7 +7,7 @@
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.0</version>
+  <version>0.3.2</version>
 
   <name>Kelp</name>
   <description>A cross-version spigot framework to avoid boilerplate code and make your plugin compatible with multiple spigot versions easily</description>
