@@ -42,7 +42,7 @@ public class KelpRegionRepository {
 
     for (int x = region.getMinPos().getBlockX(); x <= region.getMaxPos().getBlockX(); x++) {
       for (int z = region.getMinPos().getBlockZ(); z <= region.getMaxPos().getBlockZ(); z++) {
-        ApproximateLocation current = ApproximateLocation.create(maxPos.getWorldName(), x, z);
+        ApproximateLocation current = ApproximateLocation.fromExact(maxPos.getWorldName(), x, z);
         nearRegions.put(current, region);
       }
     }
@@ -58,7 +58,7 @@ public class KelpRegionRepository {
 
     for (int x = minPos.getX(); x <= maxPos.getX(); x++) {
       for (int z = minPos.getZ(); z <= maxPos.getZ(); z++) {
-        ApproximateLocation current = ApproximateLocation.create(maxPos.getWorldName(), x, z);
+        ApproximateLocation current = ApproximateLocation.fromExact(maxPos.getWorldName(), x, z);
         nearRegions.remove(current, region);
       }
     }
