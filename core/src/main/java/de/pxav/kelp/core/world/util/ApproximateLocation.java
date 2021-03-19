@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.world.region;
+package de.pxav.kelp.core.world.util;
 
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
