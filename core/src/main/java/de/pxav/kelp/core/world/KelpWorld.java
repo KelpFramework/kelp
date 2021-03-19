@@ -11,6 +11,7 @@ import de.pxav.kelp.core.world.version.WorldVersionTemplate;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -88,6 +89,20 @@ public class KelpWorld {
   }
 
   /**
+   * Gets the {@link KelpBlock} at the given location of the world.
+   *
+   * @param x  The x-coordinate of the location you want to get the block at.
+   * @param y  The y-coordinate of the location you want to get the block at.
+   * @param z  The z-coordinate of the location you want to get the block at.
+   * @return The {@link KelpBlock} object at the given location.
+   *         If the block's material is {@link de.pxav.kelp.core.inventory.material.KelpMaterial#AIR},
+   *         the block won't be {@code null} but of type {@code AIR}
+   */
+  public KelpBlock getBlockAt(double x, double y, double z) {
+    return versionTemplate.getBlockAt(this, KelpLocation.from(getName(), x, y, z));
+  }
+
+  /**
    * Gets the chunk at the given location in this world.
    * A chunk is a 16x16x256 (320 if you are on 1.17+)
    * cuboid region minecraft uses to generate and handle the world. More information
@@ -98,6 +113,19 @@ public class KelpWorld {
    */
   public KelpChunk getChunkAt(KelpLocation location) {
     return versionTemplate.getChunkAt(this, location);
+  }
+
+  /**
+   * Gets the chunk at the given location in this world.
+   * More information can be found in {@link KelpChunk}.
+   *
+   * @param x  The x-coordinate of the location to get the chunk at.
+   * @param y  The y-coordinate of the location to get the chunk at.
+   * @param z  The z-coordinate of the location to get the chunk at.
+   * @return The chunk at the given location.
+   */
+  public KelpChunk getChunkAt(double x, double y, double z) {
+    return versionTemplate.getChunkAt(this, KelpLocation.from(getName(), x, y, z));
   }
 
   /**
@@ -611,6 +639,25 @@ public class KelpWorld {
   public KelpWorld strikeLightningEffect(KelpLocation location) {
     versionTemplate.strikeLightning(this, location, true);
     return this;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+
+    if (!(object instanceof KelpWorld)) {
+      return false;
+    }
+
+    KelpWorld world = (KelpWorld) object;
+    return world.getName().equalsIgnoreCase(this.getName());
+  }
+
+  @Override
+  public int hashCode() {
+    return getUUID().hashCode();
   }
 
 }

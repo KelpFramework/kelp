@@ -6,6 +6,7 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialContainer;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.util.KelpBlockFace;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
@@ -118,7 +119,7 @@ public class VersionedBlock extends BlockVersionTemplate {
    * @param blockFace The face of the block to apply the bone meal to.
    */
   @Override
-  public void applyBoneMeal(KelpBlock kBlock, BlockFace blockFace) {
+  public void applyBoneMeal(KelpBlock kBlock, KelpBlockFace blockFace) {
     Block block = kBlock.getBukkitBlock();
 
     // cause those plant types to grow by 2 to 5 stages.

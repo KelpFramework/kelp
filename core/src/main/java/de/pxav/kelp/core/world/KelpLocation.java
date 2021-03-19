@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world;
 
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.world.util.CardinalDirection;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -95,6 +96,10 @@ public class KelpLocation implements Serializable, Cloneable {
     return new KelpLocation();
   }
 
+  public static double magnitude(double x, double y, double z) {
+    return (x * x) + (y * y) + (z * z);
+  }
+
   /**
    * Gets the name of the world this location is valid for.
    *
@@ -111,9 +116,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * when working with the location. This might cause lag to the server.
    *
    * @param worldName The name of the new world for this location.
+   * @return Instance of the current location
    */
-  public void setWorldName(String worldName) {
+  public KelpLocation setWorldName(String worldName) {
     this.worldName = worldName;
+    return this;
   }
 
   /**
@@ -129,9 +136,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's exact value on the world's X-axis.
    *
    * @param x The new value on the world's X-axis for the location.
+   * @return Instance of the current location
    */
-  public void setX(double x) {
+  public KelpLocation setX(double x) {
     this.x = x;
+    return this;
   }
 
   /**
@@ -147,9 +156,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's exact value on the world's Y-axis (height).
    *
    * @param y The new value on the world's Y-axis for the location.
+   * @return Instance of the current location
    */
-  public void setY(double y) {
+  public KelpLocation setY(double y) {
     this.y = y;
+    return this;
   }
 
   /**
@@ -165,9 +176,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's exact value on the world's Y-axis.
    *
    * @param z The new value on the world's Y-axis for the location.
+   * @return Instance of the current location
    */
-  public void setZ(double z) {
+  public KelpLocation setZ(double z) {
     this.z = z;
+    return this;
   }
 
   /**
@@ -194,9 +207,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the location's yaw (rotation around the y-Axis).
    *
    * @param yaw The new yaw to set for this location.
+   * @return Instance of the current location
    */
-  public void setYaw(float yaw) {
+  public KelpLocation setYaw(float yaw) {
     this.yaw = yaw;
+    return this;
   }
 
   /**
@@ -218,9 +233,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * Sets the locations pitch. This is the angle in which the entity is facing up or down.
    *
    * @param pitch The new pitch for the location.
+   * @return Instance of the current location
    */
-  public void setPitch(float pitch) {
+  public KelpLocation setPitch(float pitch) {
     this.pitch = pitch;
+    return this;
   }
 
   /**
@@ -263,9 +280,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * so be careful if you still need the exact value.
    *
    * @param x The new block x-value of this location.
+   * @return Instance of the current location
    */
-  public void setBlockX(double x) {
+  public KelpLocation setBlockX(double x) {
     this.x = Location.locToBlock(this.x);
+    return this;
   }
 
   /**
@@ -275,9 +294,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * so be careful if you still need the exact value.
    *
    * @param y The new block y-value of this location.
+   * @return Instance of the current location
    */
-  public void setBlockY(double y) {
+  public KelpLocation setBlockY(double y) {
     this.y = Location.locToBlock(this.y);
+    return this;
   }
 
   /**
@@ -287,9 +308,11 @@ public class KelpLocation implements Serializable, Cloneable {
    * so be careful if you still need the exact value.
    *
    * @param z The new block z-value of this location.
+   * @return Instance of the current location
    */
-  public void setBlockZ(double z) {
+  public KelpLocation setBlockZ(double z) {
     this.z = Location.locToBlock(this.z);
+    return this;
   }
 
   /**
@@ -326,6 +349,21 @@ public class KelpLocation implements Serializable, Cloneable {
     this.x += x;
     this.y += y;
     this.z += z;
+    return this;
+  }
+
+  /**
+   * Adds the given value to all coordinate values of this location.
+   * This means that all axis {@code x, y and z} will grow
+   * by {@code value}.
+   *
+   * @param value The value to add to all location coordinates.
+   * @return The current location object with the added values.
+   */
+  public KelpLocation add(double value) {
+    this.x += value;
+    this.y += value;
+    this.z += value;
     return this;
   }
 
@@ -393,6 +431,20 @@ public class KelpLocation implements Serializable, Cloneable {
     this.x -= x;
     this.y -= y;
     this.z -= z;
+    return this;
+  }
+
+  /**
+   * Subtracts the given value from all the locations coordinates.
+   * So all axis {@code x, y and z} will be smaller by {@code value}.
+   *
+   * @param value The value to subtract from all coordinate values.
+   * @return The current location object with the subtracted values.
+   */
+  public KelpLocation subtract(double value) {
+    this.x -= value;
+    this.y -= value;
+    this.z -= value;
     return this;
   }
 
@@ -602,6 +654,10 @@ public class KelpLocation implements Serializable, Cloneable {
     } else {
       return null;
     }
+  }
+
+  public KelpLocation findMidpoint(KelpLocation to) {
+    return getMinimalLocation(to).add(getMaximalLocation(to)).multiply(0.5);
   }
 
   /**
@@ -836,6 +892,53 @@ public class KelpLocation implements Serializable, Cloneable {
   }
 
   /**
+   * Compares the current location with the given location
+   * and returns the location that is lower in the world's grid.
+   * When a location is 'lower' than another it means that its
+   * coordinate values (x, y, z) are smaller. The yaw and pitch
+   * value is ignored in this calculation.
+   *
+   * This method will automatically clone the source location.
+   *
+   * @param compareTo The location to compare the current location to.
+   * @return The location that is lower in the world grid.
+   */
+  public KelpLocation getMinimalLocation(KelpLocation compareTo) {
+    double minX = Math.min(compareTo.getX(), getX());
+    double minY = Math.min(compareTo.getY(), getY());
+    double minZ = Math.min(compareTo.getZ(), getZ());
+
+    return this.clone()
+      .setX(minX)
+      .setY(minY)
+      .setZ(minZ);
+  }
+
+
+  /**
+   * Compares the current location with the given location
+   * and returns the location that is higher in the world's grid.
+   * When a location is 'higher' than another it means that its
+   * coordinate values (x, y, z) are bigger. The yaw and pitch
+   * value is ignored in this calculation.
+   *
+   * This method will automatically clone the source location.
+   *
+   * @param compareTo The location to compare the current location to.
+   * @return The location that is higher in the world grid.
+   */
+  public KelpLocation getMaximalLocation(KelpLocation compareTo) {
+    double maxX = Math.max(compareTo.getX(), getX());
+    double maxY = Math.max(compareTo.getY(), getY());
+    double maxZ = Math.max(compareTo.getZ(), getZ());
+
+    return this.clone()
+      .setX(maxX)
+      .setY(maxY)
+      .setZ(maxZ);
+  }
+
+  /**
    * Zeros all axis of the location. This sets the x, y, and z
    * coordinate to {@code 0}.
    *
@@ -894,6 +997,37 @@ public class KelpLocation implements Serializable, Cloneable {
    */
   public Location getBukkitLocation() {
     return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+
+    if (!(object instanceof KelpLocation)) {
+      return false;
+    }
+
+    KelpLocation location = (KelpLocation) object;
+    return this.getWorldName().equalsIgnoreCase(location.getWorldName())
+      && this.getX() == location.getX()
+      && this.getY() == location.getY()
+      && this.getZ() == location.getZ()
+      && this.getYaw() == location.getYaw()
+      && this.getPitch() == location.getPitch();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+      .append(this.worldName)
+      .append(this.x)
+      .append(this.y)
+      .append(this.z)
+      .append(this.yaw)
+      .append(this.pitch)
+      .toHashCode();
   }
 
 }

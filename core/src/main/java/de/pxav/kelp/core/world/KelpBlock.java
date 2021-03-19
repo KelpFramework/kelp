@@ -1,11 +1,14 @@
 package de.pxav.kelp.core.world;
 
+import com.google.common.base.Objects;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.util.CardinalDirection;
+import de.pxav.kelp.core.world.util.KelpBlockFace;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.util.Vector;
 
 /**
@@ -275,9 +278,10 @@ public class KelpBlock {
    * might grow to a tree or grass might spawn random flowers
    * and so on.
    *
-   * This method by default applies the bone meal on the upper side of a block.   */
+   * This method by default applies the bone meal on the upper side of a block.
+   */
   public void applyBoneMeal() {
-    versionTemplate.applyBoneMeal(this, BlockFace.UP);
+    versionTemplate.applyBoneMeal(this, KelpBlockFace.UP);
   }
 
   /**
@@ -288,7 +292,7 @@ public class KelpBlock {
    *
    * @param blockFace The face of the block to apply the bone meal on.
    */
-  public void applyBoneMeal(BlockFace blockFace) {
+  public void applyBoneMeal(KelpBlockFace blockFace) {
     versionTemplate.applyBoneMeal(this, blockFace);
   }
 
@@ -313,6 +317,33 @@ public class KelpBlock {
    */
   public Block getBukkitBlock() {
     return bukkitBlock;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+
+    if (!(object instanceof KelpBlock)) {
+      return false;
+    }
+
+    KelpBlock kelpBlock = (KelpBlock) object;
+    return kelpBlock.getX() == this.getX()
+      && kelpBlock.getY() == this.getY()
+      && kelpBlock.getZ() == this.getZ()
+      && kelpBlock.getWorldName().equalsIgnoreCase(this.getWorldName());
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+      .append(this.getWorldName())
+      .append(getX())
+      .append(getY())
+      .append(getZ())
+      .toHashCode();
   }
 
 }
