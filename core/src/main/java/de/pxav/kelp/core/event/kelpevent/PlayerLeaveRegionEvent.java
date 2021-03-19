@@ -5,6 +5,14 @@ import de.pxav.kelp.core.world.region.KelpRegion;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+/**
+ * This event is triggered when a player leaves a {@link KelpRegion}
+ * that has listeners enabled.
+ *
+ * The opposite of this event would be {@link PlayerEnterRegionEvent}
+ *
+ * @author pxav
+ */
 public class PlayerLeaveRegionEvent extends KelpRegionEvent implements Cancellable {
 
   private static final HandlerList handlers = new HandlerList();
@@ -17,6 +25,11 @@ public class PlayerLeaveRegionEvent extends KelpRegionEvent implements Cancellab
     this.player = player;
   }
 
+  /**
+   * Gets the player who left the region.
+   *
+   * @return The player who left the region.
+   */
   public KelpPlayer getPlayer() {
     return player;
   }
