@@ -52,15 +52,16 @@ public class InventoryClickListener {
       event.setCancelled(true);
     }
 
+    KelpPlayer player = playerRepository.getKelpPlayer((Player) event.getWhoClicked());
+    KelpItem item = itemFactory.fromItemStack(itemStack).slot(event.getSlot());
+
     for (String current : itemTagVersionTemplate.getTagKeys(itemStack)) {
       if (!current.startsWith("listener-")) {
         continue;
       }
 
-      KelpPlayer player = playerRepository.getKelpPlayer((Player) event.getWhoClicked());
-      KelpItem item = itemFactory.fromItemStack(itemStack).slot(event.getSlot());
-
       String listenerId = itemTagVersionTemplate.getStringValue(itemStack, current);
+
       listenerRepository.fireListener(listenerId, new KelpClickEvent(player, null, item));
     }
 

@@ -2,7 +2,6 @@ package de.pxav.kelp.core.inventory.widget;
 
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.function.Supplier;
 
@@ -26,9 +25,7 @@ import java.util.function.Supplier;
  *
  * @author pxav
  */
-public class ToggleableWidget implements SimpleWidget {
-
-  private KelpPlayer player;
+public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implements SimpleWidget {
 
   // the condition to be checked every time the widget updates
   private Supplier<Boolean> condition;
@@ -84,9 +81,9 @@ public class ToggleableWidget implements SimpleWidget {
    */
   public ToggleableWidget whenTrue(KelpItem kelpItem) {
     this.whenTrue = kelpItem;
-    whenTrue.addListener(player, event -> {
-      player.updateKelpInventory();
-    });
+
+    addClickListener(whenTrue, event -> event.getPlayer().updateKelpInventory());
+
     return this;
   }
 
@@ -104,13 +101,16 @@ public class ToggleableWidget implements SimpleWidget {
    */
   public ToggleableWidget whenTrue(KelpItem kelpItem, Runnable action) {
     Preconditions.checkNotNull(action);
+
     this.whenTrue = kelpItem;
-    whenTrue.addListener(player, event -> {
+
+    addClickListener(whenTrue, event -> {
       action.run();
 
       // in case of the condition changes inside the runnable, update the inventory.
-      player.updateKelpInventory();
+      event.getPlayer().updateKelpInventory();
     });
+
     return this;
   }
 
@@ -123,9 +123,9 @@ public class ToggleableWidget implements SimpleWidget {
    */
   public ToggleableWidget whenFalse(KelpItem kelpItem) {
     this.whenFalse = kelpItem;
-    whenFalse.addListener(player, event -> {
-      player.updateKelpInventory();
-    });
+
+    addClickListener(whenFalse, event -> event.getPlayer().updateKelpInventory());
+
     return this;
   }
 
@@ -143,36 +143,17 @@ public class ToggleableWidget implements SimpleWidget {
    */
   public ToggleableWidget whenFalse(KelpItem kelpItem, Runnable action) {
     Preconditions.checkNotNull(action);
+
     this.whenFalse = kelpItem;
-    whenFalse.addListener(player, event -> {
+
+    addClickListener(whenFalse, event -> {
       action.run();
 
       // in case of the condition changes inside the runnable, update the inventory.
-      player.updateKelpInventory();
+      event.getPlayer().updateKelpInventory();
     });
-    return this;
-  }
 
-  /**
-   * Sets the player to whom the current widget is currently dedicated.
-   *
-   * @param player The player you want to choose.
-   * @return The current instance of the widget.
-   */
-  @Override
-  public ToggleableWidget player(KelpPlayer player) {
-    this.player = player;
     return this;
-  }
-
-  /**
-   * Gets the player to whom the current widget is dedicated.
-   *
-   * @return The {@code KelpPlayer} - "owner" of the widget.
-   */
-  @Override
-  public KelpPlayer getPlayer() {
-    return player;
   }
 
   /**
@@ -190,5 +171,4 @@ public class ToggleableWidget implements SimpleWidget {
       return this.whenFalse.slot(slot);
     }
   }
-
 }

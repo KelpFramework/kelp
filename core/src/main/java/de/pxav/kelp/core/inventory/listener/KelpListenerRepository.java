@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,6 +22,9 @@ import java.util.UUID;
  */
 @Singleton
 public class KelpListenerRepository {
+
+  // Used to store listeners that are independent from players
+  public static final UUID GLOBAL_LISTENER_ID = UUID.nameUUIDFromBytes("KLR_GLOBAL".getBytes(StandardCharsets.UTF_8));
 
   // Stores which listener ids go with which player.
   // This allows to unregister listeners of a specific player
@@ -46,8 +50,13 @@ public class KelpListenerRepository {
    */
   public String registerListener(UUID playerFor, ClickListener listener) {
     String listenerId = this.newListenerId();
+
     listeners.put(listenerId, listener);
-    listenerOwners.put(playerFor, listenerId);
+
+    if(playerFor != GLOBAL_LISTENER_ID) {
+      listenerOwners.put(playerFor, listenerId);
+    }
+
     return listenerId;
   }
 

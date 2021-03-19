@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.inventory.widget;
 
 import de.pxav.kelp.core.inventory.item.KelpItem;
+import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.Collection;
 
@@ -24,8 +25,9 @@ public interface GroupedWidget extends Widget {
    * Converts all the given information and customization
    * and generates a collection of items out of it.
    *
+   * @param player The widget "receiver".
    * @return The collection of items representing the widget.
    */
-  Collection<KelpItem> render();
+  Collection<KelpItem> render(KelpPlayer player);
 
 }
