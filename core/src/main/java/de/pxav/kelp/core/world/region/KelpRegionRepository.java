@@ -2,8 +2,8 @@ package de.pxav.kelp.core.world.region;
 
 import de.pxav.kelp.core.common.ConcurrentMultimap;
 import de.pxav.kelp.core.common.ConcurrentSetMultimap;
-import de.pxav.kelp.core.event.kelpevent.PlayerEnterRegionEvent;
-import de.pxav.kelp.core.event.kelpevent.PlayerLeaveRegionEvent;
+import de.pxav.kelp.core.event.kelpevent.region.PlayerEnterRegionEvent;
+import de.pxav.kelp.core.event.kelpevent.region.PlayerLeaveRegionEvent;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
 import de.pxav.kelp.core.scheduler.type.RepeatingScheduler;

@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.event.kelpevent;
+package de.pxav.kelp.core.event.kelpevent.region;
 
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.region.KelpRegion;

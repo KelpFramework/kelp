@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.world.region;
 
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.event.kelpevent.region.PlayerEnterRegionEvent;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
@@ -20,7 +21,7 @@ import java.util.UUID;
  * A region can be expanded and moved in the 3D-space and you can do operations
  * with its blocks.
  *
- * You can also listen for region events, for example the {@link de.pxav.kelp.core.event.kelpevent.PlayerEnterRegionEvent},
+ * You can also listen for region events, for example the {@link PlayerEnterRegionEvent},
  * which is triggered each time a player enters a registered region. For a region to
  * be recognized by listeners, you have to enable listeners for it using
  * {@link #enableListeners()}, which can be disabled at every time using
@@ -432,7 +433,7 @@ public abstract class KelpRegion implements Cloneable {
 
   /**
    * Enables all listeners for this region.
-   * This means that events such as {@link de.pxav.kelp.core.event.kelpevent.PlayerEnterRegionEvent}
+   * This means that events such as {@link PlayerEnterRegionEvent}
    * will be triggered. Region listeners might become relatively
    * performance intensive if you have many of them, so they are
    * disabled by default.
@@ -449,7 +450,7 @@ public abstract class KelpRegion implements Cloneable {
 
   /**
    * Disables all listeners for this region.
-   * This means that events such as {@link de.pxav.kelp.core.event.kelpevent.PlayerEnterRegionEvent}
+   * This means that events such as {@link PlayerEnterRegionEvent}
    * won't be triggered anymore, which saves performance.
    *
    * Disabled listeners are the default for all regions.
@@ -464,7 +465,7 @@ public abstract class KelpRegion implements Cloneable {
   /**
    * Checks whether listeners are currently enabled for this region.
    * Listeners are responsible for triggering events such as
-   * {@link de.pxav.kelp.core.event.kelpevent.PlayerEnterRegionEvent}
+   * {@link PlayerEnterRegionEvent}
    *
    * @return {@code true} if listeners are enabled.
    */

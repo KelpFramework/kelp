@@ -1,8 +1,7 @@
-package de.pxav.kelp.core.event.kelpevent;
+package de.pxav.kelp.core.event.kelpevent.region;
 
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.region.KelpRegion;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
@@ -18,7 +17,6 @@ public class PlayerLeaveRegionEvent extends KelpRegionEvent {
   private static final HandlerList handlers = new HandlerList();
 
   private KelpPlayer player;
-  private boolean cancelled;
 
   public PlayerLeaveRegionEvent(KelpRegion region, KelpPlayer player) {
     super(region);
