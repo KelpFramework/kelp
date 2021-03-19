@@ -91,8 +91,8 @@ public class KelpRegionRepository {
     ApproximateLocation maxPos = ApproximateLocation.from(region.getMaxPos());
     ApproximateLocation minPos = ApproximateLocation.from(region.getMinPos());
 
-    for (int x = minPos.getX(); x <= maxPos.getX(); x++) { //todo use exact location here
-      for (int z = minPos.getZ(); z <= maxPos.getZ(); z++) {
+    for (int x = region.getMinPos().getBlockX(); x <= region.getMaxPos().getBlockX(); x++) {
+      for (int z = region.getMinPos().getBlockZ(); z <= region.getMaxPos().getBlockZ(); z++) {
         ApproximateLocation current = ApproximateLocation.fromExact(maxPos.getWorldName(), x, z);
         nearRegions.remove(current, region);
       }
