@@ -356,14 +356,6 @@ public class KelpChunk {
     return versionTemplate.getForceLoadFlagPlugins(this);
   }
 
-  public boolean equals(KelpChunk compareTo) {
-    return compareTo.getX() == getX() && compareTo.getZ() == getZ();
-  }
-
-  public boolean equals(Chunk compareTo) {
-    return compareTo.getX() == getX() && compareTo.getZ() == getZ();
-  }
-
   /**
    * Gets the bukkit chunk instance of this KelpChunk.
    *
