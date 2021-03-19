@@ -13,7 +13,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author pxav
  */
-public class PlayerLeaveRegionEvent extends KelpRegionEvent implements Cancellable {
+public class PlayerLeaveRegionEvent extends KelpRegionEvent {
 
   private static final HandlerList handlers = new HandlerList();
 
@@ -41,16 +41,6 @@ public class PlayerLeaveRegionEvent extends KelpRegionEvent implements Cancellab
 
   public static HandlerList getHandlerList() {
     return handlers;
-  }
-
-  @Override
-  public boolean isCancelled() {
-    return cancelled;
-  }
-
-  @Override
-  public void setCancelled(boolean cancelled) {
-    this.cancelled = cancelled;
   }
 
 }
