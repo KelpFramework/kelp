@@ -40,8 +40,8 @@ public class KelpRegionRepository {
     ApproximateLocation maxPos = ApproximateLocation.from(region.getMaxPos());
     ApproximateLocation minPos = ApproximateLocation.from(region.getMinPos());
 
-    for (int x = minPos.getX(); x <= maxPos.getX(); x++) {
-      for (int z = minPos.getZ(); z <= maxPos.getZ(); z++) {
+    for (int x = region.getMinPos().getBlockX(); x <= region.getMaxPos().getBlockX(); x++) {
+      for (int z = region.getMinPos().getBlockZ(); z <= region.getMaxPos().getBlockZ(); z++) {
         ApproximateLocation current = ApproximateLocation.create(maxPos.getWorldName(), x, z);
         nearRegions.put(current, region);
       }
@@ -70,11 +70,12 @@ public class KelpRegionRepository {
 
   @EventHandler
   public void handlePlayerJoin(PlayerJoinEvent event) {
-    if (nearRegions.isEmpty()) {
+    if (nearRegions.isEmpty() || this.isListenerRunning()) {
       return;
     }
 
     this.startListenerTasks();
+
   }
 
   private void startListenerTasks() {
@@ -92,6 +93,7 @@ public class KelpRegionRepository {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
           nearRegions.getOrEmpty(ApproximateLocation.from(player.getLocation())).forEach(region -> {
+
             if (!region.getWorldName().equalsIgnoreCase(player.getWorld().getName())) {
               return;
             }
