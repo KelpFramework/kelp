@@ -3,7 +3,7 @@ package de.pxav.kelp.core.inventory.item;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.pxav.kelp.core.KelpPlugin;
-import de.pxav.kelp.core.inventory.listener.ClickListener;
+import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 /**
  * The {@code KelpItem} can be compared with the {@code ItemStack} of the
@@ -258,7 +259,7 @@ public class KelpItem {
    *                  to execute when the item is clicked.
    * @return Instance of the current {@code KelpItem} object.
    */
-  public KelpItem addListener(KelpPlayer player, ClickListener listener) {
+  public KelpItem addListener(KelpPlayer player, Consumer<KelpClickEvent> listener) {
     return addListener(player.getUUID(), listener);
   }
 
@@ -268,7 +269,7 @@ public class KelpItem {
    * @param listener The listener.
    * @return Instance of the current {@code KelpItem} object.
    */
-  public KelpItem addGlobalListener(ClickListener listener) {
+  public KelpItem addGlobalListener(Consumer<KelpClickEvent> listener) {
     return addListener(KelpListenerRepository.GLOBAL_LISTENER_ID, listener);
   }
 
@@ -284,7 +285,7 @@ public class KelpItem {
    *                  to execute when the item is clicked.
    * @return Instance of the current {@code KelpItem} object.
    */
-  public KelpItem addListener(UUID player, ClickListener listener) {
+  public KelpItem addListener(UUID player, Consumer<KelpClickEvent> listener) {
     String listenerId = listenerRepository.registerListener(player, listener);
     this.addTag("listener-" + ThreadLocalRandom.current().nextInt(1, 1000), listenerId);
     return this;

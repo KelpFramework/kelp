@@ -2,9 +2,10 @@ package de.pxav.kelp.core.inventory.widget;
 
 import com.google.common.collect.Sets;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.listener.ClickListener;
+import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * This widget is used to create single items and put them into
@@ -19,7 +20,7 @@ public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidg
   private KelpItem item;
 
   // caches listeners to be added to the item, when the item itself is still null.
-  private Set<ClickListener> listenerCache;
+  private Set<Consumer<KelpClickEvent>> listenerCache;
 
   ItemWidget() {
     this.listenerCache = Sets.newHashSet();
@@ -50,7 +51,7 @@ public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidg
    * @param listener The listener you want to add.
    * @return The current instance of the widget.
    */
-  public ItemWidget addItemListener(ClickListener listener) {
+  public ItemWidget addItemListener(Consumer<KelpClickEvent> listener) {
     // cache the listener if it cannot be added to the item directly.
     if (item == null) {
       if (listenerCache == null) {
