@@ -1,7 +1,6 @@
 package de.pxav.kelp.implementation1_8.inventory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
@@ -9,13 +8,11 @@ import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
-import net.minecraft.server.v1_8_R3.NBTBase;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,31 +34,48 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
   }
 
   @Override
-  public ItemStack tagItem(ItemStack itemStack, String key, String value) {
-    Preconditions.checkNotNull(itemStack);
+  public ItemStack tagItem(ItemStack itemStack, String key, Object value) {
     Preconditions.checkNotNull(key);
     Preconditions.checkNotNull(value);
-    if (itemStack.getType() == Material.AIR) {
-      this.logAirError();
-      return itemStack;
+    if (!isItemValid(itemStack)) {
+      return null;
     }
 
     net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
     NBTTagCompound nbtTagCompound = nmsItemStack.getTag() == null
       ? new NBTTagCompound()
       : nmsItemStack.getTag();
-    nbtTagCompound.setString(key, value);
+    
+    if (value instanceof Integer) {
+      nbtTagCompound.setInt(key, (int) value);
+    } else if (value instanceof Boolean) {
+      nbtTagCompound.setBoolean(key, (Boolean) value);
+    } else if (value instanceof Float) {
+      nbtTagCompound.setFloat(key, (Float) value);
+    } else if (value instanceof Double) {
+      nbtTagCompound.setDouble(key, (Double) value);
+    } else if (value instanceof Long) {
+      nbtTagCompound.setLong(key, (Long) value);
+    } else if (value instanceof int[]) {
+      nbtTagCompound.setIntArray(key, (int[]) value);
+    } else if (value instanceof Byte) {
+      nbtTagCompound.setByte(key, (Byte) value);
+    } else if (value instanceof byte[]) {
+      nbtTagCompound.setByteArray(key, (byte[]) value);
+    } else if (value instanceof Short) {
+      nbtTagCompound.setShort(key, (Short) value);
+    } else {
+      nbtTagCompound.setString(key, String.valueOf(value));
+    }
+    
     nmsItemStack.setTag(nbtTagCompound);
     return CraftItemStack.asBukkitCopy(nmsItemStack);
   }
 
   @Override
   public ItemStack removeTag(ItemStack itemStack, String key) {
-    Preconditions.checkNotNull(itemStack);
-
-    if (itemStack.getType() == Material.AIR) {
-      this.logAirError();
-      return itemStack;
+    if (!isItemValid(itemStack)) {
+      return null;
     }
 
     net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
@@ -74,9 +88,7 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
 
   @Override
   public boolean hasTagKey(ItemStack itemStack, String key) {
-    Preconditions.checkNotNull(itemStack);
-    if (itemStack.getType() == Material.AIR) {
-      this.logAirError();
+    if (!isItemValid(itemStack)) {
       return false;
     }
 
@@ -89,15 +101,80 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
 
   @Override
   public String getStringValue(ItemStack itemStack, String key) {
-    Preconditions.checkNotNull(itemStack);
-    if (itemStack.getType() == Material.AIR) {
-      this.logAirError();
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    return nbtTagCompound == null ? null : nbtTagCompound.getString(key);
+  }
+
+  @Override
+  public int getIntegerValue(ItemStack itemStack, String key) {
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    return nbtTagCompound == null ? 0 : nbtTagCompound.getInt(key);
+  }
+
+  @Override
+  public double getDoubleValue(ItemStack itemStack, String key) {
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    return nbtTagCompound == null ? 0 : nbtTagCompound.getDouble(key);
+  }
+
+  @Override
+  public long getLongValue(ItemStack itemStack, String key) {
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    return nbtTagCompound == null ? 0 : nbtTagCompound.getLong(key);
+  }
+
+  @Override
+  public float getFloatValue(ItemStack itemStack, String key) {
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    return nbtTagCompound == null ? 0 : nbtTagCompound.getFloat(key);
+  }
+
+  @Override
+  public byte getByteValue(ItemStack itemStack, String key) {
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    return nbtTagCompound == null ? 0 : nbtTagCompound.getByte(key);
+  }
+
+  @Override
+  public boolean getBooleanValue(ItemStack itemStack, String key) {
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    return nbtTagCompound != null && nbtTagCompound.getBoolean(key);
+  }
+
+  @Override
+  public Object getAnyValue(ItemStack itemStack, String key) {
+    if (!hasTagKey(itemStack, key)) {
       return null;
     }
 
-    net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-    NBTTagCompound nbtTagCompound = nmsItemStack.getTag();
-    return nbtTagCompound.getString(key);
+    NBTTagCompound nbtTagCompound = getTagCompound(itemStack);
+    NBTBase base = nbtTagCompound.get(key);
+    if (base instanceof NBTTagInt) {
+      return nbtTagCompound.getInt(key);
+    } else if (base instanceof NBTTagByte) {
+      byte value = nbtTagCompound.getByte(key);
+      if (value == 1) {
+        return true;
+      } else if (value == 0) {
+        return false;
+      }
+      return nbtTagCompound.getByte(key);
+    } else if (base instanceof NBTTagByteArray) {
+      return nbtTagCompound.getByteArray(key);
+    } else if (base instanceof NBTTagDouble) {
+      return nbtTagCompound.getDouble(key);
+    } else if (base instanceof NBTTagFloat) {
+      return nbtTagCompound.getFloat(key);
+    } else if (base instanceof NBTTagIntArray) {
+      return nbtTagCompound.getIntArray(key);
+    } else if (base instanceof NBTTagLong) {
+      return nbtTagCompound.getLong(key);
+    } else if (base instanceof NBTTagShort) {
+      return nbtTagCompound.getShort(key);
+    } else if (base instanceof NBTTagString) {
+      return nbtTagCompound.getString(key);
+    }
+    return null;
   }
 
   @Override
@@ -111,8 +188,38 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
     return tags.keySet();
   }
 
-  private void logAirError() {
-    logger.log(LogLevel.DEBUG, "Cannot get item tags of items with type AIR.");
+  /**
+   * Gets the {@link NBTTagCompound tag compound} of an item stack
+   * and automatically checks if the item stack can hold tags at all.
+   *
+   * The tag compound holds all nbt tag data of the item.
+   *
+   * @param itemStack The item stack to get the tag compound of.
+   * @return The {@link NBTTagCompound} of the given item stack.
+   */
+  private NBTTagCompound getTagCompound(ItemStack itemStack) {
+    if (!isItemValid(itemStack)) {
+      return null;
+    }
+
+    net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+    return nmsItemStack.getTag();
+  }
+
+  /**
+   * Checks whether the given item stack is not null and if it is
+   * not of type {@link de.pxav.kelp.core.inventory.material.KelpMaterial#AIR air}.
+   *
+   * @param itemStack The item stack to check.
+   * @return Whether the item stack can hold an item tag.
+   */
+  private boolean isItemValid(ItemStack itemStack) {
+    Preconditions.checkNotNull(itemStack);
+    if (itemStack.getType() == Material.AIR) {
+      logger.log(LogLevel.DEBUG, "Cannot get item tags of items with type AIR.");
+      return false;
+    }
+    return true;
   }
 
 }
