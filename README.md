@@ -4,7 +4,9 @@
 
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/PXAV/kelp?include_prereleases&label=version&color=green) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.pxav.kelp/core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.pxav.kelp/core)  ![GitHub issues](https://img.shields.io/github/issues/PXAV/kelp) ![GitHub pull requests](https://img.shields.io/github/issues-pr/PXAV/kelp) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/PXAV/kelp) ![Development Indicator](https://img.shields.io/badge/development-active-brightgreen)
 
-
+Join the **DISCORD** for exclusive updates, feature voting, etc.:
+https://discord.gg/KVtjCMwk4x 
+Share and download free plugins with the community
 
 ### What is Kelp?
 
