@@ -48,6 +48,10 @@ public class KelpItem {
     );
   }
 
+  public static KelpItem from(ItemStack itemStack) {
+    return KelpPlugin.getInjector().getInstance(ItemVersionTemplate.class).fromItemStack(itemStack);
+  }
+
   // the material of the item. If none is set, stone will be used
   private KelpMaterial material = KelpMaterial.STONE;
 
