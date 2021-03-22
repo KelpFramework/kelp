@@ -8,6 +8,7 @@ import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -140,6 +141,7 @@ public class KelpItem {
    */
   public KelpItem removeTag(String key) {
     this.tagsToRemove.add(key);
+    this.nbtTags.remove(key);
     return this;
   }
 
@@ -562,6 +564,36 @@ public class KelpItem {
    */
   public int[] getIntegerArrayTag(String key) {
     return (int[]) nbtTags.get(key);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof KelpItem)) {
+      return false;
+    }
+
+    KelpItem item = (KelpItem) object;
+    return displayName.equalsIgnoreCase(item.getDisplayName())
+      && material == item.getMaterial()
+      && itemDescription.equals(item.getItemDescription())
+      && slot == item.getSlot()
+      && unbreakable == item.unbreakable
+      && nbtTags.equals(item.nbtTags);
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+      .append(this.displayName)
+      .append(this.itemDescription)
+      .append(this.slot)
+      .append(this.material)
+      .append(this.nbtTags)
+      .append(this.glowing)
+      .append(this.unbreakable)
+      .append(this.enchantments)
+      .append(this.itemFlags)
+      .toHashCode();
   }
 
 }
