@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
@@ -70,7 +71,7 @@ public class KelpItem {
   private boolean glowing = false;
   private boolean unbreakable = false;
 
-  private Map<String, String> nbtTagStrings = Maps.newHashMap();
+  private ConcurrentMap<String, Object> nbtTags = Maps.newConcurrentMap();
   private Collection<String> tagsToRemove = Lists.newArrayList();
 
   /**
@@ -126,8 +127,8 @@ public class KelpItem {
    * @param value   The value you want to assign to the given key.
    * @return Instance of the current {@code KelpItem} object.
    */
-  public KelpItem addTag(String key, String value) {
-    this.nbtTagStrings.put(key, value);
+  public KelpItem addTag(String key, Object value) {
+    this.nbtTags.put(key, value);
     return this;
   }
 
@@ -230,7 +231,7 @@ public class KelpItem {
    * @return Instance of the current {@code KelpItem} object.
    */
   public KelpItem cancelInteractions() {
-    this.addTag("interactionCancelled", "true");
+    this.addTag("interactionCancelled", true);
     return this;
   }
 
@@ -316,13 +317,14 @@ public class KelpItem {
     }
 
     // add a flag to cancel interactions by default, if nothing else has been defined
-    if (!this.nbtTagStrings.containsKey("interactionCancelled") && !tagsToRemove.contains("interactionCancelled")) {
+    if (!this.nbtTags.containsKey("interactionCancelled") && !tagsToRemove.contains("interactionCancelled")) {
       this.cancelInteractions();
     }
 
     // add string tags
-    for (Map.Entry<String, String> tagEntry : this.nbtTagStrings.entrySet()) {
-      itemStack = itemTagVersionTemplate.tagItem(itemStack, tagEntry.getKey(), tagEntry.getValue());
+    for (Map.Entry<String, Object> tagEntry : this.nbtTags.entrySet()) {
+      Object value = tagEntry.getValue();
+      itemStack = itemTagVersionTemplate.tagItem(itemStack, tagEntry.getKey(), value);
     }
 
     // remove tags, which should be removed
@@ -388,4 +390,178 @@ public class KelpItem {
   public int getAmount() {
     return amount;
   }
+
+  /**
+   * Checks whether this item has a specific tag.
+   * Tags can be assigned using {@link #addTag(String, Object)}.
+   *
+   * You can get the value for a tag using one of the get methods
+   * like {@link #getIntTag(String)}.
+   *
+   * @param key The key of the tag to check.
+   * @return {@code true} if the item has the desired tag.
+   */
+  public boolean hasTagKey(String key) {
+    return nbtTags.containsKey(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method does not cast the value to a specific type, but
+   * returns a generic object.
+   *
+   * You can retrieve specific values using {@link #getIntTag(String)}
+   * for example.
+   *
+   * @param key The key of the tag you want to get the value of.
+   * @return The value associated with the given key.
+   */
+  public Object getRawTag(String key) {
+    return nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type integer and you should
+   * be sure that the tag you are retrieving is an integer.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The integer value associated with this tag.
+   */
+  public int getIntTag(String key) {
+    return (int) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type string and you should
+   * be sure that the tag you are retrieving is a string.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The string value associated with this tag.
+   */
+  public String getStringTag(String key) {
+    return (String) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type boolean and you should
+   * be sure that the tag you are retrieving is a boolean.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The boolean value associated with this tag.
+   */
+  public boolean getBooleanTag(String key) {
+    return (boolean) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type double and you should
+   * be sure that the tag you are retrieving is a double.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The double value associated with this tag.
+   */
+  public double getDoubleTag(String key) {
+    return (double) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type float and you should
+   * be sure that the tag you are retrieving is a float.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The double value associated with this tag.
+   */
+  public float getFloatTag(String key) {
+    return (float) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type long and you should
+   * be sure that the tag you are retrieving is a long.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The long value associated with this tag.
+   */
+  public long getLongTag(String key) {
+    return (long) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type short and you should
+   * be sure that the tag you are retrieving is a short.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The short value associated with this tag.
+   */
+  public short getShortTag(String key) {
+    return (short) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type byte and you should
+   * be sure that the tag you are retrieving is a byte.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The byte value associated with this tag.
+   */
+  public byte getByteTag(String key) {
+    return (byte) nbtTags.get(key);
+  }
+
+  /**
+   * Gets the value for the tag associated with the given value.
+   * This method only returns values of type int array and you should
+   * be sure that the tag you are retrieving is an integer array.
+   * Otherwise, class cast exceptions might occur.
+   *
+   * If you want to retrieve any datatype, use {@link #getRawTag(String)}
+   * instead.
+   *
+   * @param key The key of the tag to get the value of.
+   * @return The integer array associated with this tag.
+   */
+  public int[] getIntegerArrayTag(String key) {
+    return (int[]) nbtTags.get(key);
+  }
+
 }
