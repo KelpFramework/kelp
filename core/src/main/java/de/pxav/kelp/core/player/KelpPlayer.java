@@ -9,6 +9,7 @@ import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
+import de.pxav.kelp.core.inventory.type.PlayerInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import de.pxav.kelp.core.player.bossbar.BossBarColor;
@@ -143,6 +144,10 @@ public class KelpPlayer extends LivingKelpEntity {
 
   public SimpleChatPrompt openSimpleChatPrompt() {
     return new SimpleChatPrompt(this.getBukkitPlayer(), this.chatPromptVersionTemplate);
+  }
+
+  public PlayerInventory getInventory() {
+    return PlayerInventory.of(this);
   }
 
   /**
