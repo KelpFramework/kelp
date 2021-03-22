@@ -39,6 +39,12 @@ public class VersionedItem extends ItemVersionTemplate {
 
   @Override
   public KelpItem fromItemStack(ItemStack itemStack) {
+    KelpItem output = KelpItem.create();
+
+    for (String tagKey : itemTagVersionTemplate.getTagKeys(itemStack)) {
+      output.addTag(tagKey, itemTagVersionTemplate.getAnyValue(itemStack, tagKey));
+    }
+
     short subId = itemStack.getDurability();
     KelpMaterial material;
     if (subId == 0) {
@@ -49,7 +55,7 @@ public class VersionedItem extends ItemVersionTemplate {
 
     ItemMeta itemMeta = itemStack.getItemMeta();
 
-    return new KelpItem(this, itemTagVersionTemplate, kelpListenerRepository)
+    return output
       .material(material)
       .amount(itemStack.getAmount())
       .displayName(itemMeta.getDisplayName())
