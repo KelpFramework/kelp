@@ -1,16 +1,23 @@
 package de.pxav.kelp.core.inventory.type;
 
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.common.ConcurrentSetMultimap;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.version.PlayerInventoryVersionTemplate;
+import de.pxav.kelp.core.inventory.widget.GroupedWidget;
+import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class PlayerInventory {
 
   private PlayerInventoryVersionTemplate versionTemplate;
   private KelpPlayer player;
+
+  private static ConcurrentSetMultimap<UUID, SimpleWidget> simpleWidgets = ConcurrentSetMultimap.create();
+  private static ConcurrentSetMultimap<UUID, GroupedWidget> groupedWidgets = ConcurrentSetMultimap.create();
 
   public static PlayerInventory of(KelpPlayer player) {
     return new PlayerInventory(
@@ -97,6 +104,75 @@ public class PlayerInventory {
 
   public PlayerInventory setItemInOffHand(KelpItem item) {
     versionTemplate.setItemInOffHand(player.getBukkitPlayer(), item);
+    return this;
+  }
+
+  public PlayerInventory addWidget(SimpleWidget simpleWidget) {
+    simpleWidgets.put(player.getUUID(), simpleWidget);
+    return this;
+  }
+
+  public PlayerInventory addWidget(GroupedWidget groupedWidget) {
+    groupedWidgets.put(player.getUUID(), groupedWidget);
+    return this;
+  }
+
+  public PlayerInventory removeSimpleWidget(Class<? extends SimpleWidget> widgetClass) {
+    simpleWidgets.get(player.getUUID()).forEach(widget -> {
+      if (widgetClass.getName().equalsIgnoreCase(widget.getClass().getName())) {
+        removeWidget(widget);
+      }
+    });
+    return this;
+  }
+
+  public PlayerInventory removeGroupedWidget(Class<? extends GroupedWidget> widgetClass) {
+    groupedWidgets.get(player.getUUID()).forEach(widget -> {
+      if (widgetClass.getName().equalsIgnoreCase(widget.getClass().getName())) {
+        removeWidget(widget);
+      }
+    });
+    return this;
+  }
+
+  public PlayerInventory removeWidget(SimpleWidget widget) {
+    player.getBukkitPlayer().getInventory().clear(widget.getCoveredSlot());
+    widget.onRemove();
+    simpleWidgets.remove(player.getUUID(), widget);
+    return this;
+  }
+
+  public PlayerInventory removeWidget(GroupedWidget widget) {
+    widget.getCoveredSlots().forEach(slot -> player.getBukkitPlayer().getInventory().clear(slot));
+    widget.onRemove();
+    groupedWidgets.remove(player.getUUID(), widget);
+    return this;
+  }
+
+  public PlayerInventory removeAllWidgets() {
+    simpleWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
+    groupedWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
+    return this;
+  }
+
+  public PlayerInventory updateWidgets() {
+    for (SimpleWidget current : simpleWidgets.getOrEmpty(player.getUUID())) {
+      KelpItem item = current.render();
+      if (!item.hasTagKey("interactionAllowed")) {
+        item.cancelInteractions();
+      }
+      setItem(item.getSlot(), item);
+    }
+
+    for (GroupedWidget current : groupedWidgets.getOrEmpty(player.getUUID())) {
+      current.render(player).forEach(item -> {
+        if (!item.hasTagKey("interactionAllowed")) {
+          item.cancelInteractions();
+        }
+        setItem(item.getSlot(), item);
+      });
+    }
+
     return this;
   }
 
