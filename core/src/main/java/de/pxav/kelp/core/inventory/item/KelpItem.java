@@ -238,6 +238,7 @@ public class KelpItem {
    */
   public KelpItem cancelInteractions() {
     this.addTag("interactionCancelled", true);
+    this.removeTag("interactionAllowed");
     return this;
   }
 
