@@ -13,6 +13,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.map.MapPalette;
 
 import java.util.List;
 
@@ -42,7 +43,11 @@ public class VersionedItem extends ItemVersionTemplate {
     KelpItem output = KelpItem.create();
 
     for (String tagKey : itemTagVersionTemplate.getTagKeys(itemStack)) {
-      output.addTag(tagKey, itemTagVersionTemplate.getAnyValue(itemStack, tagKey));
+      Object value = itemTagVersionTemplate.getAnyValue(itemStack, tagKey);
+      if (value == null) {
+        continue;
+      }
+      output.addTag(tagKey, value);
     }
 
     short subId = itemStack.getDurability();
