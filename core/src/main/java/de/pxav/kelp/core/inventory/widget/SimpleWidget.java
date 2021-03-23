@@ -29,4 +29,6 @@ public interface SimpleWidget extends Widget {
    */
   KelpItem render();
 
+  int getCoveredSlot();
+
 }

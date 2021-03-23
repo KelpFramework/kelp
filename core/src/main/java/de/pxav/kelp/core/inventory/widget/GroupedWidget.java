@@ -4,6 +4,7 @@ import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This interface represents a widget type.
@@ -29,5 +30,7 @@ public interface GroupedWidget extends Widget {
    * @return The collection of items representing the widget.
    */
   Collection<KelpItem> render(KelpPlayer player);
+
+  List<Integer> getCoveredSlots();
 
 }
