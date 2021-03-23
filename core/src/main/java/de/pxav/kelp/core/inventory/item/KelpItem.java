@@ -252,6 +252,7 @@ public class KelpItem {
    */
   public KelpItem allowInteractions() {
     this.removeTag("interactionCancelled");
+    this.addTag("interactionAllowed", true);
     return this;
   }
 
@@ -320,11 +321,6 @@ public class KelpItem {
     // make the item unbreakable if needed.
     if (this.unbreakable) {
       itemStack = itemVersionTemplate.makeUnbreakable(itemStack);
-    }
-
-    // add a flag to cancel interactions by default, if nothing else has been defined
-    if (!this.nbtTags.containsKey("interactionCancelled") && !tagsToRemove.contains("interactionCancelled")) {
-      this.cancelInteractions();
     }
 
     // add string tags
@@ -455,6 +451,9 @@ public class KelpItem {
    * @return The string value associated with this tag.
    */
   public String getStringTag(String key) {
+    if (nbtTags.get(key) == null) {
+      return null;
+    }
     return (String) nbtTags.get(key);
   }
 
@@ -471,6 +470,9 @@ public class KelpItem {
    * @return The boolean value associated with this tag.
    */
   public boolean getBooleanTag(String key) {
+    if (nbtTags.get(key) == null) {
+      return false;
+    }
     return (boolean) nbtTags.get(key);
   }
 
