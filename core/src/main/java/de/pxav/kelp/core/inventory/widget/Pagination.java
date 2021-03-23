@@ -10,10 +10,7 @@ import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This widget is used to crate pagination in your inventories.
@@ -175,7 +172,8 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
     int currentPlayerPage = inventoryRepository.getPlayerPages().getOrDefault(player.getUUID(), Maps.newHashMap()).getOrDefault(this, 0);
     int slotIndex = 0;
     for (KelpItem item : pages.get(currentPlayerPage)) {
-      output.add(item.slot(contentSlots.get(slotIndex)));
+      int slot = contentSlots.get(slotIndex);
+      output.add(item.slot(slot));
       slotIndex++;
     }
 
@@ -190,4 +188,13 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
 
     return output;
   }
+
+  @Override
+  public List<Integer> getCoveredSlots() {
+    List<Integer> output = Lists.newArrayList(contentSlots);
+    output.add(nextButton.getSlot());
+    output.add(previousButton.getSlot());
+    return output;
+  }
+
 }

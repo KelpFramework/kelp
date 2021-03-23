@@ -84,4 +84,9 @@ public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidg
     return item;
   }
 
+  @Override
+  public int getCoveredSlot() {
+    return item.getSlot();
+  }
+
 }

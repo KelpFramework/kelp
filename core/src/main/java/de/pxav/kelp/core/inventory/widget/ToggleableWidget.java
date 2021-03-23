@@ -36,6 +36,8 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
   // The item which is displayed when the condition is false.
   private KelpItem whenFalse;
 
+  private int slot;
+
   ToggleableWidget() {}
 
   public static ToggleableWidget create() {
@@ -148,9 +150,16 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
   @Override
   public KelpItem render() {
     if (condition.get()) {
+      slot = this.whenTrue.getSlot();
       return this.whenTrue;
     } else {
+      slot = this.whenFalse.getSlot();
       return this.whenFalse;
     }
+  }
+
+  @Override
+  public int getCoveredSlot() {
+    return slot;
   }
 }
