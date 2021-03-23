@@ -26,9 +26,6 @@ import java.util.concurrent.TimeUnit;
 public class AnimatedInventory extends KelpInventory {
 
   private TextAnimation title;
-  private int size;
-  private List<SimpleWidget> simpleWidgets;
-  private List<GroupedWidget> groupedWidgets;
 
   private ScheduledExecutorService scheduledExecutorService;
   private int animationState = 0;
@@ -92,11 +89,17 @@ public class AnimatedInventory extends KelpInventory {
 
     for (SimpleWidget current : simpleWidgets) {
       KelpItem item = current.render();
+      if (!item.getBooleanTag("interactionAllowed")) {
+        item.cancelInteractions();
+      }
       inventory.setItem(item.getSlot(), item.getItemStack());
     }
 
     for (GroupedWidget current : groupedWidgets) {
       current.render(player).forEach(item -> {
+        if (!item.getBooleanTag("interactionAllowed")) {
+          item.cancelInteractions();
+        }
         inventory.setItem(item.getSlot(), item.getItemStack());
       });
     }
@@ -111,11 +114,17 @@ public class AnimatedInventory extends KelpInventory {
 
     for (SimpleWidget current : simpleWidgets) {
       KelpItem item = current.render();
+      if (!item.hasTagKey("interactionAllowed")) {
+        item.cancelInteractions();
+      }
       playerInventory.setItem(item.getSlot(), item.getItemStack());
     }
 
     for (GroupedWidget current : groupedWidgets) {
       current.render(toUpdate).forEach(item -> {
+        if (!item.hasTagKey("interactionAllowed")) {
+          item.cancelInteractions();
+        }
         playerInventory.setItem(item.getSlot(), item.getItemStack());
       });
     }
@@ -136,7 +145,8 @@ public class AnimatedInventory extends KelpInventory {
     }, 0, animationDelayInMillis, TimeUnit.MILLISECONDS);
   }
 
-  public void stopUpdater() {
+  @Override
+  public void onClose() {
     scheduledExecutorService.shutdown();
   }
 
