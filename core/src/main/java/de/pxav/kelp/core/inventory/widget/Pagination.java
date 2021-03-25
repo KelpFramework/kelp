@@ -28,7 +28,7 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   private List<Integer> contentSlots;
 
   // all items which have to be spread across the pages
-  private Collection<KelpItem> contentItems;
+  private Collection<SimpleWidget> contentWidgets;
 
   // navigation buttons
   private KelpItem nextButton;
@@ -39,7 +39,7 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   Pagination(KelpInventoryRepository inventoryRepository) {
     this.inventoryRepository = inventoryRepository;
     this.contentSlots = Lists.newArrayList();
-    this.contentItems = Lists.newArrayList();
+    this.contentWidgets = Lists.newArrayList();
   }
 
   public static Pagination create() {
@@ -80,9 +80,9 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
    *                    the different pages.
    * @return The current instance of the widget.
    */
-  public Pagination contentItems(KelpItem... contentItem) {
-    this.contentItems.clear();
-    this.contentItems.addAll(Arrays.asList(contentItem));
+  public Pagination contentWidgets(SimpleWidget... contentItem) {
+    this.contentWidgets.clear();
+    this.contentWidgets.addAll(Arrays.asList(contentItem));
     return this;
   }
 
@@ -138,7 +138,7 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
    * @return The amount of maximum pages needed.
    */
   private int getMaxPage() {
-    double d = ((double) contentItems.size()) / contentSlots.size();
+    double d = ((double) contentWidgets.size()) / contentSlots.size();
     if (DoubleMath.isMathematicalInteger(d)) {
       return (int) d;
     }
@@ -159,21 +159,21 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
 
     // Iterate all items and check to which page they belong
     // Map pattern: page id -> items for that page
-    Multimap<Integer, KelpItem> pages = HashMultimap.create();
-    for (KelpItem item : contentItems) {
+    Multimap<Integer, SimpleWidget> pages = HashMultimap.create();
+    for (SimpleWidget widget : contentWidgets) {
       int currentPage = pages.isEmpty() ? 0 : pages.keySet().size() - 1;
       if (pages.get(currentPage).size() >= contentSlots.size()) {
         currentPage++;
       }
-      pages.put(currentPage, item);
+      pages.put(currentPage, widget);
     }
 
     // spread the items of the current page across all available slots
     int currentPlayerPage = inventoryRepository.getPlayerPages().getOrDefault(player.getUUID(), Maps.newHashMap()).getOrDefault(this, 0);
     int slotIndex = 0;
-    for (KelpItem item : pages.get(currentPlayerPage)) {
+    for (SimpleWidget widget : pages.get(currentPlayerPage)) {
       int slot = contentSlots.get(slotIndex);
-      output.add(item.slot(slot));
+      output.add(widget.render().slot(slot));
       slotIndex++;
     }
 
@@ -187,6 +187,11 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
     }
 
     return output;
+  }
+
+  @Override
+  public void onRemove() {
+    contentWidgets.forEach(Widget::onRemove);
   }
 
   @Override
