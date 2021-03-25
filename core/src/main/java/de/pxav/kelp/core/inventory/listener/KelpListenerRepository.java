@@ -71,6 +71,10 @@ public class KelpListenerRepository {
    *                    the inventory where the item is stored, etc.
    */
   public void fireListener(String listenerId, KelpClickEvent event) {
+    Consumer<KelpClickEvent> eventHandler = this.listeners.get(listenerId);
+    if (eventHandler == null) {
+      return;
+    }
     this.listeners.get(listenerId).accept(event);
   }
 
