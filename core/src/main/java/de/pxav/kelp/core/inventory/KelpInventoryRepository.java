@@ -15,6 +15,8 @@ import de.pxav.kelp.core.inventory.widget.Pagination;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.reflect.MethodFinder;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Map;
@@ -54,6 +56,13 @@ public class KelpInventoryRepository {
    */
   public void loadMaterials() {
     this.materialVersionTemplate.defineDefaults();
+  }
+
+  @EventHandler
+  public void handlePlayerQuit(PlayerQuitEvent event) {
+    KelpPlayer player = KelpPlayer.from(event.getPlayer());
+
+    player.getInventory().removeAllWidgets();
   }
 
   /**
