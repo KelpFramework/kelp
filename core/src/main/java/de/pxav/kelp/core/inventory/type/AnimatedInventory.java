@@ -89,7 +89,7 @@ public class AnimatedInventory extends KelpInventory {
 
     for (SimpleWidget current : simpleWidgets) {
       KelpItem item = current.render();
-      if (!item.getBooleanTag("interactionAllowed")) {
+      if (!item.hasTagKey("interactionAllowed")) {
         item.cancelInteractions();
       }
       inventory.setItem(item.getSlot(), item.getItemStack());
@@ -97,7 +97,7 @@ public class AnimatedInventory extends KelpInventory {
 
     for (GroupedWidget current : groupedWidgets) {
       current.render(player).forEach(item -> {
-        if (!item.getBooleanTag("interactionAllowed")) {
+        if (!item.hasTagKey("interactionAllowed")) {
           item.cancelInteractions();
         }
         inventory.setItem(item.getSlot(), item.getItemStack());
