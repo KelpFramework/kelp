@@ -179,10 +179,16 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
 
   @Override
   public Set<String> getTagKeys(ItemStack itemStack) {
+    if (!isItemValid(itemStack)) {
+      return Sets.newHashSet();
+    }
+
     net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+
     if (nmsItemStack.getTag() == null || nmsItemStack.getTag().isEmpty()) {
       return Sets.newHashSet();
     }
+
     NBTTagCompound nbtTagCompound = nmsItemStack.getTag();
     Map<String, NBTBase> tags = (Map<String, NBTBase>) reflectionUtil.getValue(nbtTagCompound, "map");
     return tags.keySet();
