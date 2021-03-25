@@ -27,15 +27,12 @@ public class VersionedItem extends ItemVersionTemplate {
 
   private MaterialRepository materialRepository;
   private ItemTagVersionTemplate itemTagVersionTemplate;
-  private KelpListenerRepository kelpListenerRepository;
 
   @Inject
   public VersionedItem(MaterialRepository materialRepository,
-                       ItemTagVersionTemplate itemTagVersionTemplate,
-                       KelpListenerRepository kelpListenerRepository) {
+                       ItemTagVersionTemplate itemTagVersionTemplate) {
     this.materialRepository = materialRepository;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
-    this.kelpListenerRepository = kelpListenerRepository;
   }
 
   @Override
@@ -60,11 +57,17 @@ public class VersionedItem extends ItemVersionTemplate {
 
     ItemMeta itemMeta = itemStack.getItemMeta();
 
+    if (itemMeta.getDisplayName() != null) {
+      output.displayName(itemMeta.getDisplayName());
+    }
+
+    if (itemMeta.getLore() != null) {
+      output.itemDescription(itemMeta.getLore());
+    }
+
     return output
       .material(material)
-      .amount(itemStack.getAmount())
-      .displayName(itemMeta.getDisplayName())
-      .itemDescription(itemMeta.getLore());
+      .amount(itemStack.getAmount());
   }
 
   @Override
