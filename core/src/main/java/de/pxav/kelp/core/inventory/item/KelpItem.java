@@ -558,6 +558,33 @@ public class KelpItem {
   }
 
   /**
+   * Gets all keys of the tags assigned to this item.
+   *
+   * @return A set of all tag keys of this item.
+   */
+  public Set<String> getTagKeys() {
+    return nbtTags.keySet();
+  }
+
+  /**
+   * Gets all tags of this item with their key and value.
+   *
+   * @return The entry set containing all the tag's entries.
+   */
+  public Set<Map.Entry<String, Object>> getTagEntries() {
+    return nbtTags.entrySet();
+  }
+
+  /**
+   * Gets all values assigned to any tag this item has been assigned.
+   *
+   * @return The collection of all tag values of this item.
+   */
+  public Collection<Object> getTagValues() {
+    return nbtTags.values();
+  }
+
+  /**
    * Gets the value for the tag associated with the given value.
    * This method only returns values of type int array and you should
    * be sure that the tag you are retrieving is an integer array.
