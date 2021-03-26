@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author pxav
  */
-public class AnimatedInventory extends KelpInventory {
+public class AnimatedInventory extends KelpInventory<AnimatedInventory> {
 
   private TextAnimation title;
 
@@ -32,15 +32,11 @@ public class AnimatedInventory extends KelpInventory {
   private long animationDelayInMillis = 500;
 
   private WindowPacketTemplate windowPacketTemplate;
-  private InventoryVersionTemplate inventoryVersionTemplate;
 
   public AnimatedInventory(WindowPacketTemplate windowPacketTemplate,
                            InventoryVersionTemplate inventoryVersionTemplate) {
+    super(inventoryVersionTemplate);
     this.windowPacketTemplate = windowPacketTemplate;
-    this.inventoryVersionTemplate = inventoryVersionTemplate;
-    this.simpleWidgets = Lists.newArrayList();
-    this.groupedWidgets = Lists.newArrayList();
-    this.size = 54;
   }
 
   public static AnimatedInventory create() {
@@ -50,28 +46,8 @@ public class AnimatedInventory extends KelpInventory {
     );
   }
 
-  public AnimatedInventory size(int size) {
-    this.size = size;
-    return this;
-  }
-
-  public AnimatedInventory rows(int rows) {
-    this.size = rows * 9;
-    return this;
-  }
-
   public AnimatedInventory title(TextAnimation textAnimation) {
     this.title = textAnimation;
-    return this;
-  }
-
-  public AnimatedInventory addWidget(SimpleWidget widget) {
-    this.simpleWidgets.add(widget);
-    return this;
-  }
-
-  public AnimatedInventory addWidget(GroupedWidget widget) {
-    this.groupedWidgets.add(widget);
     return this;
   }
 

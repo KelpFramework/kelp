@@ -2,10 +2,12 @@ package de.pxav.kelp.core.inventory.type;
 
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.inventory.item.KelpItem;
+import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.inventory.widget.Widget;
 import de.pxav.kelp.core.player.KelpPlayer;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 
 import java.util.List;
@@ -15,11 +17,38 @@ import java.util.List;
  *
  * @author pxav
  */
-public abstract class KelpInventory {
+public abstract class KelpInventory<T extends KelpInventory<?>> {
 
   protected int size;
   protected List<SimpleWidget> simpleWidgets = Lists.newArrayList();
   protected List<GroupedWidget> groupedWidgets = Lists.newArrayList();
+
+  protected InventoryVersionTemplate inventoryVersionTemplate;
+
+  public KelpInventory(InventoryVersionTemplate inventoryVersionTemplate) {
+    this.inventoryVersionTemplate = inventoryVersionTemplate;
+    this.size = 54;
+  }
+
+  public T size(int size) {
+    this.size = size;
+    return (T) this;
+  }
+
+  public T rows(int rows) {
+    this.size = rows * 9;
+    return (T) this;
+  }
+
+  public T addWidget(SimpleWidget widget) {
+    this.simpleWidgets.add(widget);
+    return (T) this;
+  }
+
+  public T addWidget(GroupedWidget widget) {
+    this.groupedWidgets.add(widget);
+    return (T) this;
+  }
 
   public abstract Inventory render(KelpPlayer player);
 
@@ -33,16 +62,9 @@ public abstract class KelpInventory {
         item.cancelInteractions();
       }
       playerInventory.setItem(item.getSlot(), item.getItemStack());
-      if (!current.isStateful()) {
-        simpleWidgets.remove(current);
-      }
     }
 
     for (GroupedWidget current : Lists.newArrayList(groupedWidgets)) {
-      if (!current.isStateful()) {
-        continue;
-      }
-
       current.render(toUpdate).forEach(item -> {
         if (!item.hasTagKey("interactionAllowed")) {
           item.cancelInteractions();
@@ -61,5 +83,4 @@ public abstract class KelpInventory {
   }
 
   public void onClose() {}
-
 }
