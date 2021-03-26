@@ -11,6 +11,7 @@ import de.pxav.kelp.core.inventory.material.MaterialVersionTemplate;
 import de.pxav.kelp.core.inventory.type.AnimatedInventory;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.inventory.type.PlayerInventory;
+import de.pxav.kelp.core.inventory.type.SimpleInventory;
 import de.pxav.kelp.core.inventory.widget.Pagination;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.reflect.MethodFinder;
@@ -135,6 +136,25 @@ public class KelpInventoryRepository {
 
     kelpInventory.update(player);
     Bukkit.getPluginManager().callEvent(new KelpInventoryUpdateEvent(player, kelpInventory));
+  }
+
+  /**
+   * Updates the title of the player's current kelp inventory if this
+   * inventory is of type {@link SimpleInventory}. A simple inventory has
+   * an updatable title in form of a {@link java.util.function.Supplier<String>}, while
+   * the title of an {@link AnimatedInventory} is managed by itself, so calling this method
+   * on an animated inventory won't have any effect, but it won't throw an error either.
+   *
+   * @param player The player you want to update the inventory title of.
+   */
+  public void updateInventoryTitle(KelpPlayer player) {
+    KelpInventory kelpInventory = playerInventories.get(player.getUUID());
+
+    if (kelpInventory instanceof SimpleInventory) {
+      SimpleInventory simpleInventory = (SimpleInventory) kelpInventory;
+      simpleInventory.updateTitleOnly(player);
+    }
+
   }
 
   /**

@@ -264,6 +264,24 @@ public class KelpPlayer extends LivingKelpEntity {
     return this.inventoryRepository.hasInventory(this);
   }
 
+  /**
+   * Updates the title of the player's {@link de.pxav.kelp.core.inventory.type.SimpleInventory}.
+   * This inventory takes its title as {@link com.google.common.base.Supplier<String>} and the
+   * content is therefore updatable. If the player has an animated inventory, the updating process
+   * is handled by the {@link de.pxav.kelp.core.inventory.type.AnimatedInventory} class and
+   * executing this method will have no effect.
+   *
+   * @return An instance of the the current player.
+   */
+  public KelpPlayer updateKelpInventoryTitle() {
+    if (!hasKelpInventory()) {
+      return this;
+    }
+
+    inventoryRepository.updateInventoryTitle(this);
+    return this;
+  }
+
   public KelpPlayer playSound(KelpSound sound) {
     playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), 3, 0);
     return this;
