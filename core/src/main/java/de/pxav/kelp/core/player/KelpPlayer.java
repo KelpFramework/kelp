@@ -252,6 +252,18 @@ public class KelpPlayer extends LivingKelpEntity {
     return this;
   }
 
+  /**
+   * Checks whether the current player has a {@link KelpInventory} open.
+   * Having opened a normal {@link PlayerInventory} using the {@code E} key
+   * on the keyboard does not count for this method. It will only return
+   * true if the player really has an external kelp inventory (GUI) opened.
+   *
+   * @return {@code true} if the player has opened a {@link KelpInventory}.
+   */
+  public boolean hasKelpInventory() {
+    return this.inventoryRepository.hasInventory(this);
+  }
+
   public KelpPlayer playSound(KelpSound sound) {
     playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), 3, 0);
     return this;

@@ -137,6 +137,19 @@ public class KelpInventoryRepository {
     Bukkit.getPluginManager().callEvent(new KelpInventoryUpdateEvent(player, kelpInventory));
   }
 
+  /**
+   * Checks whether the given {@link KelpPlayer player} currently has a
+   * {@link KelpInventory} opened. Having opened a normal player inventory
+   * (using {@code E} key on the key board) does not count for this
+   * method.
+   *
+   * @param player The player you want to check.
+   * @return {@code true} of the given player has a kelp inventory opened.
+   */
+  public boolean hasInventory(KelpPlayer player) {
+    return playerInventories.containsKey(player.getUUID());
+  }
+
   public Map<UUID, Map<Pagination, Integer>> getPlayerPages() {
     return playerPages;
   }
