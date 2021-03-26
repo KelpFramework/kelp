@@ -16,29 +16,139 @@ import org.bukkit.util.Vector;
  */
 public enum KelpBlockFace {
 
-  NORTH(0, 0, -1),
-  EAST(1, 0, 0),
-  SOUTH(0, 0, 1),
-  WEST(-1, 0, 0),
-  UP(0, 1, 0),
-  DOWN(0, -1, 0),
-  NORTH_EAST(NORTH, EAST),
-  NORTH_WEST(NORTH, WEST),
-  SOUTH_EAST(SOUTH, EAST),
-  SOUTH_WEST(SOUTH, WEST),
-  WEST_NORTH_WEST(WEST, NORTH_WEST),
-  NORTH_NORTH_WEST(NORTH, NORTH_WEST),
-  NORTH_NORTH_EAST(NORTH, NORTH_EAST),
-  EAST_NORTH_EAST(EAST, NORTH_EAST),
-  EAST_SOUTH_EAST(EAST, SOUTH_EAST),
-  SOUTH_SOUTH_EAST(SOUTH, SOUTH_EAST),
-  SOUTH_SOUTH_WEST(SOUTH, SOUTH_WEST),
-  WEST_SOUTH_WEST(WEST, SOUTH_WEST),
+  NORTH(0, 0, -1) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return SOUTH;
+    }
+  },
+
+  EAST(1, 0, 0) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return WEST;
+    }
+  },
+
+  SOUTH(0, 0, 1) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return NORTH;
+    }
+  },
+
+  WEST(-1, 0, 0) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return EAST;
+    }
+  },
+
+  UP(0, 1, 0) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return DOWN;
+    }
+  },
+
+  DOWN(0, -1, 0) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return UP;
+    }
+  },
+
+  NORTH_EAST(NORTH, EAST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return NORTH_WEST;
+    }
+  },
+
+  NORTH_WEST(NORTH, WEST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return SOUTH_EAST;
+    }
+  },
+
+  SOUTH_EAST(SOUTH, EAST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return NORTH_WEST;
+    }
+  },
+
+  SOUTH_WEST(SOUTH, WEST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return NORTH_EAST;
+    }
+  },
+
+  WEST_NORTH_WEST(WEST, NORTH_WEST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return EAST_SOUTH_EAST;
+    }
+  },
+
+  NORTH_NORTH_WEST(NORTH, NORTH_WEST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return SOUTH_SOUTH_EAST;
+    }
+  },
+
+  NORTH_NORTH_EAST(NORTH, NORTH_EAST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return SOUTH_SOUTH_WEST;
+    }
+  },
+
+  EAST_NORTH_EAST(EAST, NORTH_EAST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return WEST_SOUTH_WEST;
+    }
+  },
+
+  EAST_SOUTH_EAST(EAST, SOUTH_EAST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return WEST_NORTH_WEST;
+    }
+  },
+
+  SOUTH_SOUTH_EAST(SOUTH, SOUTH_EAST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return NORTH_NORTH_WEST;
+    }
+  },
+
+  SOUTH_SOUTH_WEST(SOUTH, SOUTH_WEST) {
+    @Override
+    public KelpBlockFace getOppositeFace() {
+      return NORTH_NORTH_EAST;
+    }
+  },
+
+  WEST_SOUTH_WEST(WEST, SOUTH_WEST) {
+    public KelpBlockFace getOppositeFace() {
+      return EAST_NORTH_EAST;
+    }
+  },
 
   /**
    * Represents the current block and no specific face of it.
    */
-  SELF(0, 0, 0);
+  SELF(0, 0, 0) {
+    public KelpBlockFace getOppositeFace() {
+      return SELF;
+    }
+  };
 
   private final int deltaX;
   private final int deltaY;
@@ -113,46 +223,7 @@ public enum KelpBlockFace {
    * @return The block face opposite to the current block face.
    */
   public KelpBlockFace getOppositeFace() {
-    switch(this) {
-      case NORTH:
-        return SOUTH;
-      case EAST:
-        return WEST;
-      case SOUTH:
-        return NORTH;
-      case WEST:
-        return EAST;
-      case UP:
-        return DOWN;
-      case DOWN:
-        return UP;
-      case NORTH_EAST:
-        return SOUTH_WEST;
-      case NORTH_WEST:
-        return SOUTH_EAST;
-      case SOUTH_EAST:
-        return NORTH_WEST;
-      case SOUTH_WEST:
-        return NORTH_EAST;
-      case WEST_NORTH_WEST:
-        return EAST_SOUTH_EAST;
-      case NORTH_NORTH_WEST:
-        return SOUTH_SOUTH_EAST;
-      case NORTH_NORTH_EAST:
-        return SOUTH_SOUTH_WEST;
-      case EAST_NORTH_EAST:
-        return WEST_SOUTH_WEST;
-      case EAST_SOUTH_EAST:
-        return WEST_NORTH_WEST;
-      case SOUTH_SOUTH_EAST:
-        return NORTH_NORTH_WEST;
-      case SOUTH_SOUTH_WEST:
-        return NORTH_NORTH_EAST;
-      case WEST_SOUTH_WEST:
-        return EAST_NORTH_EAST;
-      default:
-        return SELF;
-    }
+    throw new AbstractMethodError("Cannot get opposite face of block face with type 'null'");
   }
 
   /**
