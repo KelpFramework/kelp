@@ -52,9 +52,4 @@ public class StatefulItemWidget extends AbstractWidget<StatefulItemWidget> imple
     return itemSupplier.get().getSlot();
   }
 
-  @Override
-  public boolean isStateful() {
-    return true;
-  }
-
 }

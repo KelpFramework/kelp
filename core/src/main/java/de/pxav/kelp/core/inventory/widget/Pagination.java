@@ -190,11 +190,6 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   }
 
   @Override
-  public boolean isStateful() {
-    return true;
-  }
-
-  @Override
   public void onRemove() {
     contentWidgets.forEach(Widget::onRemove);
   }
