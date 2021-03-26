@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  *
  * @author pxav
  */
-public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidget {
+public class StatelessItemWidget extends AbstractWidget<StatelessItemWidget> implements SimpleWidget {
 
   // the item to be set into the inventory.
   private KelpItem item;
@@ -22,12 +22,12 @@ public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidg
   // caches listeners to be added to the item, when the item itself is still null.
   private Set<Consumer<KelpClickEvent>> listenerCache;
 
-  ItemWidget() {
+  StatelessItemWidget() {
     this.listenerCache = Sets.newHashSet();
   }
 
-  public static ItemWidget create() {
-    return new ItemWidget();
+  public static StatelessItemWidget create() {
+    return new StatelessItemWidget();
   }
 
   /**
@@ -36,7 +36,7 @@ public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidg
    * @param item The item you want to set.
    * @return
    */
-  public ItemWidget item(KelpItem item) {
+  public StatelessItemWidget item(KelpItem item) {
     this.item = item;
     return this;
   }
@@ -51,7 +51,7 @@ public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidg
    * @param listener The listener you want to add.
    * @return The current instance of the widget.
    */
-  public ItemWidget addItemListener(Consumer<KelpClickEvent> listener) {
+  public StatelessItemWidget addItemListener(Consumer<KelpClickEvent> listener) {
     // cache the listener if it cannot be added to the item directly.
     if (item == null) {
       if (listenerCache == null) {

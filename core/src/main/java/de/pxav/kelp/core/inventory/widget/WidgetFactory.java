@@ -24,8 +24,8 @@ public class WidgetFactory {
     return new ToggleableWidget();
   }
 
-  public ItemWidget newItemWidget() {
-    return new ItemWidget();
+  public StatelessItemWidget newItemWidget() {
+    return new StatelessItemWidget();
   }
 
   public Pagination newPagination() {
