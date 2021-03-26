@@ -6,6 +6,8 @@ import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialRepository;
+import de.pxav.kelp.core.inventory.metadata.ItemMetadata;
+import de.pxav.kelp.core.inventory.metadata.ItemMetadataVersionTemplate;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
 import de.pxav.kelp.core.version.Versioned;
 import org.bukkit.Material;
@@ -27,12 +29,15 @@ public class VersionedItem extends ItemVersionTemplate {
 
   private MaterialRepository materialRepository;
   private ItemTagVersionTemplate itemTagVersionTemplate;
+  private ItemMetadataVersionTemplate metadataVersionTemplate;
 
   @Inject
   public VersionedItem(MaterialRepository materialRepository,
-                       ItemTagVersionTemplate itemTagVersionTemplate) {
+                       ItemTagVersionTemplate itemTagVersionTemplate,
+                       ItemMetadataVersionTemplate metadataVersionTemplate) {
     this.materialRepository = materialRepository;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
+    this.metadataVersionTemplate = metadataVersionTemplate;
   }
 
   @Override
@@ -63,6 +68,12 @@ public class VersionedItem extends ItemVersionTemplate {
 
     if (itemMeta.getLore() != null) {
       output.itemDescription(itemMeta.getLore());
+    }
+
+    ItemMetadata metadata = metadataVersionTemplate.getMetadata(itemStack);
+
+    if (metadata != null) {
+      output.metadata(metadata);
     }
 
     return output

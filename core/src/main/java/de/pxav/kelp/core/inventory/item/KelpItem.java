@@ -6,6 +6,8 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
+import de.pxav.kelp.core.inventory.metadata.ItemMetadata;
+import de.pxav.kelp.core.inventory.metadata.ItemMetadataVersionTemplate;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -69,6 +71,8 @@ public class KelpItem {
   // the item description - aka. the item lore.
   // Those are some lines of text below the display name.
   private List<String> itemDescription = Lists.newArrayList();
+
+  private ItemMetadata metadata;
 
   private Collection<ItemFlag> itemFlags = Lists.newArrayList();
   private Map<Enchantment, Integer> enchantments = Maps.newHashMap();
@@ -228,6 +232,11 @@ public class KelpItem {
     return this;
   }
 
+  public KelpItem metadata(ItemMetadata metadata) {
+    this.metadata = metadata;
+    return this;
+  }
+
   /**
    * Cancels interactions when a player clicks on the item. This
    * avoids that items can be taken out of inventories for example.
@@ -317,6 +326,10 @@ public class KelpItem {
 
     if (this.itemDescription != null && !this.itemDescription.isEmpty()) {
       itemVersionTemplate.setLore(itemStack, itemDescription);
+    }
+
+    if (this.metadata != null) {
+      metadata.applyTo(itemStack);
     }
 
     // make the item unbreakable if needed.
