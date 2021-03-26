@@ -205,7 +205,7 @@ public class KelpPlayer extends LivingKelpEntity {
    * @param inventory The inventory you want to show to the player
    * @return the current instance of the player
    */
-  public KelpPlayer openInventory(KelpInventory inventory) {
+  public KelpPlayer openInventory(KelpInventory<?> inventory) {
     this.inventoryRepository.openInventory(inventory, this);
     return this;
   }

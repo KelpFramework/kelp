@@ -39,7 +39,7 @@ public class KelpInventoryRepository {
   private MethodFinder methodFinder;
   private KelpListenerRepository kelpListenerRepository;
 
-  private Map<UUID, KelpInventory> playerInventories = Maps.newHashMap();
+  private Map<UUID, KelpInventory<?>> playerInventories = Maps.newHashMap();
   private Map<UUID, Map<Pagination, Integer>> playerPages = Maps.newHashMap();
   private Map<UUID, AnimatedInventory> playerAnimations = Maps.newHashMap();
 
@@ -73,7 +73,7 @@ public class KelpInventoryRepository {
    * @param inventory The inventory you want to show to the player.
    * @param player    The player who should see the inventory.
    */
-  public void openInventory(KelpInventory inventory, KelpPlayer player) {
+  public void openInventory(KelpInventory<?> inventory, KelpPlayer player) {
     Inventory renderedInventory = inventory.render(player);
     player.getBukkitPlayer().openInventory(renderedInventory);
     boolean animated = false;
@@ -98,7 +98,7 @@ public class KelpInventoryRepository {
    *               you want to close.
    */
   public void closeInventory(KelpPlayer player) {
-    KelpInventory inventory = this.playerInventories.get(player.getUUID());
+    KelpInventory<?> inventory = this.playerInventories.get(player.getUUID());
 
     if (inventory == null) {
       return;
@@ -126,7 +126,7 @@ public class KelpInventoryRepository {
    * @param player The player whose inventory you want to update.
    */
   public void updateInventory(KelpPlayer player) {
-    KelpInventory kelpInventory = playerInventories.get(player.getUUID());
+    KelpInventory<?> kelpInventory = playerInventories.get(player.getUUID());
 
     if (kelpInventory == null) {
       PlayerInventory playerInventory = PlayerInventory.of(player);
@@ -148,7 +148,7 @@ public class KelpInventoryRepository {
    * @param player The player you want to update the inventory title of.
    */
   public void updateInventoryTitle(KelpPlayer player) {
-    KelpInventory kelpInventory = playerInventories.get(player.getUUID());
+    KelpInventory<?> kelpInventory = playerInventories.get(player.getUUID());
 
     if (kelpInventory instanceof SimpleInventory) {
       SimpleInventory simpleInventory = (SimpleInventory) kelpInventory;
