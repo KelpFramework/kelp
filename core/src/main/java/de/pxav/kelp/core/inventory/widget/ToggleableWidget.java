@@ -159,6 +159,11 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
   }
 
   @Override
+  public boolean isStateful() {
+    return true;
+  }
+
+  @Override
   public int getCoveredSlot() {
     return slot;
   }

@@ -85,6 +85,11 @@ public class ItemWidget extends AbstractWidget<ItemWidget> implements SimpleWidg
   }
 
   @Override
+  public boolean isStateful() {
+    return false;
+  }
+
+  @Override
   public int getCoveredSlot() {
     return item.getSlot();
   }
