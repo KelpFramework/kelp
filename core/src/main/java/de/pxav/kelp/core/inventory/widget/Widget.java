@@ -40,6 +40,19 @@ public interface Widget {
    */
   KelpPlayer getPlayer();
 
+  /**
+   * Returns {@code true} if this widget is stateful. A stateful widget
+   * is a widget containing updatable content. If you have a widget filling up
+   * the empty space in the UI with glass panes, this widget is stateless and
+   * updating it every time you update the inventory would be wasted performance.
+   * But if you want to display content such as the player's coins or a
+   * timer inside an item lore, your item has to be stateful. Only then Kelp
+   * will update it every time you call {@link KelpPlayer#updateKelpInventory()}.
+   *
+   * @return {@code true} if the widget is stateful, {@code false} if it's stateless.
+   */
+  boolean isStateful();
+
   default void onRemove() {}
 
 }
