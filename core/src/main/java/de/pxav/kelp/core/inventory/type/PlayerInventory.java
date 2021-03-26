@@ -162,6 +162,9 @@ public class PlayerInventory {
         item.cancelInteractions();
       }
       setItem(item.getSlot(), item);
+      if (!current.isStateful()) {
+        simpleWidgets.remove(player.getUUID(), current);
+      }
     }
 
     for (GroupedWidget current : groupedWidgets.getOrEmpty(player.getUUID())) {
@@ -171,6 +174,9 @@ public class PlayerInventory {
         }
         setItem(item.getSlot(), item);
       });
+      if (!current.isStateful()) {
+        groupedWidgets.remove(player.getUUID(), current);
+      }
     }
 
     return this;

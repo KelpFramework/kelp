@@ -107,31 +107,6 @@ public class AnimatedInventory extends KelpInventory {
     return inventory;
   }
 
-  @Override
-  public void update(KelpPlayer toUpdate) {
-    Inventory playerInventory = toUpdate.getBukkitPlayer().getOpenInventory().getTopInventory();
-    playerInventory.clear();
-
-    for (SimpleWidget current : simpleWidgets) {
-      KelpItem item = current.render();
-      if (!item.hasTagKey("interactionAllowed")) {
-        item.cancelInteractions();
-      }
-      playerInventory.setItem(item.getSlot(), item.getItemStack());
-    }
-
-    for (GroupedWidget current : groupedWidgets) {
-      current.render(toUpdate).forEach(item -> {
-        if (!item.hasTagKey("interactionAllowed")) {
-          item.cancelInteractions();
-        }
-        playerInventory.setItem(item.getSlot(), item.getItemStack());
-      });
-    }
-
-    toUpdate.getBukkitPlayer().updateInventory();
-  }
-
   public void scheduleUpdater(Player playerFor) {
     scheduledExecutorService = Executors.newScheduledThreadPool(1);
     scheduledExecutorService.scheduleAtFixedRate(() -> {
