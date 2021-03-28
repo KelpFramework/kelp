@@ -25,7 +25,7 @@ public class KelpServer {
     this.kelpPlayerRepository = kelpPlayerRepository;
   }
 
-  public KelpVersion getVersion() {
+  public static KelpVersion getVersion() {
     return KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
   }
 
