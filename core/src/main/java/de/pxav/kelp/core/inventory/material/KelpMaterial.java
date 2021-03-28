@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.inventory.material;
 
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.KelpServer;
 import de.pxav.kelp.core.version.KelpVersion;
 import org.bukkit.Material;
 
@@ -6263,7 +6264,7 @@ public enum KelpMaterial {
 
   // items smelted per item fuel
   public float getFuelPower() {
-    return 0F;
+    return fuelPowerFromVersion(KelpServer.getVersion());
   }
 
   public float getHardness() {
@@ -6304,6 +6305,10 @@ public enum KelpMaterial {
 
   boolean solidUnsafe() {
     return true;
+  }
+
+  float fuelPowerFromVersion(KelpVersion version) {
+    return 0.0F;
   }
 
   public static KelpMaterial from(Material bukkitMaterial) {
