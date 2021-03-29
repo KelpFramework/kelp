@@ -1,9 +1,6 @@
 package de.pxav.kelp.core.inventory.widget;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import com.google.common.math.DoubleMath;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
@@ -195,8 +192,8 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   }
 
   @Override
-  public List<Integer> getCoveredSlots() {
-    List<Integer> output = Lists.newArrayList(contentSlots);
+  public Set<Integer> getCoveredSlots() {
+    Set<Integer> output = Sets.newHashSet(contentSlots);
     output.add(nextButton.getSlot());
     output.add(previousButton.getSlot());
     return output;
