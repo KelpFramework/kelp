@@ -86,6 +86,34 @@ public class Color {
   }
 
   /**
+   * Creates a new color instance based on the HEX value of the given color.
+   * The entered hex string has to have 6 chars representing the colors
+   * and optionally a {@code #} at the beginning to indicate that this is a
+   * HEX color value.
+   *
+   * @param hexValue The HEX value of the color you want to create.
+   *                 This value may contain a # at the beginning, but
+   *                 does not have to have one necessarily.
+   * @return The color based on the given HEX value.
+   */
+  public static Color fromHEX(String hexValue) {
+    if (hexValue == null
+      || ((hexValue.length() != 7 && hexValue.charAt(0) != '#')
+        && hexValue.length() != 6)) {
+          return new Color(0, 0, 0);
+    }
+
+    if (hexValue.length() == 7) {
+      hexValue = hexValue.replace("#", "");
+    }
+
+    int red = Integer.parseInt(hexValue.substring(0, 2), 16);
+    int green = Integer.parseInt(hexValue.substring(2, 4), 16);
+    int blue = Integer.parseInt(hexValue.substring(4, 6), 16);
+    return fromRGB(red, green, blue);
+  }
+
+  /**
    * Converts a bukkit color into a kelp color using its rgb values.
    *
    * @param color The bukkit color you want to convert.
