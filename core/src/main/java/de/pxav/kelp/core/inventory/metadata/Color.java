@@ -1,6 +1,8 @@
 package de.pxav.kelp.core.inventory.metadata;
 
+import com.google.common.hash.HashCode;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Represents a color that can be used for dyeing items such
@@ -16,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author pxav
  */
-public class Color {
+public class Color implements Cloneable {
 
   // all minecraft default chat colors in rgb notation
   public static final Color CHAT_DARK_RED = fromRGB(170, 0, 0);
@@ -311,6 +313,42 @@ public class Color {
    */
   public org.bukkit.Color getBukkitColor() {
     return org.bukkit.Color.fromRGB(red, green, blue);
+  }
+
+  @Override
+  public Color clone() {
+    return Color.fromRGB(this.red, this.green, this.blue);
+  }
+
+  @Override
+  public String toString() {
+    return "Color{" +
+      "red=" + red +
+      ", green=" + green +
+      ", blue=" + blue +
+      '}';
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Color)) {
+      return false;
+    }
+
+    Color color = (Color) object;
+
+    return color.getRed() == this.red
+      && color.getGreen() == this.green
+      && color.getBlue() == this.blue;
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+      .append(this.red)
+      .append(this.blue)
+      .append(this.green)
+      .toHashCode();
   }
 
 }
