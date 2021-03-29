@@ -24,7 +24,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   BLUE_BANNER(KelpVersion.MC_1_8_0) {
@@ -33,7 +32,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   BROWN_BANNER(KelpVersion.MC_1_8_0) {
@@ -42,7 +40,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   CYAN_BANNER(KelpVersion.MC_1_8_0) {
@@ -51,7 +48,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   GRAY_BANNER(KelpVersion.MC_1_8_0) {
@@ -60,7 +56,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   GREEN_BANNER(KelpVersion.MC_1_8_0) {
@@ -69,7 +64,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   LIGHT_BLUE_BANNER(KelpVersion.MC_1_8_0) {
@@ -78,7 +72,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   LIGHT_GRAY_BANNER(KelpVersion.MC_1_8_0) {
@@ -87,7 +80,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   LIME_BANNER(KelpVersion.MC_1_8_0) {
@@ -96,7 +88,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   MAGENTA_BANNER(KelpVersion.MC_1_8_0) {
@@ -105,7 +96,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   ORANGE_BANNER(KelpVersion.MC_1_8_0) {
@@ -114,7 +104,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   PINK_BANNER(KelpVersion.MC_1_8_0) {
@@ -123,7 +112,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   PURPLE_BANNER(KelpVersion.MC_1_8_0) {
@@ -132,7 +120,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   RED_BANNER(KelpVersion.MC_1_8_0) {
@@ -141,7 +128,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   WHITE_BANNER(KelpVersion.MC_1_8_0) {
@@ -150,7 +136,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
   YELLOW_BANNER(KelpVersion.MC_1_8_0) {
@@ -159,7 +144,6 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isItem() { return false; }
   },
 
@@ -387,42 +371,72 @@ public enum KelpMaterial {
     public boolean isEntity() { return true; }
     public boolean hasGravity() { return true; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 6.0F;
+      }
+      return 0.0F;
+    }
   },
   BIRCH_BOAT(KelpVersion.MC_1_9_0) {
     public boolean isBlock() { return false; }
     public boolean isEntity() { return true; }
     public boolean hasGravity() { return true; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 6.0F;
+      }
+      return 0.0F;
+    }
   },
   DARK_OAK_BOAT(KelpVersion.MC_1_9_0) {
     public boolean isBlock() { return false; }
     public boolean isEntity() { return true; }
     public boolean hasGravity() { return true; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 6.0F;
+      }
+      return 0.0F;
+    }
   },
   JUNGLE_BOAT(KelpVersion.MC_1_9_0) {
     public boolean isBlock() { return false; }
     public boolean isEntity() { return true; }
     public boolean hasGravity() { return true; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 6.0F;
+      }
+      return 0.0F;
+    }
   },
   OAK_BOAT(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public boolean isEntity() { return true; }
     public boolean hasGravity() { return true; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 6.0F;
+      }
+      return 0.0F;
+    }
   },
   SPRUCE_BOAT(KelpVersion.MC_1_9_0) {
     public boolean isBlock() { return false; }
     public boolean isEntity() { return true; }
     public boolean hasGravity() { return true; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 6.0F;
+      }
+      return 0.0F;
+    }
   },
 
   // BUTTONS
@@ -432,7 +446,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.5F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   BIRCH_BUTTON(KelpVersion.MC_1_13_0) {
@@ -441,7 +460,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.5F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   DARK_OAK_BUTTON(KelpVersion.MC_1_13_0) {
@@ -450,7 +474,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.5F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   JUNGLE_BUTTON(KelpVersion.MC_1_13_0) {
@@ -459,7 +488,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.5F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   OAK_BUTTON(KelpVersion.MC_1_8_0) {
@@ -468,7 +502,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.5F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   SPRUCE_BUTTON(KelpVersion.MC_1_13_0) {
@@ -477,7 +516,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.5F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   STONE_BUTTON(KelpVersion.MC_1_8_0) {
@@ -665,7 +709,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   BIRCH_DOOR(KelpVersion.MC_1_8_0) {
@@ -674,7 +723,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   DARK_OAK_DOOR(KelpVersion.MC_1_8_0) {
@@ -683,7 +737,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   IRON_DOOR(KelpVersion.MC_1_8_0) {
@@ -699,7 +758,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   OAK_DOOR(KelpVersion.MC_1_8_0) {
@@ -708,7 +772,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
   SPRUCE_DOOR(KelpVersion.MC_1_8_0) {
@@ -717,7 +786,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1F;
+      }
+      return 0.0F;
+    }
     public boolean isInteractable() { return true; }
   },
 
@@ -729,7 +803,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   BIRCH_FENCE(KelpVersion.MC_1_8_0) {
@@ -739,7 +813,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   DARK_OAK_FENCE(KelpVersion.MC_1_8_0) {
@@ -749,7 +823,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   JUNGLE_FENCE(KelpVersion.MC_1_8_0) {
@@ -759,7 +833,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   OAK_FENCE(KelpVersion.MC_1_8_0) {
@@ -769,7 +843,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   SPRUCE_FENCE(KelpVersion.MC_1_8_0) {
@@ -779,7 +853,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   NETHER_BRICK_FENCE(KelpVersion.MC_1_8_0) {
@@ -798,7 +872,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   BIRCH_FENCE_GATE(KelpVersion.MC_1_8_0) {
@@ -808,7 +882,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   DARK_OAK_FENCE_GATE(KelpVersion.MC_1_8_0) {
@@ -818,7 +892,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   JUNGLE_FENCE_GATE(KelpVersion.MC_1_8_0) {
@@ -828,7 +902,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   OAK_FENCE_GATE(KelpVersion.MC_1_8_0) {
@@ -838,7 +912,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   SPRUCE_FENCE_GATE(KelpVersion.MC_1_8_0) {
@@ -848,7 +922,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
 
@@ -909,7 +983,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_BIRCH_LOG(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -917,7 +991,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_DARK_OAK_LOG(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -925,7 +999,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_JUNGLE_LOG(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -933,7 +1007,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_OAK_LOG(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -941,7 +1015,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_SPRUCE_LOG(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -949,7 +1023,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
 
   // LOGS
@@ -959,7 +1033,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   BIRCH_LOG(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -967,7 +1041,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   DARK_OAK_LOG(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -975,7 +1049,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   JUNGLE_LOG(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -983,7 +1057,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   OAK_LOG(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -991,7 +1065,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   SPRUCE_LOG(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -999,7 +1073,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
 
   // STRIPPED WOOD
@@ -1009,7 +1083,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_BIRCH_WOOD(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -1017,7 +1091,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_DARK_OAK_WOOD(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -1025,7 +1099,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_JUNGLE_WOOD(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -1033,7 +1107,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_OAK_WOOD(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -1041,7 +1115,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STRIPPED_SPRUCE_WOOD(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.0F; }
@@ -1049,7 +1123,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
 
   // PLANKS
@@ -1059,7 +1133,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   BIRCH_PLANKS(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -1067,7 +1141,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   DARK_OAK_PLANKS(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -1075,7 +1149,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   JUNGLE_PLANKS(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -1083,7 +1157,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   OAK_PLANKS(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -1091,7 +1165,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   SPRUCE_PLANKS(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -1099,7 +1173,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
 
   // CONCRETE POWDER
@@ -1289,7 +1363,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   BIRCH_PRESSURE_PLATE(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 0.5F; }
@@ -1297,7 +1371,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   DARK_OAK_PRESSURE_PLATE(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 0.5F; }
@@ -1305,7 +1379,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   HEAVY_WEIGHTED_PRESSURE_PLATE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.5F; }
@@ -1319,7 +1393,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   LIGHT_WEIGHTED_PRESSURE_PLATE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.5F; }
@@ -1333,7 +1407,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   SPRUCE_PRESSURE_PLATE(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 0.5F; }
@@ -1341,7 +1415,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STONE_PRESSURE_PLATE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.5F; }
@@ -1357,7 +1431,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.5F; }
   },
   BAMBOO_SAPLING(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 1.0F; }
@@ -1373,7 +1447,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.5F; }
   },
   DARK_OAK_SAPLING(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.0F; }
@@ -1381,7 +1455,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.5F; }
   },
   JUNGLE_SAPLING(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.0F; }
@@ -1389,7 +1463,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.5F; }
   },
   OAK_SAPLING(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.0F; }
@@ -1397,7 +1471,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.5F; }
   },
   SPRUCE_SAPLING(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.0F; }
@@ -1405,7 +1479,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.5F; }
   },
 
   // POTTED SAPLING
@@ -1464,8 +1538,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 1.0F; }
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
-    public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
+    public boolean isItem() { return false; }
     public boolean isInteractable() { return true; }
   },
   BIRCH_SIGN(KelpVersion.MC_1_14_0) {
@@ -1473,8 +1546,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 1.0F; }
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
-    public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
+    public boolean isItem() { return false; }
     public boolean isInteractable() { return true; }
   },
   DARK_OAK_SIGN(KelpVersion.MC_1_14_0) {
@@ -1482,8 +1554,6 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 1.0F; }
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
-    public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isInteractable() { return true; }
   },
   JUNGLE_SIGN(KelpVersion.MC_1_14_0) {
@@ -1491,36 +1561,87 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 1.0F; }
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
-    public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isInteractable() { return true; }
+    public boolean isItem() { return false; }
   },
   OAK_SIGN(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 1.0F; }
     public float getBlastResistance() { return 1.0F; }
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
-    public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isInteractable() { return true; }
+    public boolean isItem() { return false; }
   },
   SPRUCE_SIGN(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 1.0F; }
     public float getBlastResistance() { return 1.0F; }
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
-    public int getMaxStackSize() { return 16; }
-    public float getFuelPower() { return 0.0F; }
     public boolean isInteractable() { return true; }
+    public boolean isItem() { return false; }
   },
 
   // SIGNS
-  ACACIA_SIGN_ITEM(KelpVersion.MC_1_14_0),
-  BIRCH_SIGN_ITEM(KelpVersion.MC_1_14_0),
-  DARK_OAK_SIGN_ITEM(KelpVersion.MC_1_14_0),
-  JUNGLE_SIGN_ITEM(KelpVersion.MC_1_14_0),
-  OAK_SIGN_ITEM(KelpVersion.MC_1_8_0),
-  SPRUCE_SIGN_ITEM(KelpVersion.MC_1_14_0),
+  ACACIA_SIGN_ITEM(KelpVersion.MC_1_14_0) {
+    public boolean isBlock() { return false; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.0F;
+      }
+      return 0.0F;
+    }
+    public int getMaxStackSize() { return 16; }
+  },
+  BIRCH_SIGN_ITEM(KelpVersion.MC_1_14_0) {
+    public boolean isBlock() { return false; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.0F;
+      }
+      return 0.0F;
+    }
+    public int getMaxStackSize() { return 16; }
+  },
+  DARK_OAK_SIGN_ITEM(KelpVersion.MC_1_14_0) {
+    public boolean isBlock() { return false; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.0F;
+      }
+      return 0.0F;
+    }
+    public int getMaxStackSize() { return 16; }
+  },
+  JUNGLE_SIGN_ITEM(KelpVersion.MC_1_14_0) {
+    public boolean isBlock() { return false; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.0F;
+      }
+      return 0.0F;
+    }
+    public int getMaxStackSize() { return 16; }
+  },
+  OAK_SIGN_ITEM(KelpVersion.MC_1_8_0) {
+    public boolean isBlock() { return false; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.0F;
+      }
+      return 0.0F;
+    }
+    public int getMaxStackSize() { return 16; }
+  },
+  SPRUCE_SIGN_ITEM(KelpVersion.MC_1_14_0) {
+    public boolean isBlock() { return false; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.0F;
+      }
+      return 0.0F;
+    }
+    public int getMaxStackSize() { return 16; }
+  },
 
   // WALL SIGNS
   ACACIA_WALL_SIGN(KelpVersion.MC_1_14_0) {
@@ -1580,7 +1701,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.75F; }
   },
   ANDESITE_SLAB(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 1.5F; }
@@ -1595,7 +1716,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.75F; }
   },
   BRICK_SLAB(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -1628,7 +1749,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.75F; }
   },
   DARK_PRISMARINE_SLAB(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 1.5F; }
@@ -1661,7 +1782,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.75F; }
   },
   MOSSY_COBBLESTONE_SLAB(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 2.0F; }
@@ -1688,7 +1809,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.75F; }
   },
   PETRIFIED_OAK_SLAB(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 2.0F; }
@@ -1787,7 +1908,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.75F; }
   },
   STONE_BRICK_SLAB(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.0F; }
@@ -1810,7 +1931,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   ANDESITE_STAIRS(KelpVersion.MC_1_14_0) {
@@ -1827,7 +1948,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   BRICK_STAIRS(KelpVersion.MC_1_8_0) {
@@ -1851,7 +1972,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   DARK_PRISMARINE_STAIRS(KelpVersion.MC_1_13_0) {
@@ -1889,7 +2010,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   MOSSY_COBBLESTONE_STAIRS(KelpVersion.MC_1_14_0) {
@@ -1920,7 +2041,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   POLISHED_ANDESITE_STAIRS(KelpVersion.MC_1_14_0) {
@@ -2021,7 +2142,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   STONE_BRICK_STAIRS(KelpVersion.MC_1_8_0) {
@@ -2046,7 +2167,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   BIRCH_TRAPDOOR(KelpVersion.MC_1_13_0) {
@@ -2055,7 +2176,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   DARK_OAK_TRAPDOOR(KelpVersion.MC_1_13_0) {
@@ -2064,7 +2185,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   IRON_TRAPDOOR(KelpVersion.MC_1_8_0) {
@@ -2080,7 +2201,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   OAK_TRAPDOOR(KelpVersion.MC_1_8_0) {
@@ -2089,7 +2210,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   SPRUCE_TRAPDOOR(KelpVersion.MC_1_13_0) {
@@ -2098,7 +2219,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
 
@@ -2656,7 +2777,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   BLUE_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2666,7 +2792,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   BROWN_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2676,7 +2807,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   CYAN_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2686,7 +2822,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   GRAY_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2696,7 +2837,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   GREEN_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2706,7 +2852,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   LIGHT_BLUE_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2716,7 +2867,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   LIGHT_GRAY_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2726,7 +2882,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   LIME_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2736,7 +2897,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   MAGENTA_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2746,7 +2912,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   ORANGE_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2756,7 +2927,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   PINK_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2766,7 +2942,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   PURPLE_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2776,7 +2957,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   RED_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2786,7 +2972,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   WHITE_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2796,7 +2987,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
   YELLOW_CARPET(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.1F; }
@@ -2806,7 +3002,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 0.335F;
+      }
+      return 0.0F;
+    }
   },
 
   // WOOL
@@ -2816,7 +3017,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   BLUE_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2824,7 +3030,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   BROWN_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2832,7 +3043,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   CYAN_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2840,7 +3056,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   GRAY_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2848,7 +3069,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   GREEN_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2856,7 +3082,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   LIGHT_BLUE_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2864,7 +3095,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   LIGHT_GRAY_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2872,7 +3108,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   LIME_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2880,7 +3121,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   MAGENTA_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2888,7 +3134,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   ORANGE_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2896,7 +3147,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   PINK_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2904,7 +3160,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   PURPLE_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2912,7 +3173,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   RED_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2920,7 +3186,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   WHITE_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2928,7 +3199,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   YELLOW_WOOL(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -2936,7 +3212,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
 
   // BED
@@ -3377,7 +3658,7 @@ public enum KelpMaterial {
   WOODEN_SHOVEL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1F; }
   },
 
   // HOES
@@ -3400,7 +3681,7 @@ public enum KelpMaterial {
   WOODEN_HOE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1F; }
   },
 
   // AXES
@@ -3423,7 +3704,7 @@ public enum KelpMaterial {
   WOODEN_AXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1F; }
   },
 
   // PICKAXE
@@ -3446,7 +3727,7 @@ public enum KelpMaterial {
   WOODEN_PICKAXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1F; }
   },
 
   // SWORDS
@@ -3469,7 +3750,7 @@ public enum KelpMaterial {
   WOODEN_SWORD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1F; }
   },
 
   // CORALS
@@ -3880,7 +4161,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   AIR(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.0F; }
@@ -3946,14 +4227,14 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.25F; }
   },
   BARREL(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 2.5F; }
     public float getBlastResistance() { return 2.5F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   BARRIER(KelpVersion.MC_1_8_0) {
@@ -4028,7 +4309,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   BLAST_FURNACE(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 3.5F; }
@@ -4043,7 +4324,7 @@ public enum KelpMaterial {
   BLAZE_ROD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 12F; }
   },
   BLUE_ICE(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 2.8F; }
@@ -4081,17 +4362,27 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   BOW(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   BOWL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   BREAD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
@@ -4189,7 +4480,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 2.5F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   CAULDRON(KelpVersion.MC_1_8_0) {
@@ -4218,7 +4509,7 @@ public enum KelpMaterial {
   CHARCOAL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 8.0F; }
   },
   CHEST(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 2.5F; }
@@ -4226,7 +4517,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   CHEST_MINECART(KelpVersion.MC_1_8_0) {
@@ -4304,14 +4595,14 @@ public enum KelpMaterial {
   COAL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 8.0F; }
   },
   COAL_BLOCK(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 5.0F; }
     public float getBlastResistance() { return 6.0F; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 80.0F; }
   },
   COAL_ORE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 3.0F; }
@@ -4387,7 +4678,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   CONDUIT(KelpVersion.MC_1_13_0) {
@@ -4454,13 +4745,13 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 2.5F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   CROSSBOW(KelpVersion.MC_1_14_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   CUT_RED_SANDSTONE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -4494,7 +4785,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   DARK_PRISMARINE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 1.5F; }
@@ -4507,7 +4798,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   DEAD_BUSH(KelpVersion.MC_1_8_0) {
@@ -4518,7 +4809,12 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_14_0)) {
+        return 1.0F;
+      }
+      return 0.0F;
+    }
   },
   DEBUG_STICK(KelpVersion.MC_1_13_0) {
     public boolean isBlock() { return false; }
@@ -4580,7 +4876,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 2.5F; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 20F; }
   },
   DROPPER(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 3.5F; }
@@ -4735,14 +5031,19 @@ public enum KelpMaterial {
   FISHING_ROD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   FLETCHING_TABLE(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 2.5F; }
     public float getBlastResistance() { return 2.5F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   FLINT(KelpVersion.MC_1_8_0) {
@@ -5013,7 +5314,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 6.0F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   JUNGLE_WOOD(KelpVersion.MC_1_8_0) {
@@ -5022,7 +5323,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   KELP(KelpVersion.MC_1_13_0) {
     public float getHardness() { return 0.0F; }
@@ -5048,7 +5349,12 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) {
+      if (version.isHigherThanOrEqualTo(KelpVersion.MC_1_11_0)) {
+        return 1.5F;
+      }
+      return 0.0F;
+    }
   },
   LANTERN(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 3.5F; }
@@ -5089,7 +5395,7 @@ public enum KelpMaterial {
   LAVA_BUCKET(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 100F; }
   },
   LEAD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
@@ -5110,7 +5416,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   LEVER(KelpVersion.MC_1_8_0) {
@@ -5150,7 +5456,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 2.5F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   MAGMA_BLOCK(KelpVersion.MC_1_10_0) {
@@ -5318,7 +5624,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 0.8F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   OAK_WOOD(KelpVersion.MC_1_8_0) {
@@ -5327,7 +5633,7 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   OBSERVER(KelpVersion.MC_1_11_0) {
     public float getHardness() { return 3.0F; }
@@ -5817,7 +6123,7 @@ public enum KelpMaterial {
     public boolean isBurnable() { return true; }
     boolean solidUnsafe() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 2F; }
   },
   SCUTE(KelpVersion.MC_1_13_0) {
     public boolean isBlock() { return false; }
@@ -5869,7 +6175,7 @@ public enum KelpMaterial {
     public float getBlastResistance() { return 2.5F; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   SMOKER(KelpVersion.MC_1_14_0) {
@@ -5944,12 +6250,12 @@ public enum KelpMaterial {
     public boolean isFlammable() { return true; }
     public boolean isBurnable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
   },
   STICK(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 0.5F; }
   },
   STICKY_PISTON(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 1.5F; }
@@ -6087,7 +6393,7 @@ public enum KelpMaterial {
     boolean occludingUnsafe() { return false; }
     public boolean isFlammable() { return true; }
     public int getMaxStackSize() { return 64; }
-    public float getFuelPower() { return 0.0F; }
+    float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
     public boolean isInteractable() { return true; }
   },
   TRIDENT(KelpVersion.MC_1_13_0) {
@@ -6264,6 +6570,9 @@ public enum KelpMaterial {
 
   // items smelted per item fuel
   public float getFuelPower() {
+    if (!KelpServer.getVersion().isHigherThanOrEqualTo(this.since)) {
+      return 0.0F;
+    }
     return fuelPowerFromVersion(KelpServer.getVersion());
   }
 
@@ -6307,9 +6616,7 @@ public enum KelpMaterial {
     return true;
   }
 
-  float fuelPowerFromVersion(KelpVersion version) {
-    return 0.0F;
-  }
+  float fuelPowerFromVersion(KelpVersion version) { return 0.0F; }
 
   public static KelpMaterial from(Material bukkitMaterial) {
     MaterialRepository repository = KelpPlugin.getInjector().getInstance(MaterialRepository.class);
