@@ -20,12 +20,10 @@ import java.util.function.Consumer;
 public class KelpClickEvent {
 
   private KelpPlayer player;
-  private KelpInventory<?> inventory;
   private KelpItem clickedItem;
 
-  public KelpClickEvent(KelpPlayer player, KelpInventory<?> inventory, KelpItem clickedItem) {
+  public KelpClickEvent(KelpPlayer player, KelpItem clickedItem) {
     this.player = player;
-    this.inventory = inventory;
     this.clickedItem = clickedItem;
   }
 
@@ -36,15 +34,6 @@ public class KelpClickEvent {
    */
   public KelpPlayer getPlayer() {
     return player;
-  }
-
-  /**
-   * Gets the inventory this click event has been performed in.
-   *
-   * @return The inventory this click has been performed in.
-   */
-  public KelpInventory<?> getInventory() {
-    return inventory;
   }
 
   /**
