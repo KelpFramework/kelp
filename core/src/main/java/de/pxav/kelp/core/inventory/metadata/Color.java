@@ -273,9 +273,9 @@ public class Color implements Cloneable {
    * @return The HEX notation of the current color.
    */
   public String asHex() {
-    return StringUtils.leftPad(Integer.toHexString(red), 2, '0') +
+    return (StringUtils.leftPad(Integer.toHexString(red), 2, '0') +
       StringUtils.leftPad(Integer.toHexString(green), 2, '0') +
-      StringUtils.leftPad(Integer.toHexString(blue), 2, '0').toUpperCase();
+      StringUtils.leftPad(Integer.toHexString(blue), 2, '0')).toUpperCase();
   }
 
   /**
