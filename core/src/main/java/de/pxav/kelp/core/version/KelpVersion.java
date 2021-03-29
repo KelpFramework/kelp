@@ -76,6 +76,22 @@ public enum KelpVersion {
     return false;
   }
 
+  public boolean isHigherThan(KelpVersion compare) {
+    return higherVersion(this, compare) == this;
+  }
+
+  public boolean isHigherThanOrEqualTo(KelpVersion compare) {
+    return compare == this || higherVersion(this, compare) == this;
+  }
+
+  public boolean isLowerThanOrEqualTo(KelpVersion compare) {
+    return compare == this || lowerVersion(this, compare) == this;
+  }
+
+  public boolean isLowerThan(KelpVersion compare) {
+    return lowerVersion(this, compare) == this;
+  }
+
   public static KelpVersion higherVersion(KelpVersion original, KelpVersion toCompare) {
     return original.getId() > toCompare.getId() ? original : toCompare;
   }
