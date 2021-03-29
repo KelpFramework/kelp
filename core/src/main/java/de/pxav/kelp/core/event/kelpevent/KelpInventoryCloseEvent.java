@@ -15,10 +15,10 @@ import org.bukkit.event.player.PlayerEvent;
 public class KelpInventoryCloseEvent extends KelpPlayerEvent {
 
   private static final HandlerList handlers = new HandlerList();
-  private KelpInventory inventory;
+  private KelpInventory<?> inventory;
   private boolean animated;
 
-  public KelpInventoryCloseEvent(KelpPlayer who, KelpInventory inventory, boolean isAnimated) {
+  public KelpInventoryCloseEvent(KelpPlayer who, KelpInventory<?> inventory, boolean isAnimated) {
     super(who);
     this.inventory = inventory;
     this.animated = isAnimated;
@@ -29,7 +29,7 @@ public class KelpInventoryCloseEvent extends KelpPlayerEvent {
    *
    * @return The closed inventory
    */
-  public KelpInventory getInventory() {
+  public KelpInventory<?> getInventory() {
     return this.inventory;
   }
 
