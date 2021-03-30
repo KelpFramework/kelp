@@ -32,6 +32,12 @@ public interface GroupedWidget extends Widget {
    */
   Collection<KelpItem> render(KelpPlayer player);
 
+  /**
+   * Gets all slots covered by this widget in the
+   * target inventory.
+   *
+   * @return A set of all slots covered by this widget in the target inventory.
+   */
   Set<Integer> getCoveredSlots();
 
 }
