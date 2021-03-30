@@ -8,6 +8,7 @@ import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.metadata.ItemMetadata;
 import de.pxav.kelp.core.inventory.metadata.ItemMetadataVersionTemplate;
+import de.pxav.kelp.core.inventory.metadata.LeatherArmorMetadata;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -26,6 +27,20 @@ import java.util.function.Consumer;
  * the bukkit library, no extra {@code ItemMeta} is needed to control things
  * like the display name or lore. It is all handled via one class.
  *
+ * If you want to assign material-specific metadata such as leather armor
+ * color or a custom texture for a player skull, you can use one of the
+ * {@link ItemMetadata} classes. Create a new instance with {@link LeatherArmorMetadata#create()}
+ * for example and then assign this metadata with {@link KelpItem#metadata(ItemMetadata)}.
+ *
+ * Please note that there is a difference between multiple KelpItems depending on where
+ * you use them. When rendered by a widget into a {@link de.pxav.kelp.core.inventory.type.KelpInventory}
+ * or a player inventory, the item is assigned the {@code interactionCanceled} tag by default
+ * which means it cannot be moved inside the inventory, which is what most people want most
+ * of the time. But if you create it manually and put it into a {@link de.pxav.kelp.core.inventory.type.PlayerInventory}
+ * using {@link de.pxav.kelp.core.inventory.type.PlayerInventory#addItem(KelpItem)} for example,
+ * it will be movable/interactable by default. Of course you can always change the interaction state
+ * by calling either {@link #cancelInteractions()} or {@link #allowInteractions()}.
+ *
  * @author pxav
  */
 public class KelpItem {
@@ -42,6 +57,11 @@ public class KelpItem {
     this.listenerRepository = listenerRepository;
   }
 
+  /**
+   * Creates a new, empty {@link KelpItem} instance.
+   *
+   * @return The kelp item instance that can be used for further modification.
+   */
   public static KelpItem create() {
     return new KelpItem(
       KelpPlugin.getInjector().getInstance(ItemVersionTemplate.class),
@@ -50,6 +70,13 @@ public class KelpItem {
     );
   }
 
+  /**
+   * Converts the given bukkit item stack to a KelpItem.
+   * This will convert all data including tags and metadata.
+   *
+   * @param itemStack The bukkit item stack you want to convert to a Kelp item.
+   * @return The final kelp item with the properties of the given item stack.
+   */
   public static KelpItem from(ItemStack itemStack) {
     return KelpPlugin.getInjector().getInstance(ItemVersionTemplate.class).fromItemStack(itemStack);
   }
