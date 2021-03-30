@@ -641,6 +641,23 @@ public class KelpItem {
   }
 
   @Override
+  public String toString() {
+    return "KelpItem{" +
+      "material=" + material +
+      ", amount=" + amount +
+      ", slot=" + slot +
+      ", displayName='" + displayName + '\'' +
+      ", itemDescription=" + itemDescription +
+      ", metadata=" + metadata +
+      ", itemFlags=" + itemFlags +
+      ", enchantments=" + enchantments +
+      ", glowing=" + glowing +
+      ", unbreakable=" + unbreakable +
+      ", nbtTags=" + nbtTags +
+      '}';
+  }
+
+  @Override
   public boolean equals(Object object) {
     if (!(object instanceof KelpItem)) {
       return false;
