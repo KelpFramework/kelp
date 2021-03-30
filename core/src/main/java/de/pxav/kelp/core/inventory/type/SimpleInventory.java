@@ -13,14 +13,21 @@ import org.bukkit.inventory.Inventory;
 import java.util.function.Supplier;
 
 /**
- * A class description goes here.
+ * This is a simple implementation of a {@link KelpInventory}. This inventory
+ * type allows you to create a normal inventory without any fancy title animation,
+ * which can be achieved with {@link AnimatedInventory}.
+ *
+ * Although the title is not animated, you can pass a supplier as title, which
+ * makes it updatable if you call {@link #updateTitleOnly(KelpPlayer)}.
  *
  * @author pxav
  */
 public class SimpleInventory extends KelpInventory<SimpleInventory> {
 
+  // updatable inventory title
   private Supplier<String> title;
 
+  // responsible for updating the inventory title
   private WindowPacketTemplate windowPacketTemplate;
 
   public static SimpleInventory create() {
