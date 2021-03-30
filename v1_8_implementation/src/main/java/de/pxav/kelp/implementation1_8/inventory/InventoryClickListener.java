@@ -61,7 +61,7 @@ public class InventoryClickListener {
 
       String listenerId = itemTagVersionTemplate.getStringValue(itemStack, current);
 
-      listenerRepository.fireListener(listenerId, new KelpClickEvent(player, null, item));
+      listenerRepository.fireListener(listenerId, new KelpClickEvent(player, item));
     }
 
     if (player.getBukkitPlayer().getGameMode() == GameMode.CREATIVE
