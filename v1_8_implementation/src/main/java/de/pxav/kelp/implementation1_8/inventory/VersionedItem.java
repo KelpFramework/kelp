@@ -1,6 +1,7 @@
 package de.pxav.kelp.implementation1_8.inventory;
 
 import com.google.inject.Inject;
+import de.pxav.kelp.core.inventory.enchant.EnchantmentVersionTemplate;
 import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapPalette;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A class description goes here.
@@ -30,14 +32,17 @@ public class VersionedItem extends ItemVersionTemplate {
   private MaterialRepository materialRepository;
   private ItemTagVersionTemplate itemTagVersionTemplate;
   private ItemMetadataVersionTemplate metadataVersionTemplate;
+  private EnchantmentVersionTemplate enchantmentVersionTemplate;
 
   @Inject
   public VersionedItem(MaterialRepository materialRepository,
                        ItemTagVersionTemplate itemTagVersionTemplate,
-                       ItemMetadataVersionTemplate metadataVersionTemplate) {
+                       ItemMetadataVersionTemplate metadataVersionTemplate,
+                       EnchantmentVersionTemplate enchantmentVersionTemplate) {
     this.materialRepository = materialRepository;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
     this.metadataVersionTemplate = metadataVersionTemplate;
+    this.enchantmentVersionTemplate = enchantmentVersionTemplate;
   }
 
   @Override
@@ -58,6 +63,10 @@ public class VersionedItem extends ItemVersionTemplate {
       material = materialRepository.getKelpMaterial(itemStack.getType().toString());
     } else {
       material = materialRepository.getKelpMaterial(itemStack.getType().toString(), subId);
+    }
+
+    for (Map.Entry<Enchantment, Integer> entry : itemStack.getEnchantments().entrySet()) {
+      output.enchant(enchantmentVersionTemplate.getKelpEnchantment(entry.getKey()), entry.getValue());
     }
 
     ItemMeta itemMeta = itemStack.getItemMeta();

@@ -4,18 +4,14 @@ import com.google.inject.Inject;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.item.KelpItemFactory;
 import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.player.KelpPlayerRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
