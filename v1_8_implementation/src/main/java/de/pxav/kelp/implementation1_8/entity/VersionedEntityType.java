@@ -12,7 +12,6 @@ import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.item.KelpItemFactory;
 import de.pxav.kelp.core.version.Versioned;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityGuardian;
@@ -33,13 +32,11 @@ import org.bukkit.entity.Zombie;
 @Versioned
 public class VersionedEntityType extends EntityTypeVersionTemplate {
 
-  private KelpItemFactory kelpItemFactory;
   private EntityVersionTemplate entityVersionTemplate;
   private LivingEntityVersionTemplate livingEntityVersionTemplate;
 
   @Inject
-  public VersionedEntityType(KelpItemFactory kelpItemFactory, EntityVersionTemplate entityVersionTemplate, LivingEntityVersionTemplate livingEntityVersionTemplate) {
-    this.kelpItemFactory = kelpItemFactory;
+  public VersionedEntityType(EntityVersionTemplate entityVersionTemplate, LivingEntityVersionTemplate livingEntityVersionTemplate) {
     this.entityVersionTemplate = entityVersionTemplate;
     this.livingEntityVersionTemplate = livingEntityVersionTemplate;
   }
@@ -93,7 +90,7 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
 
     if (bukkitEntity instanceof Item) {
       Item item = (Item) bukkitEntity;
-      KelpItem kelpItem = kelpItemFactory.fromItemStack(item.getItemStack());
+      KelpItem kelpItem = KelpItem.from(item.getItemStack());
       return new DroppedItemEntity(this.entityVersionTemplate,
         ((CraftEntity)item).getHandle(),
         item.getEntityId(),
