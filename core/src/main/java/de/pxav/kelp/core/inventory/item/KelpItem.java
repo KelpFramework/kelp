@@ -3,6 +3,8 @@ package de.pxav.kelp.core.inventory.item;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.inventory.enchant.EnchantmentVersionTemplate;
+import de.pxav.kelp.core.inventory.enchant.KelpEnchantment;
 import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
@@ -47,13 +49,16 @@ public class KelpItem {
 
   private ItemVersionTemplate itemVersionTemplate;
   private ItemTagVersionTemplate itemTagVersionTemplate;
+  private EnchantmentVersionTemplate enchantmentVersionTemplate;
   private KelpListenerRepository listenerRepository;
 
   public KelpItem(ItemVersionTemplate itemVersionTemplate,
                   ItemTagVersionTemplate itemTagVersionTemplate,
+                  EnchantmentVersionTemplate enchantmentVersionTemplate,
                   KelpListenerRepository listenerRepository) {
     this.itemVersionTemplate = itemVersionTemplate;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
+    this.enchantmentVersionTemplate = enchantmentVersionTemplate;
     this.listenerRepository = listenerRepository;
   }
 
@@ -66,6 +71,7 @@ public class KelpItem {
     return new KelpItem(
       KelpPlugin.getInjector().getInstance(ItemVersionTemplate.class),
       KelpPlugin.getInjector().getInstance(ItemTagVersionTemplate.class),
+      KelpPlugin.getInjector().getInstance(EnchantmentVersionTemplate.class),
       KelpPlugin.getInjector().getInstance(KelpListenerRepository.class)
     );
   }
@@ -99,10 +105,11 @@ public class KelpItem {
   // Those are some lines of text below the display name.
   private List<String> itemDescription = Lists.newArrayList();
 
+  // material-specific item meta such as leather armor, skull texture, etc.
   private ItemMetadata metadata;
 
   private Collection<ItemFlag> itemFlags = Lists.newArrayList();
-  private Map<Enchantment, Integer> enchantments = Maps.newHashMap();
+  private Map<Class<? extends KelpEnchantment>, Integer> enchantments = Maps.newHashMap();
 
   private boolean glowing = false;
   private boolean unbreakable = false;
@@ -152,6 +159,11 @@ public class KelpItem {
    */
   public KelpItem displayName(String displayName) {
     this.displayName = displayName;
+    return this;
+  }
+
+  public KelpItem enchant(Class<? extends KelpEnchantment> enchantment, int level) {
+    this.enchantments.put(enchantment, level);
     return this;
   }
 
@@ -362,6 +374,11 @@ public class KelpItem {
     // make the item unbreakable if needed.
     if (this.unbreakable) {
       itemStack = itemVersionTemplate.makeUnbreakable(itemStack);
+    }
+
+    // apply enchantments
+    for (Map.Entry<Class<? extends KelpEnchantment>, Integer> entry : enchantments.entrySet()) {
+      itemStack = enchantmentVersionTemplate.applyEnchantment(entry.getKey(), entry.getValue(), itemStack);
     }
 
     // add string tags
