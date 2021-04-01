@@ -181,6 +181,17 @@ public class KelpItem {
   }
 
   /**
+   * Removes a specific enchantment from the current item.
+   *
+   * @param enchantment The enchantment you want to remove.
+   * @return Instance of the current {@code KelpItem} object.
+   */
+  public KelpItem removeEnchantment(Class<? extends KelpEnchantment> enchantment) {
+    this.enchantments.remove(enchantment);
+    return this;
+  }
+
+  /**
    * Adds a new string tag to the item.
    *
    * @param key     The key of the tag. This key is important
