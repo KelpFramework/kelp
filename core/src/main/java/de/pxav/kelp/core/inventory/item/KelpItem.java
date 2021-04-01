@@ -162,6 +162,19 @@ public class KelpItem {
     return this;
   }
 
+  /**
+   * Enchants the item with the given enchantment. You can apply custom enchantments here using
+   * {@code YourEnchantment.class} for example, or using the default minecraft enchantments
+   * with {@code KelpEnchantment.UNBREAKING} for example.
+   *
+   * The enchantment will be applied with the given level. If the enchantment already exists
+   * on this item, it will be overwritten with the new level.
+   *
+   * @param enchantment   The enchantment you want to add to the item.
+   * @param level         The level with which the enchantment should be applied.
+   *                      This number may not exceed the max value defined in the enchantment class.
+   * @return Instance of the current {@code KelpItem} object.
+   */
   public KelpItem enchant(Class<? extends KelpEnchantment> enchantment, int level) {
     this.enchantments.put(enchantment, level);
     return this;
@@ -655,6 +668,39 @@ public class KelpItem {
    */
   public int[] getIntegerArrayTag(String key) {
     return (int[]) nbtTags.get(key);
+  }
+
+  /**
+   * Checks if the item is enchanted with the given enchantment independently
+   * from its level.
+   *
+   * @param enchantment The enchantment you want to check.
+   * @return {@code true} if the item is enchanted with the given enchantment, {@code false} if not.
+   */
+  public boolean hasEnchantment(Class<? extends KelpEnchantment> enchantment) {
+    return this.enchantments.containsKey(enchantment);
+  }
+
+  /**
+   * Gets the level of the given enchantment. If the item does not
+   * have the given enchantment, it will return {@code 0}.
+   *
+   * @param enchantment The enchantment you want to get the current level of.
+   * @return The level of the provided enchantment, {@code 0} if the enchantment does not exist for this item.
+   */
+  public int getEnchantmentLevel(Class<? extends KelpEnchantment> enchantment) {
+    return this.enchantments.getOrDefault(enchantment, 0);
+  }
+
+  /**
+   * Gets a map containing all of the enchantments the item currently has,
+   * where the key stores the declaring class of the enchantment and the
+   * value stores the level that is currently applied to the item.
+   *
+   * @return A map containing all enchantments of the item.
+   */
+  public Map<Class<? extends KelpEnchantment>, Integer> getEnchantments() {
+    return this.enchantments;
   }
 
   @Override
