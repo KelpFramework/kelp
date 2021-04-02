@@ -120,10 +120,13 @@ public abstract class KelpInventory<T extends KelpInventory<?>> {
   public void update(KelpPlayer toUpdate) {
     Inventory playerInventory = toUpdate.getBukkitPlayer().getOpenInventory().getTopInventory();
 
-    // remove old widget artifacts
-    playerInventory.clear();
-
     for (SimpleWidget current : Lists.newArrayList(simpleWidgets)) {
+      if (!current.isStateful()) {
+        simpleWidgets.remove(current);
+        continue;
+      }
+
+      playerInventory.clear(current.getCoveredSlot());
       KelpItem item = current.render();
 
       // if interactions with the item are not explicitly allowed
@@ -136,6 +139,15 @@ public abstract class KelpInventory<T extends KelpInventory<?>> {
     }
 
     for (GroupedWidget current : Lists.newArrayList(groupedWidgets)) {
+      if (!current.isStateful()) {
+        groupedWidgets.remove(current);
+        continue;
+      }
+
+      for (Integer coveredSlot : current.getCoveredSlots()) {
+        playerInventory.clear(coveredSlot);
+      }
+
       current.render(toUpdate).forEach(item -> {
 
         // if interactions with the item are not explicitly allowed
