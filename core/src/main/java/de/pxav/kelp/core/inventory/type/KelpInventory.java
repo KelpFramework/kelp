@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.inventory.type;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
@@ -12,6 +13,7 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.inventory.Inventory;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents the basis for every GUI inventory you can build
@@ -120,9 +122,8 @@ public abstract class KelpInventory<T extends KelpInventory<?>> {
   public void update(KelpPlayer toUpdate) {
     Inventory playerInventory = toUpdate.getBukkitPlayer().getOpenInventory().getTopInventory();
 
-    for (SimpleWidget current : Lists.newArrayList(simpleWidgets)) {
+    for (SimpleWidget current : simpleWidgets) {
       if (!current.isStateful()) {
-        simpleWidgets.remove(current);
         continue;
       }
 
@@ -138,9 +139,8 @@ public abstract class KelpInventory<T extends KelpInventory<?>> {
       playerInventory.setItem(item.getSlot(), item.getItemStack());
     }
 
-    for (GroupedWidget current : Lists.newArrayList(groupedWidgets)) {
+    for (GroupedWidget current : groupedWidgets) {
       if (!current.isStateful()) {
-        groupedWidgets.remove(current);
         continue;
       }
 
