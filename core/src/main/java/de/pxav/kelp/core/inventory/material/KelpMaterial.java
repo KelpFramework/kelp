@@ -6822,8 +6822,8 @@ public enum KelpMaterial {
    *
    * @return {@code true} if the item is a hoe.
    */
-  public boolean isWeapon() {
-    return getWeapons().contains(this);
+  public boolean isMeleeWeapon() {
+    return getMeleeWeapons().contains(this);
   }
 
   /**
@@ -6977,7 +6977,7 @@ public enum KelpMaterial {
    *
    * @return An array containing all materials representing a melee weapon.
    */
-  public static Set<KelpMaterial> getWeapons() {
+  public static Set<KelpMaterial> getMeleeWeapons() {
     Set<KelpMaterial> weapons = Sets.newHashSet(getPickaxes());
     weapons.addAll(getAxes());
     weapons.addAll(getShovels());
