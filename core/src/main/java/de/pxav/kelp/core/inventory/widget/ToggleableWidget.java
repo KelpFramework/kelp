@@ -140,6 +140,11 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
     return this;
   }
 
+  @Override
+  public boolean isStateful() {
+    return true;
+  }
+
   /**
    * Renders the widget and converts all the given information
    * and configuration to a single {@code KelpItem}, which can

@@ -38,6 +38,11 @@ public class StatefulItemWidget extends AbstractWidget<StatefulItemWidget> imple
   }
 
   @Override
+  public boolean isStateful() {
+    return true;
+  }
+
+  @Override
   public KelpItem render() {
     // add cached listeners which were created when then item
     // did not exist.

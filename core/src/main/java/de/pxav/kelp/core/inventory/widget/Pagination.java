@@ -142,6 +142,11 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
     return ((int) d + 1);
   }
 
+  @Override
+  public boolean isStateful() {
+    return true;
+  }
+
   /**
    * Converts all the given information and customization
    * and generates a collection of items out of it.

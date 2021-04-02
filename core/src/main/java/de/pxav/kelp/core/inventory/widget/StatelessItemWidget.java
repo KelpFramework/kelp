@@ -68,6 +68,11 @@ public class StatelessItemWidget extends AbstractWidget<StatelessItemWidget> imp
     return this;
   }
 
+  @Override
+  public boolean isStateful() {
+    return false;
+  }
+
   /**
    * Renders the widget and converts all the given information
    * and configuration to a single {@code KelpItem}, which can

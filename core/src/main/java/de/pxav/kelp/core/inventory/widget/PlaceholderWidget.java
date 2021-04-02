@@ -98,6 +98,11 @@ public class PlaceholderWidget extends AbstractWidget<PlaceholderWidget> impleme
   }
 
   @Override
+  public boolean isStateful() {
+    return false;
+  }
+
+  @Override
   public Collection<KelpItem> render(KelpPlayer player) {
     Collection<KelpItem> output = Lists.newArrayList();
 
