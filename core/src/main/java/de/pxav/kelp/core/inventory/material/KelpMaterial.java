@@ -3644,115 +3644,140 @@ public enum KelpMaterial {
   DIAMOND_SHOVEL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 1561; }
   },
   GOLDEN_SHOVEL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 32; }
   },
   IRON_SHOVEL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 250; }
   },
   STONE_SHOVEL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 131; }
   },
   WOODEN_SHOVEL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
     public float fuelPowerFromVersion(KelpVersion version) { return 1F; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 59; }
   },
 
   // HOES
   DIAMOND_HOE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 1561; }
   },
   GOLDEN_HOE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 32; }
   },
   IRON_HOE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 250; }
   },
   STONE_HOE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 131; }
   },
   WOODEN_HOE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
     public float fuelPowerFromVersion(KelpVersion version) { return 1F; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 59; }
   },
 
   // AXES
   DIAMOND_AXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 1561; }
   },
   GOLDEN_AXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 32; }
   },
   IRON_AXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 250; }
   },
   STONE_AXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 131; }
   },
   WOODEN_AXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
     public float fuelPowerFromVersion(KelpVersion version) { return 1F; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 59; }
   },
 
   // PICKAXE
   DIAMOND_PICKAXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 1561; }
   },
   GOLDEN_PICKAXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 32; }
   },
   IRON_PICKAXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 250; }
   },
   STONE_PICKAXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 131; }
   },
   WOODEN_PICKAXE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
     public float fuelPowerFromVersion(KelpVersion version) { return 1F; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 59; }
   },
 
   // SWORDS
   DIAMOND_SWORD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 1561; }
   },
   GOLDEN_SWORD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 32; }
   },
   IRON_SWORD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 250; }
   },
   STONE_SWORD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 131; }
   },
   WOODEN_SWORD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
     public float fuelPowerFromVersion(KelpVersion version) { return 1F; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 59; }
   },
 
   // CORALS
@@ -4072,88 +4097,108 @@ public enum KelpMaterial {
   CHAINMAIL_BOOTS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 195; }
   },
   DIAMOND_BOOTS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 429; }
   },
   GOLDEN_BOOTS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 91; }
   },
   IRON_BOOTS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 195; }
   },
   LEATHER_BOOTS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 65; }
   },
 
   // ARMOR (CHESTPLATE)
   CHAINMAIL_CHESTPLATE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 240; }
   },
   DIAMOND_CHESTPLATE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 528; }
   },
   GOLDEN_CHESTPLATE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 112; }
   },
   IRON_CHESTPLATE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 240; }
   },
   LEATHER_CHESTPLATE(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 80; }
   },
 
   // ARMOR (HELMET)
   CHAINMAIL_HELMET(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 165; }
   },
   DIAMOND_HELMET(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 363; }
   },
   GOLDEN_HELMET(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 77; }
   },
   IRON_HELMET(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 165; }
   },
   LEATHER_HELMET(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 55; }
   },
 
   // ARMOR (LEGGINGS)
   CHAINMAIL_LEGGINGS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 225; }
   },
   DIAMOND_LEGGINGS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 495; }
   },
   GOLDEN_LEGGINGS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 105; }
   },
   IRON_LEGGINGS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 225; }
   },
   LEATHER_LEGGINGS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 75; }
   },
 
   // OTHER
@@ -4375,6 +4420,7 @@ public enum KelpMaterial {
       }
       return 0.0F;
     }
+    int maxDurabilityUnsafe(KelpVersion version) { return 384; }
   },
   BOWL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
@@ -4476,6 +4522,7 @@ public enum KelpMaterial {
   CARROT_ON_A_STICK(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 25; }
   },
   CARTOGRAPHY_TABLE(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 2.5F; }
@@ -4754,6 +4801,7 @@ public enum KelpMaterial {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
     public float fuelPowerFromVersion(KelpVersion version) { return 1.5F; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 326; }
   },
   CUT_RED_SANDSTONE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.8F; }
@@ -4893,6 +4941,7 @@ public enum KelpMaterial {
   ELYTRA(KelpVersion.MC_1_9_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 432; }
   },
   EMERALD(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
@@ -5039,6 +5088,7 @@ public enum KelpMaterial {
       }
       return 0.0F;
     }
+    int maxDurabilityUnsafe(KelpVersion version) { return 64; }
   },
   FLETCHING_TABLE(KelpVersion.MC_1_14_0) {
     public float getHardness() { return 2.5F; }
@@ -5055,6 +5105,7 @@ public enum KelpMaterial {
   FLINT_AND_STEEL(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 64; }
   },
   FLOWER_POT(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.0F; }
@@ -6154,10 +6205,12 @@ public enum KelpMaterial {
   SHEARS(KelpVersion.MC_1_8_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 238; }
   },
   SHIELD(KelpVersion.MC_1_9_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 336; }
   },
   SHULKER_SHELL(KelpVersion.MC_1_11_0) {
     public boolean isBlock() { return false; }
@@ -6401,6 +6454,7 @@ public enum KelpMaterial {
   TRIDENT(KelpVersion.MC_1_13_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 250; }
   },
   TRIPWIRE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.0F; }
@@ -6434,6 +6488,7 @@ public enum KelpMaterial {
   TURTLE_HELMET(KelpVersion.MC_1_13_0) {
     public boolean isBlock() { return false; }
     public int getMaxStackSize() { return 1; }
+    int maxDurabilityUnsafe(KelpVersion version) { return 275; }
   },
   VINE(KelpVersion.MC_1_8_0) {
     public float getHardness() { return 0.2F; }
@@ -6759,6 +6814,32 @@ public enum KelpMaterial {
    */
   public boolean isOccluding() {
     return isBlock() && occludingUnsafe();
+  }
+
+  /**
+   * Checks if the current material is an item that has a durability,
+   * so an item that can be broken when used such as a pickaxe,
+   * armor, etc. Breakable blocks are not included in this method!
+   *
+   * @return {@code true} if the item has durability/is breakable
+   */
+  public boolean isBreakable() {
+    return getMaxDurability() > 0;
+  }
+
+  /**
+   * Gets the maximum durability of an item depending on the server version.
+   * If the current material is not an item or if it is not breakable, {@code 0}
+   * will be returned.
+   *
+   * @return The maximum durability of the item, {@code 0} if the material is no breakable item.
+   */
+  public int getMaxDurability() {
+    return maxDurabilityUnsafe(KelpServer.getVersion());
+  }
+  
+  int maxDurabilityUnsafe(KelpVersion version) {
+    return 0;
   }
 
   /**
