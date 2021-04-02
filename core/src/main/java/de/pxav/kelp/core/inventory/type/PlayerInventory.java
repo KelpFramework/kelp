@@ -404,6 +404,12 @@ public class PlayerInventory {
    */
   public PlayerInventory updateWidgets() {
     for (SimpleWidget current : simpleWidgets.getOrEmpty(player.getUUID())) {
+      if (!current.isStateful()) {
+        continue;
+      }
+
+      player.getBukkitPlayer().getInventory().clear(current.getCoveredSlot());
+
       KelpItem item = current.render();
 
       // if items are not explicitly stated as interactable
@@ -416,6 +422,14 @@ public class PlayerInventory {
     }
 
     for (GroupedWidget current : groupedWidgets.getOrEmpty(player.getUUID())) {
+      if (!current.isStateful()) {
+        continue;
+      }
+
+      for (Integer slot : current.getCoveredSlots()) {
+        player.getBukkitPlayer().getInventory().clear(slot);
+      }
+
       current.render(player).forEach(item -> {
 
         // if items are not explicitly stated as interactable
