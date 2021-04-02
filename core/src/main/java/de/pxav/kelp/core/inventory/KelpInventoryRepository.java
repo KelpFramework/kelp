@@ -59,9 +59,22 @@ public class KelpInventoryRepository {
     this.materialVersionTemplate.defineDefaults();
   }
 
+  /**
+   * Removes all widgets from a player's personal inventory
+   * when they quit the server to avoid unhandled items on
+   * the next server join.
+   *
+   * @param event The event to listen for.
+   */
   @EventHandler
   public void handlePlayerQuit(PlayerQuitEvent event) {
     KelpPlayer player = KelpPlayer.from(event.getPlayer());
+
+    // if the player has quit the server during reload
+    // return to avoid NPE
+    if (player == null) {
+      return;
+    }
 
     player.getInventory().removeAllWidgets();
   }
