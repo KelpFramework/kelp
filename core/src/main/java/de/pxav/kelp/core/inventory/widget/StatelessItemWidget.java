@@ -19,13 +19,6 @@ public class StatelessItemWidget extends AbstractWidget<StatelessItemWidget> imp
   // the item to be set into the inventory.
   private KelpItem item;
 
-  // caches listeners to be added to the item, when the item itself is still null.
-  private Set<Consumer<KelpClickEvent>> listenerCache;
-
-  StatelessItemWidget() {
-    this.listenerCache = Sets.newHashSet();
-  }
-
   public static StatelessItemWidget create() {
     return new StatelessItemWidget();
   }
@@ -38,33 +31,6 @@ public class StatelessItemWidget extends AbstractWidget<StatelessItemWidget> imp
    */
   public StatelessItemWidget item(KelpItem item) {
     this.item = item;
-    return this;
-  }
-
-  /**
-   * Adds a listener to the item.
-   *
-   * You can set listeners before the item itself has been set/created.
-   * The widget caches the listeners which were added before the item
-   * existed and adds them later when they are rendered ({@link #render()})
-   *
-   * @param listener The listener you want to add.
-   * @return The current instance of the widget.
-   */
-  public StatelessItemWidget addItemListener(Consumer<KelpClickEvent> listener) {
-    // cache the listener if it cannot be added to the item directly.
-    if (item == null) {
-      if (listenerCache == null) {
-        listenerCache = Sets.newHashSet();
-      }
-
-      listenerCache.add(listener);
-      return this;
-    }
-
-    // if the item exists, nothing has to be cached
-    addClickListener(item, listener);
-
     return this;
   }
 
@@ -82,10 +48,6 @@ public class StatelessItemWidget extends AbstractWidget<StatelessItemWidget> imp
    */
   @Override
   public KelpItem render() {
-    // add cached listeners which were created when then item
-    // did not exist.
-    listenerCache.forEach(listener -> addClickListener(item, listener));
-
     return item;
   }
 

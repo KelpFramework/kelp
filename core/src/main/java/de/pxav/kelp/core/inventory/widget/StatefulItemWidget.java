@@ -12,28 +12,12 @@ public class StatefulItemWidget extends AbstractWidget<StatefulItemWidget> imple
 
   private Supplier<KelpItem> itemSupplier;
 
-  // caches listeners to be added to the item, when the item itself is still null.
-  private Set<Consumer<KelpClickEvent>> listenerCache;
-
   public static StatefulItemWidget create() {
     return new StatefulItemWidget();
   }
 
-  StatefulItemWidget() {
-    listenerCache = Sets.newHashSet();
-  }
-
   public StatefulItemWidget item(Supplier<KelpItem> itemSupplier) {
     this.itemSupplier = itemSupplier;
-    return this;
-  }
-
-  public StatefulItemWidget addItemListener(Consumer<KelpClickEvent> listener) {
-    if (listenerCache == null) {
-      listenerCache = Sets.newHashSet();
-    }
-
-    listenerCache.add(listener);
     return this;
   }
 
@@ -44,11 +28,7 @@ public class StatefulItemWidget extends AbstractWidget<StatefulItemWidget> imple
 
   @Override
   public KelpItem render() {
-    // add cached listeners which were created when then item
-    // did not exist.
     KelpItem item = itemSupplier.get();
-    listenerCache.forEach(listener -> addClickListener(item, listener));
-
     return item;
   }
 
