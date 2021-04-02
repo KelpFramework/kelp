@@ -68,6 +68,26 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   }
 
   /**
+   * Sets the content slots of the pagination widget.
+   *
+   * This method overrides all slots which have been set before
+   * and only saves the ones provided by this method.
+   *
+   * Content slots are all slots which are available for the
+   * pageable items to be displayed. The page is only displayed
+   * at the given slots and you can freely choose the location
+   * of your pagination widget.
+   *
+   * @param slots The content slots which should be set.
+   * @return The current instance of the widget.
+   */
+  public Pagination contentSlots(Set<Integer> slots)  {
+    this.contentSlots.clear();
+    this.contentSlots.addAll(slots);
+    return this;
+  }
+
+  /**
    * Sets the items you want to be spread across the different pages.
    *
    * This method overrides all slots which have been set before
