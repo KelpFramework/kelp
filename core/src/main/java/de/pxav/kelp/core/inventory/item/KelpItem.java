@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.enchant.EnchantmentVersionTemplate;
 import de.pxav.kelp.core.inventory.enchant.KelpEnchantment;
+import de.pxav.kelp.core.inventory.enchant.custom.ItemGlowEnchantment;
 import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
@@ -111,7 +112,6 @@ public class KelpItem implements Cloneable {
   private Collection<ItemFlag> itemFlags = Lists.newArrayList();
   private Map<Class<? extends KelpEnchantment>, Integer> enchantments = Maps.newHashMap();
 
-  private boolean glowing = false;
   private boolean unbreakable = false;
 
   private ConcurrentMap<String, Object> nbtTags = Maps.newConcurrentMap();
@@ -177,6 +177,47 @@ public class KelpItem implements Cloneable {
    */
   public KelpItem enchant(Class<? extends KelpEnchantment> enchantment, int level) {
     this.enchantments.put(enchantment, level);
+    return this;
+  }
+
+  /**
+   * Gives the glow effect created by enchantments to the item.
+   * It simply applies the {@link ItemGlowEnchantment} to the item, which
+   * has no effect other than making the item glow. This won't cause any
+   * interference with other enchantments nor it will be displayed in the item's
+   * lore.
+   *
+   * @return Instance of the current {@code KelpItem} object.
+   */
+  public KelpItem addGlow() {
+    this.enchant(ItemGlowEnchantment.class, 1);
+    return this;
+  }
+
+  /**
+   * Removes the glow effect added by {@link #addGlow()} from
+   * the item.
+   *
+   * @return Instance of the current {@code KelpItem} object.
+   */
+  public KelpItem removeGlow() {
+    this.removeEnchantment(ItemGlowEnchantment.class);
+    return this;
+  }
+
+  /**
+   * Makes the item glow or unglow.
+   *
+   * @see #addGlow()
+   * @see #removeGlow()
+   * @return Instance of the current {@code KelpItem} object.
+   */
+  public KelpItem setGlowing(boolean glowing) {
+    if (glowing) {
+      addGlow();
+    } else {
+      removeGlow();
+    }
     return this;
   }
 
@@ -693,6 +734,17 @@ public class KelpItem implements Cloneable {
   }
 
   /**
+   * Checks if the item currently has a glow effect applied.
+   * The glow effect is provided by {@link #addGlow()}, which
+   * adds the {@link ItemGlowEnchantment} to the item.
+   *
+   * @return {@code true} whether the item has the glow effect applied.
+   */
+  public boolean hasGlow() {
+    return hasEnchantment(ItemGlowEnchantment.class);
+  }
+
+  /**
    * Gets the level of the given enchantment. If the item does not
    * have the given enchantment, it will return {@code 0}.
    *
@@ -735,7 +787,6 @@ public class KelpItem implements Cloneable {
       ", metadata=" + metadata +
       ", itemFlags=" + itemFlags +
       ", enchantments=" + enchantments +
-      ", glowing=" + glowing +
       ", unbreakable=" + unbreakable +
       ", nbtTags=" + nbtTags +
       '}';
@@ -764,7 +815,6 @@ public class KelpItem implements Cloneable {
       .append(this.slot)
       .append(this.material)
       .append(this.nbtTags)
-      .append(this.glowing)
       .append(this.unbreakable)
       .append(this.enchantments)
       .append(this.itemFlags)
