@@ -44,16 +44,40 @@ public class SimpleInventory extends KelpInventory<SimpleInventory> {
     this.title = () -> "§8Inventory";
   }
 
+  /**
+   * Sets an updatable title to the inventory.
+   *
+   * @param title The title of the inventory.
+   * @return An instance of the inventory for fluent builder design.
+   */
   public SimpleInventory title(Supplier<String> title) {
     this.title = title;
     return this;
   }
 
+  /**
+   * Sets a static title to the inventory. If you use this method to set
+   * the inventory title, the title will remain static and cannot be updated
+   * with {@link #updateTitleOnly(KelpPlayer)}, which is recommended if you
+   * don't need an updatable title. If you should need it though, use a supplier
+   * instead: {@link #title(Supplier)}.
+   *
+   * @param title The title of the inventory.
+   * @return An instance of the inventory for fluent builder design.
+   */
   public SimpleInventory title(String title) {
     this.title = () -> title;
     return this;
   }
 
+  /**
+   * Updates only the title of the inventory for the given player.
+   * This won't update any widgets. But {@link #update(KelpPlayer)} won't
+   * update the title as well, so you have to explicitly call this method
+   * every time you want to update the inventory title.
+   *
+   * @param player The player to send the title update to.
+   */
   public void updateTitleOnly(KelpPlayer player) {
     this.windowPacketTemplate.updateWindowTitle(player.getBukkitPlayer(), title.get());
   }
