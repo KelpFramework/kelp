@@ -114,7 +114,7 @@ public abstract class KelpEnchantment {
    *
    * @return {@code true} if the enchantment is a default Minecraft enchantment on the current server version.
    */
-  public boolean isBukkitEnchantment() {
+  public final boolean isBukkitEnchantment() {
     return bukkitEnchantmentUnsafe(KelpServer.getVersion());
   }
 

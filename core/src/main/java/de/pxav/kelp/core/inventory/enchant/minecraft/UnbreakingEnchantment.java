@@ -2,6 +2,7 @@ package de.pxav.kelp.core.inventory.enchant.minecraft;
 
 import de.pxav.kelp.core.inventory.enchant.KelpEnchantment;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
+import de.pxav.kelp.core.version.KelpVersion;
 
 public final class UnbreakingEnchantment extends KelpEnchantment {
 
@@ -36,8 +37,7 @@ public final class UnbreakingEnchantment extends KelpEnchantment {
   }
 
   @Override
-  public boolean isBukkitEnchantment() {
+  protected boolean bukkitEnchantmentUnsafe(KelpVersion version) {
     return true;
   }
-
 }
