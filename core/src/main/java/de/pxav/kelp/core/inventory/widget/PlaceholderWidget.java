@@ -113,7 +113,8 @@ public class PlaceholderWidget extends AbstractWidget<PlaceholderWidget> impleme
     }
 
     slots.forEach(current
-      -> output.add(baseItem.slot(current)));
+      -> output.add(baseItem.clone().slot(current)));
+
     return output;
   }
 
