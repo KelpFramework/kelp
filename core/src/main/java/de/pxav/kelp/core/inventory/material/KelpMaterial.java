@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.inventory.material;
 
+import com.google.common.collect.Sets;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.KelpServer;
 import de.pxav.kelp.core.version.KelpVersion;
@@ -7,6 +8,7 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * This enum represents all materials you can use when writing a
@@ -6757,6 +6759,311 @@ public enum KelpMaterial {
    */
   public boolean isOccluding() {
     return isBlock() && occludingUnsafe();
+  }
+
+  /**
+   * Checks if the current material is a pickaxe
+   * item of any tier (wood, gold, stone, ...).
+   *
+   * @return {@code true} if the item is a pickaxe.
+   */
+  public boolean isPickaxe() {
+    return getPickaxes().contains(this);
+  }
+
+  /**
+   * Checks if the current material is an axe
+   * item of any tier (wood, gold, stone, ...).
+   *
+   * @return {@code true} if the item is an axe.
+   */
+  public boolean isAxe() {
+    return getAxes().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a shovel
+   * item of any tier (wood, gold, stone, ...).
+   *
+   * @return {@code true} if the item is a shovel.
+   */
+  public boolean isShovel() {
+    return getShovels().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a hoe
+   * item of any tier (wood, gold, stone, ...).
+   *
+   * @return {@code true} if the item is a hoe.
+   */
+  public boolean isHoe() {
+    return getHoes().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a tool
+   * item of any tier. This includes:
+   * - all pickaxes
+   * - all axes
+   * - all shovels
+   * - all hoes
+   *
+   * @return {@code true} if the item is a hoe.
+   */
+  public boolean isTool() {
+    return getTools().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a weapon
+   * used for melee including all swords and tools
+   * but no bows or crossbows.
+   *
+   * @return {@code true} if the item is a hoe.
+   */
+  public boolean isWeapon() {
+    return getWeapons().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a helmet
+   * armor part.
+   *
+   * @return {@code true} if the item is a helmet armor part.
+   */
+  public boolean isHelmet() {
+    return getHelmets().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a chest plate
+   * armor part.
+   *
+   * @return {@code true} if the item is a chest plate armor part.
+   */
+  public boolean isChestPlate() {
+    return getHelmets().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a leggings
+   * armor part.
+   *
+   * @return {@code true} if the item is a leggings armor part.
+   */
+  public boolean isLeggings() {
+    return getLeggings().contains(this);
+  }
+
+  /**
+   * Checks if the current material is a boots
+   * armor part.
+   *
+   * @return {@code true} if the item is a boots armor part.
+   */
+  public boolean isBoots() {
+    return getBoots().contains(this);
+  }
+
+  /**
+   * Gets an array of all materials representing a pickaxe
+   * or any tier.
+   *
+   * @return An array containing all materials representing a pickaxe.
+   */
+  public static Set<KelpMaterial> getPickaxes() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.WOODEN_PICKAXE,
+      KelpMaterial.GOLDEN_PICKAXE,
+      KelpMaterial.STONE_PICKAXE,
+      KelpMaterial.IRON_PICKAXE,
+      KelpMaterial.DIAMOND_PICKAXE
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing an axe
+   * or any tier.
+   *
+   * @return An array containing all materials representing an axe.
+   */
+  public static Set<KelpMaterial> getAxes() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.WOODEN_AXE,
+      KelpMaterial.GOLDEN_AXE,
+      KelpMaterial.STONE_AXE,
+      KelpMaterial.IRON_AXE,
+      KelpMaterial.DIAMOND_AXE
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing a shovel
+   * or any tier.
+   *
+   * @return An array containing all materials representing a shovel.
+   */
+  public static Set<KelpMaterial> getShovels() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.WOODEN_SHOVEL,
+      KelpMaterial.GOLDEN_SHOVEL,
+      KelpMaterial.STONE_SHOVEL,
+      KelpMaterial.IRON_SHOVEL,
+      KelpMaterial.DIAMOND_SHOVEL
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing a hoe
+   * or any tier.
+   *
+   * @return An array containing all materials representing a hoe.
+   */
+  public static Set<KelpMaterial> getHoes() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.WOODEN_HOE,
+      KelpMaterial.GOLDEN_HOE,
+      KelpMaterial.STONE_HOE,
+      KelpMaterial.IRON_HOE,
+      KelpMaterial.DIAMOND_HOE
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing a sword
+   * or any tier.
+   *
+   * @return An array containing all materials representing a sword.
+   */
+  public static Set<KelpMaterial> getSwords() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.WOODEN_SWORD,
+      KelpMaterial.GOLDEN_SWORD,
+      KelpMaterial.STONE_SWORD,
+      KelpMaterial.IRON_SWORD,
+      KelpMaterial.DIAMOND_SWORD
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing any tool
+   * of any tier. This includes:
+   * - all pickaxes
+   * - all axes
+   * - all shovels
+   * - all hoes
+   *
+   * @return An array containing all materials representing a tool.
+   */
+  public static Set<KelpMaterial> getTools() {
+    Set<KelpMaterial> tools = Sets.newHashSet(getPickaxes());
+    tools.addAll(getAxes());
+    tools.addAll(getShovels());
+    tools.addAll(getHoes());
+    return tools;
+  }
+
+  /**
+   * Gets an array of all materials representing any handheld
+   * weapon used for melee (no bows or crossbows included):
+   * - all tools (except )
+   * - all swords
+   *
+   * @return An array containing all materials representing a melee weapon.
+   */
+  public static Set<KelpMaterial> getWeapons() {
+    Set<KelpMaterial> weapons = Sets.newHashSet(getPickaxes());
+    weapons.addAll(getAxes());
+    weapons.addAll(getShovels());
+    if (KelpServer.getVersion().isHigherThanOrEqualTo(KelpVersion.MC_1_9_0)) {
+      weapons.addAll(getHoes());
+    }
+    weapons.addAll(getSwords());
+    return weapons;
+  }
+
+  /**
+   * Gets an array of all materials representing a chest plate
+   * armor part.
+   *
+   * @return An array containing all materials representing a chest plate armor part.
+   */
+  public static Set<KelpMaterial> getChestPlates() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.LEATHER_CHESTPLATE,
+      KelpMaterial.GOLDEN_CHESTPLATE,
+      KelpMaterial.IRON_CHESTPLATE,
+      KelpMaterial.DIAMOND_CHESTPLATE
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing a helmet
+   * armor part.
+   *
+   * @return An array containing all materials representing a helmet armor part.
+   */
+  public static Set<KelpMaterial> getHelmets() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.LEATHER_HELMET,
+      KelpMaterial.GOLDEN_HELMET,
+      KelpMaterial.IRON_HELMET,
+      KelpMaterial.DIAMOND_HELMET
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing a leggings
+   * armor part.
+   *
+   * @return An array containing all materials representing a leggings armor part.
+   */
+  public static Set<KelpMaterial> getLeggings() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.LEATHER_LEGGINGS,
+      KelpMaterial.GOLDEN_LEGGINGS,
+      KelpMaterial.IRON_LEGGINGS,
+      KelpMaterial.DIAMOND_LEGGINGS
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing a boots
+   * armor part.
+   *
+   * @return An array containing all materials representing a boots armor part.
+   */
+  public static Set<KelpMaterial> getBoots() {
+    Set<KelpMaterial> output = Sets.newHashSet(
+      KelpMaterial.LEATHER_BOOTS,
+      KelpMaterial.GOLDEN_BOOTS,
+      KelpMaterial.IRON_BOOTS,
+      KelpMaterial.DIAMOND_BOOTS
+    );
+    return output;
+  }
+
+  /**
+   * Gets an array of all materials representing armor parts
+   * in general independent from their type or tier (all helmets, chest plates, etc.)
+   *
+   * @return An array containing all materials representing all armor parts.
+   */
+  public static Set<KelpMaterial> getArmorParts() {
+    Set<KelpMaterial> output = Sets.newHashSet(getHelmets());
+    output.addAll(getChestPlates());
+    output.addAll(getLeggings());
+    output.addAll(getBoots());
+    return output;
   }
 
   public boolean isEntity() {
