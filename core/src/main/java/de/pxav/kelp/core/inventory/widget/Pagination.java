@@ -88,18 +88,46 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   }
 
   /**
-   * Sets the items you want to be spread across the different pages.
+   * Sets the widgets you want to be spread across the different pages.
    *
-   * This method overrides all slots which have been set before
+   * This method overrides all widgets which have been set before
    * and only saves the ones provided by this method.
    *
-   * @param contentItem An array of items you want to be spread across
+   * @param contentItem An array of widgets you want to be spread across
    *                    the different pages.
    * @return The current instance of the widget.
    */
   public Pagination contentWidgets(SimpleWidget... contentItem) {
     this.contentWidgets.clear();
     this.contentWidgets.addAll(Arrays.asList(contentItem));
+    return this;
+  }
+
+  /**
+   * Adds one or more new content widget(s) to the pagination. This method does
+   * not overwrite any existing widgets.
+   *
+   * Content widgets are the actual pageable content of a pagination.
+   *
+   * @param widget The widget you want to add to the pagination.
+   * @return The current instance of the widget.
+   */
+  public Pagination addContentWidgets(SimpleWidget... widget) {
+    this.contentWidgets.addAll(Arrays.asList(widget));
+    return this;
+  }
+
+  /**
+   * Adds new content widgets to the pagination. This method does
+   * not overwrite any existing widgets.
+   *
+   * Content widgets are the actual pageable content of a pagination.
+   *
+   * @param widgets The collection of widgets you want to add to the pagination.
+   * @return The current instance of the widget.
+   */
+  public Pagination addContentWidgets(Collection<SimpleWidget> widgets) {
+    this.contentWidgets.addAll(widgets);
     return this;
   }
 
