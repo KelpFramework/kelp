@@ -45,7 +45,7 @@ import java.util.function.Consumer;
  *
  * @author pxav
  */
-public class KelpItem {
+public class KelpItem implements Cloneable {
 
   private ItemVersionTemplate itemVersionTemplate;
   private ItemTagVersionTemplate itemTagVersionTemplate;
@@ -712,6 +712,16 @@ public class KelpItem {
    */
   public Map<Class<? extends KelpEnchantment>, Integer> getEnchantments() {
     return this.enchantments;
+  }
+
+  @Override
+  public KelpItem clone() {
+    try {
+      return (KelpItem) super.clone();
+    } catch (CloneNotSupportedException exception) {
+      exception.printStackTrace();
+      return null;
+    }
   }
 
   @Override
