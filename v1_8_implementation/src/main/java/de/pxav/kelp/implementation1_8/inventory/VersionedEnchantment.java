@@ -119,7 +119,7 @@ public class VersionedEnchantment extends EnchantmentVersionTemplate {
 
       @Override
       public boolean conflictsWith(Enchantment other) {
-        return enchantment.conflictsWith(other.getName());
+        return enchantment.conflictsWith(getKelpEnchantment(other));
       }
 
       @Override

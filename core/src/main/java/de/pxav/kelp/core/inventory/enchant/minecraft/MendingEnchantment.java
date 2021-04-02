@@ -27,7 +27,7 @@ public final class MendingEnchantment extends KelpEnchantment {
   }
 
   @Override
-  public boolean conflictsWith(String otherEnchantment) {
+  public boolean conflictsWith(Class<? extends KelpEnchantment> enchantment) {
     return false;
   }
 

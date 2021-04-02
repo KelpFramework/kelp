@@ -86,11 +86,11 @@ public abstract class KelpEnchantment {
    * is useful if you want to balance your enchantments and want to avoid
    * overpowered combinations such as Mending + Infinity on a bow.
    *
-   * @param enchantmentName The name of the enchantment provided by the
-   *                        {@link #getName()} method of the corresponding class.
+   * @param enchantment The name of the enchantment provided by the
+   *                    {@link #getName()} method of the corresponding class.
    * @return {@code true} if the given enchantment is incompatible with this enchantment.
    */
-  public abstract boolean conflictsWith(String enchantmentName);
+  public abstract boolean conflictsWith(Class<? extends KelpEnchantment> enchantment);
 
   /**
    * Checks whether the the enchantment should be mentioned in the item

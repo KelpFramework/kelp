@@ -44,7 +44,7 @@ public class ItemGlowEnchantment extends KelpEnchantment {
   }
 
   @Override
-  public boolean conflictsWith(String enchantmentName) {
+  public boolean conflictsWith(Class<? extends KelpEnchantment> enchantment) {
     return false;
   }
 

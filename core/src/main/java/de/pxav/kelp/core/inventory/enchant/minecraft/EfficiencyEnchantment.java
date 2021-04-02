@@ -27,7 +27,7 @@ public final class EfficiencyEnchantment extends KelpEnchantment {
   }
 
   @Override
-  public boolean conflictsWith(String otherEnchantment) {
+  public boolean conflictsWith(Class<? extends KelpEnchantment> enchantment) {
     // efficiency generally conflicts with no other enchantments.
     return false;
   }
