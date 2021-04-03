@@ -3,11 +3,14 @@ package de.pxav.kelp.core.inventory.widget;
 import com.google.common.collect.*;
 import com.google.common.math.DoubleMath;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.common.ConcurrentListMultimap;
+import de.pxav.kelp.core.common.ConcurrentMultimap;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * This widget is used to crate pagination in your inventories.
@@ -25,7 +28,11 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   private List<Integer> contentSlots;
 
   // all items which have to be spread across the pages
-  private Collection<SimpleWidget> contentWidgets;
+  private Supplier<List<SimpleWidget>> contentWidgets;
+
+  // widgets that are currently displayed independent from the output
+  // that would be returned by the supplier right now.
+  private List<SimpleWidget> currentContentWidgets = ImmutableList.of();
 
   // navigation buttons
   private KelpItem nextButton;
@@ -36,7 +43,7 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   Pagination(KelpInventoryRepository inventoryRepository) {
     this.inventoryRepository = inventoryRepository;
     this.contentSlots = Lists.newArrayList();
-    this.contentWidgets = Lists.newArrayList();
+    this.contentWidgets = Lists::newArrayList;
   }
 
   public static Pagination create() {
@@ -93,41 +100,12 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
    * This method overrides all widgets which have been set before
    * and only saves the ones provided by this method.
    *
-   * @param contentItem An array of widgets you want to be spread across
-   *                    the different pages.
+   * @param contentWidgets A supplier containing the list with all content
+   *                       widgets you want to set.
    * @return The current instance of the widget.
    */
-  public Pagination contentWidgets(SimpleWidget... contentItem) {
-    this.contentWidgets.clear();
-    this.contentWidgets.addAll(Arrays.asList(contentItem));
-    return this;
-  }
-
-  /**
-   * Adds one or more new content widget(s) to the pagination. This method does
-   * not overwrite any existing widgets.
-   *
-   * Content widgets are the actual pageable content of a pagination.
-   *
-   * @param widget The widget you want to add to the pagination.
-   * @return The current instance of the widget.
-   */
-  public Pagination addContentWidgets(SimpleWidget... widget) {
-    this.contentWidgets.addAll(Arrays.asList(widget));
-    return this;
-  }
-
-  /**
-   * Adds new content widgets to the pagination. This method does
-   * not overwrite any existing widgets.
-   *
-   * Content widgets are the actual pageable content of a pagination.
-   *
-   * @param widgets The collection of widgets you want to add to the pagination.
-   * @return The current instance of the widget.
-   */
-  public Pagination addContentWidgets(Collection<SimpleWidget> widgets) {
-    this.contentWidgets.addAll(widgets);
+  public Pagination contentWidgets(Supplier<List<SimpleWidget>> contentWidgets) {
+    this.contentWidgets = contentWidgets;
     return this;
   }
 
@@ -183,7 +161,7 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
    * @return The amount of maximum pages needed.
    */
   private int getMaxPage() {
-    double d = ((double) contentWidgets.size()) / contentSlots.size();
+    double d = ((double) currentContentWidgets.size()) / contentSlots.size();
     if (DoubleMath.isMathematicalInteger(d)) {
       return (int) d;
     }
@@ -204,15 +182,16 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   @Override
   public Collection<KelpItem> render(KelpPlayer player) {
     player = this.player != null ? this.player : player;
+    this.currentContentWidgets = contentWidgets.get();
 
     Collection<KelpItem> output = Lists.newArrayList();
 
     // Iterate all items and check to which page they belong
     // Map pattern: page id -> items for that page
-    Multimap<Integer, SimpleWidget> pages = HashMultimap.create();
-    for (SimpleWidget widget : contentWidgets) {
+    ConcurrentMultimap<Integer, SimpleWidget> pages = ConcurrentListMultimap.create();
+    for (SimpleWidget widget : currentContentWidgets) {
       int currentPage = pages.isEmpty() ? 0 : pages.keySet().size() - 1;
-      if (pages.get(currentPage).size() >= contentSlots.size()) {
+      if (pages.getOrEmpty(currentPage).size() >= contentSlots.size()) {
         currentPage++;
       }
       pages.put(currentPage, widget);
@@ -241,7 +220,7 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
 
   @Override
   public void onRemove() {
-    contentWidgets.forEach(Widget::onRemove);
+    currentContentWidgets.forEach(Widget::onRemove);
   }
 
   @Override
