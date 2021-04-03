@@ -9,6 +9,7 @@ import de.pxav.kelp.core.common.MathUtils;
 import de.pxav.kelp.core.inventory.enchant.EnchantmentVersionTemplate;
 import de.pxav.kelp.core.inventory.enchant.KelpEnchantment;
 import de.pxav.kelp.core.inventory.enchant.minecraft.EfficiencyEnchantment;
+import de.pxav.kelp.core.inventory.enchant.minecraft.InfinityEnchantment;
 import de.pxav.kelp.core.inventory.enchant.minecraft.UnbreakingEnchantment;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
@@ -143,10 +144,12 @@ public class VersionedEnchantment extends EnchantmentVersionTemplate {
         to.addUnsafeEnchantment(Enchantment.DIG_SPEED, level);
       } else if (kelpEnchantment instanceof UnbreakingEnchantment) {
         to.addUnsafeEnchantment(Enchantment.DURABILITY, level);
+      } else if (kelpEnchantment instanceof InfinityEnchantment) {
+        to.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, level);
       }
 
       else {
-        logger.log(LogLevel.ERROR, "Enchantment " + kelpEnchantment.getName() + " is not available for this server version!");
+        logger.log(LogLevel.ERROR, "No implementation available for enchantment " + kelpEnchantment.getName() + ". Please report this to the Kelp developers!");
       }
 
       return to;

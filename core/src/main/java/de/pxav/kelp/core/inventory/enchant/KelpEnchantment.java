@@ -2,6 +2,8 @@ package de.pxav.kelp.core.inventory.enchant;
 
 import de.pxav.kelp.core.KelpServer;
 import de.pxav.kelp.core.inventory.enchant.minecraft.EfficiencyEnchantment;
+import de.pxav.kelp.core.inventory.enchant.minecraft.InfinityEnchantment;
+import de.pxav.kelp.core.inventory.enchant.minecraft.MendingEnchantment;
 import de.pxav.kelp.core.inventory.enchant.minecraft.UnbreakingEnchantment;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.version.KelpVersion;
@@ -39,6 +41,16 @@ public abstract class KelpEnchantment {
    * Increases the durability of the item it is applied to.
    */
   public static final Class<UnbreakingEnchantment> UNBREAKING = UnbreakingEnchantment.class;
+
+  /**
+   * Infinite arrows on a bow if at least one arrow is inside the player's inventory.
+   */
+  public static final Class<InfinityEnchantment> INFINITY = InfinityEnchantment.class;
+
+  /**
+   * Repairs player items at the cost of experience orbs collected from any source.
+   */
+  public static final Class<MendingEnchantment> MENDING = MendingEnchantment.class;
 
   /**
    * Gets the name of the enchantment which is used to generate
