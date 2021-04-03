@@ -21,11 +21,11 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
  *
  * @author pxav
  */
-public class ItemGlowEnchantment extends KelpEnchantment {
+public final class ItemGlowEnchantment extends KelpEnchantment {
 
   @Override
   public String getName() {
-    return "ItemGlow";
+    return "Item Glow";
   }
 
   @Override
