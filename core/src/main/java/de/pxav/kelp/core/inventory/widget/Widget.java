@@ -40,4 +40,8 @@ public interface Widget {
    */
   KelpPlayer getPlayer();
 
+  boolean isStateful();
+
+  default void onRemove() {}
+
 }

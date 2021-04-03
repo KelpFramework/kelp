@@ -1,19 +1,16 @@
 package de.pxav.kelp.core.inventory.widget;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import com.google.common.math.DoubleMath;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.common.ConcurrentListMultimap;
+import de.pxav.kelp.core.common.ConcurrentMultimap;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * This widget is used to crate pagination in your inventories.
@@ -31,7 +28,11 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   private List<Integer> contentSlots;
 
   // all items which have to be spread across the pages
-  private Collection<KelpItem> contentItems;
+  private Supplier<List<SimpleWidget>> contentWidgets;
+
+  // widgets that are currently displayed independent from the output
+  // that would be returned by the supplier right now.
+  private List<SimpleWidget> currentContentWidgets = ImmutableList.of();
 
   // navigation buttons
   private KelpItem nextButton;
@@ -42,7 +43,7 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   Pagination(KelpInventoryRepository inventoryRepository) {
     this.inventoryRepository = inventoryRepository;
     this.contentSlots = Lists.newArrayList();
-    this.contentItems = Lists.newArrayList();
+    this.contentWidgets = Lists::newArrayList;
   }
 
   public static Pagination create() {
@@ -74,18 +75,37 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   }
 
   /**
-   * Sets the items you want to be spread across the different pages.
+   * Sets the content slots of the pagination widget.
    *
    * This method overrides all slots which have been set before
    * and only saves the ones provided by this method.
    *
-   * @param contentItem An array of items you want to be spread across
-   *                    the different pages.
+   * Content slots are all slots which are available for the
+   * pageable items to be displayed. The page is only displayed
+   * at the given slots and you can freely choose the location
+   * of your pagination widget.
+   *
+   * @param slots The content slots which should be set.
    * @return The current instance of the widget.
    */
-  public Pagination contentItems(KelpItem... contentItem) {
-    this.contentItems.clear();
-    this.contentItems.addAll(Arrays.asList(contentItem));
+  public Pagination contentSlots(Set<Integer> slots)  {
+    this.contentSlots.clear();
+    this.contentSlots.addAll(slots);
+    return this;
+  }
+
+  /**
+   * Sets the widgets you want to be spread across the different pages.
+   *
+   * This method overrides all widgets which have been set before
+   * and only saves the ones provided by this method.
+   *
+   * @param contentWidgets A supplier containing the list with all content
+   *                       widgets you want to set.
+   * @return The current instance of the widget.
+   */
+  public Pagination contentWidgets(Supplier<List<SimpleWidget>> contentWidgets) {
+    this.contentWidgets = contentWidgets;
     return this;
   }
 
@@ -141,11 +161,16 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
    * @return The amount of maximum pages needed.
    */
   private int getMaxPage() {
-    double d = ((double) contentItems.size()) / contentSlots.size();
+    double d = ((double) currentContentWidgets.size()) / contentSlots.size();
     if (DoubleMath.isMathematicalInteger(d)) {
       return (int) d;
     }
     return ((int) d + 1);
+  }
+
+  @Override
+  public boolean isStateful() {
+    return true;
   }
 
   /**
@@ -157,25 +182,27 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   @Override
   public Collection<KelpItem> render(KelpPlayer player) {
     player = this.player != null ? this.player : player;
+    this.currentContentWidgets = contentWidgets.get();
 
     Collection<KelpItem> output = Lists.newArrayList();
 
     // Iterate all items and check to which page they belong
     // Map pattern: page id -> items for that page
-    Multimap<Integer, KelpItem> pages = HashMultimap.create();
-    for (KelpItem item : contentItems) {
+    ConcurrentMultimap<Integer, SimpleWidget> pages = ConcurrentListMultimap.create();
+    for (SimpleWidget widget : currentContentWidgets) {
       int currentPage = pages.isEmpty() ? 0 : pages.keySet().size() - 1;
-      if (pages.get(currentPage).size() >= contentSlots.size()) {
+      if (pages.getOrEmpty(currentPage).size() >= contentSlots.size()) {
         currentPage++;
       }
-      pages.put(currentPage, item);
+      pages.put(currentPage, widget);
     }
 
     // spread the items of the current page across all available slots
     int currentPlayerPage = inventoryRepository.getPlayerPages().getOrDefault(player.getUUID(), Maps.newHashMap()).getOrDefault(this, 0);
     int slotIndex = 0;
-    for (KelpItem item : pages.get(currentPlayerPage)) {
-      output.add(item.slot(contentSlots.get(slotIndex)));
+    for (SimpleWidget widget : pages.get(currentPlayerPage)) {
+      int slot = contentSlots.get(slotIndex);
+      output.add(widget.render().slot(slot));
       slotIndex++;
     }
 
@@ -190,4 +217,18 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
 
     return output;
   }
+
+  @Override
+  public void onRemove() {
+    currentContentWidgets.forEach(Widget::onRemove);
+  }
+
+  @Override
+  public Set<Integer> getCoveredSlots() {
+    Set<Integer> output = Sets.newHashSet(contentSlots);
+    output.add(nextButton.getSlot());
+    output.add(previousButton.getSlot());
+    return output;
+  }
+
 }

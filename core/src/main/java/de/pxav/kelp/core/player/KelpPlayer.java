@@ -9,6 +9,7 @@ import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
+import de.pxav.kelp.core.inventory.type.PlayerInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import de.pxav.kelp.core.player.bossbar.BossBarColor;
@@ -145,6 +146,10 @@ public class KelpPlayer extends LivingKelpEntity {
     return new SimpleChatPrompt(this.getBukkitPlayer(), this.chatPromptVersionTemplate);
   }
 
+  public PlayerInventory getInventory() {
+    return PlayerInventory.of(this);
+  }
+
   /**
    * Checks if the player has any scoreboard with content stored in any
    * objective type ({@code SIDEBAR, PLAYER_LIST}, etc.)
@@ -200,7 +205,7 @@ public class KelpPlayer extends LivingKelpEntity {
    * @param inventory The inventory you want to show to the player
    * @return the current instance of the player
    */
-  public KelpPlayer openInventory(KelpInventory inventory) {
+  public KelpPlayer openInventory(KelpInventory<?> inventory) {
     this.inventoryRepository.openInventory(inventory, this);
     return this;
   }
@@ -244,6 +249,36 @@ public class KelpPlayer extends LivingKelpEntity {
    */
   public KelpPlayer forceInventoryClose() {
     bukkitPlayer.closeInventory();
+    return this;
+  }
+
+  /**
+   * Checks whether the current player has a {@link KelpInventory} open.
+   * Having opened a normal {@link PlayerInventory} using the {@code E} key
+   * on the keyboard does not count for this method. It will only return
+   * true if the player really has an external kelp inventory (GUI) opened.
+   *
+   * @return {@code true} if the player has opened a {@link KelpInventory}.
+   */
+  public boolean hasKelpInventory() {
+    return this.inventoryRepository.hasInventory(this);
+  }
+
+  /**
+   * Updates the title of the player's {@link de.pxav.kelp.core.inventory.type.SimpleInventory}.
+   * This inventory takes its title as {@link com.google.common.base.Supplier<String>} and the
+   * content is therefore updatable. If the player has an animated inventory, the updating process
+   * is handled by the {@link de.pxav.kelp.core.inventory.type.AnimatedInventory} class and
+   * executing this method will have no effect.
+   *
+   * @return An instance of the the current player.
+   */
+  public KelpPlayer updateKelpInventoryTitle() {
+    if (!hasKelpInventory()) {
+      return this;
+    }
+
+    inventoryRepository.updateInventoryTitle(this);
     return this;
   }
 

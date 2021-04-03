@@ -15,9 +15,9 @@ import org.bukkit.event.player.PlayerEvent;
 public class KelpInventoryUpdateEvent extends KelpPlayerEvent {
 
   private static final HandlerList handlers = new HandlerList();
-  private KelpInventory inventory;
+  private KelpInventory<?> inventory;
 
-  public KelpInventoryUpdateEvent(KelpPlayer who, KelpInventory inventory) {
+  public KelpInventoryUpdateEvent(KelpPlayer who, KelpInventory<?> inventory) {
     super(who);
     this.inventory = inventory;
   }
@@ -27,7 +27,7 @@ public class KelpInventoryUpdateEvent extends KelpPlayerEvent {
    *
    * @return the updated inventory
    */
-  public KelpInventory getInventory() {
+  public KelpInventory<?> getInventory() {
     return inventory;
   }
 

@@ -30,34 +30,18 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
   // the condition to be checked every time the widget updates
   private Supplier<Boolean> condition;
 
-  // The slot of the inventory, where the widget should finally be located.
-  private int slot;
-
   // The item which is displayed when the condition is true.
   private KelpItem whenTrue;
 
   // The item which is displayed when the condition is false.
   private KelpItem whenFalse;
 
+  private int slot;
+
   ToggleableWidget() {}
 
   public static ToggleableWidget create() {
     return new ToggleableWidget();
-  }
-
-  /**
-   * Defines the slot, where the widget should be located
-   * later in the final inventory.
-   *
-   * The slot of the given {@code KelpItems} is ignored as you
-   * would have to pass it with every item.
-   *
-   * @param slot The slot, where the widget should be located.
-   * @return Current instance of the widget.
-   */
-  public ToggleableWidget slot(int slot) {
-    this.slot = slot;
-    return this;
   }
 
   /**
@@ -156,6 +140,11 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
     return this;
   }
 
+  @Override
+  public boolean isStateful() {
+    return true;
+  }
+
   /**
    * Renders the widget and converts all the given information
    * and configuration to a single {@code KelpItem}, which can
@@ -166,9 +155,16 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
   @Override
   public KelpItem render() {
     if (condition.get()) {
-      return this.whenTrue.slot(slot);
+      slot = this.whenTrue.getSlot();
+      return this.whenTrue;
     } else {
-      return this.whenFalse.slot(slot);
+      slot = this.whenFalse.getSlot();
+      return this.whenFalse;
     }
+  }
+
+  @Override
+  public int getCoveredSlot() {
+    return slot;
   }
 }

@@ -16,16 +16,16 @@ import org.bukkit.event.player.PlayerEvent;
 public class KelpInventoryOpenEvent extends KelpPlayerEvent {
 
   private static final HandlerList handlers = new HandlerList();
-  private KelpInventory inventory;
+  private KelpInventory<?> inventory;
   private boolean animatedInventory;
 
-  public KelpInventoryOpenEvent(KelpPlayer who, KelpInventory inventory, boolean isAnimated) {
+  public KelpInventoryOpenEvent(KelpPlayer who, KelpInventory<?> inventory, boolean isAnimated) {
     super(who);
     this.inventory = inventory;
     this.animatedInventory = isAnimated;
   }
 
-  public KelpInventory getInventory() {
+  public KelpInventory<?> getInventory() {
     return inventory;
   }
 

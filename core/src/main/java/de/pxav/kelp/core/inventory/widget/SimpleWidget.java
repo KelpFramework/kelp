@@ -29,4 +29,11 @@ public interface SimpleWidget extends Widget {
    */
   KelpItem render();
 
+  /**
+   * Gets the slot covered by this widget in the target inventory.
+   *
+   * @return The slot covered in the target inventory.
+   */
+  int getCoveredSlot();
+
 }

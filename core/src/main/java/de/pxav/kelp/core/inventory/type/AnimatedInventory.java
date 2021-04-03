@@ -1,7 +1,7 @@
 package de.pxav.kelp.core.inventory.type;
 
-import com.google.common.collect.Lists;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.animation.CustomTextAnimation;
 import de.pxav.kelp.core.animation.StaticTextAnimation;
 import de.pxav.kelp.core.animation.TextAnimation;
 import de.pxav.kelp.core.inventory.item.KelpItem;
@@ -13,39 +13,59 @@ import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A class description goes here.
+ * Animated inventory is a {@link KelpInventory} implementation used if
+ * you want to display an inventory GUI with an animated title.
+ *
+ * This title animation is done via an async thread, but animated inventories
+ * are still considered as being more performance intensive as {@link SimpleInventory simple inventories}.
+ * So if you don't need the animated title it is recommended to use them over this
+ * implementation.
+ *
+ * Please also note that animated inventories have some special behavior:
+ * - when opening another inventory or GUI prompt on top of an animated inventory,
+ * the animated inventory will still be rendered as the update scheduler is still
+ * running. So call the {@link KelpPlayer#closeInventory()} method first before
+ * you open another GUI.
  *
  * @author pxav
  */
-public class AnimatedInventory extends KelpInventory {
+public class AnimatedInventory extends KelpInventory<AnimatedInventory> {
 
+  // saves the animation states of the title animation.
   private TextAnimation title;
-  private int size;
-  private List<SimpleWidget> simpleWidgets;
-  private List<GroupedWidget> groupedWidgets;
 
+  // title update scheduler
   private ScheduledExecutorService scheduledExecutorService;
+
+  // An animation is exported to different states. A "state"
+  // can be compared to a "frame" in a video. If you play all
+  // frames/states one after another, they make up a fluent animation.
+  // This variable saves which state is currently displayed to be
+  // able to calculate which to play next.
   private int animationState = 0;
+
+  // the delay between each animation state
   private long animationDelayInMillis = 500;
 
+  // responsible for updating the window title
   private WindowPacketTemplate windowPacketTemplate;
-  private InventoryVersionTemplate inventoryVersionTemplate;
 
   public AnimatedInventory(WindowPacketTemplate windowPacketTemplate,
                            InventoryVersionTemplate inventoryVersionTemplate) {
+    super(inventoryVersionTemplate);
     this.windowPacketTemplate = windowPacketTemplate;
-    this.inventoryVersionTemplate = inventoryVersionTemplate;
-    this.simpleWidgets = Lists.newArrayList();
-    this.groupedWidgets = Lists.newArrayList();
-    this.size = 54;
   }
 
+  /**
+   * Creates a new, empty {@link AnimatedInventory} instance.
+   *
+   * @return The new animated inventory.
+   */
   public static AnimatedInventory create() {
     return new AnimatedInventory(
       KelpPlugin.getInjector().getInstance(WindowPacketTemplate.class),
@@ -53,28 +73,17 @@ public class AnimatedInventory extends KelpInventory {
     );
   }
 
-  public AnimatedInventory size(int size) {
-    this.size = size;
-    return this;
-  }
-
-  public AnimatedInventory rows(int rows) {
-    this.size = rows * 9;
-    return this;
-  }
-
+  /**
+   * Sets the title of the inventory. This title is passed as {@link TextAnimation}
+   * to be able to calculate the individual animation states. If you don't want
+   * to use one of the default animations, you can create your own animation algorithms
+   * (explained in the wiki) or use {@link CustomTextAnimation#create()}.
+   *
+   * @param textAnimation The text animation to be displayed as the inventory title.
+   * @return An instance of the current inventory for fluent builder design.
+   */
   public AnimatedInventory title(TextAnimation textAnimation) {
     this.title = textAnimation;
-    return this;
-  }
-
-  public AnimatedInventory addWidget(SimpleWidget widget) {
-    this.simpleWidgets.add(widget);
-    return this;
-  }
-
-  public AnimatedInventory addWidget(GroupedWidget widget) {
-    this.groupedWidgets.add(widget);
     return this;
   }
 
@@ -92,11 +101,17 @@ public class AnimatedInventory extends KelpInventory {
 
     for (SimpleWidget current : simpleWidgets) {
       KelpItem item = current.render();
+      if (!item.hasTagKey("interactionAllowed")) {
+        item.cancelInteractions();
+      }
       inventory.setItem(item.getSlot(), item.getItemStack());
     }
 
     for (GroupedWidget current : groupedWidgets) {
       current.render(player).forEach(item -> {
+        if (!item.hasTagKey("interactionAllowed")) {
+          item.cancelInteractions();
+        }
         inventory.setItem(item.getSlot(), item.getItemStack());
       });
     }
@@ -104,31 +119,24 @@ public class AnimatedInventory extends KelpInventory {
     return inventory;
   }
 
-  @Override
-  public void update(KelpPlayer toUpdate) {
-    Inventory playerInventory = toUpdate.getBukkitPlayer().getOpenInventory().getTopInventory();
-    playerInventory.clear();
-
-    for (SimpleWidget current : simpleWidgets) {
-      KelpItem item = current.render();
-      playerInventory.setItem(item.getSlot(), item.getItemStack());
-    }
-
-    for (GroupedWidget current : groupedWidgets) {
-      current.render(toUpdate).forEach(item -> {
-        playerInventory.setItem(item.getSlot(), item.getItemStack());
-      });
-    }
-
-    toUpdate.getBukkitPlayer().updateInventory();
-  }
-
+  /**
+   * Starts the title animation scheduler for the given player.
+   * This method is called by kelp-internal classes and shouldn't
+   * be called by an application developer to avoid interference.
+   *
+   * It is executed automatically when an animated inventory is opened
+   * to a {@link KelpPlayer player}.
+   *
+   * @param playerFor The player you want to start the scheduler for.
+   */
   public void scheduleUpdater(Player playerFor) {
     scheduledExecutorService = Executors.newScheduledThreadPool(1);
     scheduledExecutorService.scheduleAtFixedRate(() -> {
       try {
         updateTitleOnly(playerFor, animationState);
         animationState++;
+
+        // restart the animation if it as the end
         if (animationState == title.states().size()) {
           animationState = 0;
         }
@@ -136,7 +144,8 @@ public class AnimatedInventory extends KelpInventory {
     }, 0, animationDelayInMillis, TimeUnit.MILLISECONDS);
   }
 
-  public void stopUpdater() {
+  @Override
+  public void onClose() {
     scheduledExecutorService.shutdown();
   }
 

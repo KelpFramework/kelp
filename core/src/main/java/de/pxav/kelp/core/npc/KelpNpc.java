@@ -372,6 +372,13 @@ public class KelpNpc {
     return this;
   }
 
+  public KelpNpc updateCustomName() {
+    if (isSpawned) {
+      npcVersionTemplate.updateCustomName(this);
+    }
+    return this;
+  }
+
   public KelpNpc addActivity(NpcActivity<?> activity) {
     this.activities.add(activity);
     return this;

@@ -1,17 +1,18 @@
 package de.pxav.kelp.implementation1_8.inventory;
 
 import com.google.inject.Inject;
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.item.KelpItemFactory;
 import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.player.KelpPlayerRepository;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -21,39 +22,33 @@ import org.bukkit.inventory.ItemStack;
  */
 public class InventoryClickListener {
 
-  private KelpPlayerRepository playerRepository;
   private KelpListenerRepository listenerRepository;
   private ItemTagVersionTemplate itemTagVersionTemplate;
-  private KelpItemFactory itemFactory;
 
   @Inject
-  public InventoryClickListener(KelpPlayerRepository playerRepository,
-                                KelpListenerRepository listenerRepository,
-                                ItemTagVersionTemplate itemTagVersionTemplate,
-                                KelpItemFactory itemFactory) {
-    this.playerRepository = playerRepository;
+  public InventoryClickListener(KelpListenerRepository listenerRepository,
+                                ItemTagVersionTemplate itemTagVersionTemplate) {
     this.listenerRepository = listenerRepository;
     this.itemTagVersionTemplate = itemTagVersionTemplate;
-    this.itemFactory = itemFactory;
   }
 
   @EventHandler
   public void handleInventoryClick(InventoryClickEvent event) {
-    if (!(event.getWhoClicked() instanceof Player)
-      || event.getClickedInventory() == null
+    if (event.getClickedInventory() == null
       || event.getCurrentItem() == null
       || event.getCurrentItem().getType() == Material.AIR) {
-      return;
+        return;
     }
 
+    Inventory inventory = event.getInventory();
     ItemStack itemStack = event.getCurrentItem();
 
     if (itemTagVersionTemplate.hasTagKey(itemStack, "interactionCancelled")) {
       event.setCancelled(true);
     }
 
-    KelpPlayer player = playerRepository.getKelpPlayer((Player) event.getWhoClicked());
-    KelpItem item = itemFactory.fromItemStack(itemStack).slot(event.getSlot());
+    KelpPlayer player = KelpPlayer.from(event.getWhoClicked().getUniqueId());
+    KelpItem item = KelpItem.from(itemStack).slot(event.getSlot());
 
     for (String current : itemTagVersionTemplate.getTagKeys(itemStack)) {
       if (!current.startsWith("listener-")) {
@@ -62,17 +57,24 @@ public class InventoryClickListener {
 
       String listenerId = itemTagVersionTemplate.getStringValue(itemStack, current);
 
-      listenerRepository.fireListener(listenerId, new KelpClickEvent(player, null, item));
+      listenerRepository.fireListener(listenerId, new KelpClickEvent(player, item));
     }
 
-//
-//    if (itemTagVersionTemplate.hasTagKey(itemStack, "listenerId")) {
-//      KelpPlayer player = playerRepository.getKelpPlayer((Player) event.getWhoClicked());
-//      KelpItem item = itemFactory.fromItemStack(itemStack).slot(event.getSlot());
-//
-//      String listenerId = itemTagVersionTemplate.getStringValue(itemStack, "listenerId");
-//      listenerRepository.fireListener(listenerId, new KelpClickEvent(player, null, item));
-//    }
+    if (player.getBukkitPlayer().getGameMode() == GameMode.CREATIVE
+      && player.getBukkitPlayer().getInventory().equals(event.getInventory())
+      && itemTagVersionTemplate.hasTagKey(itemStack, "interactionCancelled")) {
+        player.getBukkitPlayer().closeInventory();
+
+        Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
+          player.getBukkitPlayer().getInventory().remove(itemStack);
+
+          if (inventory.getItem(event.getSlot()) == null) {
+            inventory.setItem(event.getSlot(), itemStack);
+          }
+
+          player.getBukkitPlayer().updateInventory();
+        }, 1L);
+    }
 
   }
 

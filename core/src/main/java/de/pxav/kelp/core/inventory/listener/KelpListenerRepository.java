@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * This repository stores the listeners which are currently
@@ -35,7 +36,7 @@ public class KelpListenerRepository {
 
   // Stores all listener ids with the listener interface to be
   // executed when the listener is fired.
-  private Map<String, ClickListener> listeners = Maps.newHashMap();
+  private Map<String, Consumer<KelpClickEvent>> listeners = Maps.newHashMap();
 
   /**
    * Registers a new listener for the given player. This
@@ -48,7 +49,7 @@ public class KelpListenerRepository {
    *                    listener is fired.
    * @return  The listener id.
    */
-  public String registerListener(UUID playerFor, ClickListener listener) {
+  public String registerListener(UUID playerFor, Consumer<KelpClickEvent> listener) {
     String listenerId = this.newListenerId();
 
     listeners.put(listenerId, listener);
@@ -70,7 +71,11 @@ public class KelpListenerRepository {
    *                    the inventory where the item is stored, etc.
    */
   public void fireListener(String listenerId, KelpClickEvent event) {
-    this.listeners.get(listenerId).onClick(event);
+    Consumer<KelpClickEvent> eventHandler = this.listeners.get(listenerId);
+    if (eventHandler == null) {
+      return;
+    }
+    this.listeners.get(listenerId).accept(event);
   }
 
   /**

@@ -18,6 +18,7 @@ import java.util.Collection;
 @Singleton
 public class KelpServer {
 
+  private static final KelpVersion currentVersion = KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
   private KelpPlayerRepository kelpPlayerRepository;
 
   @Inject
@@ -25,8 +26,8 @@ public class KelpServer {
     this.kelpPlayerRepository = kelpPlayerRepository;
   }
 
-  public KelpVersion getVersion() {
-    return KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
+  public static KelpVersion getVersion() {
+    return currentVersion;
   }
 
   public Collection<KelpPlayer> getOnlinePlayers() {

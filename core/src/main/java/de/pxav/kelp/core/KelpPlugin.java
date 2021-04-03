@@ -11,6 +11,7 @@ import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.event.listener.EventHandlerRegistration;
 import de.pxav.kelp.core.event.listener.KelpEventRepository;
+import de.pxav.kelp.core.inventory.enchant.KelpEnchantmentRepository;
 import de.pxav.kelp.core.npc.KelpNpcRepository;
 import de.pxav.kelp.core.particle.effect.ParticleEffectRepository;
 import de.pxav.kelp.core.particle.type.ParticleTypeVersionTemplate;
@@ -35,7 +36,7 @@ import java.util.logging.Level;
  *
  * @author pxav
  */
-@Plugin(name = "Kelp", version = "0.3.2")
+@Plugin(name = "Kelp", version = "0.3.3")
 @Author("pxav")
 @Description("A cross version spigot framework.")
 @Singleton
@@ -99,6 +100,7 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(EventHandlerRegistration.class).initialize(this.getClass().getPackage().getName());
     injector.getInstance(KelpEventRepository.class).detectSubscriptions(this.getClass().getPackage().getName());
+    injector.getInstance(KelpEnchantmentRepository.class).loadEnchantments(this.getClass().getPackage().getName());
 
     injector.getInstance(KelpCommandRepository.class).loadCommands(this.getClass().getPackage().getName());
 
@@ -130,6 +132,7 @@ public class KelpPlugin extends JavaPlugin {
     logger().log("[SIDEBAR] Removed all animation clusters.");
     injector.getInstance(ParticleEffectRepository.class).stopAllTimers();
     injector.getInstance(KelpSchedulerRepository.class).interruptAll();
+    injector.getInstance(KelpEnchantmentRepository.class).unregisterAll();
 
     logger().log("[VERSION] Disabling version implementation module");
     injector.getInstance(VersionBinderModule.getMainClass()).onDisable();
