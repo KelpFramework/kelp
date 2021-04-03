@@ -1,5 +1,5 @@
 # v0.3.3
-> Release date: unknown
+> Release date: 03.04.2021
 
 **Small inventory patches**:
 * Item click listeners now use a `Consumer<KelpClickEvent>` instead of the custom `ClickListener` interface.
