@@ -7,9 +7,10 @@ import de.pxav.kelp.core.command.ExecutorType;
 import de.pxav.kelp.core.command.KelpCommand;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
-import de.pxav.kelp.core.inventory.type.AnimatedInventory;
-import de.pxav.kelp.core.inventory.type.KelpInventoryFactory;
-import de.pxav.kelp.core.inventory.widget.ItemWidget;
+import de.pxav.kelp.core.inventory.type.SimpleInventory;
+import de.pxav.kelp.core.inventory.util.SlotArea;
+import de.pxav.kelp.core.inventory.widget.PlaceholderWidget;
+import de.pxav.kelp.core.inventory.widget.StatefulItemWidget;
 import de.pxav.kelp.core.player.KelpPlayer;
 
 /**
@@ -19,39 +20,48 @@ import de.pxav.kelp.core.player.KelpPlayer;
 @CreateCommand(name = "sweetinventory", executorType = ExecutorType.PLAYER_ONLY)
 public class SweetInventoryCommand extends KelpCommand {
 
-  private AnimatedInventory inventory;
+  private SimpleInventory inventory;
 
-  private int clickIdx;
+  private int clickIndex;
 
   @Inject
-  public SweetInventoryCommand(KelpInventoryFactory factory) {
-    inventory = factory.newAnimatedInventory();
+  public SweetInventoryCommand() {
+    inventory = SimpleInventory.create().size(27);
 
-    KelpItem widgetItem = KelpItem.create().material(KelpMaterial.STONE).displayName("Hello World");
+    KelpItem widgetItem = KelpItem.create()
+      .material(KelpMaterial.STONE)
+      .displayName("Hello World")
+      .slot(10);
 
-    inventory.addWidget(ItemWidget.create().item(widgetItem).addItemListener(event -> {
+    inventory.addWidget(PlaceholderWidget.create()
+      .addSlots(SlotArea.outerBorder(27)));
+
+    widgetItem.addGlobalListener(event -> {
       String displayName = "Hello World";
 
-      widgetItem.displayName(clickIdx == 0 ? " " : displayName.substring(0, clickIdx));
+      widgetItem.displayName(clickIndex == 0 ? " " : displayName.substring(0, clickIndex));
 
       event.getPlayer().updateKelpInventory();
 
-      clickIdx++;
+      clickIndex++;
 
-      if(clickIdx > displayName.length()) {
-        clickIdx = 0;
+      if(clickIndex > displayName.length()) {
+        clickIndex = 0;
       }
-    }));
+    });
+
+    inventory.addWidget(StatefulItemWidget.create().item(() -> widgetItem));
+
   }
 
   @Override
   public void onCommandRegister() {
     addAlias("sweetinv");
-    addAlias("si");
   }
 
   @Override
   public void onCommand(KelpPlayer player, String[] args) {
     player.openInventory(inventory);
   }
+
 }
