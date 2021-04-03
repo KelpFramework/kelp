@@ -23,12 +23,11 @@ public final class EfficiencyEnchantment extends KelpEnchantment {
 
   @Override
   public boolean canEnchant(KelpMaterial material) {
-    return false; //TODO specify KelpMaterial.isTool items
+    return material.isTool();
   }
 
   @Override
   public boolean conflictsWith(Class<? extends KelpEnchantment> enchantment) {
-    // efficiency generally conflicts with no other enchantments.
     return false;
   }
 

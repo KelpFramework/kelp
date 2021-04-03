@@ -23,12 +23,12 @@ public final class MendingEnchantment extends KelpEnchantment {
 
   @Override
   public boolean canEnchant(KelpMaterial material) {
-    return false;
+    return material.isBreakable();
   }
 
   @Override
   public boolean conflictsWith(Class<? extends KelpEnchantment> enchantment) {
-    return false;
+    return enchantment == InfinityEnchantment.class;
   }
 
   @Override
