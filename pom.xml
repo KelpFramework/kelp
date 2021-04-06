@@ -11,7 +11,7 @@
 
   <name>Kelp</name>
   <description>A cross-version spigot framework to avoid boilerplate code and make your plugin compatible with multiple spigot versions easily</description>
-  <url>https://www.github.com/PXAV/kelp</url>
+  <url>https://www.github.com/KelpFramework/kelp</url>
 
   <licenses>
     <license>
@@ -44,9 +44,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/PXAV/kelp.git</connection>
-    <developerConnection>scm:git:ssh://github.com:PXAV/kelp.git</developerConnection>
-    <url>http://github.com/PXAV/kelp/tree/master</url>
+    <connection>scm:git:git://github.com/KelpFramework/kelp.git</connection>
+    <developerConnection>scm:git:ssh://github.com:KelpFramework/kelp.git</developerConnection>
+    <url>http://github.com/KelpFramework/kelp/tree/master</url>
   </scm>
 
   <modules>
