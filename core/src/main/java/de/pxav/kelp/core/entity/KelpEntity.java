@@ -358,7 +358,7 @@ public class KelpEntity {
    * @param maxFireTicks  The amount of maximum fire ticks to set.
    */
   public KelpEntity setMaxFireTicks(int maxFireTicks) {
-    entityVersionTemplate.setFireTicks(toBukkitEntity(), maxFireTicks);
+    entityVersionTemplate.setMaxFireTicks(toBukkitEntity(), maxFireTicks);
     return this;
   }
 
