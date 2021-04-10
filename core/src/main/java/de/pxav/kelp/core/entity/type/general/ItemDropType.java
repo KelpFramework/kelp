@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.entity.type;
+package de.pxav.kelp.core.entity.type.general;
 
 /**
  * This enum expresses how an item should be dropped.
