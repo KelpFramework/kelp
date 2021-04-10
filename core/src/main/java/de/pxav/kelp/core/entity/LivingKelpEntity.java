@@ -40,7 +40,7 @@ public class LivingKelpEntity extends KelpEntity {
     return this;
   }
 
-  public LivingEntity toBukkitLivingEntity() {
+  public LivingEntity getBukkitLivingEntity() {
     return bukkitLivingEntity;
   }
 

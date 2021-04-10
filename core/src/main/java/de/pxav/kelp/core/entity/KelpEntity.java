@@ -104,7 +104,7 @@ public class KelpEntity {
    *
    * @return The bukkit entity of the current KelpEntity.
    */
-  public Entity toBukkitEntity() {
+  public Entity getBukkitEntity() {
     return entityVersionTemplate.toBukkitEntity(this.minecraftEntity);
   }
 
@@ -114,7 +114,7 @@ public class KelpEntity {
    * @return The current location of the current entity.
    */
   public KelpLocation getLocation() {
-    return entityVersionTemplate.getLocation(toBukkitEntity());
+    return entityVersionTemplate.getLocation(getBukkitEntity());
   }
 
   /**
@@ -124,7 +124,7 @@ public class KelpEntity {
    * @see Vector
    */
   public KelpEntity setVelocity(Vector vector) {
-    entityVersionTemplate.setVelocity(toBukkitEntity(), vector);
+    entityVersionTemplate.setVelocity(getBukkitEntity(), vector);
     return this;
   }
 
@@ -135,7 +135,7 @@ public class KelpEntity {
    * @see Vector
    */
   public Vector getVelocity() {
-    return entityVersionTemplate.getVelocity(toBukkitEntity());
+    return entityVersionTemplate.getVelocity(getBukkitEntity());
   }
 
   /**
@@ -145,7 +145,7 @@ public class KelpEntity {
    * @return The height of the given entity.
    */
   public double getEntityHeight() {
-    return entityVersionTemplate.getHeight(toBukkitEntity());
+    return entityVersionTemplate.getHeight(getBukkitEntity());
   }
 
   /**
@@ -154,7 +154,7 @@ public class KelpEntity {
    * @return The entity's width.
    */
   public double getEntityWidth() {
-    return entityVersionTemplate.getWidth(toBukkitEntity());
+    return entityVersionTemplate.getWidth(getBukkitEntity());
   }
 
   /**
@@ -163,7 +163,7 @@ public class KelpEntity {
    * @return {@code true} if the entity is currently on ground.
    */
   public boolean isOnGround() {
-    return entityVersionTemplate.isOnGround(toBukkitEntity());
+    return entityVersionTemplate.isOnGround(getBukkitEntity());
   }
 
   /**
@@ -183,7 +183,7 @@ public class KelpEntity {
    * @param pitch   The pitch value of the desired rotation.
    */
   public KelpEntity setRotation(float yaw, float pitch) {
-    entityVersionTemplate.setRotation(toBukkitEntity(), yaw, pitch);
+    entityVersionTemplate.setRotation(getBukkitEntity(), yaw, pitch);
     return this;
   }
 
@@ -193,7 +193,7 @@ public class KelpEntity {
    * @param to The location you want the entity to be teleported to.
    */
   public KelpEntity teleport(KelpLocation to) {
-    entityVersionTemplate.teleport(toBukkitEntity(), to, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    entityVersionTemplate.teleport(getBukkitEntity(), to, PlayerTeleportEvent.TeleportCause.PLUGIN);
     return this;
   }
 
@@ -309,7 +309,7 @@ public class KelpEntity {
    * @return the entity's id provided by bukkit.
    */
   public int getEntityIdBukkit() {
-    return entityVersionTemplate.getEntityId(toBukkitEntity());
+    return entityVersionTemplate.getEntityId(getBukkitEntity());
   }
 
   /**
@@ -324,7 +324,7 @@ public class KelpEntity {
    * @return The amount of fire ticks.
    */
   public int getFireTicks() {
-    return entityVersionTemplate.getFireTicks(toBukkitEntity());
+    return entityVersionTemplate.getFireTicks(getBukkitEntity());
   }
 
   /**
@@ -339,7 +339,7 @@ public class KelpEntity {
    * @param fireTicks The amount of fire ticks you want to set.
    */
   public KelpEntity setFireTicks(int fireTicks) {
-    entityVersionTemplate.setFireTicks(toBukkitEntity(), fireTicks);
+    entityVersionTemplate.setFireTicks(getBukkitEntity(), fireTicks);
     return this;
   }
 
@@ -349,7 +349,7 @@ public class KelpEntity {
    * @return The amount of maximum fire ticks of the given entity.
    */
   public int getMaxFireTicks() {
-    return entityVersionTemplate.getMaxFireTicks(toBukkitEntity());
+    return entityVersionTemplate.getMaxFireTicks(getBukkitEntity());
   }
 
   /**
@@ -358,7 +358,7 @@ public class KelpEntity {
    * @param maxFireTicks  The amount of maximum fire ticks to set.
    */
   public KelpEntity setMaxFireTicks(int maxFireTicks) {
-    entityVersionTemplate.setMaxFireTicks(toBukkitEntity(), maxFireTicks);
+    entityVersionTemplate.setMaxFireTicks(getBukkitEntity(), maxFireTicks);
     return this;
   }
 
@@ -366,7 +366,7 @@ public class KelpEntity {
    * Removes the entity from the world.
    */
   public KelpEntity remove() {
-    entityVersionTemplate.remove(toBukkitEntity());
+    entityVersionTemplate.remove(getBukkitEntity());
     return this;
   }
 
@@ -376,7 +376,7 @@ public class KelpEntity {
    * @return {@code true} if the entity is dead.
    */
   public boolean isDead() {
-    return entityVersionTemplate.isDead(toBukkitEntity());
+    return entityVersionTemplate.isDead(getBukkitEntity());
   }
 
   /**
@@ -388,7 +388,7 @@ public class KelpEntity {
    * @return {@code true} if the entity is 'valid'.
    */
   public boolean isValid() {
-    return entityVersionTemplate.isValid(toBukkitEntity());
+    return entityVersionTemplate.isValid(getBukkitEntity());
   }
 
   /**
@@ -397,7 +397,7 @@ public class KelpEntity {
    * @return The server instance.
    */
   public Server getServer() {
-    return entityVersionTemplate.getServer(toBukkitEntity());
+    return entityVersionTemplate.getServer(getBukkitEntity());
   }
 
   /**
@@ -415,7 +415,7 @@ public class KelpEntity {
    * @return The first or only passenger of the entity. {@code null} if there is no passenger.
    */
   public Entity getPassenger() {
-    List<Entity> passengers = entityVersionTemplate.getPassengers(toBukkitEntity());
+    List<Entity> passengers = entityVersionTemplate.getPassengers(getBukkitEntity());
     if (passengers != null && !passengers.isEmpty()) {
       return passengers.get(0);
     }
@@ -435,7 +435,7 @@ public class KelpEntity {
    *          {@code null} if there are no passengers.
    */
   public List<Entity> getPassengers() {
-    return entityVersionTemplate.getPassengers(toBukkitEntity());
+    return entityVersionTemplate.getPassengers(getBukkitEntity());
   }
 
   /**
@@ -449,7 +449,7 @@ public class KelpEntity {
    * @return {@code true} if the action was successful.
    */
   public KelpEntity addPassenger(Entity passenger) {
-    entityVersionTemplate.addPassenger(toBukkitEntity(), passenger);
+    entityVersionTemplate.addPassenger(getBukkitEntity(), passenger);
     return this;
   }
 
@@ -474,7 +474,7 @@ public class KelpEntity {
    * @param toRemove The passenger you want to remove.
    */
   public KelpEntity removePassenger(Entity toRemove) {
-    entityVersionTemplate.removePassenger(toBukkitEntity(), toRemove);
+    entityVersionTemplate.removePassenger(getBukkitEntity(), toRemove);
     return this;
   }
 
@@ -485,7 +485,7 @@ public class KelpEntity {
    * @return {@code true} if the entity is empty.
    */
   public boolean isEmpty() {
-    return entityVersionTemplate.isEmpty(toBukkitEntity());
+    return entityVersionTemplate.isEmpty(getBukkitEntity());
   }
 
   /**
@@ -494,7 +494,7 @@ public class KelpEntity {
    * @return {@code true} if there are any passengers.
    */
   public boolean hasAnyPassengers() {
-    return !entityVersionTemplate.isEmpty(toBukkitEntity());
+    return !entityVersionTemplate.isEmpty(getBukkitEntity());
   }
 
   /**
@@ -502,7 +502,7 @@ public class KelpEntity {
    * given entity.
    */
   public KelpEntity ejectPassengers() {
-    entityVersionTemplate.eject(toBukkitEntity());
+    entityVersionTemplate.eject(getBukkitEntity());
     return this;
   }
 
@@ -517,7 +517,7 @@ public class KelpEntity {
    * @param fallDistance  The new fall distance you want to set.
    */
   public KelpEntity setFallDistance(float fallDistance) {
-    entityVersionTemplate.setFallDistance(toBukkitEntity(), fallDistance);
+    entityVersionTemplate.setFallDistance(getBukkitEntity(), fallDistance);
     return this;
   }
 
@@ -532,7 +532,7 @@ public class KelpEntity {
    * @return The current fall distance of the entity.
    */
   public float getFallDistance() {
-    return entityVersionTemplate.getFallDistance(toBukkitEntity());
+    return entityVersionTemplate.getFallDistance(getBukkitEntity());
   }
 
   /**
@@ -543,7 +543,7 @@ public class KelpEntity {
    * @return The UUID of the given entity.
    */
   public UUID getUUID() {
-    return entityVersionTemplate.getUniqueId(toBukkitEntity());
+    return entityVersionTemplate.getUniqueId(getBukkitEntity());
   }
 
   /**
@@ -553,7 +553,7 @@ public class KelpEntity {
    * @return The age of the entity.
    */
   public int getTicksLived() {
-    return entityVersionTemplate.getTicksLived(toBukkitEntity());
+    return entityVersionTemplate.getTicksLived(getBukkitEntity());
   }
 
   /**
@@ -564,7 +564,7 @@ public class KelpEntity {
    *                   May not be less than one tick.
    */
   public KelpEntity setTicksLived(int ticksLived) {
-    entityVersionTemplate.setTicksLived(toBukkitEntity(), ticksLived);
+    entityVersionTemplate.setTicksLived(getBukkitEntity(), ticksLived);
     return this;
   }
 
@@ -574,14 +574,14 @@ public class KelpEntity {
    * @return {@code true} if the entity is inside a vehicle.
    */
   public boolean isInsideVehicle() {
-    return entityVersionTemplate.isInsideVehicle(toBukkitEntity());
+    return entityVersionTemplate.isInsideVehicle(getBukkitEntity());
   }
 
   /**
    * Makes the entity leave its current vehicle.
    */
   public KelpEntity leaveVehicle() {
-    entityVersionTemplate.leaveVehicle(toBukkitEntity());
+    entityVersionTemplate.leaveVehicle(getBukkitEntity());
     return this;
   }
 
@@ -592,7 +592,7 @@ public class KelpEntity {
    *          has no vehicle, null will be returned.
    */
   public Entity getVehicle() {
-    return entityVersionTemplate.getVehicle(toBukkitEntity());
+    return entityVersionTemplate.getVehicle(getBukkitEntity());
   }
 
 }
