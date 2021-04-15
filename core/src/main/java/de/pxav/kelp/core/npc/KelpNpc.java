@@ -14,7 +14,6 @@ import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
 import java.util.Collection;
 import java.util.List;
