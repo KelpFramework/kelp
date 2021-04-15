@@ -1,22 +1,34 @@
 package de.pxav.kelp.implementation1_8.entity;
 
-import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
-import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.implementation1_8.entity.type.general.VersionedDamageable;
+import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 
 /**
  * A class description goes here.
  *
  * @author pxav
  */
-@Versioned
-public class VersionedLivingEntity extends LivingEntityVersionTemplate {
+public class VersionedLivingEntity<T extends LivingKelpEntity<T>>
+  extends VersionedDamageable<T>
+  implements LivingKelpEntity<T> {
+
+  private EntityLiving entityHandle;
+
+  public VersionedLivingEntity(Entity entityHandle,
+                               KelpEntityType entityType,
+                               Location initialLocation) {
+    super(entityHandle, entityType, initialLocation);
+    this.entityHandle = (EntityLiving) entityHandle;
+  }
 
   @Override
-  public KelpLocation getEyeLocation(LivingEntity livingEntity) {
-    return KelpLocation.from(livingEntity.getEyeLocation());
+  public KelpLocation getEyeLocation() {
+    return null;
   }
 
 }
