@@ -1,132 +1,47 @@
 package de.pxav.kelp.core.entity;
 
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
-import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.UUID;
 
-/**
- * A class description goes here.
- *
- * @author pxav
- */
-public class KelpEntity {
-
-  private Object minecraftEntity;
-  private KelpEntityType entityType;
-  private Location initialLocation;
-  private int entityId;
-  private EntityVersionTemplate entityVersionTemplate;
-
-  public KelpEntity(Object minecraftEntity,
-                    KelpEntityType entityType,
-                    Location initialLocation,
-                    int entityId,
-                    EntityVersionTemplate entityVersionTemplate) {
-    this.minecraftEntity = minecraftEntity;
-    this.entityType = entityType;
-    this.initialLocation = initialLocation;
-    this.entityId = entityId;
-    this.entityVersionTemplate = entityVersionTemplate;
-  }
-
-  public KelpEntity(EntityVersionTemplate entityVersionTemplate) {
-    this.entityVersionTemplate = entityVersionTemplate;
-  }
-
-  public KelpEntity() {}
-
-  public Object getMinecraftEntity() {
-    return minecraftEntity;
-  }
-
-  public KelpEntity minecraftEntity(Object minecraftEntity) {
-    this.minecraftEntity = minecraftEntity;
-    return this;
-  }
-
-  public KelpEntityType getEntityType() {
-    return entityType;
-  }
-
-  public KelpEntity entityType(KelpEntityType entityType) {
-    this.entityType = entityType;
-    return this;
-  }
-
-  public Location getInitialBukkitLocation() {
-    return initialLocation;
-  }
-
-  public KelpLocation getInitialLocation() {
-    return KelpLocation.from(initialLocation);
-  }
-
-  public KelpEntity initialLocation(KelpLocation currentLocation) {
-    this.initialLocation = currentLocation.getBukkitLocation();
-    return this;
-  }
-
-  public KelpEntity initialLocation(Location location) {
-    this.initialLocation = location;
-    return this;
-  }
-
-  public int getEntityId() {
-    return entityId;
-  }
-
-  public KelpEntity entityId(int entityId) {
-    this.entityId = entityId;
-    return this;
-  }
-
-  public KelpEntity versionTemplate(EntityVersionTemplate entityVersionTemplate) {
-    this.entityVersionTemplate = entityVersionTemplate;
-    return this;
-  }
-
-  public KelpEntity spawn() {
-    entityVersionTemplate.spawnEntity(this);
-    return this;
-  }
+public interface KelpEntity<T extends KelpEntity<?>> {
 
   /**
-   * Converts the current {@code KelpEntity} to a normal
-   * bukkit entity.
+   * Gets the unique id of this entity in its world.
    *
-   * @return The bukkit entity of the current KelpEntity.
+   * Every entity is assigned an id when spawned to a world,
+   * which can be used to identify this entity when sending packets
+   * for example.
+   *
+   * Entity ids are not incremental but random in a range
+   * from 0 to 2000, which usually is the maximum id used
+   * by bukkit.
+   *
+   * @return The id of this entity.
    */
-  public Entity getBukkitEntity() {
-    return entityVersionTemplate.toBukkitEntity(this.minecraftEntity);
-  }
+  int getEntityId();
 
   /**
-   * Gets the current entity's location in the world.
+   * Spawns the entity to the given initial location and makes it visible
+   * for all players on the world.
    *
-   * @return The current location of the current entity.
+   * @return An instance of the entity for fluent builder design.
    */
-  public KelpLocation getLocation() {
-    return entityVersionTemplate.getLocation(getBukkitEntity());
-  }
+  T spawn();
 
   /**
    * Sets the entity's velocity to the given vector.
    *
-   * @param vector The vector of the velocity you want to set.
+   * @param velocity The vector of the velocity you want to set.
    * @see Vector
    */
-  public KelpEntity setVelocity(Vector vector) {
-    entityVersionTemplate.setVelocity(getBukkitEntity(), vector);
-    return this;
-  }
+  T setVelocity(Vector velocity);
 
   /**
    * Gets the velocity of the desired entity.
@@ -134,46 +49,70 @@ public class KelpEntity {
    * @return The velocity of the given entity.
    * @see Vector
    */
-  public Vector getVelocity() {
-    return entityVersionTemplate.getVelocity(getBukkitEntity());
-  }
+  Vector getVelocity();
 
   /**
-   * Gets the height of an entity. In older versions
+   * Gets the height of an entity's model. In older versions
    * this property was called 'length' of an entity.
    *
    * @return The height of the given entity.
    */
-  public double getEntityHeight() {
-    return entityVersionTemplate.getHeight(getBukkitEntity());
-  }
+  double getEntityHeight();
 
   /**
-   * Gets the width of the given entity.
+   * Gets the width of the given entity's model.
    *
    * @return The entity's width.
    */
-  public double getEntityWidth() {
-    return entityVersionTemplate.getWidth(getBukkitEntity());
-  }
+  double getEntityWidth();
+
+  /**
+   * Gets the exact {@link KelpEntityType type} of this entity such as ZOMBIE, SHEEP, CREEPER, etc.
+   *
+   * @return The type of this entity.
+   */
+  KelpEntityType getType();
+
+  /**
+   * Gets the current entity's location in the world.
+   *
+   * @return The current location of the current entity.
+   */
+  KelpLocation getLocation();
+
+  /**
+   * Converts the current {@code KelpEntity} to a normal
+   * bukkit entity.
+   *
+   * @return The bukkit entity of the current KelpEntity.
+   */
+  Entity getBukkitEntity();
 
   /**
    * Checks if the entity is currently on the ground.
    *
    * @return {@code true} if the entity is currently on ground.
    */
-  public boolean isOnGround() {
-    return entityVersionTemplate.isOnGround(getBukkitEntity());
-  }
+  boolean isOnGround();
+
+  /**
+   * Teleports the entity to the ground level of the
+   * current coordinates. This is useful when the entity
+   * is suspected to be stuck in an underground block.
+   *
+   * This method will then search for the highest non-passable block
+   * at the entities x and z coordinates and teleport it there.
+   *
+   * @return An instance of the current entity for fluent builder design.
+   */
+  T setOnGround();
 
   /**
    * Gets the current world of the entity.
    *
    * @return The world where the entity is currently located.
    */
-  public KelpWorld getWorld() {
-    return KelpWorld.from(getLocation().getWorldName());
-  }
+  KelpWorld getWorld();
 
   /**
    * Sets the rotation of the given entity. This does not
@@ -181,84 +120,34 @@ public class KelpEntity {
    *
    * @param yaw     The yaw value of the desired rotation.
    * @param pitch   The pitch value of the desired rotation.
+   * @return An instance of the current entity for fluent builder design.
    */
-  public KelpEntity setRotation(float yaw, float pitch) {
-    entityVersionTemplate.setRotation(getBukkitEntity(), yaw, pitch);
-    return this;
-  }
+  T setRotation(float yaw, float pitch);
 
   /**
-   * Teleports the entity to the given location.
+   * Makes the entity look to the given location. So it
+   * rotates its head to the given target location.
    *
-   * @param to The location you want the entity to be teleported to.
+   * @param target The location where the entity should look to.
+   * @return An instance of the current entity object for fluent builder design.
    */
-  public KelpEntity teleport(KelpLocation to) {
-    entityVersionTemplate.teleport(getBukkitEntity(), to, PlayerTeleportEvent.TeleportCause.PLUGIN);
-    return this;
-  }
+  default T lookTo(KelpLocation target) {
+    KelpLocation location = getLocation();
+    double xDiff = target.getX() - location.getX();
+    double yDiff = target.getY() - location.getY();
+    double zDiff = target.getZ() - location.getZ();
 
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates. As there is no world passed, this method
-   * will use the current world of the entity.
-   *
-   * @param x The exact value of the location's x axis.
-   * @param y The exact value of the location's y axis.
-   * @param z The exact value of the location's z axis.
-   */
-  public KelpEntity teleport(double x, double y, double z) {
-    KelpLocation to = KelpLocation.from(getWorld(), x, y, z);
-    teleport(to);
-    return this;
-  }
+    double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+    double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
 
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates. As there is no world passed, this method
-   * will use the current world of the entity.
-   *
-   * @param x     The exact value of the location's x axis.
-   * @param y     The exact value of the location's y axis.
-   * @param z     The exact value of the location's z axis.
-   * @param yaw   The yaw rotation of the entity.
-   * @param pitch The location's pitch
-   */
-  public KelpEntity teleport(double x, double y, double z, float yaw, float pitch) {
-    KelpLocation to = KelpLocation.from(getWorld(), x, y, z, yaw, pitch);
-    teleport(to);
-    return this;
-  }
+    double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
+    double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90.0D;
+    if (zDiff < 0.0D) {
+      yaw += Math.abs(180.0D - yaw) * 2.0D;
+    }
 
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates.
-   *
-   * @param world The world where the entity should be teleported to.
-   * @param x     The exact value of the location's x axis.
-   * @param y     The exact value of the location's y axis.
-   * @param z     The exact value of the location's z axis.
-   * @param yaw   The yaw rotation of the entity.
-   * @param pitch The location's pitch
-   */
-  public KelpEntity teleport(KelpWorld world, double x, double y, double z, float yaw, float pitch) {
-    KelpLocation to = KelpLocation.from(world, x, y, z, yaw, pitch);
-    teleport(to);
-    return this;
-  }
-
-  /**
-   * Teleports the entity to the location at the given
-   * coordinates.
-   *
-   * @param world The world where the entity should be teleported to.
-   * @param x     The exact value of the location's x axis.
-   * @param y     The exact value of the location's y axis.
-   * @param z     The exact value of the location's z axis.
-   */
-  public KelpEntity teleport(KelpWorld world, double x, double y, double z) {
-    KelpLocation to = KelpLocation.from(world, x, y, z);
-    teleport(to);
-    return this;
+    setRotation((float) yaw - 90.0F, (float) pitch);
+    return (T) this;
   }
 
   /**
@@ -272,44 +161,46 @@ public class KelpEntity {
    * @param yaw       The yaw rotation of the entity.
    * @param pitch     The location's pitch
    */
-  public KelpEntity teleport(String worldName, double x, double y, double z, float yaw, float pitch) {
-    KelpLocation to = KelpLocation.from(worldName, x, y, z, yaw, pitch);
-    teleport(to);
-    return this;
+  T teleport(String worldName, double x, double y, double z, float yaw, float pitch);
+
+  /**
+   * Teleports the entity to the given location.
+   *
+   * @param to The location you want the entity to be teleported to.
+   */
+  default T teleport(KelpLocation to) {
+    teleport(to.getWorldName(), to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
+    return (T) this;
   }
 
   /**
    * Teleports the entity to the location at the given
-   * coordinates.
+   * coordinates. As there is no world passed, this method
+   * will use the current world of the entity.
    *
-   * @param worldName The name of the world where the entity should be teleported to.
-   * @param x         The exact value of the location's x axis.
-   * @param y         The exact value of the location's y axis.
-   * @param z         The exact value of the location's z axis.
+   * @param x The exact value of the location's x axis.
+   * @param y The exact value of the location's y axis.
+   * @param z The exact value of the location's z axis.
    */
-  public KelpEntity teleport(String worldName, double x, double y, double z) {
-    KelpLocation to = KelpLocation.from(worldName, x, y, z);
-    teleport(to);
-    return this;
+  default T teleport(double x, double y, double z) {
+    teleport(getWorld().getName(), x, y, z, 0, 0);
+    return (T) this;
   }
 
   /**
-   * Gets the id of the given entity.
+   * Teleports the entity to the location at the given
+   * coordinates. As there is no world passed, this method
+   * will use the current world of the entity.
    *
-   * The entity id is a unique integer id, which is given
-   * to each entity when it is created by the server. It is
-   * used to identify entities during the server runtime.
-   *
-   * In contrast to the other {@code #getEntityId} method,
-   * this method uses the method provided by bukkit and not
-   * the Kelp-internal id. However, in most server versions these
-   * ids should be the same as an entity id is immutable
-   * for the same entity.
-   *
-   * @return the entity's id provided by bukkit.
+   * @param x     The exact value of the location's x axis.
+   * @param y     The exact value of the location's y axis.
+   * @param z     The exact value of the location's z axis.
+   * @param yaw   The yaw rotation of the entity.
+   * @param pitch The location's pitch
    */
-  public int getEntityIdBukkit() {
-    return entityVersionTemplate.getEntityId(getBukkitEntity());
+  default T teleport(double x, double y, double z, float yaw, float pitch) {
+    teleport(getWorld().getName(), x, y, z, yaw, pitch);
+    return (T) this;
   }
 
   /**
@@ -323,9 +214,7 @@ public class KelpEntity {
    *
    * @return The amount of fire ticks.
    */
-  public int getFireTicks() {
-    return entityVersionTemplate.getFireTicks(getBukkitEntity());
-  }
+  int getFireTicks();
 
   /**
    * Sets the current amount of fire ticks for the given
@@ -338,46 +227,33 @@ public class KelpEntity {
    *
    * @param fireTicks The amount of fire ticks you want to set.
    */
-  public KelpEntity setFireTicks(int fireTicks) {
-    entityVersionTemplate.setFireTicks(getBukkitEntity(), fireTicks);
-    return this;
-  }
-
-  /**
-   * Gets the amount of the maximum fire ticks of the given entity.
-   *
-   * @return The amount of maximum fire ticks of the given entity.
-   */
-  public int getMaxFireTicks() {
-    return entityVersionTemplate.getMaxFireTicks(getBukkitEntity());
-  }
+  T setFireTicks(int fireTicks);
 
   /**
    * Sets the amount of the maximum fire ticks of the given entity.
    *
    * @param maxFireTicks  The amount of maximum fire ticks to set.
    */
-  public KelpEntity setMaxFireTicks(int maxFireTicks) {
-    entityVersionTemplate.setMaxFireTicks(getBukkitEntity(), maxFireTicks);
-    return this;
-  }
+  T setMaxFireTicks(int maxFireTicks);
+
+  /**
+   * Gets the amount of the maximum fire ticks of the given entity.
+   *
+   * @return The amount of maximum fire ticks of the given entity.
+   */
+  int getMaxFireTicks();
 
   /**
    * Removes the entity from the world.
    */
-  public KelpEntity remove() {
-    entityVersionTemplate.remove(getBukkitEntity());
-    return this;
-  }
+  T remove();
 
   /**
    * Checks if the given entity is dead.
    *
    * @return {@code true} if the entity is dead.
    */
-  public boolean isDead() {
-    return entityVersionTemplate.isDead(getBukkitEntity());
-  }
+  boolean isDead();
 
   /**
    * Checks if the entity is valid.
@@ -387,18 +263,14 @@ public class KelpEntity {
    *
    * @return {@code true} if the entity is 'valid'.
    */
-  public boolean isValid() {
-    return entityVersionTemplate.isValid(getBukkitEntity());
-  }
+  boolean isValid();
 
   /**
    * Gets the current server containing the entity.
    *
    * @return The server instance.
    */
-  public Server getServer() {
-    return entityVersionTemplate.getServer(getBukkitEntity());
-  }
+  Server getServer();
 
   /**
    * Gets the passenger of the current entity.
@@ -414,13 +286,7 @@ public class KelpEntity {
    *
    * @return The first or only passenger of the entity. {@code null} if there is no passenger.
    */
-  public Entity getPassenger() {
-    List<Entity> passengers = entityVersionTemplate.getPassengers(getBukkitEntity());
-    if (passengers != null && !passengers.isEmpty()) {
-      return passengers.get(0);
-    }
-    return null;
-  }
+  KelpEntity<?> getPassenger();
 
   /**
    * Returns a list of all passengers currently riding
@@ -434,9 +300,7 @@ public class KelpEntity {
    * @return  A list of all passengers of the given entity.
    *          {@code null} if there are no passengers.
    */
-  public List<Entity> getPassengers() {
-    return entityVersionTemplate.getPassengers(getBukkitEntity());
-  }
+  List<KelpEntity<?>> getPassengers();
 
   /**
    * Adds a new passenger to the given entity.
@@ -448,10 +312,7 @@ public class KelpEntity {
    * @param passenger The passenger you want to add.
    * @return {@code true} if the action was successful.
    */
-  public KelpEntity addPassenger(Entity passenger) {
-    entityVersionTemplate.addPassenger(getBukkitEntity(), passenger);
-    return this;
-  }
+  T addPassenger(KelpEntity<?> passenger);
 
   /**
    * Adds multiple passengers to the given entity.
@@ -463,20 +324,14 @@ public class KelpEntity {
    * @param passengers The passengers you want to add.
    * @return {@code true} if the action was successful.
    */
-  public KelpEntity addPassenger(List<Entity> passengers) {
-    passengers.forEach(this::addPassenger);
-    return this;
-  }
+  T addPassenger(List<KelpEntity<?>> passengers);
 
   /**
    * Removes a passenger from the given entity.
    *
-   * @param toRemove The passenger you want to remove.
+   * @param passenger The passenger you want to remove.
    */
-  public KelpEntity removePassenger(Entity toRemove) {
-    entityVersionTemplate.removePassenger(getBukkitEntity(), toRemove);
-    return this;
-  }
+  T removePassenger(KelpEntity<?> passenger);
 
   /**
    * Checks if the current entity is empty. An empty
@@ -484,27 +339,22 @@ public class KelpEntity {
    *
    * @return {@code true} if the entity is empty.
    */
-  public boolean isEmpty() {
-    return entityVersionTemplate.isEmpty(getBukkitEntity());
-  }
+  boolean isEmpty();
 
   /**
    * Checks if the current entity has any passengers.
    *
    * @return {@code true} if there are any passengers.
    */
-  public boolean hasAnyPassengers() {
-    return !entityVersionTemplate.isEmpty(getBukkitEntity());
+  default boolean hasAnyPassengers() {
+    return !isEmpty();
   }
 
   /**
    * Ejects any passenger currently riding on the
    * given entity.
    */
-  public KelpEntity ejectPassengers() {
-    entityVersionTemplate.eject(getBukkitEntity());
-    return this;
-  }
+  T ejectPassengers();
 
   /**
    * Sets the current fall distance of the current entity.
@@ -516,10 +366,7 @@ public class KelpEntity {
    *
    * @param fallDistance  The new fall distance you want to set.
    */
-  public KelpEntity setFallDistance(float fallDistance) {
-    entityVersionTemplate.setFallDistance(getBukkitEntity(), fallDistance);
-    return this;
-  }
+  T setFallDistance(float fallDistance);
 
   /**
    * Gets the current fall distance of the current entity.
@@ -531,9 +378,7 @@ public class KelpEntity {
    *
    * @return The current fall distance of the entity.
    */
-  public float getFallDistance() {
-    return entityVersionTemplate.getFallDistance(getBukkitEntity());
-  }
+  float getFallDistance();
 
   /**
    * Returns a unique as well as persistent id for
@@ -542,9 +387,7 @@ public class KelpEntity {
    *
    * @return The UUID of the given entity.
    */
-  public UUID getUUID() {
-    return entityVersionTemplate.getUniqueId(getBukkitEntity());
-  }
+  UUID getUUID();
 
   /**
    * Gets the amount of ticks the entity has been alive.
@@ -552,9 +395,7 @@ public class KelpEntity {
    *
    * @return The age of the entity.
    */
-  public int getTicksLived() {
-    return entityVersionTemplate.getTicksLived(getBukkitEntity());
-  }
+  int getTicksLived();
 
   /**
    * Gets the amount of ticks the entity has been alive.
@@ -563,27 +404,19 @@ public class KelpEntity {
    * @param ticksLived The amount of ticks you want to set.
    *                   May not be less than one tick.
    */
-  public KelpEntity setTicksLived(int ticksLived) {
-    entityVersionTemplate.setTicksLived(getBukkitEntity(), ticksLived);
-    return this;
-  }
+  T setTicksLived(int ticksLived);
 
   /**
    * Returns true if the entity is currently inside a vehicle.
    *
    * @return {@code true} if the entity is inside a vehicle.
    */
-  public boolean isInsideVehicle() {
-    return entityVersionTemplate.isInsideVehicle(getBukkitEntity());
-  }
+  boolean isInsideVehicle();
 
   /**
    * Makes the entity leave its current vehicle.
    */
-  public KelpEntity leaveVehicle() {
-    entityVersionTemplate.leaveVehicle(getBukkitEntity());
-    return this;
-  }
+  T leaveVehicle();
 
   /**
    * Gets the current vehicle of the given entity.
@@ -591,8 +424,64 @@ public class KelpEntity {
    * @return  The vehicle of the entity. If the entity
    *          has no vehicle, null will be returned.
    */
-  public Entity getVehicle() {
-    return entityVersionTemplate.getVehicle(getBukkitEntity());
+  KelpEntity<?> getVehicle();
+
+  boolean isGlowing();
+
+  T setGlowing(boolean glowing);
+
+  /**
+   * Sets the custom name of an entity visible or invisible
+   * for the clients.
+   *
+   * @param visible  {@code true} if it should be visible
+   *                 {@code false} if it should not be visible.
+   */
+  T customNameVisible(boolean visible);
+
+  T customName(String customName);
+
+  /**
+   * Checks if the custom name of the given entity is
+   * currently visible.
+   *
+   * @return {@code true} if the custom name is visible.
+   */
+  boolean isCustomNameVisible();
+
+  /**
+   * Gets the last damage cause. If the entity has not been damaged
+   * so far, it will return null.
+   *
+   * @return  The last damage event instance containing the last
+   *          damage cause.
+   */
+  EntityDamageEvent getLastDamageCause();
+
+  /**
+   * Sets the last damage cause the entity has suffered.
+   *
+   * @param damageCause   The instance of the last entity damage event containing
+   *                      the last damage cause.
+   */
+  void setLastDamageCause(EntityDamageEvent damageCause);
+
+  /**
+   * Gets all entities within the given radius centered around
+   * the given entity.
+   *
+   * @param radiusX the radius for the x axis
+   *                (1/2 the size of the box along x axis)
+   * @param radiusY the radius for the y axis
+   *                (1/2 the size of the box along y axis)
+   * @param radiusZ the radius for the z axis
+   *                (1/2 the size of the box along z axis)
+   * @return A list of all nearby entities within the given radius.
+   */
+  List<KelpEntity<?>> getNearbyEntities(double radiusX, double radiusY, double radiusZ);
+
+  default List<KelpEntity<?>> getNearbyEntities(double radius) {
+    return getNearbyEntities(radius, radius, radius);
   }
 
 }
