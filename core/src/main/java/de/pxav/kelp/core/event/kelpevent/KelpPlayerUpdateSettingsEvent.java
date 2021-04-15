@@ -3,7 +3,6 @@ package de.pxav.kelp.core.event.kelpevent;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 
 /**
  * This event is triggered when the client settings of a player change.
