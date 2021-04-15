@@ -2,10 +2,9 @@ package de.pxav.kelp.core.player;
 
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.KelpPlugin;
-import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
-import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
+import de.pxav.kelp.core.entity.type.general.HumanEntity;
+import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
@@ -22,12 +21,10 @@ import de.pxav.kelp.core.player.prompt.chat.DefaultFontSize;
 import de.pxav.kelp.core.player.prompt.chat.SimpleChatPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
-import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
@@ -60,69 +57,14 @@ import java.util.UUID;
  * @see KelpPlayerRepository
  * @author pxav
  */
-public class KelpPlayer extends LivingKelpEntity {
+public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<KelpPlayer> {
 
-  private PlayerVersionTemplate playerVersionTemplate;
-  private SidebarRepository sidebarRepository;
-  private KelpInventoryRepository inventoryRepository;
-  private ParticleVersionTemplate particleVersionTemplate;
-  private SignPromptVersionTemplate signPromptVersionTemplate;
-  private AnvilPromptVersionTemplate anvilPromptVersionTemplate;
-  private ChatPromptVersionTemplate chatPromptVersionTemplate;
-
-  private Player bukkitPlayer;
-
-  // caches the view distance configured in the player's video settings
-  private int clientViewDistance;
-
-  // caches the language of the player's client
-  private String clientLanguage;
-
-  // caches the chat visibility configured by the player in the chat settings tab
-  private PlayerChatVisibility playerChatVisibility;
-
-  private boolean playerChatColorEnabled;
-
-  private String tabListHeader;
-  private String tabListFooter;
-
-  private KelpSidebar kelpSidebar;
-
-  public KelpPlayer(Player bukkitPlayer,
-                    PlayerVersionTemplate playerVersionTemplate,
-                    KelpInventoryRepository inventoryRepository,
-                    KelpPlayerRepository kelpPlayerRepository,
-                    ParticleVersionTemplate particleVersionTemplate,
-                    SignPromptVersionTemplate signPromptVersionTemplate,
-                    AnvilPromptVersionTemplate anvilPromptVersionTemplate,
-                    ChatPromptVersionTemplate chatPromptVersionTemplate,
-                    EntityVersionTemplate entityVersionTemplate,
-                    LivingEntityVersionTemplate livingEntityVersionTemplate,
-                    UUID uuid,
-                    Location location,
-                    int entityId) {
-    super(kelpPlayerRepository.getMinecraftEntity(uuid),
-      KelpEntityType.PLAYER,
-      location,
-      entityId,
-      entityVersionTemplate,
-      livingEntityVersionTemplate,
-      bukkitPlayer);
-    this.bukkitPlayer = bukkitPlayer;
-    this.playerVersionTemplate = playerVersionTemplate;
-    this.inventoryRepository = inventoryRepository;
-    this.particleVersionTemplate = particleVersionTemplate;
-    this.signPromptVersionTemplate = signPromptVersionTemplate;
-    this.chatPromptVersionTemplate = chatPromptVersionTemplate;
-    this.anvilPromptVersionTemplate = anvilPromptVersionTemplate;
-  }
-
-  public static KelpPlayer from(UUID player) {
+  static KelpPlayer from(UUID player) {
     KelpPlayerRepository repository = KelpPlugin.getInjector().getInstance(KelpPlayerRepository.class);
     return repository.getKelpPlayer(player);
   }
 
-  public static KelpPlayer from(String name) {
+  static KelpPlayer from(String name) {
     Player player = Bukkit.getPlayer(name);
     if (player == null) {
       return null;
@@ -130,24 +72,24 @@ public class KelpPlayer extends LivingKelpEntity {
     return KelpPlayer.from(player);
   }
 
-  public static KelpPlayer from(Player player) {
+  static KelpPlayer from(Player player) {
     return KelpPlayer.from(player.getUniqueId());
   }
 
-  public SignPrompt openSignPrompt() {
-    return new SignPrompt(this.getBukkitPlayer(), this.signPromptVersionTemplate);
-  }
-
-  public AnvilPrompt openAnvilPrompt() {
-    return new AnvilPrompt(this.getBukkitPlayer(), this.anvilPromptVersionTemplate);
-  }
-
-  public SimpleChatPrompt openSimpleChatPrompt() {
-    return new SimpleChatPrompt(this.getBukkitPlayer(), this.chatPromptVersionTemplate);
-  }
-
-  public PlayerInventory getInventory() {
+  default PlayerInventory getInventory() {
     return PlayerInventory.of(this);
+  }
+
+  default SignPrompt openSignPrompt() {
+    return new SignPrompt(this.getBukkitPlayer(), Dependencies.getSignPromptVersionTemplate());
+  }
+
+  default AnvilPrompt openAnvilPrompt() {
+    return new AnvilPrompt(this.getBukkitPlayer(), Dependencies.getAnvilPromptVersionTemplate());
+  }
+
+  default SimpleChatPrompt openSimpleChatPrompt() {
+    return new SimpleChatPrompt(this.getBukkitPlayer(), Dependencies.getChatPromptVersionTemplate());
   }
 
   /**
@@ -156,8 +98,8 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @return {@code true} if the player has a scoreboard with an objective.
    */
-  public boolean hasScoreboard() {
-    Scoreboard scoreboard = bukkitPlayer.getScoreboard();
+  default boolean hasScoreboard() {
+    Scoreboard scoreboard = getBukkitPlayer().getScoreboard();
     return scoreboard.getObjective(DisplaySlot.SIDEBAR) != null
       || scoreboard.getObjective(DisplaySlot.BELOW_NAME) != null
       || scoreboard.getObjective(DisplaySlot.PLAYER_LIST) != null;
@@ -169,33 +111,40 @@ public class KelpPlayer extends LivingKelpEntity {
    * to it (such as title animation). This method does not effect other parts
    * of the scoreboard such as the tab list.
    */
-  public void removeSidebar() {
+  default KelpPlayer removeSidebar() {
     setSidebarInternally(null);
     Bukkit.getPluginManager().callEvent(new KelpSidebarRemoveEvent(this));
-    playerVersionTemplate.removeSidebar(bukkitPlayer);
+    removeScoreboard();
   }
 
   /**
-   * Caches the sidebar object of the player locally. This does not
-   * render nor update the given sidebar. It simply changes the internal
-   * sidebar object which can then be retrieved to update it for
-   * example using {@link #getCurrentSidebar()}.
+   * Removes the player's bukkit scoreboard no matter if this is a {@link KelpSidebar}
+   * or a simple {@link org.bukkit.scoreboard.Scoreboard}. This can be used universally.
    *
-   * @param sidebar The current sidebar of the player.
+   * But if the sidebar is a kelp sidebar, this method won't call the corresponding
+   * {@link KelpSidebarRemoveEvent} unlike the {@link #removeSidebar()} method.
+   *
+   * @return
    */
-  public void setSidebarInternally(KelpSidebar sidebar) {
-    this.kelpSidebar = sidebar;
-  }
+  KelpPlayer removeScoreboard();
 
   /**
-   * Gets the sidebar the player is currently seeing.
-   * Will return {@code null} of the player has no sidebar.
+   * Sets the internal sidebar instance for the current player.
+   * This won't actually update the sidebar content itself nor call
+   * the {@link de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRenderEvent}
+   * or {@link de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarUpdateEvent}.
    *
-   * @return The current sidebar of the player.
+   * @param sidebar The new sidebar instance to set internally.
    */
-  public KelpSidebar getCurrentSidebar() {
-    return kelpSidebar;
-  }
+  void setSidebarInternally(KelpSidebar<?> sidebar);
+
+  /**
+   * Gets the sidebar that is currently rendered to the player.
+   *
+   * @return  The sidebar that is currently rendered to the player.
+   *          {@code null} if the player has no sidebar.
+   */
+  KelpSidebar<?> getCurrentSidebar();
 
   /**
    * Opens a {@link KelpInventory} to the player. This
@@ -205,8 +154,8 @@ public class KelpPlayer extends LivingKelpEntity {
    * @param inventory The inventory you want to show to the player
    * @return the current instance of the player
    */
-  public KelpPlayer openInventory(KelpInventory<?> inventory) {
-    this.inventoryRepository.openInventory(inventory, this);
+  default KelpPlayer openInventory(KelpInventory<?> inventory) {
+    Dependencies.getInventoryRepository().openInventory(inventory, this);
     return this;
   }
 
@@ -219,8 +168,22 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @return the current instance of the player.
    */
-  public KelpPlayer updateKelpInventory() {
-    this.inventoryRepository.updateInventory(this);
+  default KelpPlayer updateKelpInventory() {
+    Dependencies.getInventoryRepository().updateInventory(this);
+    return this;
+  }
+
+  /**
+   * Updates the title of the player's {@link de.pxav.kelp.core.inventory.type.SimpleInventory}.
+   * This inventory takes its title as {@link com.google.common.base.Supplier<String>} and the
+   * content is therefore updatable. If the player has an animated inventory, the updating process
+   * is handled by the {@link de.pxav.kelp.core.inventory.type.AnimatedInventory} class and
+   * executing this method will have no effect.
+   *
+   * @return An instance of the the current player.
+   */
+  default KelpPlayer updateKelpInventoryTitle() {
+    Dependencies.getInventoryRepository().updateInventoryTitle(this);
     return this;
   }
 
@@ -232,8 +195,8 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @return the current instance of the player.
    */
-  public KelpPlayer closeInventory() {
-    this.inventoryRepository.closeInventory(this);
+  default KelpPlayer closeInventory() {
+    Dependencies.getInventoryRepository().closeInventory(this);
     return this;
   }
 
@@ -247,667 +210,400 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @return the current instance of the player
    */
-  public KelpPlayer forceInventoryClose() {
-    bukkitPlayer.closeInventory();
+  KelpPlayer forceInventoryClose();
+
+  default boolean hasKelpInventory() {
+    return Dependencies.getInventoryRepository().hasInventory(this);
+  }
+
+  default KelpPlayer playSound(KelpSound sound) {
+    playSound(sound, getLocation(), 2, 0);
     return this;
   }
 
-  /**
-   * Checks whether the current player has a {@link KelpInventory} open.
-   * Having opened a normal {@link PlayerInventory} using the {@code E} key
-   * on the keyboard does not count for this method. It will only return
-   * true if the player really has an external kelp inventory (GUI) opened.
-   *
-   * @return {@code true} if the player has opened a {@link KelpInventory}.
-   */
-  public boolean hasKelpInventory() {
-    return this.inventoryRepository.hasInventory(this);
-  }
-
-  /**
-   * Updates the title of the player's {@link de.pxav.kelp.core.inventory.type.SimpleInventory}.
-   * This inventory takes its title as {@link com.google.common.base.Supplier<String>} and the
-   * content is therefore updatable. If the player has an animated inventory, the updating process
-   * is handled by the {@link de.pxav.kelp.core.inventory.type.AnimatedInventory} class and
-   * executing this method will have no effect.
-   *
-   * @return An instance of the the current player.
-   */
-  public KelpPlayer updateKelpInventoryTitle() {
-    if (!hasKelpInventory()) {
-      return this;
-    }
-
-    inventoryRepository.updateInventoryTitle(this);
+  default KelpPlayer playSound(KelpSound sound, KelpLocation location) {
+    playSound(sound, location, 2, 0);
     return this;
   }
 
-  public KelpPlayer playSound(KelpSound sound) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), 3, 0);
+  default KelpPlayer playSound(KelpSound sound, float volume) {
+    playSound(sound, getLocation(), volume, 0);
     return this;
   }
 
-  public KelpPlayer playSound(KelpSound sound, KelpLocation location) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, location, 3, 0);
+  default KelpPlayer playSound(KelpSound sound, float volume, float pitch) {
+    playSound(sound, volume, pitch);
     return this;
   }
 
-  public KelpPlayer playSound(KelpSound sound, float volume) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), volume, 0);
+  KelpPlayer playSound(KelpSound sound, KelpLocation from, float volume, float pitch);
+
+  KelpPlayer sendActionbar(String message);
+
+  KelpPlayer sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut);
+
+  default KelpPlayer sendTitle(String title, String subTitle) {
+    sendTitle(title, subTitle, 20, 60, 20);
     return this;
   }
 
-  public KelpPlayer playSound(KelpSound sound, float volume, float pitch) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, getLocation(), volume, pitch);
+  default KelpPlayer sendSuddenTitle(String title, String subTitle) {
+    sendTitle(title, subTitle, 0, 60, 0);
     return this;
   }
 
-  public KelpPlayer playSound(KelpSound sound, KelpLocation location, float volume, float pitch) {
-    playerVersionTemplate.playSound(bukkitPlayer, sound, location, volume, pitch);
-    return this;
-  }
+  KelpPlayer spawnParticle(ParticleType particleType,
+                           double x,
+                           double y,
+                           double z,
+                           float offsetX,
+                           float offsetY,
+                           float offsetZ,
+                           int count,
+                           float particleData,
+                           Object generalData);
 
-  public KelpPlayer sendTitle(String title, String subTitle) {
-    playerVersionTemplate.sendTitle(bukkitPlayer, title, subTitle, 20, 60, 20);
-    return this;
-  }
-
-  public KelpPlayer sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut) {
-    playerVersionTemplate.sendTitle(bukkitPlayer, title, subTitle, fadeIn, stay, fadeOut);
-    return this;
-  }
-
-  public KelpPlayer sendActionbar(String message) {
-    playerVersionTemplate.sendActionBar(bukkitPlayer, message);
-    return this;
-  }
-
-  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, float offsetX, float offsetY, float offsetZ, int count) {
-    particleVersionTemplate.spawnParticle(this,
+  default KelpPlayer spawnParticle(ParticleType particleType, KelpLocation location) {
+    spawnParticle(
       particleType,
-      longDistance,
-      getLocation().getX(),
-      getLocation().getY(),
-      getLocation().getZ(),
-      offsetX, offsetY,
-      offsetZ,
-      0,
-      count,
-      null);
-    return this;
-  }
-
-  public KelpPlayer spawnParticle(ParticleType particleType, float offsetX, float offsetY, float offsetZ) {
-    particleVersionTemplate.spawnParticle(this,
-      particleType,
-      false,
-      getLocation().getX(),
-      getLocation().getY(),
-      getLocation().getZ(),
-      offsetX, offsetY,
-      offsetZ,
-      0,
-      1,
-      null);
-    return this;
-  }
-
-  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
-    particleVersionTemplate.spawnParticle(this,
-      particleType,
-      longDistance,
-      getLocation().getX(),
-      getLocation().getY(),
-      getLocation().getZ(),
-      offsetX, offsetY,
-      offsetZ,
-      particleData,
-      count,
-      generalData);
-    return this;
-  }
-
-  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, KelpLocation location, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
-    particleVersionTemplate.spawnParticle(this,
-      particleType,
-      longDistance,
       location.getX(),
       location.getY(),
       location.getZ(),
-      offsetX, offsetY,
-      offsetZ,
-      particleData,
-      count,
-      generalData);
+      0,
+      0,
+      0,
+      1,
+      0,
+      null);
     return this;
   }
 
-  public KelpPlayer spawnParticle(ParticleType particleType, boolean longDistance, double x, double y, double z, float offsetX, float offsetY, float offsetZ, int count, float particleData, Object generalData) {
-    particleVersionTemplate.spawnParticle(this,
+  default KelpPlayer spawnParticle(ParticleType particleType, KelpLocation location, int count, float offset) {
+    spawnParticle(
       particleType,
-      longDistance,
-      x,
-      y,
-      z,
-      offsetX, offsetY,
-      offsetZ,
-      particleData,
+      location.getX(),
+      location.getY(),
+      location.getZ(),
+      offset,
+      offset,
+      offset,
       count,
-      generalData);
+      0,
+      null);
     return this;
   }
 
-  public UUID getUUID() {
-    return playerVersionTemplate.getUniqueId(bukkitPlayer);
-  }
-
-  public String getName() {
-    return bukkitPlayer.getName();
-  }
-
-  public KelpPlayer setHealth(int health) {
-    playerVersionTemplate.setHealth(bukkitPlayer, health);
+  default KelpPlayer spawnParticle(ParticleType particleType,
+                                   KelpLocation location,
+                                   int count,
+                                   float offsetX,
+                                   float offsetY,
+                                   float offsetZ) {
+    spawnParticle(
+      particleType,
+      location.getX(),
+      location.getY(),
+      location.getZ(),
+      offsetX,
+      offsetY,
+      offsetZ,
+      count,
+      0,
+      null);
     return this;
   }
 
-  public boolean isInWater() {
-    return playerVersionTemplate.isInWater(bukkitPlayer);
-  }
+  UUID getUUID();
 
-  public boolean isInCobweb() {
-    return playerVersionTemplate.isInCobweb(bukkitPlayer);
-  }
+  String getName();
 
-  public KelpPlayer chat(String message) {
-    playerVersionTemplate.chat(bukkitPlayer, message);
-    return this;
-  }
+  KelpPlayer setHealth(int health);
 
-  public KelpPlayer clearChat() {
+  boolean isInCobweb();
+
+  boolean isInWater();
+
+  KelpPlayer chat(String message);
+
+  default KelpPlayer clearChat() {
     for (int i = 0; i < 103; i++) {
       sendMessage(" ");
     }
     return this;
   }
 
-  public boolean mayFly() {
-    return playerVersionTemplate.getAllowFlight(bukkitPlayer);
-  }
+  boolean mayFly();
 
-  public String getDisplayName() {
-    return playerVersionTemplate.getDisplayName(bukkitPlayer);
-  }
+  String getDisplayName();
 
-  public KelpPlayer setDisplayName(String displayName) {
-    playerVersionTemplate.setDisplayName(bukkitPlayer, displayName);
+  KelpPlayer setDisplayName();
+
+  String getTabListName();
+
+  KelpPlayer setTabListName();
+
+  KelpPlayer setCompassTarget(KelpLocation target);
+
+  KelpPlayer kickPlayer(String kickMessage);
+
+  boolean isSneaking();
+
+  KelpPlayer setSneaking(boolean sneaking);
+
+  default KelpPlayer toggleSneak() {
+    setSneaking(!isSneaking());
     return this;
   }
 
-  public String getTabListName() {
-    return playerVersionTemplate.getPlayerTabListName(bukkitPlayer);
-  }
-
-  public KelpPlayer setTabListName(String tabListName) {
-    playerVersionTemplate.setPlayerTabListName(bukkitPlayer, tabListName);
+  default KelpPlayer sneak() {
+    setSneaking(true);
     return this;
   }
 
-  // TODO make tablist name hideable
-
-  // TODO TAB LIST HEADER AND FOOTER
-
-  public KelpPlayer setCompassTarget(KelpLocation target) {
-    playerVersionTemplate.setCompassTarget(bukkitPlayer, target);
+  default KelpPlayer unSneak() {
+    setSneaking(false);
     return this;
   }
 
-  public KelpPlayer kickPlayer(String kickMessage) {
-    playerVersionTemplate.kickPlayer(bukkitPlayer, kickMessage);
+  boolean isSprinting();
+
+  KelpPlayer setSprinting(boolean sneaking);
+
+  default KelpPlayer toggleSprinting() {
+    setSneaking(!isSneaking());
     return this;
   }
 
-  public boolean isSneaking() {
-    return playerVersionTemplate.isSneaking(bukkitPlayer);
-  }
-
-  public KelpPlayer sneak() {
-    playerVersionTemplate.setSneaking(bukkitPlayer, true);
+  default KelpPlayer sprint() {
+    setSprinting(true);
     return this;
   }
 
-  public KelpPlayer unSneak() {
-    playerVersionTemplate.setSneaking(bukkitPlayer, false);
+  default KelpPlayer unSprint() {
+    setSprinting(false);
     return this;
   }
 
-  public KelpPlayer toggleSneak() {
-    if (this.isSneaking()) {
-      this.unSneak();
-    } else {
-      this.sneak();
-    }
+  boolean isSleepingIgnored();
+
+  default KelpPlayer ignoreSleeping() {
+    setSleepingIgnored(true);
     return this;
   }
 
-  public KelpPlayer setSneaking(boolean sneaking) {
-    playerVersionTemplate.setSneaking(bukkitPlayer, sneaking);
+  default KelpPlayer unIgnoreSleeping() {
+    setSleepingIgnored(false);
     return this;
   }
 
-  public boolean isSprinting() {
-    return playerVersionTemplate.isSprinting(bukkitPlayer);
-  }
-
-  public KelpPlayer sprint() {
-    playerVersionTemplate.setSprinting(bukkitPlayer, true);
+  default KelpPlayer toggleIgnoreSleeping() {
+    setSleepingIgnored(!isSleepingIgnored());
     return this;
   }
 
-  public KelpPlayer stopSprinting() {
-    playerVersionTemplate.setSprinting(bukkitPlayer, false);
+  KelpPlayer setSleepingIgnored(boolean sleepingIgnored);
+
+  KelpPlayer setRelativePlayerTime(long time);
+
+  KelpPlayer setPlayerTime(long time);
+
+  long getPlayerTime();
+
+  long getPlayerTimeOffset();
+
+  boolean isPlayerTimeRelative();
+
+  KelpPlayer resetPlayerTime();
+
+  default KelpPlayer giveExperience(int amount) {
+    setExperience(getExperience() + amount);
     return this;
   }
 
-  public KelpPlayer toggleSprint() {
-    if (this.isSprinting()) {
-      this.stopSprinting();
-    } else {
-      this.sprint();
-    }
+  default KelpPlayer giveExperienceLevels(int amount) {
+    setLevel(getLevel() + amount);
     return this;
   }
 
-  public KelpPlayer setSprinting(boolean sprinting) {
-    playerVersionTemplate.setSprinting(bukkitPlayer, sprinting);
+  float getExperience();
+
+  KelpPlayer setExperience(float experience);
+
+  KelpPlayer setLevel(int level);
+
+  int getLevel();
+
+  int getTotalExperience();
+
+  KelpPlayer setTotalExperience(int experience);
+
+  float getExhaustionLevel();
+
+  KelpPlayer setExhaustionLevel(float exhaustionLevel);
+
+  KelpPlayer setSaturationLevel(float saturationLevel);
+
+  float getSaturationLevel();
+
+  int getFoodLevel();
+
+  KelpPlayer setFoodLevel(int foodLevel);
+
+  KelpPlayer setAllowFlight(boolean allowed);
+
+  KelpPlayer allowFlying();
+
+  KelpPlayer disallowFlying();
+
+  KelpPlayer hidePlayer(KelpPlayer toHide);
+
+  KelpPlayer showPlayer(KelpPlayer toShow);
+
+  boolean canSee(KelpPlayer toCheck);
+
+  boolean isFlying();
+
+  default KelpPlayer makeFlying() {
+    setFlying(true);
     return this;
   }
 
-  public boolean isSleepingIgnored() {
-    return playerVersionTemplate.isSprinting(bukkitPlayer);
-  }
-
-  public KelpPlayer ignoreSleeping() {
-    playerVersionTemplate.setSleepingIgnored(bukkitPlayer, true);
+  default KelpPlayer stopFlying() {
+    setFlying(false);
     return this;
   }
 
-  public KelpPlayer unignoreSleeping() {
-    playerVersionTemplate.setSleepingIgnored(bukkitPlayer, false);
+  default KelpPlayer toggleFlying() {
+    setFlying(!isFlying());
     return this;
   }
 
-  public KelpPlayer toggleIgnoreSleeping() {
-    if (this.isSleepingIgnored()) {
-      this.unignoreSleeping();
-    } else {
-      this.ignoreSleeping();
-    }
-    return this;
-  }
+  KelpPlayer setFlying(boolean flying);
 
-  public KelpPlayer setSleepingIgnored(boolean sleepingIgnored) {
-    playerVersionTemplate.setSleepingIgnored(bukkitPlayer, sleepingIgnored);
-    return this;
-  }
+  KelpPlayer setFlySpeed(float flySpeed);
 
-  public KelpPlayer setRelativePlayerTime(long time) {
-    playerVersionTemplate.setPlayerTime(bukkitPlayer, time, true);
-    return this;
-  }
+  float getFlySpeed();
 
-  public KelpPlayer setPlayerTime(long time) {
-    playerVersionTemplate.setPlayerTime(bukkitPlayer, time, false);
-    return this;
-  }
+  float getWalkSpeed();
 
-  public long getPlayerTime() {
-    return playerVersionTemplate.getPlayerTime(bukkitPlayer);
-  }
+  KelpPlayer setResourcePack(String url);
 
-  public long getPlayerTimeOffset() {
-    return playerVersionTemplate.getPlayerTimeOffset(bukkitPlayer);
-  }
+  KelpPlayer setResourcePack(String url, byte[] hash);
 
-  public boolean isPlayerTimeRelative() {
-    return playerVersionTemplate.isPlayerTimeRelative(bukkitPlayer);
-  }
+  boolean isHealthScaled();
 
-  public KelpPlayer resetPlayerTime() {
-    playerVersionTemplate.resetPlayerTime(bukkitPlayer);
-    return this;
-  }
+  KelpPlayer setHealthScale(double healthScale) ;
 
-  public KelpPlayer giveExperience(int amount) {
-    playerVersionTemplate.giveExperience(bukkitPlayer, amount);
-    return this;
-  }
+  double getHealthScale();
 
-  public KelpPlayer giveExperienceLevels(int amount) {
-    playerVersionTemplate.giveExperienceLevels(bukkitPlayer, amount);
-    return this;
-  }
+  KelpPlayer resetTitle();
 
-  public float getExperience() {
-    return playerVersionTemplate.getExperience(bukkitPlayer);
-  }
+  KelpPlayer setClientViewDistanceInternally(int clientViewDistance);
 
-  public KelpPlayer setExperience(float experience) {
-    playerVersionTemplate.setExperience(bukkitPlayer, experience);
-    return this;
-  }
+  int getClientViewDistance();
 
-  public KelpPlayer setLevel(int level) {
-    playerVersionTemplate.setLevel(bukkitPlayer, level);
-    return this;
-  }
+  KelpPlayer setClientLanguageInternally(String clientLanguage);
 
-  public int getLevel() {
-    return playerVersionTemplate.getLevel(bukkitPlayer);
-  }
+  String getClientLanguage();
 
-  public int getTotalExperience() {
-    return playerVersionTemplate.getTotalExperience(bukkitPlayer);
-  }
+  KelpPlayer setPlayerChatVisibilityInternally(PlayerChatVisibility playerChatVisibility);
 
-  public KelpPlayer setTotalExperience(int experience) {
-    playerVersionTemplate.setTotalExperience(bukkitPlayer, experience);
-    return this;
-  }
+  PlayerChatVisibility getPlayerChatVisibility();
 
-  public float getExhaustionLevel() {
-    return playerVersionTemplate.getExhaustion(bukkitPlayer);
-  }
+  KelpPlayer setPlayerChatColorEnabledInternally(boolean playerChatColorEnabled);
 
-  public KelpPlayer setExhaustionLevel(float exhaustionLevel) {
-    playerVersionTemplate.setExhaustion(bukkitPlayer, exhaustionLevel);
-    return this;
-  }
+  boolean isPlayerChatColorEnabled();
 
-  public KelpPlayer setSaturationLevel(float saturationLevel) {
-    playerVersionTemplate.setSaturation(bukkitPlayer, saturationLevel);
-    return this;
-  }
+  KelpPlayer setTabListHeader(String header);
 
-  public float getSaturationLevel() {
-    return playerVersionTemplate.getSaturation(bukkitPlayer);
-  }
+  KelpPlayer setTabListFooter(String footer);
 
-  public int getFoodLevel() {
-    return playerVersionTemplate.getFoodLevel(bukkitPlayer);
-  }
-
-  public KelpPlayer setFoodLevel(int foodLevel) {
-    playerVersionTemplate.setFoodLevel(bukkitPlayer, foodLevel);
-    return this;
-  }
-
-  public KelpPlayer setAllowFlight(boolean allowed) {
-    playerVersionTemplate.setAllowFlight(bukkitPlayer, allowed);
-    return this;
-  }
-
-  public KelpPlayer allowFlying() {
-    playerVersionTemplate.setAllowFlight(bukkitPlayer, true);
-    return this;
-  }
-
-  public KelpPlayer disallowFlying() {
-    playerVersionTemplate.setAllowFlight(bukkitPlayer, false);
-    return this;
-  }
-
-  public KelpPlayer hidePlayer(KelpPlayer toHide) {
-    playerVersionTemplate.hidePlayer(bukkitPlayer, toHide.getBukkitPlayer());
-    return this;
-  }
-
-  public KelpPlayer showPlayer(KelpPlayer toShow) {
-    playerVersionTemplate.showPlayer(bukkitPlayer, toShow.getBukkitPlayer());
-    return this;
-  }
-
-  public boolean canSee(KelpPlayer toCheck) {
-    return playerVersionTemplate.canSee(bukkitPlayer, toCheck.getBukkitPlayer());
-  }
-
-  public boolean isFlying() {
-    return playerVersionTemplate.isFlying(bukkitPlayer);
-  }
-
-  public KelpPlayer makeFlying() {
-    playerVersionTemplate.setFlying(bukkitPlayer, true);
-    return this;
-  }
-
-  public KelpPlayer stopFlying() {
-    playerVersionTemplate.setFlying(bukkitPlayer, false);
-    return this;
-  }
-
-  public KelpPlayer toggleFlying() {
-    if (this.isFlying()) {
-      this.stopFlying();
-    } else {
-      this.makeFlying();
-    }
-    return this;
-  }
-
-  public KelpPlayer setFlying(boolean flying) {
-    playerVersionTemplate.setFlying(bukkitPlayer, flying);
-    return this;
-  }
-
-  public KelpPlayer setFlySpeed(float flySpeed) {
-    playerVersionTemplate.setFlySpeed(bukkitPlayer, flySpeed);
-    return this;
-  }
-
-  public float getFlySpeed() {
-    return playerVersionTemplate.getFlySpeed(bukkitPlayer);
-  }
-
-  public float getWalkSpeed() {
-    return playerVersionTemplate.getWalkSpeed(bukkitPlayer);
-  }
-
-  public KelpPlayer setResourcePack(String url) {
-    playerVersionTemplate.setResourcePack(bukkitPlayer, url);
-    return this;
-  }
-
-  public KelpPlayer setResourcePack(String url, byte[] hash) {
-    playerVersionTemplate.setResourcePack(bukkitPlayer, url, hash);
-    return this;
-  }
-
-  public boolean isHealthScaled() {
-    return playerVersionTemplate.isHealthScaled(bukkitPlayer);
-  }
-
-  public KelpPlayer setHealthScale(double healthScale) {
-    playerVersionTemplate.setHealthScale(bukkitPlayer, healthScale);
-    return this;
-  }
-
-  public double getHealthScale() {
-    return playerVersionTemplate.getHealthScale(bukkitPlayer);
-  }
-
-  public KelpPlayer resetTitle() {
-    playerVersionTemplate.resetTitle(bukkitPlayer);
-    return this;
-  }
-
-  public KelpPlayer setClientViewDistanceInternally(int clientViewDistance) {
-    this.clientViewDistance = clientViewDistance;
-    return this;
-  }
-
-  public int getClientViewDistance() {
-    return this.clientViewDistance;
-  }
-
-  public KelpPlayer setClientLanguageInternally(String clientLanguage) {
-    this.clientLanguage = clientLanguage;
-    return this;
-  }
-
-  public String getClientLanguage() {
-    return clientLanguage;
-  }
-
-  public KelpPlayer setPlayerChatVisibilityInternally(PlayerChatVisibility playerChatVisibility) {
-    this.playerChatVisibility = playerChatVisibility;
-    return this;
-  }
-
-  public PlayerChatVisibility getPlayerChatVisibility() {
-    return playerChatVisibility;
-  }
-
-  public KelpPlayer setPlayerChatColorEnabledInternally(boolean playerChatColorEnabled) {
-    this.playerChatColorEnabled = playerChatColorEnabled;
-    return this;
-  }
-
-  public boolean isPlayerChatColorEnabled() {
-    return this.playerChatColorEnabled;
-  }
-
-  public KelpPlayer setTabListHeader(String header) {
-    playerVersionTemplate.setPlayerListHeader(bukkitPlayer, header);
-    this.tabListHeader = header;
-    return this;
-  }
-
-  public KelpPlayer setTabListFooter(String footer) {
-    playerVersionTemplate.setPlayerListHeader(bukkitPlayer, footer);
-    this.tabListFooter = footer;
-    return this;
-  }
-
-  public KelpPlayer setTabListHeaderAndFooter(String header, String footer) {
+  default KelpPlayer setTabListHeaderAndFooter(String header, String footer) {
     setTabListHeader(header).setTabListFooter(footer);
     return this;
   }
 
-  public String getTabListFooter() {
-    return tabListFooter;
-  }
+  String getTabListFooter();
 
-  public String getTabListHeader() {
-    return tabListHeader;
-  }
+  String getTabListHeader();
 
-  public boolean isOperator() {
-    return playerVersionTemplate.isOperator(bukkitPlayer);
-  }
+  boolean isOperator();
 
-  public KelpPlayer makeOperator() {
-    playerVersionTemplate.setOperator(bukkitPlayer, true);
+  default KelpPlayer makeOperator() {
+    setOperator(true);
     return this;
   }
 
-  public KelpPlayer removeOperator() {
-    playerVersionTemplate.setOperator(bukkitPlayer, false);
+  default KelpPlayer removeOperator() {
+    setOperator(false);
     return this;
   }
 
-  public KelpPlayer toggleOperator() {
-    if (this.isOperator()) {
-      this.removeOperator();
-    } else {
-      this.makeOperator();
-    }
+  default KelpPlayer toggleOperator() {
+    setOperator(!isOperator());
     return this;
   }
 
-  public KelpPlayer setOperator(boolean operator) {
-    playerVersionTemplate.setOperator(bukkitPlayer, operator);
+  KelpPlayer setOperator(boolean operator);
+
+  KelpPlayer grantPermission(String permissionName);
+
+  KelpPlayer removePermission(String permissionName);
+
+  boolean hasPermission(String permissionName);
+
+  boolean isBannedByBukkit();
+
+  boolean isWhitelisted();
+
+  default KelpPlayer whitelist() {
+    setWhitelisted(true);
     return this;
   }
 
-  public KelpPlayer grantPermission(String permissionName) {
-    playerVersionTemplate.givePermission(bukkitPlayer, permissionName);
+  default KelpPlayer removeFromWhitelist() {
+    setWhitelisted(false);
     return this;
   }
 
-  public KelpPlayer removePermission(String permissionName) {
-    playerVersionTemplate.removePermission(bukkitPlayer, permissionName);
+  default KelpPlayer toggleWhitelist() {
+    setWhitelisted(!isWhitelisted());
     return this;
   }
 
-  public boolean hasPermission(String permissionName) {
-    return playerVersionTemplate.hasPermission(bukkitPlayer, permissionName);
-  }
+  KelpPlayer setWhitelisted(boolean whitelisted);
 
-  public boolean isBannedByBukkit() {
-    return playerVersionTemplate.isBannedByBukkit(bukkitPlayer);
-  }
+  KelpPlayer sendMessage(String message);
 
-  public boolean isWhitelisted() {
-    return playerVersionTemplate.isWhitelisted(bukkitPlayer);
-  }
-
-  public KelpPlayer whitelist() {
-    playerVersionTemplate.setOperator(bukkitPlayer, true);
-    return this;
-  }
-
-  public KelpPlayer removeFromWhitelist() {
-    playerVersionTemplate.setOperator(bukkitPlayer, false);
-    return this;
-  }
-
-  public KelpPlayer toggleWhitelist() {
-    if (this.isOperator()) {
-      this.removeOperator();
-    } else {
-      this.makeOperator();
-    }
-    return this;
-  }
-
-  public KelpPlayer setWhitelisted(boolean whitelisted) {
-    playerVersionTemplate.setWhitelisted(bukkitPlayer, whitelisted);
-    return this;
-  }
-
-  public KelpPlayer sendMessage(String message) {
-    playerVersionTemplate.sendMessage(bukkitPlayer, message);
-    return this;
-  }
-
-  public KelpPlayer sendMessages(String... messages) {
+  default KelpPlayer sendMessages(String... messages) {
     for (String message : messages) {
-      playerVersionTemplate.sendMessage(bukkitPlayer, message);
+      sendMessage(message);
     }
     return this;
   }
 
-  public KelpPlayer sendMessages(Collection<String> messages) {
+  default KelpPlayer sendMessages(Collection<String> messages) {
     for (String message : messages) {
-      playerVersionTemplate.sendMessage(bukkitPlayer, message);
+      sendMessage(message);
     }
     return this;
   }
 
-  public KelpPlayer sendPrefixedMessages(String prefix, String... messages) {
+  default KelpPlayer sendPrefixedMessages(String prefix, String... messages) {
     for (String message : messages) {
       sendMessage(prefix + message);
     }
     return this;
   }
 
-  public KelpPlayer sendPrefixedMessages(String prefix, Collection<String> messages) {
+  default KelpPlayer sendPrefixedMessages(String prefix, Collection<String> messages) {
     for (String message : messages) {
       sendMessage(prefix + message);
     }
     return this;
   }
 
-  public void sendCenteredMessage(String message) {
+  default KelpPlayer sendCenteredMessage(String message) {
     Preconditions.checkNotNull(message);
     if(message.equals("")) {
       this.sendMessage("");
@@ -944,21 +640,24 @@ public class KelpPlayer extends LivingKelpEntity {
       compensated += spaceLength;
     }
     this.sendMessage(sb.toString() + message);
+    return this;
   }
 
-  public void sendCenteredMessages(String... messages) {
+  default KelpPlayer sendCenteredMessages(String... messages) {
     for (String s : messages) {
       this.sendCenteredMessage(s);
     }
+    return this;
   }
 
-  public void sendCenteredMessages(Collection<String> messages) {
+  default KelpPlayer sendCenteredMessages(Collection<String> messages) {
     for (String s : messages) {
       this.sendCenteredMessage(s);
     }
+    return this;
   }
 
-  public void sendCenteredMessages(String header, String footer, String... messages) {
+  default KelpPlayer sendCenteredMessages(String header, String footer, String... messages) {
     if (header != null) {
       this.sendMessage(header);
     }
@@ -968,9 +667,10 @@ public class KelpPlayer extends LivingKelpEntity {
     if (footer != null) {
       this.sendMessage(footer);
     }
+    return this;
   }
 
-  public void sendCenteredMessages(String header, Collection<String> messages, String footer) {
+  default KelpPlayer sendCenteredMessages(String header, Collection<String> messages, String footer) {
     if (header != null) {
       this.sendMessage(header);
     }
@@ -980,6 +680,7 @@ public class KelpPlayer extends LivingKelpEntity {
     if (footer != null) {
       this.sendMessage(footer);
     }
+    return this;
   }
 
   /**
@@ -998,9 +699,7 @@ public class KelpPlayer extends LivingKelpEntity {
    *                  style, no exception will be thrown, but {@code SOLID} is chosen
    *                  automatically.
    */
-  public void sendBossBar(String message, float health, BossBarColor barColor, BossBarStyle barStyle) {
-    playerVersionTemplate.sendBossBar(bukkitPlayer, message, health, barColor, barStyle);
-  }
+  KelpPlayer sendBossBar(String message, float health, BossBarColor barColor, BossBarStyle barStyle);
 
   /**
    * Sends a boss bar to the player by spawning a boss entity near it.
@@ -1010,8 +709,8 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @param message The message you want to be displayed above the boss bar.
    */
-  public void sendBossBar(String message) {
-    playerVersionTemplate.sendBossBar(bukkitPlayer, message, 300f, BossBarColor.PURPLE, BossBarStyle.SOLID);
+  default KelpPlayer sendBossBar(String message) {
+    return sendBossBar(message, 300f, BossBarColor.PURPLE, BossBarStyle.SOLID);
   }
 
   /**
@@ -1023,9 +722,7 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @param health The health of the boss bar entity.
    */
-  public void setBossBarProgressHealth(float health) {
-    playerVersionTemplate.setBossBarProgress(bukkitPlayer, health);
-  }
+  KelpPlayer setBossBarProgressHealth(float health);
 
   /**
    * Sets the progress of the player's boss bar, where 1 means
@@ -1034,9 +731,10 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @param percentage The percentage value of the progress between 0 and 1.
    */
-  public void setBossBarProgress(double percentage) {
+  default KelpPlayer setBossBarProgress(double percentage) {
     float health = 300f * (float) percentage;
     setBossBarProgressHealth(health);
+    return this;
   }
 
   /**
@@ -1050,9 +748,10 @@ public class KelpPlayer extends LivingKelpEntity {
    * @param current The current state of reaching the maximum in absolute numbers.
    * @param max     The maximum value that is reachable for parameter {@code current}.
    */
-  public void setBossBarProgress(int current, int max) {
+  default KelpPlayer setBossBarProgress(int current, int max) {
     double percentage = (double) current / (double) max;
     setBossBarProgress(percentage);
+    return this;
   }
 
   /**
@@ -1066,17 +765,16 @@ public class KelpPlayer extends LivingKelpEntity {
    * @param current The current state of reaching the maximum in absolute numbers.
    * @param max     The maximum value that is reachable for parameter {@code current}.
    */
-  public void setBossBarProgress(double current, double max) {
+  default KelpPlayer setBossBarProgress(double current, double max) {
     double percentage = current / max;
     setBossBarProgress(percentage);
+    return this;
   }
 
   /**
    * Makes the boss bar disappear for the player.
    */
-  public void removeBossBar() {
-    playerVersionTemplate.removeBossBar(bukkitPlayer);
-  }
+  KelpPlayer removeBossBar();
 
   /**
    * Sends an interactive message to the player. An interactive message is a message
@@ -1087,18 +785,46 @@ public class KelpPlayer extends LivingKelpEntity {
    *
    * @param interactiveMessage The interactive message you want to send to the player.
    */
-  public void sendInteractiveMessage(InteractiveMessage interactiveMessage) {
-    playerVersionTemplate.sendInteractiveMessage(bukkitPlayer, interactiveMessage);
-  }
+  KelpPlayer sendInteractiveMessage(InteractiveMessage interactiveMessage);
 
   /**
-   * Gets the bukkit instance of the current {@link Player}. Be aware that
-   * by using this, you might lose version independence.
+   * Gets the bukkit instance of this player.
+   * This can be used to access bukkit methods if you cannot
+   * find the appropriate kelp equivalent in this class.
    *
-   * @return The current bukkit player instance.
+   * @return The instance of the bukkit player equivalent to this kelp player.
    */
-  public Player getBukkitPlayer() {
-    return bukkitPlayer;
+  Player getBukkitPlayer();
+
+  /**
+   * This class allows for hidden access for dependencies used in the
+   * {@link KelpPlayer} class. Instead of creating interface methods
+   * that should not be publicly available, they are wrapped into this
+   * class as private interface methods are only compatible with Java
+   * 1.9 upwards.
+   *
+   * This should give the incentive to developers to avoid using
+   * one of those methods as version templates are not safe and might change
+   * over time.
+   *
+   * @author pxav
+   */
+  final class Dependencies {
+    private static SignPromptVersionTemplate getSignPromptVersionTemplate() {
+      return KelpPlugin.getInjector().getInstance(SignPromptVersionTemplate.class);
+    }
+    private static KelpInventoryRepository getInventoryRepository() {
+      return KelpPlugin.getInjector().getInstance(KelpInventoryRepository.class);
+    }
+    private static ParticleVersionTemplate getParticleVersionTemplate() {
+      return KelpPlugin.getInjector().getInstance(ParticleVersionTemplate.class);
+    }
+    private static AnvilPromptVersionTemplate getAnvilPromptVersionTemplate() {
+      return KelpPlugin.getInjector().getInstance(AnvilPromptVersionTemplate.class);
+    }
+    private static ChatPromptVersionTemplate getChatPromptVersionTemplate() {
+      return KelpPlugin.getInjector().getInstance(ChatPromptVersionTemplate.class);
+    }
   }
 
 }
