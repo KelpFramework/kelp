@@ -2,7 +2,6 @@ package de.pxav.kelp.core.player;
 
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.KelpPlugin;
-import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.type.general.HumanEntity;
 import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
@@ -29,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -238,8 +238,25 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
 
   KelpPlayer playSound(KelpSound sound, KelpLocation from, float volume, float pitch);
 
+  /**
+   * Sends an action bar message to the player.
+   * The action bar is a line of text, which is displayed
+   * above the player's hotbar.
+   *
+   * @param message The message you want to send.
+   */
   KelpPlayer sendActionbar(String message);
 
+  /**
+   * Sends a title to a player. A title is a big text displayed
+   * right in the middle of the player's screen.
+   *
+   * @param title The upper title text (will be displayed slightly bigger than the sub title).
+   * @param subTitle The lower title text (will be displayed slightly smaller than the main title).
+   * @param fadeIn How long should it take to fade the title in? (in ticks)
+   * @param stay How long should the title stay in 100% opacity? (in ticks)
+   * @param fadeOut How long should it take to fade the title out? (in ticks)
+   */
   KelpPlayer sendTitle(String title, String subTitle, int fadeIn, int stay, int fadeOut);
 
   default KelpPlayer sendTitle(String title, String subTitle) {
@@ -317,12 +334,39 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
 
   String getName();
 
+  /**
+   * Sets the player's health.
+   *
+   * @param player The player whose health you want to change.
+   * @param health How many health points the player should have.
+   *               2 health points equal 1 heart.
+   *               So 20 health points equal the full 10 hearts.
+   */
   KelpPlayer setHealth(int health);
 
+  /**
+   * Checks if the player is currently stuck in a cobweb.
+   *
+   * @return {@code true} if the player is currently stuck in a cobweb.
+   */
   boolean isInCobweb();
 
+  /**
+   * Checks if the player is currently located in water.
+   *
+   * @return {@code true} if the player is currently in water.
+   */
   boolean isInWater();
 
+  /**
+   * Sends a chat message from the given player.
+   * This means you can send a message as if the player itself
+   * typed in this message. This also works with commands, if
+   * you add a slash in front of the message.
+   *
+   * @param player  The player from whom the message should be sent.
+   * @param message The message you want to send.
+   */
   KelpPlayer chat(String message);
 
   default KelpPlayer clearChat() {
@@ -332,22 +376,101 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return this;
   }
 
+  /**
+   * Gets the socket address of a specific player.
+   *
+   * @return The {@code InetSocketAddress} object of the player's address.
+   */
+  InetSocketAddress getSocketAddress();
+
+  /**
+   * Determines if the Player is allowed to fly via
+   * jump key double-tap like in creative mode.
+   *
+   * If a player flies without permission, they will get kicked
+   * by the server automatically.
+   *
+   * @return {@code true} if the player is allowed to fly.
+   */
   boolean mayFly();
 
+  /**
+   * Gets the display name of a player.
+   * The display name is a name which - unlike the normal name -
+   * can be modified during the server runtime. You can use this
+   * to include custom prefixes, ...
+   *
+   * @return The display name.
+   */
   String getDisplayName();
 
-  KelpPlayer setDisplayName();
+  /**
+   * Sets the display name of a player
+   * The display name is a name which - unlike the normal name -
+   * can be modified during the server runtime. You can use this
+   * to include custom prefixes, ...
+   *
+   * @param displayName The display name you want to set.
+   */
+  KelpPlayer setDisplayName(String displayName);
 
+  /**
+   * Gets the tab-list name of the player.
+   * The tab-list name is the name which is used to represent
+   * the player in the tab-list of online players.
+   *
+   * @return The tab-list name.
+   */
   String getTabListName();
 
-  KelpPlayer setTabListName();
+  /**
+   * Sets the tab-list name of the player.
+   * The tab-list name is the name which is used to represent
+   * the player in the tab-list of online players.
+   *
+   * @param tabListName The tab-list name you want to set.
+   */
+  KelpPlayer setTabListName(String tabListName);
 
+  /**
+   * Sets the compass target of the player.
+   * The compass target is the location, where the compass needle
+   * points to. By default this is the spawn location of the world,
+   * but you could set this to specific player locations as well.
+   *
+   * @param target The location, where the compass should point to.
+   */
   KelpPlayer setCompassTarget(KelpLocation target);
 
+  /**
+   * Gets the compass target of the player.
+   * The compass target is the location, where the compass needle
+   * points to. By default this is the spawn location of the world.
+   *
+   * @return The target location of the player's compass.
+   */
+  KelpPlayer getCompassTarget();
+
+  /**
+   * Kicks the given player from the server.
+   *
+   * @param kickMessage The message, which should be received by the player.
+   *                    Could also be named kick reason.
+   */
   KelpPlayer kickPlayer(String kickMessage);
 
+  /**
+   * Checks if the player is currently sneaking/crouching.
+   * @return {@code true} if the player is sneaking.
+   */
   boolean isSneaking();
 
+  /**
+   * Modifies the sneak state of the player.
+   *
+   * @param sneaking  {@code true} if you want to make the player sneak.
+   *                  {@code false}, if not.
+   */
   KelpPlayer setSneaking(boolean sneaking);
 
   default KelpPlayer toggleSneak() {
@@ -365,9 +488,25 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return this;
   }
 
+  /**
+   * Checks if the player is currently sprinting.
+   * Sprinting is active when the player has double-pressed the
+   * walking key or pressed the walking and sprinting key at
+   * once.
+   *
+   * @return {@code true} if the player is currently sprinting.
+   */
   boolean isSprinting();
 
-  KelpPlayer setSprinting(boolean sneaking);
+  /**
+   * Changes the sprinting state of a player.
+   * Sprinting is active when the player has double-pressed the
+   * walking key or pressed the walking and sprinting key at
+   * once.
+   *
+   * @param sprinting {@code true} if the player should be sprinting.
+   */
+  KelpPlayer setSprinting(boolean sprinting);
 
   default KelpPlayer toggleSprinting() {
     setSneaking(!isSneaking());
@@ -384,6 +523,19 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return this;
   }
 
+  /**
+   * Checks if the player is ignored when the server checks who is sleeping.
+   *
+   * When it is night, normally all players have to sleep so that the
+   * time can jump to morning. If you don't want all players to sleep,
+   * you can give specific players this flag and they don't have to sleep
+   * anymore.
+   *
+   * If you give this flag to all players, nothing will happen at night.
+   * So there has to be at least one player sleeping at night.
+   *
+   * @return {@code true} if the player has the ignore flag.
+   */
   boolean isSleepingIgnored();
 
   default KelpPlayer ignoreSleeping() {
@@ -401,66 +553,271 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return this;
   }
 
+  /**
+   * Sets the player ignored when the server checks who is sleeping.
+   *
+   * When it is night, normally all players have to sleep so that the
+   * time can jump to morning. If you don't want all players to sleep,
+   * you can give specific players this flag and they don't have to sleep
+   * anymore.
+   *
+   * If you give this flag to all players, nothing will happen at night.
+   * So there has to be at least one player sleeping at night.
+   *
+   * @param sleepingIgnored {@code true} if the player should be ignored when sleeping.
+   */
   KelpPlayer setSleepingIgnored(boolean sleepingIgnored);
 
   KelpPlayer setRelativePlayerTime(long time);
 
+  /**
+   * Sets the player time. Each player can have an individual time
+   * - even if they are in the same world.
+   *
+   * @param time      If {@code relative} is set to {@code true}, this is the
+   *                  time offset to the server time in ticks. If {@code relative}
+   *                  is set to {@code false} it is the absolute day time ticks.
+   */
   KelpPlayer setPlayerTime(long time);
 
+  /**
+   * Gets the current player time. Each player can have an
+   * individual time - even if they are in the same world.
+   *
+   * @return The current time of the player in ticks.
+   */
   long getPlayerTime();
 
+  /**
+   * If the player time was set with {@code relative} to {@code true},
+   * then it will get the offset of the player time to the current server
+   * time. If {@code relative} was set to {@code false}, it will simply
+   * return the current player time.
+   *
+   * @return The player's time (offset).
+   */
   long getPlayerTimeOffset();
 
+  /**
+   * Checks if the player time set for the player is relative
+   * to the server time. More information can be found
+   * at {@code #setPlayerTime(player, time, relative)}
+   *
+   * @return {@code true} if player time is relative to server time.
+   */
   boolean isPlayerTimeRelative();
 
+  /**
+   * Resets the player time back to the current server
+   * time. So the times of both are synchronized again.
+   *
+   */
   KelpPlayer resetPlayerTime();
 
+  /**
+   * Gives the player the given amount of experience.
+   * This method simply adds the given amount to the player's
+   * current exp count and does not overwrite anything.
+   *
+   * @param amount The amount of experience to give.
+   */
   default KelpPlayer giveExperience(int amount) {
     setExperience(getExperience() + amount);
     return this;
   }
 
+  /**
+   * Gives or takes the player the given amount of experience.
+   * Negative amounts express that levels should be taken
+   * away from the player, positive amounts will be added.
+   *
+   * @param amount The amount of levels to give or take.
+   */
   default KelpPlayer giveExperienceLevels(int amount) {
     setLevel(getLevel() + amount);
     return this;
   }
 
+  /**
+   * Gets the current experience of the given player.
+   *
+   * Experience is a percentage value (ranging from 0 to 1)
+   * indicating the progress to the next full level.
+   * 0 means he has just reached a new level and has made no
+   * progress since then, wile 1 says the player is just about
+   * to reach a new level.
+   *
+   * Inside Minecraft, the experience is represented by the
+   * green bar above the hotbar.
+   *
+   * @return The current experience progress (from 0 to 1).
+   */
   float getExperience();
 
+  /**
+   * Sets the current experience of the given player.
+   *
+   * Experience is a percentage value (ranging from 0 to 1)
+   * indicating the progress to the next full level.
+   * 0 means he has just reached a new level and has made no
+   * progress since then, wile 1 says the player is just about
+   * to reach a new level.
+   *
+   * Inside Minecraft, the experience is represented by the
+   * green bar above the hotbar.
+   *
+   * @param experience  The experience value you want to set.
+   *                    May range from 0 to 1.
+   */
   KelpPlayer setExperience(float experience);
 
+  /**
+   * Sets the current amount of the player's levels.
+   *
+   * Levels are reached when the experience count reaches 1.
+   * The amount of levels is represented by the small green
+   * number above the level bar.
+   *
+   * @param level   The new level count to set.
+   */
   KelpPlayer setLevel(int level);
 
+  /**
+   * Gets the current amount of the player's levels.
+   *
+   * Levels are reached when the experience count reaches 1.
+   * The amount of levels is represented by the small green
+   * number above the level bar.
+   *
+   * @return The current amount of levels.
+   */
   int getLevel();
 
+  /**
+   * Gets the players total experience points.
+   *
+   * This refers to the total amount of experience
+   * the player has collected over time and is not currently
+   * displayed to the client.
+   *
+   * @return The total experience points amount.
+   */
   int getTotalExperience();
 
+  /**
+   * Sets the players total experience points.
+   *
+   * This refers to the total amount of experience
+   * the player has collected over time and is not currently
+   * displayed to the client.
+   *
+   * @param experience  The new amount of total experience.
+   */
   KelpPlayer setTotalExperience(int experience);
 
+  /**
+   * Gets the player's current exhaustion level.
+   * Exhaustion controls how fast the food level drops.
+   * While you have a certain amount of exhaustion,
+   * your saturation will drop to zero, and then your
+   * food will drop to zero.
+   *
+   * @return The exhaustion level of the current player.
+   */
   float getExhaustionLevel();
 
+  /**
+   * Sets the player's current exhaustion level.
+   * Exhaustion controls how fast the food level drops.
+   * While you have a certain amount of exhaustion,
+   * your saturation will drop to zero, and then your
+   * food will drop to zero.
+   *
+   * @param exhaustionLevel The exhaustion level you want to set.
+   */
   KelpPlayer setExhaustionLevel(float exhaustionLevel);
 
+  /**
+   * Sets the saturation level of a player.
+   * Saturation is a buffer for food level.
+   * Your food level will not drop if you are saturated > 0.
+   *
+   * @param saturationLevel  The saturation level you want to set.
+   */
   KelpPlayer setSaturationLevel(float saturationLevel);
 
+  /**
+   * Gets the saturation level of a player.
+   * Saturation is a buffer for food level.
+   * Your food level will not drop if you are saturated > 0.
+   *
+   * @return The saturation of the player.
+   */
   float getSaturationLevel();
 
+  /**
+   * Gets the current food level of the player. The
+   * food level indicates how full the food bar is.
+   * 20 means a full food bar, 0 an empty food bar.
+   *
+   * @return The food level of the player.
+   */
   int getFoodLevel();
 
+  /**
+   * Sets the food level of a player.
+   * The food level indicates how full the food bar is.
+   * 20 means a full food bar, 0 an empty food bar.
+   *
+   * @param foodLevel The absolute food level you want to set.
+   */
   KelpPlayer setFoodLevel(int foodLevel);
 
+  /**
+   * Sets if the player is allowed to fly as if he was in creative
+   * mode
+   *
+   * @param allowed {@code true} if you want to allow, {@code false}
+   *                    if not.
+   */
   KelpPlayer setAllowFlight(boolean allowed);
 
   KelpPlayer allowFlying();
 
   KelpPlayer disallowFlying();
 
+  /**
+   * Hides a player from another player, so they become invisible
+   * for the other player.
+   *
+   * @param toHide The player you want to hide.
+   */
   KelpPlayer hidePlayer(KelpPlayer toHide);
 
+  /**
+   * Shows a player to another player again, so they become visible
+   * for the other player.
+   *
+   * @param toShow The player you want to show.
+   */
   KelpPlayer showPlayer(KelpPlayer toShow);
 
+  /**
+   * Checks if the given player can see the targeted player.
+   * This does not check if the player currently really sees
+   * the given target player, but if the player is not hidden.
+   *
+   * @param toCheck  The player to check if he is visible for the
+   *                 other player.
+   * @return {@code true} if {@code player} can see {@code toCheck}.
+   */
   boolean canSee(KelpPlayer toCheck);
 
+  /**
+   * Checks if the player is currently flying.
+   *
+   * @return {@code true} if the player is flying.
+   */
   boolean isFlying();
 
   default KelpPlayer makeFlying() {
@@ -478,24 +835,141 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return this;
   }
 
+  /**
+   * Changes the flying state of the player.
+   *
+   * @param flying {@code true} if you want to make the player fly.
+   *               {@code false} if you don't want to make the player fly.
+   */
   KelpPlayer setFlying(boolean flying);
 
+  /**
+   * Sets the current fly speed of a player. The higher
+   * the value the higher the speed. Negative values
+   * indicate reverse directions.
+   *
+   * @param flySpeed  The desired fly speed. The value may
+   *                  range from -1 to 1.
+   */
   KelpPlayer setFlySpeed(float flySpeed);
 
+  /**
+   * Gets the current speed a player can fly. The higher
+   * the value the higher the speed. Negative values
+   * indicate reverse directions.
+   *
+   * @return  The current fly speed of a player.
+   *          Value can range from -1 to 1
+   */
   float getFlySpeed();
 
+  /**
+   * Gets the current speed a player can walk. The higher
+   * the value the higher the speed. Negative values
+   * indicate reverse directions.
+   *
+   * @return  The current walk speed of a player.
+   *          Value can range from -1 to 1
+   */
   float getWalkSpeed();
 
+  /**
+   * Sets the current walk speed of a player. The higher
+   * the value the higher the speed. Negative values
+   * indicate reverse directions.
+   *
+   * @param walkSpeed The desired walk speed. The value may
+   *                  range from -1 to 1.
+   */
+  KelpPlayer setWalkSpeed(float walkSpeed);
+
+  KelpPlayer resetWalkSpeed();
+
+  /**
+   * Request that the player's client download and switch resource packs.
+   *
+   * The player's client will download the new resource pack asynchronously
+   * in the background, if the request was accepted, and will automatically switch to it once the download
+   * is complete. If the client has downloaded and cached a resource pack
+   * with the same hash in the past it will not download but directly apply
+   * the cached pack. When this request is sent for the very first time
+   * from a given server, the client will first display a confirmation GUI
+   * to the player before proceeding with the download.
+   *
+   * @param player The player who should download the Resource pack.
+   * @param url  The URL from which the client will download the resource pack.
+   *             The string must contain only US-ASCII characters
+   *             and should be encoded as per RFC 1738.
+   */
   KelpPlayer setResourcePack(String url);
 
+  /**
+   * Request that the player's client download and switch resource packs.
+   *
+   * The player's client will download the new resource pack asynchronously
+   * in the background, if the request was accepted, and will automatically switch to it once the download
+   * is complete. If the client has downloaded and cached a resource pack
+   * with the same hash in the past it will not download but directly apply
+   * the cached pack. When this request is sent for the very first time
+   * from a given server, the client will first display a confirmation GUI
+   * to the player before proceeding with the download.
+   *
+   * @param url  The URL from which the client will download the resource pack.
+   *             The string must contain only US-ASCII characters
+   *             and should be encoded as per RFC 1738.
+   * @param hash The sha1 hash sum of the resource pack file
+   *             which is used to apply a cached version of the pack
+   *             directly without downloading if it is available.
+   *             Has to be 20 bytes long!
+   */
   KelpPlayer setResourcePack(String url, byte[] hash);
 
+  /**
+   * Sets if the player is shown the scaled health bar.
+   * If you modify your health scale with {@code setHealthScale},
+   * you have to say the server to send this new scaled health
+   * to the player.
+   *
+   * @param scaled {@code true} whether the health should be scaled.
+   */
+  KelpPlayer setHealthScaled(boolean scaled);
+
+  /**
+   * Checks if the player has received the scaled health bar
+   * from the server.
+   *
+   * @return {@code true} if the player's health bar scale is up to date.
+   */
   boolean isHealthScaled();
 
+  /**
+   * Sets the health scale of the given player. The health
+   * scale is the maximum amount of hearts displayed to the
+   * client.
+   * 2 means one heart is displayed. If you choose values
+   * above 20, the player will get additional hearts.
+   * Consider changing the max health as well.
+   *
+   * This method will automatically set {@code setHealthScaled} to
+   * {@code true}.
+   *
+   * @param healthScale The amount of scaled health you want to set.
+   */
   KelpPlayer setHealthScale(double healthScale) ;
 
+  /**
+   * Gets the number of scaled health points,
+   * which are currently displayed to the client.
+   *
+   * @return  The number of scaled health if health
+   *          scaling was set to {@code true} earlier.
+   */
   double getHealthScale();
 
+  /**
+   * Cancels the title animation for a player. The current
+   * title is removed immediately.
+   */
   KelpPlayer resetTitle();
 
   KelpPlayer setClientViewDistanceInternally(int clientViewDistance);
@@ -514,19 +988,51 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
 
   boolean isPlayerChatColorEnabled();
 
-  KelpPlayer setTabListHeader(String header);
-
-  KelpPlayer setTabListFooter(String footer);
-
-  default KelpPlayer setTabListHeaderAndFooter(String header, String footer) {
-    setTabListHeader(header).setTabListFooter(footer);
+  default KelpPlayer setTabListHeader(String header) {
+    setTabListHeaderAndFooter(header, getTabListFooter());
     return this;
   }
+
+  default KelpPlayer setTabListFooter(String footer) {
+    setTabListHeaderAndFooter(getTabListHeader(), footer);
+    return this;
+  }
+
+  /**
+   * Sets the tab header and footer of player. The tab header is
+   * a text displayed above the player list in the tab, while
+   * the tab footer is a message displayed below the player list.
+   *
+   * The messages may contain '\n' to create new lines inside the
+   * message.
+   *
+   * @param header The header message you want to send.
+   * @param footer The footer message you want to send.
+   */
+  KelpPlayer setTabListHeaderAndFooter(String header, String footer);
 
   String getTabListFooter();
 
   String getTabListHeader();
 
+  /**
+   * Gets the version number of the client's protocol. You
+   * can convert this information to the release name with the
+   * help of this list: https://wiki.vg/Protocol_version_numbers
+   * Please note that you should use the versions after the Netty
+   * rewrite.
+   *
+   * @return The protocol version number.
+   */
+  int getProtocolVersion();
+
+  /**
+   * Checks if the given player is a server operator. A server operator
+   * is a player, who has all permissions and can execute every
+   * command.
+   *
+   * @return {@code true} if the player is a server operator.
+   */
   boolean isOperator();
 
   default KelpPlayer makeOperator() {
@@ -544,16 +1050,53 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return this;
   }
 
+  /**
+   * Sets the player to a server operator. A server operator
+   * is a player, who has all permissions and can execute every
+   * command.
+   *
+   * @param operator   {@code true} If you want to make the player an operator.
+   */
   KelpPlayer setOperator(boolean operator);
 
-  KelpPlayer grantPermission(String permissionName);
+  /**
+   * Gives the player the desired permission.
+   *
+   * @param permission        The name of the permission you want to give the player.
+   */
+  KelpPlayer grantPermission(String permission);
 
-  KelpPlayer removePermission(String permissionName);
+  /**
+   * Removes the specified permission from the given player.
+   *
+   * @param permission  The name of the permission you want to remove.
+   */
+  KelpPlayer removePermission(String permission);
 
-  boolean hasPermission(String permissionName);
+  /**
+   * Checks if the given player has the desired permission.
+   *
+   * @param permission  The permission you want to check for.
+   * @return {@code true} if the player has the permission.
+   */
+  boolean hasPermission(String permission);
 
+  /**
+   * Checks if the given player is currently banned from the server.
+   * This does only check if the player was banned by the
+   * bukkit server using the normal {@code /ban} command. If another
+   * plugin has banned the player, this is ignored.
+   *
+   * @return {@code true} if the player has been banned by the bukkit server.
+   */
   boolean isBannedByBukkit();
 
+  /**
+   * Checks if the player is on the bukkit whitelist.
+   *
+   * @param player The player you want to check.
+   * @return {@code true} if the player is whitelisted.
+   */
   boolean isWhitelisted();
 
   default KelpPlayer whitelist() {
@@ -571,8 +1114,21 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return this;
   }
 
+  /**
+   * Sets the player whitelisted or not whitelisted to the server.
+   *
+   * The whitelist determines which players are allowed to join the server
+   * and which are not. It has to be enabled manually by the server owner.
+   *
+   * @param whitelisted   {@code true} if the player should be whitelisted.
+   */
   KelpPlayer setWhitelisted(boolean whitelisted);
 
+  /**
+   * Sends the given player a message into their chat.
+   *
+   * @param message   The message itself. May contain color codes.
+   */
   KelpPlayer sendMessage(String message);
 
   default KelpPlayer sendMessages(String... messages) {
