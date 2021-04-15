@@ -1,34 +1,37 @@
 package de.pxav.kelp.core.entity.type;
 
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.entity.KelpEntityFactory;
 import de.pxav.kelp.core.entity.KelpEntityType;
-import de.pxav.kelp.core.entity.LivingKelpEntity;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
-import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import de.pxav.kelp.core.entity.type.general.AgeableEntity;
+import de.pxav.kelp.core.entity.type.general.MonsterEntity;
+import de.pxav.kelp.core.world.KelpLocation;
+import org.bukkit.Difficulty;
 
-/**
- * A class description goes here.
- *
- * @author pxav
- */
-public class ZombieEntity extends LivingKelpEntity {
+public interface ZombieEntity extends AgeableEntity<ZombieEntity>, MonsterEntity<ZombieEntity> {
 
-  private boolean isBaby = false;
-
-  public ZombieEntity() {}
-
-  public ZombieEntity(EntityVersionTemplate entityVersionTemplate, LivingEntityVersionTemplate livingEntityVersionTemplate, LivingEntity livingEntity, Object entity, int entityId, Location location, boolean isBaby) {
-    super(entity, KelpEntityType.ZOMBIE, location, entityId, entityVersionTemplate, livingEntityVersionTemplate, livingEntity);
-    this.isBaby = isBaby;
+  static ZombieEntity create(KelpLocation location) {
+    return (ZombieEntity) KelpPlugin.getInjector().getInstance(KelpEntityFactory.class)
+      .newKelpEntity(KelpEntityType.ZOMBIE, location.getBukkitLocation());
   }
 
-  public boolean isBaby() {
-    return isBaby;
+  @Override
+  default int getAttackDamage(Difficulty difficulty) {
+    if (difficulty == Difficulty.EASY) {
+      return 4;
+    }
+    if (difficulty == Difficulty.NORMAL) {
+      return 6;
+    }
+    if (difficulty == Difficulty.HARD) {
+      return 8;
+    }
+    return 0;
   }
 
-  public void setBaby(boolean baby) {
-    isBaby = baby;
+  @Override
+  default int getMaximumSpawnLightLevel() {
+    return 7;
   }
 
 }
