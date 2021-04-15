@@ -1,7 +1,6 @@
 package de.pxav.kelp.core.player.prompt.sign;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
-import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.prompt.PromptTimeout;
 import org.bukkit.entity.Player;
 
