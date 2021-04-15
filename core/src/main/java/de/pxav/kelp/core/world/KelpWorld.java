@@ -2,7 +2,7 @@ package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.type.DroppedItemEntity;
-import de.pxav.kelp.core.entity.type.ItemDropType;
+import de.pxav.kelp.core.entity.type.general.ItemDropType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.util.ExplosionPower;
@@ -11,7 +11,6 @@ import de.pxav.kelp.core.world.version.WorldVersionTemplate;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 
 import java.util.Collection;
 import java.util.UUID;

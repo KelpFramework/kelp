@@ -40,6 +40,8 @@ public class ExplosionPower {
   public static final ExplosionPower RESPAWN_ANCHOR = new ExplosionPower(5F);
   public static final ExplosionPower GHAST_FIREBALL = new ExplosionPower(1F);
 
+  public static final ExplosionPower NO_EXPLOSION = new ExplosionPower(0F);
+
   /**
    * Allows you to create an explosion with a custom power, which is not
    * provided by the default list by minecraft.

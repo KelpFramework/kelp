@@ -2,7 +2,6 @@ package de.pxav.kelp.implementation1_8.world;
 
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.application.KelpApplication;
-import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.*;

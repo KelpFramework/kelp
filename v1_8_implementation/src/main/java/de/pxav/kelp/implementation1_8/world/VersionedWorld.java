@@ -2,7 +2,7 @@ package de.pxav.kelp.implementation1_8.world;
 
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.entity.type.DroppedItemEntity;
-import de.pxav.kelp.core.entity.type.ItemDropType;
+import de.pxav.kelp.core.entity.type.general.ItemDropType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.Versioned;
