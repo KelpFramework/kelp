@@ -41,6 +41,11 @@
       <organization>com.github.shatuxy</organization>
       <organizationUrl>https://www.github.com/Shatuxy</organizationUrl>
     </developer>
+    <developer>
+      <name>DSeeLP</name>
+      <organization>com.github.dseelp</organization>
+      <organizationUrl>https://www.github.com/DSeeLP</organizationUrl>
+    </developer>
   </developers>
 
   <scm>
