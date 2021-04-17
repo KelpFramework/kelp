@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.command;
 
+import de.pxav.kelp.core.player.KelpPlayer;
+
 /**
  * An executor type represents a group of potential command
  * executors, which can execute a specific command.
@@ -24,7 +26,7 @@ public enum ExecutorType {
    * If you set this executor type, you have to chose the
    * {@code #onCommand(kelpPlayer, args)} method.
    */
-  PLAYER_ONLY,
+  PLAYER_ONLY(KelpPlayer.class),
 
   /**
    * The given command can only be executed by the console.
@@ -37,7 +39,7 @@ public enum ExecutorType {
    * If you set this executor type, you have to chose the
    * {@code #onCommand(kelpConsoleSender, args)} method.
    */
-  CONSOLE_ONLY,
+  CONSOLE_ONLY(KelpConsoleSender.class),
 
   /**
    * The given command can only be executed by
@@ -48,6 +50,17 @@ public enum ExecutorType {
    * If you set this executor type, you have to chose the
    * {@code #onCommand(kelpConsoleSender, args)} method.
    */
-  PLAYER_AND_CONSOLE
+  PLAYER_AND_CONSOLE(KelpConsoleSender.class, KelpPlayer.class);
 
+
+  private final Class<? extends KelpCommandSender<?>>[] acceptedCommandSenders;
+
+  @SafeVarargs
+  ExecutorType(Class<? extends KelpCommandSender<?>>... acceptedCommandSenders) {
+    this.acceptedCommandSenders = acceptedCommandSenders;
+  }
+
+  public Class<? extends KelpCommandSender<?>>[] getAcceptedCommandSenders() {
+    return acceptedCommandSenders;
+  }
 }

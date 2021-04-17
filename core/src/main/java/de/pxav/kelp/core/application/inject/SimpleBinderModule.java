@@ -1,7 +1,9 @@
 package de.pxav.kelp.core.application.inject;
 
 import com.google.inject.AbstractModule;
+import de.dseelp.kommon.command.CommandDispatcher;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.command.KelpCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.ExecutorService;
@@ -34,6 +36,7 @@ public final class SimpleBinderModule extends AbstractModule {
     bind(ScheduledExecutorService.class).toInstance(Executors.newScheduledThreadPool(1));
     bind(JavaPlugin.class).toInstance(this.plugin);
     bind(ClassLoader.class).toInstance(KelpPlugin.class.getClassLoader());
+    bind(CommandDispatcher.class).toInstance(new CommandDispatcher<KelpCommandSender<?>>());
   }
 
 }

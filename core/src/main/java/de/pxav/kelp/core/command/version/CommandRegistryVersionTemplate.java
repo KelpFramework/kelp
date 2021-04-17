@@ -1,8 +1,7 @@
 package de.pxav.kelp.core.command.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
-import de.pxav.kelp.core.command.CreateCommand;
-import de.pxav.kelp.core.command.KelpCommand;
+import de.pxav.kelp.core.command.*;
 
 /**
  * This version template is responsible for registering the commands.
@@ -28,5 +27,6 @@ public abstract class CommandRegistryVersionTemplate {
    * @param commandAnnotation   An instance of the main command annotation.
    */
   public abstract void registerCommand(KelpCommand command, CreateCommand commandAnnotation);
+  public abstract void registerCommand(DeclarativeKelpCommand<? extends KelpCommandSender<?>> command, CreateDeclarativeCommand commandAnnotation);
 
 }

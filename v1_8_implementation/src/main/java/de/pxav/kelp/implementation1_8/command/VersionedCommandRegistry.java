@@ -2,6 +2,9 @@ package de.pxav.kelp.implementation1_8.command;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import de.dseelp.kommon.command.CommandDispatcher;
+import de.dseelp.kommon.command.CommandNode;
+import de.dseelp.kommon.command.ParsedResult;
 import de.pxav.kelp.core.command.*;
 import de.pxav.kelp.core.command.version.CommandRegistryVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -11,12 +14,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -30,12 +37,14 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
   private KelpConsoleSenderFactory consoleSenderFactory;
   private KelpPlayerRepository playerRepository;
   private JavaPlugin kelpPlugin;
+  private CommandDispatcher<? extends KelpCommandSender<?>> commandDispatcher;
 
   @Inject
-  public VersionedCommandRegistry(KelpConsoleSenderFactory consoleSenderFactory, KelpPlayerRepository playerRepository, JavaPlugin kelpPlugin) {
+  public VersionedCommandRegistry(KelpConsoleSenderFactory consoleSenderFactory, KelpPlayerRepository playerRepository, JavaPlugin kelpPlugin, CommandDispatcher<? extends KelpCommandSender<?>> commandDispatcher) {
     this.consoleSenderFactory = consoleSenderFactory;
     this.playerRepository = playerRepository;
     this.kelpPlugin = kelpPlugin;
+    this.commandDispatcher = commandDispatcher;
   }
 
   @Override
@@ -92,10 +101,55 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
         }
       }.setAliases(Lists.newArrayList(command.getAliases()));
 
+    registerInCommandMap(commandAnnotation.name(), bukkitCommand);
+  }
+
+  @Override
+  public void registerCommand(DeclarativeKelpCommand<? extends KelpCommandSender<?>> command, CreateDeclarativeCommand commandAnnotation) {
+    final String commandName = command.getCommandNode().getName();
+    addToDispatcher(command.getCommandNode());
+    //CommandDispatcherUtil.addToDispatcher(commandDispatcher, command.getCommandNode());
+    Command bukkitCommand = new BukkitCommand(commandName) {
+      @Override
+      public boolean execute(CommandSender sender, String label, String[] args) {
+        final ParsedResult<? extends KelpCommandSender<?>> parsed = commandDispatcher.parse(label);
+        if (parsed == null) sender.sendMessage("Failed to parse command. Please contact an admin.");
+        ExecutorType executorType = commandAnnotation.executorType();
+        KelpCommandSender<?> kelpSender;
+        boolean isConsoleSender = false;
+        if ((sender instanceof Player && executorType != ExecutorType.CONSOLE_ONLY)) {
+          kelpSender = playerRepository.getKelpPlayer((Player) sender);
+        }else if ((sender instanceof ConsoleCommandSender && executorType != ExecutorType.PLAYER_ONLY)) {
+          kelpSender = consoleSenderFactory.newKelpConsoleSender(sender);
+          isConsoleSender = true;
+        }else {
+          sender.sendMessage("Command executed with unknown CommandSender.");
+          return true;
+        }
+        try {
+          parsed.getClass().getDeclaredMethod("execute", Object.class, boolean.class).invoke(parsed, kelpSender, isConsoleSender);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+          e.printStackTrace();
+        }
+        return true;
+      }
+    }.setAliases(Collections.singletonList(commandName));
+    registerInCommandMap(commandName, bukkitCommand);
+  }
+
+  private void addToDispatcher(CommandNode<? extends KelpCommandSender<?>> node) {
+    try {
+      commandDispatcher.getClass().getDeclaredMethod("register", CommandNode.class).invoke(commandDispatcher, node);
+    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void registerInCommandMap(String name, Command bukkitCommand) {
     CommandMap commandMap = ((CraftServer) Bukkit.getServer()).getCommandMap();
 
-    if (commandMap.getCommand(commandAnnotation.name()) != null) {
-      commandMap.getCommand(commandAnnotation.name()).unregister(commandMap);
+    if (commandMap.getCommand(name) != null) {
+      commandMap.getCommand(name).unregister(commandMap);
     }
 
     try {
@@ -112,7 +166,6 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
 
     commandMap.register(kelpPlugin.getName(), bukkitCommand);
   }
-
 
 
   private boolean checkExecutorsAndExecute(CommandSender sender, String[] args, KelpCommand command, ExecutorType executorType) {
