@@ -4,7 +4,9 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.pxav.kelp.core.inventory.metadata.*;
 import de.pxav.kelp.core.version.Versioned;
+import org.bukkit.FireworkEffect;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -53,6 +55,15 @@ public class VersionedItemMetadata extends ItemMetadataVersionTemplate {
       return itemStack;
     }
 
+    if (metadata instanceof FireworkMetadata) {
+      FireworkMetadata kelpMeta = (FireworkMetadata) metadata;
+      FireworkMeta fireworkMeta = (FireworkMeta) itemStack.getItemMeta();
+      fireworkMeta.addEffects(kelpMeta.getEffects());
+      fireworkMeta.setPower(kelpMeta.getHeight());
+      itemStack.setItemMeta(fireworkMeta);
+      return itemStack;
+    }
+
     return itemStack;
   }
 
@@ -71,10 +82,15 @@ public class VersionedItemMetadata extends ItemMetadataVersionTemplate {
       SkullMeta skullMeta = (SkullMeta) itemMeta;
       SkullMetadata kelpMeta = SkullMetadata.create();
 
-
-
       kelpMeta.setSkullOwner(skullMeta.getOwner());
       return kelpMeta;
+    }
+
+    if (itemMeta instanceof FireworkMeta) {
+      FireworkMeta fireworkMeta = (FireworkMeta) itemMeta;
+      FireworkMetadata kelpMeta = FireworkMetadata.create();
+      kelpMeta.height(fireworkMeta.getPower());
+      kelpMeta.addEffect(fireworkMeta.getEffects().toArray(new FireworkEffect[fireworkMeta.getEffectsSize()]));
     }
 
     return null;
