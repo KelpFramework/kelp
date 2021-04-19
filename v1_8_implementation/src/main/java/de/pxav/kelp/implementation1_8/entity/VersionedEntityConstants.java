@@ -2,12 +2,16 @@ package de.pxav.kelp.implementation1_8.entity;
 
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
 import de.pxav.kelp.core.entity.util.PaintingType;
-import de.pxav.kelp.core.entity.version.EntitySpecificVersionTemplate;
+import de.pxav.kelp.core.entity.util.VillagerProfession;
+import de.pxav.kelp.core.entity.util.VillagerType;
+import de.pxav.kelp.core.entity.version.EntityConstantsVersionTemplate;
 import de.pxav.kelp.core.version.Versioned;
 import org.bukkit.Art;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Villager;
 
 @Versioned
-public class VersionedSpecificEntity extends EntitySpecificVersionTemplate {
+public class VersionedEntityConstants extends EntityConstantsVersionTemplate {
 
   @Override
   public PaintingType getPaintingType(Art art) {
@@ -123,6 +127,46 @@ public class VersionedSpecificEntity extends EntitySpecificVersionTemplate {
       return Art.DONKEYKONG;
     }
     return Art.ALBAN;
+  }
+
+  @Override
+  public VillagerProfession getVillagerProfession(String bukkitProfession) {
+    if (bukkitProfession.equalsIgnoreCase("FARMER")) {
+      return VillagerProfession.FARMER;
+    } else if (bukkitProfession.equalsIgnoreCase("LIBRARIAN")) {
+      return VillagerProfession.LIBRARIAN;
+    } if (bukkitProfession.equalsIgnoreCase("PRIEST")) {
+      return VillagerProfession.CLERIC;
+    } if (bukkitProfession.equalsIgnoreCase("BLACKSMITH")) {
+      return VillagerProfession.TOOL_SMITH;
+    } if (bukkitProfession.equalsIgnoreCase("BUTCHER")) {
+      return VillagerProfession.BUTCHER;
+    }
+    return VillagerProfession.NONE;
+  }
+
+  @Override
+  public String getVillagerProfession(VillagerProfession villagerProfession) {
+    if (villagerProfession == VillagerProfession.BUTCHER) {
+      return "BUTCHER";
+    } else if (villagerProfession == VillagerProfession.CLERIC) {
+      return "PRIEST";
+    } else if (villagerProfession == VillagerProfession.FARMER) {
+      return "FARMER";
+    } else if (villagerProfession == VillagerProfession.LIBRARIAN) {
+      return "LIBRARIAN";
+    }
+    return "BLACKSMITH";
+  }
+
+  @Override
+  public VillagerType getVillagerType(String bukkitType) {
+    return VillagerType.NONE;
+  }
+
+  @Override
+  public String getVillagerType(VillagerType villagerType) {
+    return "NONE";
   }
 
   @Override
