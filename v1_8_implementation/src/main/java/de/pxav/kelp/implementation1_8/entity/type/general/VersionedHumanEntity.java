@@ -2,51 +2,85 @@ package de.pxav.kelp.implementation1_8.entity.type.general;
 
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.general.HumanEntity;
+import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
+import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.world.KelpLocation;
-import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
 public class VersionedHumanEntity<T extends HumanEntity<T>>
   extends VersionedMobileEntity<T>
   implements HumanEntity<T> {
 
-  public VersionedHumanEntity(Entity entityHandle, KelpEntityType entityType, Location initialLocation) {
-    super(entityHandle, entityType, initialLocation);
+  private EntityHuman humanHandle;
+  private CraftHumanEntity craftHumanEntity;
+  private ReflectionUtil reflectionUtil;
+
+  public VersionedHumanEntity(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
+    this.humanHandle = (EntityHuman) entityHandle;
+    this.craftHumanEntity = (CraftHumanEntity) entityHandle.getBukkitEntity();
+    this.reflectionUtil = reflectionUtil;
   }
 
   @Override
   public GameMode getGameMode() {
-    return null;
+    return humanHandle.getBukkitEntity().getGameMode();
   }
 
   @Override
-  public T setGameMode() {
-    return null;
+  public T setGameMode(GameMode gameMode) {
+    humanHandle.getBukkitEntity().setGameMode(gameMode);
+    return (T) this;
   }
 
   @Override
   public KelpLocation getCurrentBedLocation() {
-    return null;
+    return KelpLocation.from(
+      humanHandle.getWorld().getWorldData().getName(),
+      humanHandle.getBed().getX(),
+      humanHandle.getBed().getY(),
+      humanHandle.getBed().getZ());
   }
 
   @Override
   public int getExpToLevel() {
-    return 0;
+    return craftHumanEntity.getExpToLevel();
   }
 
   @Override
   public T wakeUp() {
-    return null;
+    humanHandle.sleepTicks = 0;
+    return (T) this;
   }
 
   @Override
   public T wakeUpAndSetSpawnLocation() {
-    return null;
+    humanHandle.world.everyoneSleeping();
+    humanHandle.sleepTicks = 0;
+    return (T) this;
   }
 
   @Override
   public T sleep(KelpLocation bedLocation) {
-    return null;
+    BlockPosition bedPosition = new BlockPosition(
+      bedLocation.getX(),
+      bedLocation.getY(),
+      bedLocation.getZ());
+
+    PacketPlayOutBed bedPacket = new PacketPlayOutBed();
+    reflectionUtil.setValue(bedPacket, "a", getEntityId());
+    reflectionUtil.setValue(bedPacket, "b", bedPosition);
+
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      ((CraftPlayer)player).getHandle().playerConnection.sendPacket(bedPacket);
+    }
+    return (T) this;
   }
+
 }
