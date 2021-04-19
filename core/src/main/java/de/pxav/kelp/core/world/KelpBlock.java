@@ -197,6 +197,45 @@ public class KelpBlock {
   }
 
   /**
+   * Gets the block that is directly attached to this block
+   * to the given face. If you pass {@link KelpBlockFace#UP} for example, then
+   * the block above this block will be returned, and so on.
+   * This is similar to {@link #getRelative(CardinalDirection)} with the main
+   * difference that you can get the block above and below the current block
+   * as you are independent from cardinal directions.
+   *
+   * @param face The face of the block you want to get.
+   * @return The block relative to this block in the given direction.
+   */
+  public KelpBlock getRelative(KelpBlockFace face) {
+    switch (face) {
+      case NORTH:
+        return getNorthernBlock();
+      case NORTH_EAST:
+        return getNorthEasternBlock();
+      case EAST:
+        return getEasternBlock();
+      case SOUTH_EAST:
+        return getSouthEasternBlock();
+      case SOUTH:
+        return getSouthernBlock();
+      case SOUTH_WEST:
+        return getSouthWesternBlock();
+      case WEST:
+        return getWesternBlock();
+      case NORTH_WEST:
+        return getNorthWesternBlock();
+      case UP:
+        return getBlockAbove();
+      case DOWN:
+        return getBlockBelow();
+      case SELF:
+        return this;
+    }
+    return null;
+  }
+
+  /**
    * Gets the block in front of this block relative to the given direction.
    *
    * @param direction A {@link Vector} indicating the direction
