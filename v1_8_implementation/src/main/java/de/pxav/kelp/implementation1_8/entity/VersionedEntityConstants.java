@@ -1,6 +1,7 @@
 package de.pxav.kelp.implementation1_8.entity;
 
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
+import de.pxav.kelp.core.entity.util.CatType;
 import de.pxav.kelp.core.entity.util.PaintingType;
 import de.pxav.kelp.core.entity.util.VillagerProfession;
 import de.pxav.kelp.core.entity.util.VillagerType;
@@ -167,6 +168,30 @@ public class VersionedEntityConstants extends EntityConstantsVersionTemplate {
   @Override
   public String getVillagerType(VillagerType villagerType) {
     return "NONE";
+  }
+
+  @Override
+  public CatType getCatType(String bukkitCatType) {
+    if (bukkitCatType.equalsIgnoreCase("BLACK_CAT")) {
+      return CatType.ALL_BLACK;
+    } else if (bukkitCatType.equalsIgnoreCase("RED_CAT")) {
+      return CatType.RED;
+    } else if (bukkitCatType.equalsIgnoreCase("SIAMESE_CAT")) {
+      return CatType.SIAMESE;
+    }
+    return CatType.ALL_BLACK;
+  }
+
+  @Override
+  public String getCatType(CatType catType) {
+    if (catType == CatType.ALL_BLACK) {
+      return "BLACK_CAT";
+    } else if (catType == CatType.RED) {
+      return "RED_CAT";
+    } else if (catType == CatType.SIAMESE) {
+      return "SIAMESE_CAT";
+    }
+    return null;
   }
 
   @Override

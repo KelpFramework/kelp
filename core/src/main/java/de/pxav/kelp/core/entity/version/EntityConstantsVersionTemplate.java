@@ -2,6 +2,7 @@ package de.pxav.kelp.core.entity.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
+import de.pxav.kelp.core.entity.util.CatType;
 import de.pxav.kelp.core.entity.util.PaintingType;
 import de.pxav.kelp.core.entity.util.VillagerProfession;
 import de.pxav.kelp.core.entity.util.VillagerType;
@@ -22,6 +23,10 @@ public abstract class EntityConstantsVersionTemplate {
   public abstract VillagerType getVillagerType(String bukkitType);
 
   public abstract String getVillagerType(VillagerType villagerType);
+
+  public abstract CatType getCatType(String bukkitCatType);
+
+  public abstract String getCatType(CatType catType);
 
   public abstract <T extends KelpProjectile<?>> T launchProjectile();
 
