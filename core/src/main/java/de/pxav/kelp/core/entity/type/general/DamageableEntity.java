@@ -10,12 +10,12 @@ public interface DamageableEntity<T extends DamageableEntity<?>> extends KelpEnt
 
   double getAbsorptionAmount();
 
-  T setAbsorptionAmount(int absorptionAmount);
+  T setAbsorptionAmount(double absorptionAmount);
 
-  int getHealth();
+  double getHealth();
 
-  int getMaxHealth();
+  double getMaxHealth();
 
-  T setHealth(int health);
+  T setHealth(double health);
 
 }
