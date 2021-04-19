@@ -16,7 +16,12 @@ public interface ZombieEntity extends AgeableEntity<ZombieEntity>, MonsterEntity
   }
 
   @Override
-  default int getAttackDamage(Difficulty difficulty) {
+  default KelpEntityType getType() {
+    return KelpEntityType.ZOMBIE;
+  }
+
+  @Override
+  default double getAttackDamage(Difficulty difficulty) {
     if (difficulty == Difficulty.EASY) {
       return 4;
     }
