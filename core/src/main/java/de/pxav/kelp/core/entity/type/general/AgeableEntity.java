@@ -1,16 +1,31 @@
 package de.pxav.kelp.core.entity.type.general;
 
-public interface AgeableEntity<T extends AgeableEntity<?>> {
+public interface AgeableEntity<T extends AgeableEntity<?>> extends MobileEntity<T> {
 
-  T makeBaby();
+  boolean isAgeLocked();
+
+  T setAgeLocked(boolean ageLocked);
+
+  default T makeBaby() {
+    setBaby(true);
+    return (T) this;
+  }
 
   T setBaby(boolean baby);
 
-  T setAdult(boolean adult);
+  default T setAdult(boolean adult) {
+    setBaby(!adult);
+    return (T) this;
+  }
 
-  T makeAdult();
+  default T makeAdult() {
+    setAdult(true);
+    return (T) this;
+  }
 
-  boolean isAdult();
+  default boolean isAdult() {
+    return !isBaby();
+  }
 
   boolean isBaby();
 
