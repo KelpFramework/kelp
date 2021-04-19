@@ -10,6 +10,6 @@ public interface MobileEntity<T extends MobileEntity<?>> extends LivingKelpEntit
 
   boolean isAware();
 
-  boolean setAware(boolean aware);
+  T setAware(boolean aware);
 
 }
