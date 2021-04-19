@@ -3,8 +3,9 @@ package de.pxav.kelp.core.inventory.type;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.common.ConcurrentSetMultimap;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.version.PlayerInventoryVersionTemplate;
+import de.pxav.kelp.core.inventory.version.StorageInventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
+import de.pxav.kelp.core.inventory.widget.SimplePagination;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.player.KelpPlayer;
 
@@ -24,38 +25,7 @@ import java.util.UUID;
  *
  * @author pxav
  */
-public class PlayerInventory {
-
-  // the version template used for player inventory manipulation
-  private PlayerInventoryVersionTemplate versionTemplate;
-
-  // the owner of this inventory
-  private KelpPlayer player;
-
-  // all widgets currently stored by all players on the server.
-  // the uuid represents the player uuid who owns the widget.
-  private static ConcurrentSetMultimap<UUID, SimpleWidget> simpleWidgets = ConcurrentSetMultimap.create();
-  private static ConcurrentSetMultimap<UUID, GroupedWidget> groupedWidgets = ConcurrentSetMultimap.create();
-
-  /**
-   * Gets the inventory of a specific {@link KelpPlayer}.
-   * Alternatively, you can use {@link KelpPlayer#getInventory()} to get
-   * the inventory directly from the kelp player class.
-   *
-   * @param player The player you want to get the inventory of.
-   * @return The {@link PlayerInventory} of the given player.
-   */
-  public static PlayerInventory of(KelpPlayer player) {
-    return new PlayerInventory(
-      player,
-      KelpPlugin.getInjector().getInstance(PlayerInventoryVersionTemplate.class)
-    );
-  }
-
-  private PlayerInventory(KelpPlayer player, PlayerInventoryVersionTemplate versionTemplate) {
-    this.player = player;
-    this.versionTemplate = versionTemplate;
-  }
+public interface PlayerInventory extends StorageInventory<PlayerInventory> {
 
   /**
    * Gets all items stored in this player inventory. This includes
@@ -63,9 +33,7 @@ public class PlayerInventory {
    *
    * @return A set of all items that are currently in the player's inventory.
    */
-  public Set<KelpItem> getItems() {
-    return versionTemplate.getItems(player.getBukkitPlayer());
-  }
+  Set<KelpItem> getItems();
 
   /**
    * Gets an item at a specific slot. The slot count starts at the
@@ -77,9 +45,7 @@ public class PlayerInventory {
    * @param slot The slot of the item you want to get.
    * @return The item stored at the given slot in the player inventory.
    */
-  public KelpItem getItemAt(int slot) {
-    return versionTemplate.getItemAt(player.getBukkitPlayer(), slot);
-  }
+  KelpItem getItemAt(int slot);
 
   /**
    * Gets all items stored in the player's hotbar. The hotbar
@@ -88,9 +54,7 @@ public class PlayerInventory {
    *
    * @return A set of all items stored in the player's hotbar.
    */
-  public Set<KelpItem> getHotBarItems() {
-    return versionTemplate.getHotBarItems(player.getBukkitPlayer());
-  }
+  Set<KelpItem> getHotBarItems();
 
   /**
    * Sets the helmet the player is wearing to the given item.
@@ -102,10 +66,7 @@ public class PlayerInventory {
    *               a normal armor helmet or any banner, head or even some blocks.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory setHelmet(KelpItem helmet) {
-    versionTemplate.setHelmet(player.getBukkitPlayer(), helmet);
-    return this;
-  }
+  PlayerInventory setHelmet(KelpItem helmet);
 
   /**
    * Sets the chest plate of the player owning this inventory.
@@ -115,10 +76,7 @@ public class PlayerInventory {
    * @param chestPlate The chest plate item you want to set.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory setChestPlate(KelpItem chestPlate) {
-    versionTemplate.setChestPlate(player.getBukkitPlayer(), chestPlate);
-    return this;
-  }
+  PlayerInventory setChestPlate(KelpItem chestPlate);
 
   /**
    * Sets the leggings of the player owning this inventory.
@@ -128,10 +86,7 @@ public class PlayerInventory {
    * @param leggings The leggings item you want to set.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory setLeggings(KelpItem leggings) {
-    versionTemplate.setLeggings(player.getBukkitPlayer(), leggings);
-    return this;
-  }
+  PlayerInventory setLeggings(KelpItem leggings);
 
   /**
    * Sets the boots of the player owning this inventory.
@@ -141,10 +96,7 @@ public class PlayerInventory {
    * @param boots The chest plate item you want to set.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory setBoots(KelpItem boots) {
-    versionTemplate.setBoots(player.getBukkitPlayer(), boots);
-    return this;
-  }
+  PlayerInventory setBoots(KelpItem boots);
 
   /**
    * Gets the helmet the player is currently wearing.
@@ -156,9 +108,7 @@ public class PlayerInventory {
    *
    * @return The item representing the player's helmet.
    */
-  public KelpItem getHelmet() {
-    return versionTemplate.getHelmet(player.getBukkitPlayer());
-  }
+  KelpItem getHelmet();
 
   /**
    * Gets the chest plate the player is currently wearing.
@@ -167,9 +117,7 @@ public class PlayerInventory {
    *
    * @return The item representing the player's chest plate.
    */
-  public KelpItem getChestPlate() {
-    return versionTemplate.getChestPlate(player.getBukkitPlayer());
-  }
+  KelpItem getChestPlate();
 
   /**
    * Gets the leggings the player is currently wearing.
@@ -178,9 +126,7 @@ public class PlayerInventory {
    *
    * @return The item representing the player's chest plate.
    */
-  public KelpItem getLeggings() {
-    return versionTemplate.getLeggings(player.getBukkitPlayer());
-  }
+  KelpItem getLeggings();
 
   /**
    * Gets the boots the player is currently wearing.
@@ -189,9 +135,7 @@ public class PlayerInventory {
    *
    * @return The item representing the player's chest plate.
    */
-  public KelpItem getBoots() {
-    return versionTemplate.getBoots(player.getBukkitPlayer());
-  }
+  KelpItem getBoots();
 
   /**
    * Stores an item in the player inventory at the given slot location.
@@ -203,10 +147,7 @@ public class PlayerInventory {
    * @param item The item to store at the given slot.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory setItem(int slot, KelpItem item) {
-    versionTemplate.setItem(player.getBukkitPlayer(), slot, item);
-    return this;
-  }
+  PlayerInventory setItem(int slot, KelpItem item);
 
   /**
    * Adds a new item to the player's inventory.
@@ -219,10 +160,7 @@ public class PlayerInventory {
    * @param item The item to add.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory addItem(KelpItem item) {
-    versionTemplate.addItem(player.getBukkitPlayer(), item);
-    return this;
-  }
+  PlayerInventory addItem(KelpItem item);
 
   /**
    * Gets the item that is currently stored in the player's
@@ -232,9 +170,7 @@ public class PlayerInventory {
    *
    * @return The item the player is holding right now.
    */
-  public KelpItem getItemInHand() {
-    return versionTemplate.getItemInHand(player.getBukkitPlayer());
-  }
+  KelpItem getItemInHand();
 
   /**
    * Sets the item in the player's main hand (the player's right hand).
@@ -244,10 +180,7 @@ public class PlayerInventory {
    * @param item The item to set in the player's main hand.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory setItemInHand(KelpItem item) {
-    versionTemplate.setItemInHand(player.getBukkitPlayer(), item);
-    return this;
-  }
+  PlayerInventory setItemInHand(KelpItem item);
 
   /**
    * Gets the item that is currently in the player's off hand
@@ -261,9 +194,7 @@ public class PlayerInventory {
    *
    * @return The item that is stored in the player's off hand right now.
    */
-  public KelpItem getItemInOffHand() {
-    return versionTemplate.getItemInOffHand(player.getBukkitPlayer());
-  }
+  KelpItem getItemInOffHand();
 
   /**
    * Sets the item in the player's off hand (the player's left hand).
@@ -275,183 +206,13 @@ public class PlayerInventory {
    * @param item The item to set in the player's off hand.
    * @return An instance of the current inventory for fluent builder design.
    */
-  public PlayerInventory setItemInOffHand(KelpItem item) {
-    versionTemplate.setItemInOffHand(player.getBukkitPlayer(), item);
-    return this;
-  }
-
-  /**
-   * Adds a new {@link SimpleWidget} to the player's inventory.
-   * This method does not immediately render the widget, but only
-   * adds it to the cache. To make the widget appear, call
-   * {@link #updateWidgets()} first.
-   *
-   * @param simpleWidget The simple widget you want to add to the inventory.
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory addWidget(SimpleWidget simpleWidget) {
-    simpleWidgets.put(player.getUUID(), simpleWidget);
-    return this;
-  }
-
-  /**
-   * Adds a new {@link GroupedWidget} to the player's inventory.
-   * This method does not immediately render the widget, but only
-   * adds it to the cache. To make the widget appear, call
-   * {@link #updateWidgets()} first.
-   *
-   * @param groupedWidget The grouped widget you want to add to the inventory.
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory addWidget(GroupedWidget groupedWidget) {
-    groupedWidgets.put(player.getUUID(), groupedWidget);
-    return this;
-  }
-
-  /**
-   * Removes all {@link SimpleWidget simple widgets} of a certain type.
-   * This method removes the widget from the cache as well as the inventory,
-   * so that no items are there anymore.
-   *
-   * @param widgetClass The class of the widget type you want to remove.
-   *                    If you pass {@code ToggleableWidget.class} here,
-   *                    all {@link de.pxav.kelp.core.inventory.widget.ToggleableWidget ToggleableWidgets}
-   *                    will be removed from the inventory.
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory removeSimpleWidget(Class<? extends SimpleWidget> widgetClass) {
-    simpleWidgets.get(player.getUUID()).forEach(widget -> {
-      if (widgetClass.getName().equalsIgnoreCase(widget.getClass().getName())) {
-        removeWidget(widget);
-      }
-    });
-    return this;
-  }
-
-  /**
-   * Removes all {@link GroupedWidget grouped widgets} of a certain type.
-   * This method removes the widget from the cache as well as the inventory,
-   * so that no items are there anymore.
-   *
-   * @param widgetClass The class of the widget type you want to remove.
-   *                    If you pass {@code Pagination.class} here,
-   *                    all {@link de.pxav.kelp.core.inventory.widget.Pagination Paginations}
-   *                    will be removed from the inventory.
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory removeGroupedWidget(Class<? extends GroupedWidget> widgetClass) {
-    groupedWidgets.get(player.getUUID()).forEach(widget -> {
-      if (widgetClass.getName().equalsIgnoreCase(widget.getClass().getName())) {
-        removeWidget(widget);
-      }
-    });
-    return this;
-  }
-
-  /**
-   * Removes a specific {@link SimpleWidget} from the inventory.
-   * This method removes the widget from the cache as well as
-   * the inventory itself, so there won't be any items rendered by
-   * this widget anymore.
-   *
-   * @param widget The object of the widget you want to remove.
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory removeWidget(SimpleWidget widget) {
-    player.getBukkitPlayer().getInventory().clear(widget.getCoveredSlot());
-    widget.onRemove();
-    simpleWidgets.remove(player.getUUID(), widget);
-    return this;
-  }
-
-  /**
-   * Removes a specific {@link GroupedWidget} from the inventory.
-   * This method removes the widget from the cache as well as
-   * the inventory itself, so there won't be any items rendered by
-   * this widget anymore.
-   *
-   * @param widget The object of the widget you want to remove.
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory removeWidget(GroupedWidget widget) {
-    widget.getCoveredSlots().forEach(slot -> player.getBukkitPlayer().getInventory().clear(slot));
-    widget.onRemove();
-    groupedWidgets.remove(player.getUUID(), widget);
-    return this;
-  }
-
-  /**
-   * Removes all widgets from the player's inventory.
-   * This will not only remove them from the cache, but also from
-   * the visible inventory itself.
-   *
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory removeAllWidgets() {
-    simpleWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
-    groupedWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
-    return this;
-  }
-
-  /**
-   * Updates all widgets inside this player inventory.
-   *
-   * This is also equivalent to the {@link KelpInventory#render(KelpPlayer) render method} you
-   * already know from KelpInventories, so call this method even if you
-   * have just put widgets into the inventory for the first time.
-   *
-   * @return An instance of the current inventory for fluent builder design.
-   */
-  public PlayerInventory updateWidgets() {
-    for (SimpleWidget current : simpleWidgets.getOrEmpty(player.getUUID())) {
-      if (!current.isStateful()) {
-        continue;
-      }
-
-      player.getBukkitPlayer().getInventory().clear(current.getCoveredSlot());
-
-      KelpItem item = current.render();
-
-      // if items are not explicitly stated as interactable
-      // cancel interactions by default
-      if (!item.hasTagKey("interactionAllowed")) {
-        item.cancelInteractions();
-      }
-
-      setItem(item.getSlot(), item);
-    }
-
-    for (GroupedWidget current : groupedWidgets.getOrEmpty(player.getUUID())) {
-      if (!current.isStateful()) {
-        continue;
-      }
-
-      for (Integer slot : current.getCoveredSlots()) {
-        player.getBukkitPlayer().getInventory().clear(slot);
-      }
-
-      current.render(player).forEach(item -> {
-
-        // if items are not explicitly stated as interactable
-        // cancel interactions by default
-        if (!item.hasTagKey("interactionAllowed")) {
-          item.cancelInteractions();
-        }
-
-        setItem(item.getSlot(), item);
-      });
-    }
-
-    return this;
-  }
+  PlayerInventory setItemInOffHand(KelpItem item);
 
   /**
    * Gets the player owning this inventory.
    *
    * @return The player owning this inventory.
    */
-  public KelpPlayer getPlayer() {
-    return player;
-  }
+  KelpPlayer getPlayer();
 
 }
