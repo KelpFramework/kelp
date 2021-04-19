@@ -2,6 +2,7 @@ package de.pxav.kelp.implementation1_8.entity;
 
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
 import org.bukkit.Location;
@@ -24,15 +25,18 @@ import java.util.UUID;
 public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
 
   protected net.minecraft.server.v1_8_R3.Entity entityHandle;
+  protected EntityTypeVersionTemplate entityTypeVersionTemplate;
   private final Location location;
   private final KelpEntityType entityType;
 
   public VersionedEntity(net.minecraft.server.v1_8_R3.Entity entityHandle,
-                              KelpEntityType entityType,
-                              Location initialLocation) {
+                         KelpEntityType entityType,
+                         Location initialLocation,
+                         EntityTypeVersionTemplate entityTypeVersionTemplate) {
     this.entityHandle = entityHandle;
     this.entityType = entityType;
     this.location = initialLocation;
+    this.entityTypeVersionTemplate = entityTypeVersionTemplate;
   }
 
   @Override
