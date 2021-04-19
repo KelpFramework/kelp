@@ -1,6 +1,6 @@
 package de.pxav.kelp.core.entity.type.general;
 
-public interface BreedableEntity<T extends BreedableEntity<?>> extends MobileEntity<T> {
+public interface BreedableAnimalEntity<T extends BreedableAnimalEntity<?>> extends AnimalEntity<T> {
 
   boolean canBreed();
 
