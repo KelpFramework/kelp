@@ -1,21 +1,21 @@
 package de.pxav.kelp.core.entity.type;
 
-import de.pxav.kelp.core.entity.KelpEntity;
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.entity.KelpEntityFactory;
 import de.pxav.kelp.core.entity.KelpEntityType;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
-import org.bukkit.Location;
+import de.pxav.kelp.core.entity.type.general.MonsterEntity;
+import de.pxav.kelp.core.world.KelpLocation;
 
 /**
  * A class description goes here.
  *
  * @author pxav
  */
-public class GuardianEntity extends KelpEntity {
+public interface GuardianEntity extends MonsterEntity<GuardianEntity> {
 
-  public GuardianEntity() {}
-
-  public GuardianEntity(EntityVersionTemplate entityVersionTemplate, Object entity, int entityId, Location location) {
-    super(entity, KelpEntityType.GUARDIAN, location, entityId, entityVersionTemplate);
+  static ElderGuardianEntity create(KelpLocation location) {
+    return (ElderGuardianEntity) KelpPlugin.getInjector().getInstance(KelpEntityFactory.class)
+      .newKelpEntity(KelpEntityType.ELDER_GUARDIAN, location.getBukkitLocation());
   }
 
 }
