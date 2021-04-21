@@ -4,7 +4,6 @@ import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**
