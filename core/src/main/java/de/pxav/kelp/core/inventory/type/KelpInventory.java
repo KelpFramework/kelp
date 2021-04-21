@@ -1,19 +1,15 @@
 package de.pxav.kelp.core.inventory.type;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.inventory.widget.Widget;
 import de.pxav.kelp.core.player.KelpPlayer;
-import org.bukkit.Material;
-import org.bukkit.block.Dispenser;
 import org.bukkit.inventory.Inventory;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents the basis for every GUI inventory you can build
