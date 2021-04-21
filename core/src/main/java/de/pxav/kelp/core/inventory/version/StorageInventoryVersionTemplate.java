@@ -14,10 +14,10 @@ import java.util.Set;
  * @author pxav
  */
 @KelpVersionTemplate
-public abstract class PlayerInventoryVersionTemplate {
+public abstract class StorageInventoryVersionTemplate {
 
   /**
-   * Gets all items stored in this player inventory. This includes
+   * Gets all items stored in this inventory. This includes
    * all slots (main storage, armor and hot bar).
    *
    * @param player The player to get the items of.
