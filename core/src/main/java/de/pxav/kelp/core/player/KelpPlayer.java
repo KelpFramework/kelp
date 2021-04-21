@@ -2,6 +2,7 @@ package de.pxav.kelp.core.player;
 
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.type.general.HumanEntity;
 import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
