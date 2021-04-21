@@ -2,11 +2,9 @@ package de.pxav.kelp.core.entity.type;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.KelpEntity;
-import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.util.ItemDropType;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import org.bukkit.Location;
 import org.bukkit.entity.Item;
 
 /**
@@ -14,36 +12,18 @@ import org.bukkit.entity.Item;
  *
  * @author pxav
  */
-public class DroppedItemEntity extends KelpEntity {
+public interface DroppedItemEntity extends KelpEntity<DroppedItemEntity> {
 
-  private KelpItem item;
-  private ItemDropType itemDropType;
-
-  public static DroppedItemEntity from(Item item) {
+  static DroppedItemEntity from(Item item) {
     return (DroppedItemEntity) KelpPlugin.getInjector().getInstance(EntityTypeVersionTemplate.class).getKelpEntity(item);
   }
 
-  public DroppedItemEntity() {}
+  KelpItem getItem();
 
-  public DroppedItemEntity(EntityVersionTemplate entityVersionTemplate, Object entity, int entityId, Location location, KelpItem item) {
-    super(entity, KelpEntityType.DROPPED_ITEM, location, entityId, entityVersionTemplate);
-    this.item = item;
-  }
+  void setItem(KelpItem item);
 
-  public KelpItem getItem() {
-    return item;
-  }
+  ItemDropType getItemDropType();
 
-  public void setItem(KelpItem item) {
-    this.item = item;
-  }
-
-  public ItemDropType getItemDropType() {
-    return itemDropType;
-  }
-
-  public void setItemDropType(ItemDropType itemDropType) {
-    this.itemDropType = itemDropType;
-  }
+  void setItemDropType(ItemDropType itemDropType);
 
 }
