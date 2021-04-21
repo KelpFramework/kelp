@@ -14,8 +14,8 @@ import org.bukkit.entity.Entity;
 @KelpVersionTemplate
 public abstract class EntityTypeVersionTemplate {
 
-  public abstract KelpEntity newKelpEntity(KelpEntityType entityType, Location location);
+  public abstract KelpEntity<?> newKelpEntity(KelpEntityType entityType, Location location);
 
-  public abstract KelpEntity getKelpEntity(Entity bukkitEntity);
+  public abstract KelpEntity<?> getKelpEntity(Entity bukkitEntity);
 
 }
