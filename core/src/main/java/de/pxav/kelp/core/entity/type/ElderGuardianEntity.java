@@ -1,8 +1,12 @@
 package de.pxav.kelp.core.entity.type;
 
-import de.pxav.kelp.core.entity.KelpEntity;
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.entity.KelpEntityFactory;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.type.general.MonsterEntity;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
+import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.Location;
 
 /**
@@ -10,12 +14,11 @@ import org.bukkit.Location;
  *
  * @author pxav
  */
-public class ElderGuardianEntity extends KelpEntity {
+public interface ElderGuardianEntity extends MonsterEntity<ElderGuardianEntity> {
 
-  public ElderGuardianEntity() {}
-
-  public ElderGuardianEntity(EntityVersionTemplate entityVersionTemplate, Object entity, int entityId, Location location) {
-    super(entity, KelpEntityType.ELDER_GUARDIAN, location, entityId, entityVersionTemplate);
+  static ElderGuardianEntity create(KelpLocation location) {
+    return (ElderGuardianEntity) KelpPlugin.getInjector().getInstance(KelpEntityFactory.class)
+      .newKelpEntity(KelpEntityType.ELDER_GUARDIAN, location.getBukkitLocation());
   }
 
 }
