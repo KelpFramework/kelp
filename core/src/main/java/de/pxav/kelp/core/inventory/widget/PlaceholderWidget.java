@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
-import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.Arrays;
 import java.util.Collection;
