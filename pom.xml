@@ -51,7 +51,7 @@
   <scm>
     <connection>scm:git:git://github.com/KelpFramework/kelp.git</connection>
     <developerConnection>scm:git:ssh://github.com:KelpFramework/kelp.git</developerConnection>
-    <url>http://github.com/KelpFramework/kelp/tree/master</url>
+    <url>https://github.com/KelpFramework/kelp/tree/master</url>
   </scm>
 
   <modules>
