@@ -7,16 +7,16 @@
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.3</version>
+  <version>0.3.4</version>
 
   <name>Kelp</name>
   <description>A cross-version spigot framework to avoid boilerplate code and make your plugin compatible with multiple spigot versions easily</description>
-  <url>https://www.github.com/PXAV/kelp</url>
+  <url>https://www.github.com/KelpFramework/kelp</url>
 
   <licenses>
     <license>
       <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <url>https://www.opensource.org/licenses/mit-license.php</url>
     </license>
   </licenses>
 
@@ -41,12 +41,17 @@
       <organization>com.github.shatuxy</organization>
       <organizationUrl>https://www.github.com/Shatuxy</organizationUrl>
     </developer>
+    <developer>
+      <name>DSeeLP</name>
+      <organization>com.github.dseelp</organization>
+      <organizationUrl>https://www.github.com/DSeeLP</organizationUrl>
+    </developer>
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/PXAV/kelp.git</connection>
-    <developerConnection>scm:git:ssh://github.com:PXAV/kelp.git</developerConnection>
-    <url>http://github.com/PXAV/kelp/tree/master</url>
+    <connection>scm:git:git://github.com/KelpFramework/kelp.git</connection>
+    <developerConnection>scm:git:ssh://github.com:KelpFramework/kelp.git</developerConnection>
+    <url>https://github.com/KelpFramework/kelp/tree/master</url>
   </scm>
 
   <modules>
@@ -59,6 +64,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <kotlin.version>1.4.32</kotlin.version>
   </properties>
 
   <dependencyManagement>
