@@ -4,6 +4,7 @@ import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.general.TameableAnimal;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
+import de.pxav.kelp.core.reflect.ReflectionUtil;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityTameableAnimal;
 import org.bukkit.Location;
@@ -13,8 +14,12 @@ public class VersionedTameableAnimal<T extends TameableAnimal<T>> extends Versio
 
   private EntityTameableAnimal tameableHandle;
 
-  public VersionedTameableAnimal(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
+  public VersionedTameableAnimal(Entity entityHandle,
+                                 KelpEntityType entityType,
+                                 Location initialLocation,
+                                 EntityTypeVersionTemplate entityTypeVersionTemplate,
+                                 ReflectionUtil reflectionUtil) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
     this.tameableHandle = (EntityTameableAnimal) entityHandle;
   }
 

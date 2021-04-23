@@ -6,6 +6,7 @@ import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
+import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.implementation1_8.entity.type.VersionedSheep;
 import net.minecraft.server.v1_8_R3.Entity;
@@ -23,11 +24,15 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
 
   private EntityVersionTemplate entityVersionTemplate;
   private LivingEntityVersionTemplate livingEntityVersionTemplate;
+  private ReflectionUtil reflectionUtil;
 
   @Inject
-  public VersionedEntityType(EntityVersionTemplate entityVersionTemplate, LivingEntityVersionTemplate livingEntityVersionTemplate) {
+  public VersionedEntityType(EntityVersionTemplate entityVersionTemplate,
+                             LivingEntityVersionTemplate livingEntityVersionTemplate,
+                             ReflectionUtil reflectionUtil) {
     this.entityVersionTemplate = entityVersionTemplate;
     this.livingEntityVersionTemplate = livingEntityVersionTemplate;
+    this.reflectionUtil = reflectionUtil;
   }
 
   @Override
@@ -56,7 +61,7 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
 //        break;
       case SHEEP:
         entity = craftWorld.createEntity(location, Sheep.class);
-        output = new VersionedSheep(entity, KelpEntityType.SHEEP, location, this);
+        output = new VersionedSheep(entity, KelpEntityType.SHEEP, location, this, reflectionUtil);
     }
 
 //    if (entityType != KelpEntityType.DROPPED_ITEM) {
