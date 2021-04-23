@@ -2,7 +2,7 @@ package de.pxav.kelp.core.inventory.type;
 
 import de.pxav.kelp.core.inventory.item.KelpItem;
 
-public interface SimpleEntityEquipment extends StorageInventory<SimpleEntityEquipment> {
+public interface SimpleEntityEquipment {
 
   /**
    * Sets the helmet the player is wearing to the given item.
@@ -14,7 +14,7 @@ public interface SimpleEntityEquipment extends StorageInventory<SimpleEntityEqui
    *               a normal armor helmet or any banner, head or even some blocks.
    * @return An instance of the current inventory for fluent builder design.
    */
-  PlayerInventory setHelmet(KelpItem helmet);
+  SimpleEntityEquipment setHelmet(KelpItem helmet);
 
   /**
    * Sets the chest plate of the player owning this inventory.
@@ -24,7 +24,7 @@ public interface SimpleEntityEquipment extends StorageInventory<SimpleEntityEqui
    * @param chestPlate The chest plate item you want to set.
    * @return An instance of the current inventory for fluent builder design.
    */
-  PlayerInventory setChestPlate(KelpItem chestPlate);
+  SimpleEntityEquipment setChestPlate(KelpItem chestPlate);
 
   /**
    * Sets the leggings of the player owning this inventory.
@@ -34,7 +34,7 @@ public interface SimpleEntityEquipment extends StorageInventory<SimpleEntityEqui
    * @param leggings The leggings item you want to set.
    * @return An instance of the current inventory for fluent builder design.
    */
-  PlayerInventory setLeggings(KelpItem leggings);
+  SimpleEntityEquipment setLeggings(KelpItem leggings);
 
   /**
    * Sets the boots of the player owning this inventory.
@@ -44,7 +44,7 @@ public interface SimpleEntityEquipment extends StorageInventory<SimpleEntityEqui
    * @param boots The chest plate item you want to set.
    * @return An instance of the current inventory for fluent builder design.
    */
-  PlayerInventory setBoots(KelpItem boots);
+  SimpleEntityEquipment setBoots(KelpItem boots);
 
   /**
    * Gets the helmet the player is currently wearing.
@@ -103,7 +103,7 @@ public interface SimpleEntityEquipment extends StorageInventory<SimpleEntityEqui
    * @param item The item to set in the player's main hand.
    * @return An instance of the current inventory for fluent builder design.
    */
-  PlayerInventory setItemInHand(KelpItem item);
+  SimpleEntityEquipment setItemInHand(KelpItem item);
 
   /**
    * Gets the item that is currently in the player's off hand
@@ -129,6 +129,6 @@ public interface SimpleEntityEquipment extends StorageInventory<SimpleEntityEqui
    * @param item The item to set in the player's off hand.
    * @return An instance of the current inventory for fluent builder design.
    */
-  PlayerInventory setItemInOffHand(KelpItem item);
+  SimpleEntityEquipment setItemInOffHand(KelpItem item);
 
 }
