@@ -4,9 +4,6 @@ import com.google.inject.Inject;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.entity.KelpEntityType;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
-import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
-import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.implementation1_8.entity.type.VersionedSheep;
 import net.minecraft.server.v1_8_R3.Entity;
@@ -22,14 +19,9 @@ import org.bukkit.entity.Sheep;
 @Versioned
 public class VersionedEntityType extends EntityTypeVersionTemplate {
 
-  private EntityVersionTemplate entityVersionTemplate;
-  private LivingEntityVersionTemplate livingEntityVersionTemplate;
-
   @Inject
-  public VersionedEntityType(EntityVersionTemplate entityVersionTemplate,
-                             LivingEntityVersionTemplate livingEntityVersionTemplate) {
-    this.entityVersionTemplate = entityVersionTemplate;
-    this.livingEntityVersionTemplate = livingEntityVersionTemplate;
+  public VersionedEntityType() {
+
   }
 
   @Override

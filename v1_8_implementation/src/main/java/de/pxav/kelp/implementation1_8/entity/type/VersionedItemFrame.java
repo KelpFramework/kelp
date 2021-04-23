@@ -3,7 +3,6 @@ package de.pxav.kelp.implementation1_8.entity.type;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.ItemFrameEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.implementation1_8.entity.FixedItemFrameListener;
@@ -12,9 +11,7 @@ import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityItemFrame;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHorse;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItemFrame;
-import org.bukkit.entity.Item;
 
 public class VersionedItemFrame extends VersionedHangingEntity<ItemFrameEntity> implements ItemFrameEntity {
 

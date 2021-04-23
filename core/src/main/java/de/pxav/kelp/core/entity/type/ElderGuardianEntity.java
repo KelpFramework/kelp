@@ -4,10 +4,7 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.KelpEntityFactory;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.general.MonsterEntity;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
-import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
-import org.bukkit.Location;
 
 /**
  * A class description goes here.
