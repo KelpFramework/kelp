@@ -1,6 +1,8 @@
 package de.pxav.kelp.implementation1_8.player;
 
 import com.google.inject.Inject;
+import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerLoginEvent;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerUpdateSettingsEvent;
 import de.pxav.kelp.core.event.kelpevent.SettingsUpdateStage;
@@ -9,9 +11,12 @@ import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
+import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.implementation1_8.packet.GlobalPacketListener;
+import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -31,6 +36,8 @@ public class PlayerCreationListener {
 
   private KelpPlayerRepository kelpPlayerRepository;
   private GlobalPacketListener globalPacketListener;
+  private EntityTypeVersionTemplate entityTypeVersionTemplate;
+  private ReflectionUtil reflectionUtil;
   private KelpLogger logger;
 
   @Inject
@@ -53,9 +60,15 @@ public class PlayerCreationListener {
    */
   @EventHandler
   public void handlePlayerLogin(PlayerLoginEvent event) {
-    kelpPlayerRepository.playerEntityObject(event.getPlayer().getUniqueId(),
-      ((CraftEntity)event.getPlayer()).getHandle());
-    KelpPlayer kelpPlayer = kelpPlayerRepository.newKelpPlayer(event.getPlayer());
+    Entity playerHandle = ((CraftPlayer)event.getPlayer()).getHandle();
+    kelpPlayerRepository.playerEntityObject(event.getPlayer().getUniqueId(), playerHandle);
+    KelpPlayer kelpPlayer = new VersionedKelpPlayer(
+      playerHandle,
+      KelpEntityType.PLAYER,
+      event.getPlayer().getLocation(),
+      entityTypeVersionTemplate,
+      reflectionUtil,
+      logger);
     kelpPlayerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
     Bukkit.getPluginManager().callEvent(new KelpPlayerLoginEvent(
       kelpPlayer,
@@ -89,7 +102,14 @@ public class PlayerCreationListener {
       // the quit event at first. So the exception is caught and the player
       // is removed from the cache again.
       try {
-        KelpPlayer kelpPlayer = kelpPlayerRepository.newKelpPlayer(current);
+        Entity playerHandle = ((CraftPlayer)current).getHandle();
+        KelpPlayer kelpPlayer = new VersionedKelpPlayer(
+          playerHandle,
+          KelpEntityType.PLAYER,
+          current.getLocation(),
+          entityTypeVersionTemplate,
+          reflectionUtil,
+          logger);
         kelpPlayer.setClientViewDistanceInternally(Bukkit.getViewDistance());
         kelpPlayer.setClientLanguageInternally("en_US");
         kelpPlayer.setPlayerChatVisibilityInternally(PlayerChatVisibility.SHOW_ALL_MESSAGES);

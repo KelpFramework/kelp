@@ -145,6 +145,8 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
    */
   KelpSidebar<?> getCurrentSidebar();
 
+  PlayerInventory getInventory();
+
   /**
    * Opens a {@link KelpInventory} to the player. This
    * is equivalent to calling the {@link KelpInventoryRepository#openInventory(KelpInventory, KelpPlayer)}
