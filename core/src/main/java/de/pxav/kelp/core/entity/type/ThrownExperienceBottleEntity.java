@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.entity.type;
 
-public interface ThrownExperienceBottleEntity  {
+import de.pxav.kelp.core.entity.type.general.KelpProjectile;
+
+public interface ThrownExperienceBottleEntity extends KelpProjectile<ThrownExperienceBottleEntity> {
 
 }
