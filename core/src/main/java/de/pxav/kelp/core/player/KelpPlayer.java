@@ -78,10 +78,6 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     return KelpPlayer.from(player.getUniqueId());
   }
 
-  default PlayerInventory getInventory() {
-    return PlayerInventory.of(this);
-  }
-
   default SignPrompt openSignPrompt() {
     return new SignPrompt(this.getBukkitPlayer(), Dependencies.getSignPromptVersionTemplate());
   }
@@ -117,6 +113,7 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
     setSidebarInternally(null);
     Bukkit.getPluginManager().callEvent(new KelpSidebarRemoveEvent(this));
     removeScoreboard();
+    return this;
   }
 
   /**
@@ -339,7 +336,6 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
   /**
    * Sets the player's health.
    *
-   * @param player The player whose health you want to change.
    * @param health How many health points the player should have.
    *               2 health points equal 1 heart.
    *               So 20 health points equal the full 10 hearts.
@@ -366,7 +362,6 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
    * typed in this message. This also works with commands, if
    * you add a slash in front of the message.
    *
-   * @param player  The player from whom the message should be sent.
    * @param message The message you want to send.
    */
   KelpPlayer chat(String message);
@@ -898,7 +893,6 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
    * from a given server, the client will first display a confirmation GUI
    * to the player before proceeding with the download.
    *
-   * @param player The player who should download the Resource pack.
    * @param url  The URL from which the client will download the resource pack.
    *             The string must contain only US-ASCII characters
    *             and should be encoded as per RFC 1738.
@@ -1096,7 +1090,6 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
   /**
    * Checks if the player is on the bukkit whitelist.
    *
-   * @param player The player you want to check.
    * @return {@code true} if the player is whitelisted.
    */
   boolean isWhitelisted();
