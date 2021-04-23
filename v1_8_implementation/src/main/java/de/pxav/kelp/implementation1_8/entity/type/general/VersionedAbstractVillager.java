@@ -19,9 +19,8 @@ public class VersionedAbstractVillager<T extends AbstractVillager<T>> extends Ve
                                    KelpEntityType entityType,
                                    Location initialLocation,
                                    EntityTypeVersionTemplate entityTypeVersionTemplate,
-                                   InventoryVersionTemplate inventoryVersionTemplate,
-                                   ReflectionUtil reflectionUtil) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+                                   InventoryVersionTemplate inventoryVersionTemplate) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     this.inventoryVersionTemplate = inventoryVersionTemplate;
     this.craftVillager = (CraftVillager) entityHandle.getBukkitEntity();
   }

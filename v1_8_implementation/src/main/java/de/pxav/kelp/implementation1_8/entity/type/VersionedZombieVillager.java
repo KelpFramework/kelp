@@ -13,26 +13,23 @@ import org.bukkit.Location;
 
 public class VersionedZombieVillager extends VersionedZombie implements ZombieVillagerEntity {
 
-  private EntityConstantsVersionTemplate entityConstantsVersionTemplate;
-  private EntityZombie zombieHandle;
-  private ReflectionUtil reflectionUtil;
+  private final EntityConstantsVersionTemplate entityConstantsVersionTemplate;
+  private final EntityZombie zombieHandle;
 
   public VersionedZombieVillager(Entity entityHandle,
                                  KelpEntityType entityType,
                                  Location initialLocation,
                                  EntityTypeVersionTemplate entityTypeVersionTemplate,
-                                 EntityConstantsVersionTemplate entityConstantsVersionTemplate,
-                                 ReflectionUtil reflectionUtil) {
+                                 EntityConstantsVersionTemplate entityConstantsVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     this.entityConstantsVersionTemplate = entityConstantsVersionTemplate;
     this.zombieHandle = (EntityZombie) entityHandle;
-    this.reflectionUtil = reflectionUtil;
     zombieHandle.setVillager(true);
   }
 
   @Override
   public ZombieVillagerEntity setConversionTime(int conversionTime) {
-    reflectionUtil.setValue(zombieHandle, "bn", conversionTime);
+    ReflectionUtil.setValue(zombieHandle, "bn", conversionTime);
     return this;
   }
 
@@ -48,7 +45,7 @@ public class VersionedZombieVillager extends VersionedZombie implements ZombieVi
 
   @Override
   public int getConversionTime() {
-    return (int) reflectionUtil.getValue(zombieHandle, "bn");
+    return (int) ReflectionUtil.getValue(zombieHandle, "bn");
   }
 
   @Override

@@ -74,13 +74,12 @@ public class VersionedKelpPlayer
                              KelpEntityType entityType,
                              Location initialLocation,
                              EntityTypeVersionTemplate entityTypeVersionTemplate,
-                             ReflectionUtil reflectionUtil,
                              KelpLogger logger,
                              BossBarLocationUpdater bossBarLocationUpdater,
                              SoundRepository soundRepository,
                              ParticleVersionTemplate particleVersionTemplate,
                              JavaPlugin javaPlugin) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     playerHandle = (EntityPlayer) entityHandle;
     player = (CraftPlayer) entityHandle.getBukkitEntity();
     this.logger = logger;
@@ -773,7 +772,8 @@ public class VersionedKelpPlayer
     }
 
     // finally send the message to the player via spigot api call.
-    player.spigot().sendMessage(componentBuilder.create());
+    Player spigotPlayer = (Player) player;
+    spigotPlayer.spigot().sendMessage(componentBuilder.create());
     return null;
   }
 

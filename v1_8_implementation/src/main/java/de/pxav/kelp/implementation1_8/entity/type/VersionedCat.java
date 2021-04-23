@@ -20,8 +20,8 @@ public class VersionedCat extends VersionedAnimalEntity<CatEntity> implements Ca
   EntityOcelot ocelotHandle;
   private EntityConstantsVersionTemplate entityConstantsVersionTemplate;
 
-  public VersionedCat(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil, EntityConstantsVersionTemplate entityConstantsVersionTemplate) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+  public VersionedCat(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, EntityConstantsVersionTemplate entityConstantsVersionTemplate) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     craftOcelot.setCatType(Ocelot.Type.valueOf(entityConstantsVersionTemplate.getCatType(CatType.randomCatType())));
     this.entityConstantsVersionTemplate = entityConstantsVersionTemplate;
   }

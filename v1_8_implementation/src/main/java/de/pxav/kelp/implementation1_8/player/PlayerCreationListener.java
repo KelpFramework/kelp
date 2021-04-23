@@ -43,7 +43,6 @@ public class PlayerCreationListener {
   private SoundRepository soundRepository;
   private BossBarLocationUpdater bossBarLocationUpdater;
   private JavaPlugin javaPlugin;
-  private ReflectionUtil reflectionUtil;
   private ParticleVersionTemplate particleVersionTemplate;
   private KelpLogger logger;
 
@@ -54,14 +53,12 @@ public class PlayerCreationListener {
                                 JavaPlugin javaPlugin,
                                 SoundRepository soundRepository,
                                 EntityTypeVersionTemplate entityTypeVersionTemplate,
-                                ReflectionUtil reflectionUtil,
                                 BossBarLocationUpdater bossBarLocationUpdater,
                                 ParticleVersionTemplate particleVersionTemplate) {
     this.kelpPlayerRepository = kelpPlayerRepository;
     this.globalPacketListener = globalPacketListener;
     this.logger = logger;
     this.javaPlugin = javaPlugin;
-    this.reflectionUtil = reflectionUtil;
     this.particleVersionTemplate = particleVersionTemplate;
     this.bossBarLocationUpdater = bossBarLocationUpdater;
     this.soundRepository = soundRepository;
@@ -86,7 +83,6 @@ public class PlayerCreationListener {
       KelpEntityType.PLAYER,
       event.getPlayer().getLocation(),
       entityTypeVersionTemplate,
-      reflectionUtil,
       logger,
       bossBarLocationUpdater,
       soundRepository,
@@ -131,7 +127,6 @@ public class PlayerCreationListener {
           KelpEntityType.PLAYER,
           current.getLocation(),
           entityTypeVersionTemplate,
-          reflectionUtil,
           logger,
           bossBarLocationUpdater,
           soundRepository,

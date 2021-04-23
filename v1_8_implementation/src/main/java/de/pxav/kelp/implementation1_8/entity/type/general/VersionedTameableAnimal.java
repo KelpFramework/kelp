@@ -17,9 +17,8 @@ public class VersionedTameableAnimal<T extends TameableAnimal<T>> extends Versio
   public VersionedTameableAnimal(Entity entityHandle,
                                  KelpEntityType entityType,
                                  Location initialLocation,
-                                 EntityTypeVersionTemplate entityTypeVersionTemplate,
-                                 ReflectionUtil reflectionUtil) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+                                 EntityTypeVersionTemplate entityTypeVersionTemplate) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     this.tameableHandle = (EntityTameableAnimal) entityHandle;
   }
 

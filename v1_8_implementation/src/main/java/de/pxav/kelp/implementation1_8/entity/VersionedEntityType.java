@@ -24,15 +24,12 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
 
   private EntityVersionTemplate entityVersionTemplate;
   private LivingEntityVersionTemplate livingEntityVersionTemplate;
-  private ReflectionUtil reflectionUtil;
 
   @Inject
   public VersionedEntityType(EntityVersionTemplate entityVersionTemplate,
-                             LivingEntityVersionTemplate livingEntityVersionTemplate,
-                             ReflectionUtil reflectionUtil) {
+                             LivingEntityVersionTemplate livingEntityVersionTemplate) {
     this.entityVersionTemplate = entityVersionTemplate;
     this.livingEntityVersionTemplate = livingEntityVersionTemplate;
-    this.reflectionUtil = reflectionUtil;
   }
 
   @Override
@@ -61,7 +58,7 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
 //        break;
       case SHEEP:
         entity = craftWorld.createEntity(location, Sheep.class);
-        output = new VersionedSheep(entity, KelpEntityType.SHEEP, location, this, reflectionUtil);
+        output = new VersionedSheep(entity, KelpEntityType.SHEEP, location, this);
     }
 
 //    if (entityType != KelpEntityType.DROPPED_ITEM) {

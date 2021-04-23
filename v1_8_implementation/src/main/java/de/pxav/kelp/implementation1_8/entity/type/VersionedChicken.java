@@ -10,8 +10,8 @@ import org.bukkit.Location;
 
 public class VersionedChicken extends VersionedBreedableAnimal<ChickenEntity> implements ChickenEntity  {
 
-  public VersionedChicken(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+  public VersionedChicken(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
   }
 
 }

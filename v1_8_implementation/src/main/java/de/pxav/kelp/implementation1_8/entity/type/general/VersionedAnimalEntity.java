@@ -14,12 +14,10 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPig;
 public class VersionedAnimalEntity<T extends AnimalEntity<T>>
   extends VersionedMobileEntity<T> implements AnimalEntity<T> {
 
-  private EntityAnimal animalHandle;
-  private ReflectionUtil reflectionUtil;
+  private final EntityAnimal animalHandle;
 
-  public VersionedAnimalEntity(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil) {
+  public VersionedAnimalEntity(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
-    this.reflectionUtil = reflectionUtil;
     this.animalHandle = (EntityAnimal) entityHandle;
   }
 
@@ -46,18 +44,18 @@ public class VersionedAnimalEntity<T extends AnimalEntity<T>>
   @Override
   public T setBreeder(KelpEntity<?> breeder) {
     EntityHuman nmsHuman = ((CraftHumanEntity) breeder.getBukkitEntity()).getHandle();
-    reflectionUtil.setValue(animalHandle, "bo", nmsHuman);
+    ReflectionUtil.setValue(animalHandle, "bo", nmsHuman);
     return (T) this;
   }
 
   @Override
   public int getLoveModeTicks() {
-    return (int) reflectionUtil.getValue(animalHandle, "bm");
+    return (int) ReflectionUtil.getValue(animalHandle, "bm");
   }
 
   @Override
   public T setLoveModeTicks(int loveModeTicks) {
-    reflectionUtil.setValue(animalHandle, "bm", loveModeTicks);
+    ReflectionUtil.setValue(animalHandle, "bm", loveModeTicks);
     return (T) this;
   }
 

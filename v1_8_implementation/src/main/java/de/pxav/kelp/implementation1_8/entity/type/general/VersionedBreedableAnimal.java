@@ -11,8 +11,8 @@ public class VersionedBreedableAnimal<T extends BreedableAnimalEntity<T>>
   extends VersionedAnimalEntity<T>
   implements BreedableAnimalEntity<T> {
 
-  public VersionedBreedableAnimal(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+  public VersionedBreedableAnimal(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
   }
 
   //TODO cannot be implemented. Lack of server-side methods.

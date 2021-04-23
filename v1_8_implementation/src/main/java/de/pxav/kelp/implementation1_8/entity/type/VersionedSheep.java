@@ -20,9 +20,8 @@ public class VersionedSheep
   public VersionedSheep(Entity entityHandle,
                         KelpEntityType entityType,
                         Location initialLocation,
-                        EntityTypeVersionTemplate entityTypeVersionTemplate,
-                        ReflectionUtil reflectionUtil) {
-    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+                        EntityTypeVersionTemplate entityTypeVersionTemplate) {
+    super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     this.sheepHandle = (EntitySheep) entityHandle;
   }
 

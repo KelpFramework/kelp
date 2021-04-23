@@ -20,14 +20,12 @@ public class VersionedItemFrame extends VersionedHangingEntity<ItemFrameEntity> 
 
   private CraftItemFrame craftItemFrame;
   private EntityItemFrame itemFrameHandle;
-  private ReflectionUtil reflectionUtil;
   private FixedItemFrameListener fixedItemFrame;
 
-  public VersionedItemFrame(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil, FixedItemFrameListener fixedItemFrame) {
+  public VersionedItemFrame(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, FixedItemFrameListener fixedItemFrame) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     this.craftItemFrame = (CraftItemFrame) entityHandle.getBukkitEntity();
     this.itemFrameHandle = (EntityItemFrame) entityHandle;
-    this.reflectionUtil = reflectionUtil;
     this.fixedItemFrame = fixedItemFrame;
   }
 
@@ -89,12 +87,12 @@ public class VersionedItemFrame extends VersionedHangingEntity<ItemFrameEntity> 
 
   @Override
   public double getItemDropChance() {
-    return (double) ((float) reflectionUtil.getValue(itemFrameHandle, "c")) ;
+    return (double) ((float) ReflectionUtil.getValue(itemFrameHandle, "c")) ;
   }
 
   @Override
   public ItemFrameEntity setItemDropChance(double itemDropChance) {
-    reflectionUtil.setValue(itemFrameHandle, "c", (float) itemDropChance);
+    ReflectionUtil.setValue(itemFrameHandle, "c", (float) itemDropChance);
     return this;
   }
 

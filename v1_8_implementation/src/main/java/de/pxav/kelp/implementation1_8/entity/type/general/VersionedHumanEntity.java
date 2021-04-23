@@ -17,15 +17,13 @@ public class VersionedHumanEntity<T extends HumanEntity<T>>
   extends VersionedMobileEntity<T>
   implements HumanEntity<T> {
 
-  private EntityHuman humanHandle;
-  private CraftHumanEntity craftHumanEntity;
-  private ReflectionUtil reflectionUtil;
+  private final EntityHuman humanHandle;
+  private final CraftHumanEntity craftHumanEntity;
 
-  public VersionedHumanEntity(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil) {
+  public VersionedHumanEntity(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     this.humanHandle = (EntityHuman) entityHandle;
     this.craftHumanEntity = (CraftHumanEntity) entityHandle.getBukkitEntity();
-    this.reflectionUtil = reflectionUtil;
   }
 
   @Override
@@ -74,8 +72,8 @@ public class VersionedHumanEntity<T extends HumanEntity<T>>
       bedLocation.getZ());
 
     PacketPlayOutBed bedPacket = new PacketPlayOutBed();
-    reflectionUtil.setValue(bedPacket, "a", getEntityId());
-    reflectionUtil.setValue(bedPacket, "b", bedPosition);
+    ReflectionUtil.setValue(bedPacket, "a", getEntityId());
+    ReflectionUtil.setValue(bedPacket, "b", bedPosition);
 
     for (Player player : Bukkit.getOnlinePlayers()) {
       ((CraftPlayer)player).getHandle().playerConnection.sendPacket(bedPacket);

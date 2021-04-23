@@ -37,20 +37,17 @@ import java.util.UUID;
  */
 public class GlobalPacketListener {
 
-  private KelpPlayerRepository playerRepository;
-  private ReflectionUtil reflectionUtil;
-  private VersionedSignPrompt signPrompt;
-  private KelpSchedulerRepository schedulerRepository;
-  private KelpNpcRepository npcRepository;
+  private final KelpPlayerRepository playerRepository;
+  private final VersionedSignPrompt signPrompt;
+  private final KelpSchedulerRepository schedulerRepository;
+  private final KelpNpcRepository npcRepository;
 
   @Inject
   public GlobalPacketListener(KelpPlayerRepository playerRepository,
-                              ReflectionUtil reflectionUtil,
                               VersionedSignPrompt signPrompt,
                               KelpSchedulerRepository schedulerRepository,
                               KelpNpcRepository npcRepository) {
     this.playerRepository = playerRepository;
-    this.reflectionUtil = reflectionUtil;
     this.signPrompt = signPrompt;
     this.schedulerRepository = schedulerRepository;
     this.npcRepository = npcRepository;
@@ -79,11 +76,11 @@ public class GlobalPacketListener {
         if (packet instanceof PacketPlayInSettings) {
 
           PacketPlayInSettings settingsPacket = (PacketPlayInSettings) packet;
-          String language = String.valueOf(reflectionUtil.getValue(settingsPacket, "a"));
-          int viewDistance = Integer.parseInt(String.valueOf(reflectionUtil.getValue(settingsPacket, "b")));
-          boolean chatColorEnabled = Boolean.parseBoolean(String.valueOf(reflectionUtil.getValue(settingsPacket, "d")));
+          String language = String.valueOf(ReflectionUtil.getValue(settingsPacket, "a"));
+          int viewDistance = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(settingsPacket, "b")));
+          boolean chatColorEnabled = Boolean.parseBoolean(String.valueOf(ReflectionUtil.getValue(settingsPacket, "d")));
           PlayerChatVisibility chatVisibility = PlayerChatVisibility.SHOW_ALL_MESSAGES;
-          switch (String.valueOf(reflectionUtil.getValue(settingsPacket, "c"))) {
+          switch (String.valueOf(ReflectionUtil.getValue(settingsPacket, "c"))) {
             case "FULL":
               chatVisibility = PlayerChatVisibility.SHOW_ALL_MESSAGES;
               break;
@@ -117,7 +114,7 @@ public class GlobalPacketListener {
         if (packet instanceof PacketPlayInUpdateSign && signPrompt.isChecked(player.getUniqueId())) {
 
           PacketPlayInUpdateSign updatePacket = (PacketPlayInUpdateSign) packet;
-          IChatBaseComponent[] rawLines = (IChatBaseComponent[]) reflectionUtil.getValue(updatePacket, "b");
+          IChatBaseComponent[] rawLines = (IChatBaseComponent[]) ReflectionUtil.getValue(updatePacket, "b");
           List<String> input = Lists.newArrayList();
 
           for (IChatBaseComponent line : rawLines) {
@@ -149,9 +146,9 @@ public class GlobalPacketListener {
           }
 
           PacketPlayInUseEntity usePacket = (PacketPlayInUseEntity) packet;
-          int rawEntityId = Integer.parseInt(String.valueOf(reflectionUtil.getValue(usePacket, "a")));
+          int rawEntityId = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(usePacket, "a")));
           PacketPlayInUseEntity.EnumEntityUseAction packetAction = PacketPlayInUseEntity.EnumEntityUseAction.valueOf(
-            String.valueOf(reflectionUtil.getValue(usePacket, "action"))
+            String.valueOf(ReflectionUtil.getValue(usePacket, "action"))
           );
 
           if (packetAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT) {
