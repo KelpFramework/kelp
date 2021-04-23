@@ -14,6 +14,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,6 +104,36 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
       entityHandle.locZ,
       entityHandle.yaw,
       entityHandle.pitch);
+  }
+
+  @Override
+  public boolean isInWater() {
+    try {
+      Field inWaterField = net.minecraft.server.v1_8_R3.Entity.class.getDeclaredField("inWater");
+
+      inWaterField.setAccessible(true);
+
+      return inWaterField.getBoolean(entityHandle);
+    } catch (IllegalAccessException | NoSuchFieldException e) {
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean isInCobweb() {
+    try {
+      Field hField = net.minecraft.server.v1_8_R3.Entity.class.getDeclaredField("H");
+
+      hField.setAccessible(true);
+
+      return hField.getBoolean(entityHandle);
+    } catch (IllegalAccessException | NoSuchFieldException e) {
+      e.printStackTrace();
+    }
+
+    return false;
   }
 
   @Override

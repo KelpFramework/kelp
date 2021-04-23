@@ -80,6 +80,10 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    */
   KelpLocation getLocation();
 
+  boolean isInWater();
+
+  boolean isInCobweb();
+
   /**
    * Converts the current {@code KelpEntity} to a normal
    * bukkit entity.
