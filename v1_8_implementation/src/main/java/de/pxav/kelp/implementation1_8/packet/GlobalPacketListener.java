@@ -63,6 +63,112 @@ public class GlobalPacketListener {
     removePacketListener(event.getPlayer());
   }
 
+  private void handleIncomingPacket(Player player, ChannelHandlerContext channelHandlerContext, Object packet) {
+    if (packet instanceof PacketPlayInSettings) {
+
+      PacketPlayInSettings settingsPacket = (PacketPlayInSettings) packet;
+      String language = String.valueOf(ReflectionUtil.getValue(settingsPacket, "a"));
+      int viewDistance = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(settingsPacket, "b")));
+      boolean chatColorEnabled = Boolean.parseBoolean(String.valueOf(ReflectionUtil.getValue(settingsPacket, "d")));
+      PlayerChatVisibility chatVisibility = PlayerChatVisibility.SHOW_ALL_MESSAGES;
+      switch (String.valueOf(ReflectionUtil.getValue(settingsPacket, "c"))) {
+        case "FULL":
+          chatVisibility = PlayerChatVisibility.SHOW_ALL_MESSAGES;
+          break;
+        case "SYSTEM":
+          chatVisibility = PlayerChatVisibility.COMMANDS_ONLY;
+          break;
+        case "HIDDEN":
+          chatVisibility = PlayerChatVisibility.HIDDEN;
+          break;
+      }
+
+      KelpPlayer kelpPlayer = playerRepository.getKelpPlayer(player);
+
+      Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(kelpPlayer,
+        SettingsUpdateStage.PACKET_PLAY_IN,
+        language,
+        viewDistance,
+        chatVisibility,
+        chatColorEnabled));
+
+      kelpPlayer
+        .setClientLanguageInternally(language)
+        .setClientViewDistanceInternally(viewDistance)
+        .setPlayerChatColorEnabledInternally(chatColorEnabled)
+        .setPlayerChatVisibilityInternally(chatVisibility);
+      playerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
+
+      return;
+    }
+
+    if (packet instanceof PacketPlayInUpdateSign && signPrompt.isChecked(player.getUniqueId())) {
+
+      PacketPlayInUpdateSign updatePacket = (PacketPlayInUpdateSign) packet;
+      IChatBaseComponent[] rawLines = (IChatBaseComponent[]) ReflectionUtil.getValue(updatePacket, "b");
+      List<String> input = Lists.newArrayList();
+
+      for (IChatBaseComponent line : rawLines) {
+        input.add(line.getText());
+      }
+
+      SignPromptResponseHandler handler = signPrompt.getHandler(player.getUniqueId());
+      PromptResponseType responseType = handler.accept(input);
+
+      if (responseType == PromptResponseType.TRY_AGAIN) {
+        signPrompt.resetBlockAndRemove(player.getUniqueId());
+        Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
+          UUID taskId = signPrompt.getTimeout(player.getUniqueId()).getTaskId();
+          schedulerRepository.interruptScheduler(taskId);
+          signPrompt.openSignPrompt(player, input, signPrompt.getTimeout(player.getUniqueId()), handler);
+        }, 1);
+        return;
+      }
+
+      UUID taskId = signPrompt.getTimeout(player.getUniqueId()).getTaskId();
+      schedulerRepository.interruptScheduler(taskId);
+      signPrompt.resetBlockAndRemove(player.getUniqueId());
+
+    }
+
+    if (packet instanceof PacketPlayInUseEntity) {
+      if (!npcRepository.playerHasNpc(player.getUniqueId())) {
+        return;
+      }
+
+      PacketPlayInUseEntity usePacket = (PacketPlayInUseEntity) packet;
+      int rawEntityId = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(usePacket, "a")));
+      PacketPlayInUseEntity.EnumEntityUseAction packetAction = PacketPlayInUseEntity.EnumEntityUseAction.valueOf(
+        String.valueOf(ReflectionUtil.getValue(usePacket, "action"))
+      );
+
+      if (packetAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT) {
+        return;
+      }
+
+      Optional<KelpNpc> rawNpc = npcRepository.getSpawnedNpcsFor(player.getUniqueId())
+        .stream()
+        .filter(npc -> npc.getEntityId() == rawEntityId)
+        .findAny();
+
+      if (!rawNpc.isPresent()) {
+        return;
+      }
+
+      KelpNpc npc = rawNpc.get();
+
+      NpcInteractAction action = packetAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK
+        ? NpcInteractAction.LEFT_CLICK
+        : NpcInteractAction.RIGHT_CLICK;
+
+      NpcInteractEvent event = new NpcInteractEvent(npc, action);
+      npc.triggerInteraction(event);
+
+      Bukkit.getPluginManager().callEvent(event);
+
+    }
+  }
+
   /**
    * Creates a new packet listener.
    *
@@ -73,110 +179,7 @@ public class GlobalPacketListener {
 
       @Override
       public void channelRead(ChannelHandlerContext channelHandlerContext, Object packet) throws Exception {
-        if (packet instanceof PacketPlayInSettings) {
-
-          PacketPlayInSettings settingsPacket = (PacketPlayInSettings) packet;
-          String language = String.valueOf(ReflectionUtil.getValue(settingsPacket, "a"));
-          int viewDistance = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(settingsPacket, "b")));
-          boolean chatColorEnabled = Boolean.parseBoolean(String.valueOf(ReflectionUtil.getValue(settingsPacket, "d")));
-          PlayerChatVisibility chatVisibility = PlayerChatVisibility.SHOW_ALL_MESSAGES;
-          switch (String.valueOf(ReflectionUtil.getValue(settingsPacket, "c"))) {
-            case "FULL":
-              chatVisibility = PlayerChatVisibility.SHOW_ALL_MESSAGES;
-              break;
-            case "SYSTEM":
-              chatVisibility = PlayerChatVisibility.COMMANDS_ONLY;
-              break;
-            case "HIDDEN":
-              chatVisibility = PlayerChatVisibility.HIDDEN;
-              break;
-          }
-
-          KelpPlayer kelpPlayer = playerRepository.getKelpPlayer(player);
-
-          Bukkit.getPluginManager().callEvent(new KelpPlayerUpdateSettingsEvent(kelpPlayer,
-            SettingsUpdateStage.PACKET_PLAY_IN,
-            language,
-            viewDistance,
-            chatVisibility,
-            chatColorEnabled));
-
-          kelpPlayer
-            .setClientLanguageInternally(language)
-            .setClientViewDistanceInternally(viewDistance)
-            .setPlayerChatColorEnabledInternally(chatColorEnabled)
-            .setPlayerChatVisibilityInternally(chatVisibility);
-          playerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
-
-          return;
-        }
-
-        if (packet instanceof PacketPlayInUpdateSign && signPrompt.isChecked(player.getUniqueId())) {
-
-          PacketPlayInUpdateSign updatePacket = (PacketPlayInUpdateSign) packet;
-          IChatBaseComponent[] rawLines = (IChatBaseComponent[]) ReflectionUtil.getValue(updatePacket, "b");
-          List<String> input = Lists.newArrayList();
-
-          for (IChatBaseComponent line : rawLines) {
-            input.add(line.getText());
-          }
-
-          SignPromptResponseHandler handler = signPrompt.getHandler(player.getUniqueId());
-          PromptResponseType responseType = handler.accept(input);
-
-          if (responseType == PromptResponseType.TRY_AGAIN) {
-            signPrompt.resetBlockAndRemove(player.getUniqueId());
-            Bukkit.getScheduler().runTaskLater(KelpPlugin.getPlugin(KelpPlugin.class), () -> {
-              UUID taskId = signPrompt.getTimeout(player.getUniqueId()).getTaskId();
-              schedulerRepository.interruptScheduler(taskId);
-              signPrompt.openSignPrompt(player, input, signPrompt.getTimeout(player.getUniqueId()), handler);
-            }, 1);
-            return;
-          }
-
-          UUID taskId = signPrompt.getTimeout(player.getUniqueId()).getTaskId();
-          schedulerRepository.interruptScheduler(taskId);
-          signPrompt.resetBlockAndRemove(player.getUniqueId());
-
-        }
-
-        if (packet instanceof PacketPlayInUseEntity) {
-          if (!npcRepository.playerHasNpc(player.getUniqueId())) {
-            return;
-          }
-
-          PacketPlayInUseEntity usePacket = (PacketPlayInUseEntity) packet;
-          int rawEntityId = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(usePacket, "a")));
-          PacketPlayInUseEntity.EnumEntityUseAction packetAction = PacketPlayInUseEntity.EnumEntityUseAction.valueOf(
-            String.valueOf(ReflectionUtil.getValue(usePacket, "action"))
-          );
-
-          if (packetAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT_AT) {
-            return;
-          }
-
-          Optional<KelpNpc> rawNpc = npcRepository.getSpawnedNpcsFor(player.getUniqueId())
-            .stream()
-            .filter(npc -> npc.getEntityId() == rawEntityId)
-            .findAny();
-
-          if (!rawNpc.isPresent()) {
-            return;
-          }
-
-          KelpNpc npc = rawNpc.get();
-
-          NpcInteractAction action = packetAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK
-            ? NpcInteractAction.LEFT_CLICK
-            : NpcInteractAction.RIGHT_CLICK;
-
-          NpcInteractEvent event = new NpcInteractEvent(npc, action);
-          npc.triggerInteraction(event);
-
-          Bukkit.getPluginManager().callEvent(event);
-
-        }
-
+        handleIncomingPacket(player, channelHandlerContext, packet);
         super.channelRead(channelHandlerContext, packet);
       }
 
