@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world.region;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.event.kelpevent.region.PlayerEnterRegionEvent;
+import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;

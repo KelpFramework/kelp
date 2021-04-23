@@ -1,7 +1,6 @@
 package de.pxav.kelp.core.inventory.util;
 
 import com.google.common.collect.Sets;
-import de.pxav.kelp.core.inventory.widget.SimplePagination;
 
 import java.util.HashSet;
 import java.util.Set;
