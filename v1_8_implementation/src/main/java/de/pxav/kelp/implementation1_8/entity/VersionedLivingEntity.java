@@ -4,12 +4,14 @@ import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
+import de.pxav.kelp.core.inventory.type.SimpleEntityEquipment;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.implementation1_8.entity.type.general.VersionedDamageable;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
+import org.bukkit.entity.LivingEntity;
 
 /**
  * A class description goes here.
@@ -34,6 +36,11 @@ public class VersionedLivingEntity<T extends LivingKelpEntity<T>>
   @Override
   public KelpLocation getEyeLocation() {
     return KelpLocation.from(craftLivingEntity.getEyeLocation());
+  }
+
+  @Override
+  public SimpleEntityEquipment getEquipment() {
+    return new VersionedSimpleEntityEquipment(getBukkitEntity());
   }
 
   @Override
@@ -73,6 +80,11 @@ public class VersionedLivingEntity<T extends LivingKelpEntity<T>>
   public T setHealth(double health) {
     entityHandle.setHealth((float) health);
     return (T) this;
+  }
+
+  @Override
+  public org.bukkit.entity.LivingEntity getBukkitEntity() {
+    return (LivingEntity) super.getBukkitEntity();
   }
 
 }

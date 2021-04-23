@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.entity;
 
 import de.pxav.kelp.core.entity.type.general.DamageableEntity;
+import de.pxav.kelp.core.inventory.type.SimpleEntityEquipment;
 import de.pxav.kelp.core.world.KelpLocation;
 
 public interface LivingKelpEntity<T extends LivingKelpEntity<?>> extends KelpEntity<T>, DamageableEntity<T> {
@@ -14,5 +15,7 @@ public interface LivingKelpEntity<T extends LivingKelpEntity<?>> extends KelpEnt
    * @return The location of the entity's eyes.
    */
   KelpLocation getEyeLocation();
+
+  SimpleEntityEquipment getEquipment();
 
 }
