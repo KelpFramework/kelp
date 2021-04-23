@@ -6,6 +6,7 @@ import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.version.WindowPacketTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
+import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.inventory.Inventory;
 
 import java.util.function.Supplier;
