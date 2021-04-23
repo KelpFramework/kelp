@@ -1,11 +1,12 @@
 package de.pxav.kelp.core.entity.type.general;
 
+import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftVehicle;
 
-public interface HumanEntity<T extends HumanEntity<?>> extends MobileEntity<T> {
+public interface HumanEntity<T extends HumanEntity<?>> extends LivingKelpEntity<T> {
 
   // TODO: INVENTORIES
 

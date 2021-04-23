@@ -5,6 +5,7 @@ import de.pxav.kelp.core.entity.type.general.HumanEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.implementation1_8.entity.VersionedLivingEntity;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -14,7 +15,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class VersionedHumanEntity<T extends HumanEntity<T>>
-  extends VersionedMobileEntity<T>
+  extends VersionedLivingEntity<T>
   implements HumanEntity<T> {
 
   private final EntityHuman humanHandle;
