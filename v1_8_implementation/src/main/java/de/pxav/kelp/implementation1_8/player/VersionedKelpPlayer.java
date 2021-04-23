@@ -3,6 +3,7 @@ package de.pxav.kelp.implementation1_8.player;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
+import de.pxav.kelp.core.inventory.type.PlayerInventory;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -19,12 +20,14 @@ import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.implementation1_8.entity.type.general.VersionedHumanEntity;
+import de.pxav.kelp.implementation1_8.inventory.VersionedPlayerInventory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.Entity;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -37,8 +40,16 @@ public class VersionedKelpPlayer
   extends VersionedHumanEntity<KelpPlayer>
   implements KelpPlayer {
 
+  EntityPlayer playerHandle;
+  CraftPlayer craftPlayer;
+
   public VersionedKelpPlayer(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, ReflectionUtil reflectionUtil) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate, reflectionUtil);
+  }
+
+  @Override
+  public PlayerInventory getInventory() {
+    return new VersionedPlayerInventory(craftPlayer.getInventory(), this);
   }
 
   /**

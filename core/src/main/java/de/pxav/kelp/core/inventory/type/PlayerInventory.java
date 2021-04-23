@@ -1,16 +1,11 @@
 package de.pxav.kelp.core.inventory.type;
 
-import de.pxav.kelp.core.KelpPlugin;
-import de.pxav.kelp.core.common.ConcurrentSetMultimap;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.version.StorageInventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
-import de.pxav.kelp.core.inventory.widget.SimplePagination;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Represents the personal inventory of a {@link KelpPlayer} which
@@ -36,7 +31,21 @@ public interface PlayerInventory extends StorageInventory<PlayerInventory> {
    */
   Set<KelpItem> getHotBarItems();
 
+  PlayerInventory addWidget(SimpleWidget simpleWidget);
 
+  PlayerInventory addWidget(GroupedWidget groupedWidget);
+
+  PlayerInventory removeSimpleWidget(Class<? extends SimpleWidget> widgetClass);
+
+  PlayerInventory removeGroupedWidget(Class<? extends GroupedWidget> widgetClass);
+
+  PlayerInventory removeWidget(SimpleWidget simpleWidget);
+
+  PlayerInventory removeWidget(GroupedWidget groupedWidget);
+
+  PlayerInventory removeAllWidgets();
+
+  PlayerInventory updateWidgets();
 
   /**
    * Gets the player owning this inventory.

@@ -7,6 +7,7 @@ import de.pxav.kelp.core.entity.type.general.HumanEntity;
 import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRemoveEvent;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
+import de.pxav.kelp.core.inventory.type.InventoryOwner;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.inventory.type.PlayerInventory;
 import de.pxav.kelp.core.particle.type.ParticleType;
@@ -58,7 +59,7 @@ import java.util.UUID;
  * @see KelpPlayerRepository
  * @author pxav
  */
-public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<KelpPlayer> {
+public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<KelpPlayer>, InventoryOwner {
 
   static KelpPlayer from(UUID player) {
     KelpPlayerRepository repository = KelpPlugin.getInjector().getInstance(KelpPlayerRepository.class);

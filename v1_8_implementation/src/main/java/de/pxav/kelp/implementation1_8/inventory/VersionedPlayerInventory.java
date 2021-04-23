@@ -1,21 +1,19 @@
 package de.pxav.kelp.implementation1_8.inventory;
 
+import com.google.common.collect.Sets;
 import de.pxav.kelp.core.common.ConcurrentSetMultimap;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.inventory.type.PlayerInventory;
-import de.pxav.kelp.core.inventory.version.StorageInventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
-import de.pxav.kelp.core.inventory.widget.SimplePagination;
 import de.pxav.kelp.core.inventory.widget.SimpleWidget;
 import de.pxav.kelp.core.player.KelpPlayer;
+import org.bukkit.inventory.Inventory;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerInventory> implements PlayerInventory {
-
-  // the version template used for player inventory manipulation
-  private StorageInventoryVersionTemplate versionTemplate;
 
   // the owner of this inventory
   private KelpPlayer player;
@@ -24,6 +22,24 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
   // the uuid represents the player uuid who owns the widget.
   private static ConcurrentSetMultimap<UUID, SimpleWidget> simpleWidgets = ConcurrentSetMultimap.create();
   private static ConcurrentSetMultimap<UUID, GroupedWidget> groupedWidgets = ConcurrentSetMultimap.create();
+
+  public VersionedPlayerInventory(Inventory inventory, KelpPlayer player) {
+    super(inventory);
+    this.player = player;
+  }
+
+  @Override
+  public Set<KelpItem> getHotBarItems() {
+    Set<KelpItem> output = Sets.newHashSet();
+    for (int i = 0; i < 9; i++) {
+      KelpItem currentItem = getItemAt(i);
+      if (currentItem == null) {
+        continue;
+      }
+      output.add(currentItem);
+    }
+    return output;
+  }
 
   /**
    * Adds a new {@link SimpleWidget} to the player's inventory.
@@ -34,6 +50,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    * @param simpleWidget The simple widget you want to add to the inventory.
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory addWidget(SimpleWidget simpleWidget) {
     simpleWidgets.put(player.getUUID(), simpleWidget);
     return this;
@@ -48,6 +65,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    * @param groupedWidget The grouped widget you want to add to the inventory.
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory addWidget(GroupedWidget groupedWidget) {
     groupedWidgets.put(player.getUUID(), groupedWidget);
     return this;
@@ -64,6 +82,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    *                    will be removed from the inventory.
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory removeSimpleWidget(Class<? extends SimpleWidget> widgetClass) {
     simpleWidgets.get(player.getUUID()).forEach(widget -> {
       if (widgetClass.getName().equalsIgnoreCase(widget.getClass().getName())) {
@@ -84,6 +103,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    *                    will be removed from the inventory.
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory removeGroupedWidget(Class<? extends GroupedWidget> widgetClass) {
     groupedWidgets.get(player.getUUID()).forEach(widget -> {
       if (widgetClass.getName().equalsIgnoreCase(widget.getClass().getName())) {
@@ -102,6 +122,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    * @param widget The object of the widget you want to remove.
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory removeWidget(SimpleWidget widget) {
     player.getBukkitPlayer().getInventory().clear(widget.getCoveredSlot());
     widget.onRemove();
@@ -118,6 +139,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    * @param widget The object of the widget you want to remove.
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory removeWidget(GroupedWidget widget) {
     widget.getCoveredSlots().forEach(slot -> player.getBukkitPlayer().getInventory().clear(slot));
     widget.onRemove();
@@ -132,6 +154,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    *
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory removeAllWidgets() {
     simpleWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
     groupedWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
@@ -147,6 +170,7 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    *
    * @return An instance of the current inventory for fluent builder design.
    */
+  @Override
   public PlayerInventory updateWidgets() {
     for (SimpleWidget current : simpleWidgets.getOrEmpty(player.getUUID())) {
       if (!current.isStateful()) {
@@ -183,11 +207,16 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
           item.cancelInteractions();
         }
 
-        setItem(item.getSlot(), item);
+        setItem(item);
       });
     }
 
     return this;
+  }
+
+  @Override
+  public KelpPlayer getPlayer() {
+    return player;
   }
 
 }
