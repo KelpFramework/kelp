@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
  */
 public class ReflectionUtil {
 
-  public Object getValue(Object object, String fieldName) {
+  public static Object getValue(Object object, String fieldName) {
     try {
       Field field = object.getClass().getDeclaredField(fieldName);
       field.setAccessible(true);
@@ -20,7 +20,7 @@ public class ReflectionUtil {
     return null;
   }
 
-  public void setValue(Object object, String fieldName, Object value) {
+  public static void setValue(Object object, String fieldName, Object value) {
     try {
       Field field = object.getClass().getDeclaredField(fieldName);
       field.setAccessible(true);
