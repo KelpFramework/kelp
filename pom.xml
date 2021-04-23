@@ -7,11 +7,16 @@
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.3</version>
+  <version>${revision}</version>
 
   <name>Kelp</name>
   <description>A cross-version spigot framework to avoid boilerplate code and make your plugin compatible with multiple spigot versions easily</description>
   <url>https://www.github.com/KelpFramework/kelp</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <revision>0.3.3</revision>
+  </properties>
 
   <licenses>
     <license>
@@ -56,10 +61,6 @@
     <module>v_1_14_implementation</module>
     <module>kelp-sql</module>
   </modules>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -184,6 +185,30 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <updatePomFile>true</updatePomFile>
+          </configuration>
+          <executions>
+            <execution>
+              <id>flatten</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>flatten</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>flatten.clean</id>
+              <phase>clean</phase>
+              <goals>
+                <goal>clean</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>

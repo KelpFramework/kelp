@@ -1,5 +1,5 @@
 name: Kelp
-version: ${project.version}
+version: ${revision}
 main: de.pxav.kelp.core.KelpPlugin
 author: pxav
 description: A cross version spigot framework.
