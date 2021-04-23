@@ -345,20 +345,6 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
   KelpPlayer setHealth(int health);
 
   /**
-   * Checks if the player is currently stuck in a cobweb.
-   *
-   * @return {@code true} if the player is currently stuck in a cobweb.
-   */
-  boolean isInCobweb();
-
-  /**
-   * Checks if the player is currently located in water.
-   *
-   * @return {@code true} if the player is currently in water.
-   */
-  boolean isInWater();
-
-  /**
    * Sends a chat message from the given player.
    * This means you can send a message as if the player itself
    * typed in this message. This also works with commands, if
@@ -448,7 +434,7 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
    *
    * @return The target location of the player's compass.
    */
-  KelpPlayer getCompassTarget();
+  KelpLocation getCompassTarget();
 
   /**
    * Kicks the given player from the server.
@@ -781,9 +767,15 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
    */
   KelpPlayer setAllowFlight(boolean allowed);
 
-  KelpPlayer allowFlying();
+  default KelpPlayer allowFlying() {
+    setAllowFlight(true);
+    return this;
+  }
 
-  KelpPlayer disallowFlying();
+  default KelpPlayer disallowFlying() {
+    setAllowFlight(false);
+    return this;
+  }
 
   /**
    * Hides a player from another player, so they become invisible
@@ -1120,6 +1112,8 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
    * @param whitelisted   {@code true} if the player should be whitelisted.
    */
   KelpPlayer setWhitelisted(boolean whitelisted);
+
+  KelpLocation getBedSpawnLocation();
 
   /**
    * Sends the given player a message into their chat.
