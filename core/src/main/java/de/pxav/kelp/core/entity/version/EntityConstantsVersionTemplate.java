@@ -1,11 +1,9 @@
 package de.pxav.kelp.core.entity.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.entity.type.RabbitEntity;
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
-import de.pxav.kelp.core.entity.util.CatType;
-import de.pxav.kelp.core.entity.util.PaintingType;
-import de.pxav.kelp.core.entity.util.VillagerProfession;
-import de.pxav.kelp.core.entity.util.VillagerType;
+import de.pxav.kelp.core.entity.util.*;
 import org.bukkit.Art;
 import org.bukkit.entity.Villager;
 
@@ -27,6 +25,16 @@ public abstract class EntityConstantsVersionTemplate {
   public abstract CatType getCatType(String bukkitCatType);
 
   public abstract String getCatType(CatType catType);
+
+  public abstract String getHorseColor(HorseColor horseColor);
+
+  public abstract HorseColor getHorseColor(String horseColor);
+
+  public abstract String getHorseStyle(HorseStyle horseStyle);
+
+  public abstract HorseStyle getHorseStyle(String horseStyle);
+
+
 
   public abstract <T extends KelpProjectile<?>> T launchProjectile();
 

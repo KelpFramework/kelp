@@ -1,14 +1,12 @@
 package de.pxav.kelp.implementation1_8.entity;
 
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
-import de.pxav.kelp.core.entity.util.CatType;
-import de.pxav.kelp.core.entity.util.PaintingType;
-import de.pxav.kelp.core.entity.util.VillagerProfession;
-import de.pxav.kelp.core.entity.util.VillagerType;
+import de.pxav.kelp.core.entity.util.*;
 import de.pxav.kelp.core.entity.version.EntityConstantsVersionTemplate;
 import de.pxav.kelp.core.version.Versioned;
 import org.bukkit.Art;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Villager;
 
 @Versioned
@@ -192,6 +190,26 @@ public class VersionedEntityConstants extends EntityConstantsVersionTemplate {
       return "SIAMESE_CAT";
     }
     return null;
+  }
+
+  @Override
+  public String getHorseColor(HorseColor horseColor) {
+    return horseColor.toString();
+  }
+
+  @Override
+  public HorseColor getHorseColor(String horseColor) {
+    return HorseColor.valueOf(horseColor);
+  }
+
+  @Override
+  public String getHorseStyle(HorseStyle horseStyle) {
+    return horseStyle.toString();
+  }
+
+  @Override
+  public HorseStyle getHorseStyle(String horseStyle) {
+    return HorseStyle.valueOf(horseStyle);
   }
 
   @Override
