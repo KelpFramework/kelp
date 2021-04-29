@@ -113,7 +113,8 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
     Command bukkitCommand = new BukkitCommand(commandName) {
       @Override
       public boolean execute(CommandSender sender, String label, String[] args) {
-        final ParsedResult<? extends KelpCommandSender<?>> parsed = commandDispatcher.parse(label);
+        String joinedArguments = String.join(" ", args);
+        final ParsedResult<? extends KelpCommandSender<?>> parsed = commandDispatcher.parse(label + " " + joinedArguments);
         if (parsed == null) {
           sender.sendMessage("Failed to parse command. Please contact an admin.");
           return true;
