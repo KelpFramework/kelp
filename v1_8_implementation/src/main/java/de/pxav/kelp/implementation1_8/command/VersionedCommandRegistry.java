@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -113,7 +114,10 @@ public class VersionedCommandRegistry extends CommandRegistryVersionTemplate {
       @Override
       public boolean execute(CommandSender sender, String label, String[] args) {
         final ParsedResult<? extends KelpCommandSender<?>> parsed = commandDispatcher.parse(label);
-        if (parsed == null) sender.sendMessage("Failed to parse command. Please contact an admin.");
+        if (parsed == null) {
+          sender.sendMessage("Failed to parse command. Please contact an admin.");
+          return true;
+        }
         ExecutorType executorType = commandAnnotation.executorType();
         KelpCommandSender<?> kelpSender;
         boolean isConsoleSender = false;
