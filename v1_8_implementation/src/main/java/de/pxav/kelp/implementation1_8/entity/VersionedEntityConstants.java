@@ -7,6 +7,7 @@ import de.pxav.kelp.core.version.Versioned;
 import org.bukkit.Art;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager;
 
 @Versioned
@@ -210,6 +211,33 @@ public class VersionedEntityConstants extends EntityConstantsVersionTemplate {
   @Override
   public HorseStyle getHorseStyle(String horseStyle) {
     return HorseStyle.valueOf(horseStyle);
+  }
+
+  @Override
+  public String getRabbitType(RabbitType rabbitType) {
+    if (rabbitType == RabbitType.BEIGE) {
+      return "GOLD";
+    } else if (rabbitType == RabbitType.BROWN) {
+      return "BROWN";
+    } else if (rabbitType == RabbitType.BLACK) {
+      return "BLACK";
+    } else if (rabbitType == RabbitType.BLACK_AND_WHITE) {
+      return "BLACK_AND_WHITE";
+    } else if (rabbitType == RabbitType.SALT_AND_PEPPER) {
+      return "SALT_AND_PEPPER";
+    } else if (rabbitType == RabbitType.WHITE) {
+      return "WHITE";
+    }
+    return "WHITE";
+  }
+
+  @Override
+  public RabbitType getRabbitType(String rabbitType) {
+    if (rabbitType.equalsIgnoreCase("GOLD")) {
+      return RabbitType.BEIGE;
+    }
+
+    return RabbitType.valueOf(rabbitType);
   }
 
   @Override

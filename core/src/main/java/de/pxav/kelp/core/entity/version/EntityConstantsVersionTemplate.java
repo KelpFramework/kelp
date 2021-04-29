@@ -34,7 +34,9 @@ public abstract class EntityConstantsVersionTemplate {
 
   public abstract HorseStyle getHorseStyle(String horseStyle);
 
+  public abstract String getRabbitType(RabbitType rabbitType);
 
+  public abstract RabbitType getRabbitType(String rabbitType);
 
   public abstract <T extends KelpProjectile<?>> T launchProjectile();
 
