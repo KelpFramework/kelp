@@ -13,16 +13,13 @@ import org.bukkit.Location;
 
 public class VersionedZombieVillager extends VersionedZombie implements ZombieVillagerEntity {
 
-  private final EntityConstantsVersionTemplate entityConstantsVersionTemplate;
   private final EntityZombie zombieHandle;
 
   public VersionedZombieVillager(Entity entityHandle,
                                  KelpEntityType entityType,
                                  Location initialLocation,
-                                 EntityTypeVersionTemplate entityTypeVersionTemplate,
-                                 EntityConstantsVersionTemplate entityConstantsVersionTemplate) {
+                                 EntityTypeVersionTemplate entityTypeVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
-    this.entityConstantsVersionTemplate = entityConstantsVersionTemplate;
     this.zombieHandle = (EntityZombie) entityHandle;
     zombieHandle.setVillager(true);
   }
