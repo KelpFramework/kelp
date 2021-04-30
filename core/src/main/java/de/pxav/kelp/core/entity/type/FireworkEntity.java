@@ -14,6 +14,6 @@ public interface FireworkEntity extends KelpProjectile<FireworkEntity> {
 
   boolean isShotAtAngle();
 
-  boolean setShotAtAngle(boolean shotAtAngle);
+  FireworkEntity setShotAtAngle(boolean shotAtAngle);
 
 }

@@ -7,10 +7,10 @@ public interface EnderCrystalEntity extends KelpEntity<EnderCrystalEntity> {
 
   boolean isShowingBottom();
 
-  void setShowingBottom(boolean showingBottom);
+  EnderCrystalEntity setShowingBottom(boolean showingBottom);
 
   KelpLocation getBeamTarget();
 
-  void setBeamTarget(KelpLocation beamTarget);
+  EnderCrystalEntity setBeamTarget(KelpLocation beamTarget);
 
 }

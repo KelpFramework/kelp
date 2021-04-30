@@ -8,18 +8,18 @@ public interface EnderSignalEntity extends KelpEntity<EnderSignalEntity> {
 
   KelpLocation getTargetLocation();
 
-  void setTargetLocation(KelpLocation var1);
+  EnderSignalEntity setTargetLocation(KelpLocation var1);
 
   boolean getDropItem();
 
-  void setDropItem(boolean dropItem);
+  EnderSignalEntity setDropItem(boolean dropItem);
 
   KelpItem getItem();
 
-  void setItem(KelpItem item);
+  EnderSignalEntity setItem(KelpItem item);
 
   int getDespawnTimer();
 
-  void setDespawnTimer(int despawnTimer);
+  EnderSignalEntity setDespawnTimer(int despawnTimer);
 
 }

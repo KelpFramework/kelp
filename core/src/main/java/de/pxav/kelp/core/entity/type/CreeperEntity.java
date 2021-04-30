@@ -1,29 +1,28 @@
 package de.pxav.kelp.core.entity.type;
 
+import de.pxav.kelp.core.entity.type.general.ExplosiveEntity;
 import de.pxav.kelp.core.entity.type.general.MonsterEntity;
 import org.bukkit.Difficulty;
 
-public interface CreeperEntity extends MonsterEntity<CreeperEntity> {
+public interface CreeperEntity extends MonsterEntity<CreeperEntity>, ExplosiveEntity<CreeperEntity> {
 
   boolean isCharged();
 
-  void setCharged(boolean charged);
+  CreeperEntity setCharged(boolean charged);
 
-  void setMaxFuseTicks(int maxFuseTicks);
+  CreeperEntity setMaxFuseTicks(int maxFuseTicks);
 
   int getMaxFuseTicks();
 
-  void setFuseTicks(int fuseTicks);
+  CreeperEntity setFuseTicks(int fuseTicks);
 
   int getFuseTicks();
 
-  void setExplosionRadius(int explosionRadius);
+  CreeperEntity explode();
 
-  int getExplosionRadius();
+  CreeperEntity ignite();
 
-  void explode();
-
-  void ignite();
+  boolean isIgnited();
 
   @Override
   default int getMaximumSpawnLightLevel() {
