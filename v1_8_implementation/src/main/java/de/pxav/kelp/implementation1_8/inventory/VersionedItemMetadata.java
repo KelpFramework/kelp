@@ -68,6 +68,21 @@ public class VersionedItemMetadata extends ItemMetadataVersionTemplate {
   }
 
   @Override
+  public ItemMetadata getMetadata(ItemMeta itemMeta) {
+
+    if (itemMeta instanceof FireworkMeta) {
+      FireworkMeta fireworkMeta = (FireworkMeta) itemMeta;
+      return FireworkMetadata.create()
+        .height(fireworkMeta.getPower())
+        .addEffect(fireworkMeta.getEffects().toArray(new FireworkEffect[0]));
+    }
+
+    //TODO add more metadatas
+
+    return null;
+  }
+
+  @Override
   public ItemMetadata getMetadata(ItemStack itemStack) {
     ItemMeta itemMeta = itemStack.getItemMeta();
 
