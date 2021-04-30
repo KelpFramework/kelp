@@ -10,7 +10,7 @@ import org.bukkit.Location;
 
 public class VersionedBat extends VersionedMobileEntity<BatEntity> implements BatEntity {
 
-  EntityBat batHandle;
+  private EntityBat batHandle;
 
   public VersionedBat(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
