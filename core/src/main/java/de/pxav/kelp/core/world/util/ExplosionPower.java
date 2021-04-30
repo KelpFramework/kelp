@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.world.util;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * This class is used to determine the power of an explosion.
  * Depending on which type of explosion is performed, those types
@@ -66,6 +68,24 @@ public class ExplosionPower {
    */
   public float getPower() {
     return power;
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+      .append("EXPLOSIONPOWER:")
+      .append(this.power)
+      .append(this.power * 4 - 2).toHashCode();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof ExplosionPower)) {
+      return false;
+    }
+
+    ExplosionPower compare = (ExplosionPower) object;
+    return compare.power == this.power;
   }
 
 }
