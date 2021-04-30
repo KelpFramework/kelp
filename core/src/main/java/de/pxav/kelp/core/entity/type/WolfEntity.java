@@ -12,6 +12,6 @@ public interface WolfEntity extends AnimalEntity<WolfEntity>, TameableAnimal<Wol
 
   Color getCollarDyeColor();
 
-  WolfEntity setCollarDyeColor();
+  WolfEntity setCollarDyeColor(Color color);
 
 }

@@ -6,6 +6,6 @@ public interface HopperMinecart extends MinecartEntity<HopperMinecart> {
 
   boolean isHopperEnabled();
 
-  HopperMinecart setHopperEnabled();
+  HopperMinecart setHopperEnabled(boolean enabled);
 
 }

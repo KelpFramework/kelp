@@ -6,6 +6,6 @@ public interface SlimeEntity extends MobileEntity<SlimeEntity> {
 
   int getSlimeSize();
 
-  SlimeEntity setSlimeSize();
+  SlimeEntity setSlimeSize(int slimeSize);
 
 }
