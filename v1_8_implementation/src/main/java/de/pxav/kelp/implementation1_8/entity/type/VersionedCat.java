@@ -16,12 +16,16 @@ import org.bukkit.entity.Ocelot;
 
 public class VersionedCat extends VersionedAnimalEntity<CatEntity> implements CatEntity {
 
-  CraftOcelot craftOcelot;
-  EntityOcelot ocelotHandle;
+  private CraftOcelot craftOcelot;
   private EntityConstantsVersionTemplate entityConstantsVersionTemplate;
 
-  public VersionedCat(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate, EntityConstantsVersionTemplate entityConstantsVersionTemplate) {
+  public VersionedCat(Entity entityHandle,
+                      KelpEntityType entityType,
+                      Location initialLocation,
+                      EntityTypeVersionTemplate entityTypeVersionTemplate,
+                      EntityConstantsVersionTemplate entityConstantsVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
+    this.craftOcelot = (CraftOcelot) entityHandle.getBukkitEntity();
     craftOcelot.setCatType(Ocelot.Type.valueOf(entityConstantsVersionTemplate.getCatType(CatType.randomCatType())));
     this.entityConstantsVersionTemplate = entityConstantsVersionTemplate;
   }
