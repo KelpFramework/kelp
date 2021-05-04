@@ -255,14 +255,13 @@ class CommandDispatcher<S : Any> {
         if (newArgs.isEmpty()) {
             val strings = mutableSetOf<String>()
             node.childs
+                .filter { it.checkAccess.invoke(context) }
                 .mapNotNull { it.argumentIdentifier }
                 .map { it.complete(context, current) }
                 .forEach { strings.addAll(it) }
-            node.childs.filter { it.argumentIdentifier == null }.forEach { strings.addAll(it.aliases + it.name!!) }
+            node.childs.filter { it.checkAccess.invoke(context) }.filter { it.argumentIdentifier == null }.forEach { strings.addAll(it.aliases + it.name!!) }
             return strings.toTypedArray()
         }
         return arrayOf()
     }
-
-
 }
