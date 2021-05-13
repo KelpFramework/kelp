@@ -1,6 +1,7 @@
 package de.dseelp.kommon.command
 
 import de.dseelp.kommon.command.arguments.ParsedArgument
+import java.util.*
 
 /**
  * @author DSeeLP
@@ -14,7 +15,7 @@ class CommandDispatcher<S : Any> {
     }
 
     fun register(name: String, block: CommandBuilder<S>.() -> Unit) {
-        register(command(name, block))
+        register(literal(name, block))
     }
 
     fun register(builder: JavaCommandBuilder<S>) {
@@ -27,12 +28,12 @@ class CommandDispatcher<S : Any> {
     }
 
     fun getNode(name: String, useAliases: Boolean = false): CommandNode<S>? {
-        val lowercaseName = name.toLowerCase()
+        val lowercaseName = name.lowercase(Locale.getDefault())
         for (node in nodes) {
-            if (node.name!!.toLowerCase() == lowercaseName) return node
+            if (node.name!!.lowercase(Locale.getDefault()) == lowercaseName) return node
             if (useAliases) {
                 for (alias in node.aliases) {
-                    if (alias.toLowerCase() == lowercaseName) return node
+                    if (alias.lowercase(Locale.getDefault()) == lowercaseName) return node
                 }
             }
         }
