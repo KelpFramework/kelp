@@ -12,12 +12,12 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand;
 import org.bukkit.util.EulerAngle;
 
-public class VersionedArmorStand extends VersionedEntity<ArmorStandEntity> implements ArmorStandEntity {
+public class VersionedArmorStandEntity extends VersionedEntity<ArmorStandEntity> implements ArmorStandEntity {
 
   CraftArmorStand craftArmorStand;
   EntityArmorStand armorStandHandle;
 
-  public VersionedArmorStand(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
+  public VersionedArmorStandEntity(Entity entityHandle, KelpEntityType entityType, Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     this.craftArmorStand = (CraftArmorStand) entityHandle.getBukkitEntity();
     this.armorStandHandle = (EntityArmorStand) entityHandle;
@@ -148,4 +148,5 @@ public class VersionedArmorStand extends VersionedEntity<ArmorStandEntity> imple
   public SimpleEntityEquipment getEquipment() {
     return new VersionedSimpleEntityEquipment(craftArmorStand);
   }
+
 }
