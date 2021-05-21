@@ -10,6 +10,8 @@ import net.minecraft.server.v1_8_R3.EntityTameableAnimal;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftTameableAnimal;
 
+import java.util.UUID;
+
 public class VersionedTameableAnimal<T extends TameableAnimal<T>> extends VersionedAnimalEntity<T> implements TameableAnimal<T> {
 
   private EntityTameableAnimal tameableHandle;
@@ -36,6 +38,11 @@ public class VersionedTameableAnimal<T extends TameableAnimal<T>> extends Versio
   @Override
   public KelpEntity<?> getOwner() {
     return entityTypeVersionTemplate.getKelpEntity(tameableHandle.getOwner().getBukkitEntity());
+  }
+
+  @Override
+  public UUID getOwnerUUID() {
+    return UUID.fromString(tameableHandle.getOwnerUUID());
   }
 
   @Override
