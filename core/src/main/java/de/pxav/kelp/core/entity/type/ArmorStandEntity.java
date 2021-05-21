@@ -1,13 +1,25 @@
 package de.pxav.kelp.core.entity.type;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.KelpEntity;
+import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.inventory.type.SimpleEntityEquipment;
+import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 public interface ArmorStandEntity extends KelpEntity<ArmorStandEntity> {
+
+  static ArmorStandEntity create(KelpLocation location) {
+    return (ArmorStandEntity) KelpPlugin.getInjector().getInstance(EntityTypeVersionTemplate.class)
+      .newKelpEntity(KelpEntityType.ARMOR_STAND, location.getBukkitLocation());
+  }
+
+  static ArmorStandEntity from(ArmorStand armorStand) {
+    return (ArmorStandEntity) KelpPlugin.getInjector().getInstance(EntityTypeVersionTemplate.class)
+      .getKelpEntity(armorStand);
+  }
   
   EulerAngle getBodyPose();
 
