@@ -3,6 +3,7 @@ package de.pxav.kelp.implementation1_8.entity;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.util.CatType;
 import de.pxav.kelp.core.entity.util.potion.PotionVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityConstantsVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
@@ -15,6 +16,8 @@ import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHorse;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftOcelot;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.minecart.*;
@@ -384,10 +387,8 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
         entity = craftWorld.createEntity(location, Snowman.class);
       }
       output = new VersionedSnowman(entity, entityType, location, this);
-    } else if (entityType == KelpEntityType.OCELOT || entity instanceof EntityOcelot) {
-      if (create) {
-        entity = craftWorld.createEntity(location, Ocelot.class);
-      }
+    } else if (entityType == KelpEntityType.OCELOT) {
+      entity = craftWorld.createEntity(location, Ocelot.class);
       output = new VersionedOcelot(entity, entityType, location, this);
     } else if (entityType == KelpEntityType.IRON_GOLEM || entity instanceof EntityIronGolem) {
       if (create) {
@@ -432,6 +433,33 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
         entity = craftWorld.createEntity(location, Zombie.class);
       }
       output = new VersionedZombie(entity, entityType, location, this);
+    }
+
+    //todo make type fetching more efficient
+
+    if (entity instanceof EntityOcelot) {
+      CraftOcelot ocelot = (CraftOcelot) entity.getBukkitEntity();
+      if (ocelot.getCatType() == Ocelot.Type.WILD_OCELOT) {
+        output = new VersionedOcelot(entity, entityType, location, this);
+      } else {
+        output = new VersionedCat(entity, entityType, location, this, entityConstantsVersionTemplate)
+          .setCatType(entityConstantsVersionTemplate.getCatType(ocelot.getCatType().toString()));
+      }
+    }
+
+    if (entity instanceof EntityHorse) {
+      CraftHorse horse = (CraftHorse) entity.getBukkitEntity();
+      if (horse.getVariant() == Horse.Variant.DONKEY) {
+        output = new VersionedDonkey(entity, entityType, location, this, inventoryVersionTemplate);
+      } else if (horse.getVariant() == Horse.Variant.MULE) {
+        output = new VersionedMule(entity, entityType, location, this, inventoryVersionTemplate);
+      } else if (horse.getVariant() == Horse.Variant.SKELETON_HORSE) {
+        output = new VersionedSkeletonHorse(entity, entityType, location, this, inventoryVersionTemplate);
+      } else if (horse.getVariant() == Horse.Variant.UNDEAD_HORSE) {
+        output = new VersionedZombieHorse(entity, entityType, location, this, inventoryVersionTemplate);
+      } else if (horse.getVariant() == Horse.Variant.HORSE) {
+        output = new VersionedHorse(entity, entityType, location, this, inventoryVersionTemplate, entityConstantsVersionTemplate);
+      }
     }
 
     return output;
