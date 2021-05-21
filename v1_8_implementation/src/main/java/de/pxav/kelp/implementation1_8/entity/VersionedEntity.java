@@ -1,10 +1,12 @@
 package de.pxav.kelp.implementation1_8.entity;
 
+import com.google.common.collect.Lists;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -15,8 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * A class description goes here.
@@ -67,28 +68,29 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
       entityHandle.pitch
     );
 
-    craftWorld.addEntity(entityHandle, CreatureSpawnEvent.SpawnReason.CUSTOM);
+    craftWorld.getHandle().addEntity(entityHandle, CreatureSpawnEvent.SpawnReason.DEFAULT);
     return (T) this;
   }
 
   @Override
   public T setVelocity(Vector velocity) {
-    return null;
+    craftEntity().setVelocity(velocity);
+    return (T) this;
   }
 
   @Override
   public Vector getVelocity() {
-    return null;
+    return craftEntity().getVelocity();
   }
 
   @Override
   public double getEntityHeight() {
-    return entityHandle.width;
+    return entityHandle.getHeadHeight();
   }
 
   @Override
   public double getEntityWidth() {
-    return entityHandle.getHeadHeight();
+    return entityHandle.width;
   }
 
   @Override
@@ -138,187 +140,225 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
 
   @Override
   public Entity getBukkitEntity() {
-    return null;
+    return craftEntity();
   }
 
   @Override
   public boolean isOnGround() {
-    return false;
+    return entityHandle.onGround;
   }
 
   @Override
-  public T setOnGround() {
-    return null;
+  public T setOnGround(boolean onGround) {
+    entityHandle.onGround = onGround;
+    return (T) this;
   }
 
   @Override
   public KelpWorld getWorld() {
-    return null;
+    return KelpWorld.from(craftEntity().getWorld());
   }
 
   @Override
   public T setRotation(float yaw, float pitch) {
-    return null;
+    entityHandle.yaw = yaw;
+    entityHandle.pitch = pitch;
+    return (T) this;
   }
 
   @Override
   public T teleport(String worldName, double x, double y, double z, float yaw, float pitch) {
-    return null;
+    craftEntity().teleport(new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch));
+    return (T) this;
   }
 
   @Override
   public int getFireTicks() {
-    return 0;
+    return entityHandle.fireTicks;
   }
 
   @Override
   public T setFireTicks(int fireTicks) {
-    return null;
+    entityHandle.fireTicks = fireTicks;
+    return (T) this;
   }
 
   @Override
   public T setMaxFireTicks(int maxFireTicks) {
-    return null;
+    entityHandle.maxFireTicks = maxFireTicks;
+    return (T) this;
   }
 
   @Override
   public int getMaxFireTicks() {
-    return 0;
+    return entityHandle.maxFireTicks;
   }
 
   @Override
   public T remove() {
-    return null;
+    craftEntity().remove();
+    return (T) this;
   }
 
   @Override
   public boolean isDead() {
-    return false;
+    return !entityHandle.isAlive();
   }
 
   @Override
   public boolean isValid() {
-    return false;
+    return entityHandle.valid;
   }
 
   @Override
   public Server getServer() {
-    return null;
+    return craftEntity().getServer();
   }
 
   @Override
   public KelpEntity<?> getPassenger() {
-    return null;
+    return entityTypeVersionTemplate.getKelpEntity(craftEntity().getPassenger());
   }
 
   @Override
   public List<KelpEntity<?>> getPassengers() {
-    return null;
+    // there is only one passenger in 1.8
+    KelpEntity<?> passenger = getPassenger();
+    if (passenger == null) {
+      return null;
+    }
+    return Collections.singletonList(passenger);
   }
 
   @Override
   public T addPassenger(KelpEntity<?> passenger) {
-    return null;
+    craftEntity().setPassenger(passenger.getBukkitEntity());
+    return (T) this;
   }
 
   @Override
   public T addPassenger(List<KelpEntity<?>> passengers) {
-    return null;
+    if (passengers == null || passengers.isEmpty()) {
+      return (T) this;
+    }
+    craftEntity().setPassenger(passengers.get(0).getBukkitEntity());
+    return (T) this;
   }
 
+  // only one passenger in 1.8
   @Override
   public T removePassenger(KelpEntity<?> passenger) {
-    return null;
+    craftEntity().eject();
+    return (T) this;
   }
 
   @Override
   public boolean isEmpty() {
-    return false;
+    return craftEntity().isEmpty();
   }
 
   @Override
   public T ejectPassengers() {
-    return null;
+    craftEntity().eject();
+    return (T) this;
   }
 
   @Override
   public T setFallDistance(float fallDistance) {
-    return null;
+    craftEntity().setFallDistance(fallDistance);
+    return (T) this;
   }
 
   @Override
   public float getFallDistance() {
-    return 0;
+    return craftEntity().getFallDistance();
   }
 
   @Override
   public UUID getUUID() {
-    return null;
+    return entityHandle.getUniqueID();
   }
 
   @Override
   public int getTicksLived() {
-    return 0;
+    return craftEntity().getTicksLived();
   }
 
   @Override
   public T setTicksLived(int ticksLived) {
-    return null;
+    craftEntity().setTicksLived(ticksLived);
+    return (T) this;
   }
 
   @Override
   public boolean isInsideVehicle() {
-    return false;
+    return craftEntity().isInsideVehicle();
   }
 
   @Override
   public T leaveVehicle() {
-    return null;
+    craftEntity().leaveVehicle();
+    return (T) this;
   }
 
   @Override
   public KelpEntity<?> getVehicle() {
-    return null;
+    return entityTypeVersionTemplate.getKelpEntity(craftEntity().getVehicle());
   }
 
+  // not available in 1.8
   @Override
   public boolean isGlowing() {
     return false;
   }
 
+  // not in 1.8
   @Override
   public T setGlowing(boolean glowing) {
-    return null;
+    return (T) this;
   }
 
   @Override
   public T customNameVisible(boolean visible) {
-    return null;
+    craftEntity().setCustomNameVisible(visible);
+    return (T) this;
   }
 
   @Override
   public T customName(String customName) {
-    return null;
+    craftEntity().setCustomName(customName);
+    return (T) this;
   }
 
   @Override
   public boolean isCustomNameVisible() {
-    return false;
+    return craftEntity().isCustomNameVisible();
   }
 
   @Override
   public EntityDamageEvent getLastDamageCause() {
-    return null;
+    return craftEntity().getLastDamageCause();
   }
 
   @Override
   public void setLastDamageCause(EntityDamageEvent damageCause) {
-
+    craftEntity().setLastDamageCause(damageCause);
   }
 
   @Override
   public List<KelpEntity<?>> getNearbyEntities(double radiusX, double radiusY, double radiusZ) {
-    return null;
+    List<net.minecraft.server.v1_8_R3.Entity> notchEntityList = entityHandle.world.a(
+      entityHandle,
+      entityHandle.getBoundingBox().grow(radiusX, radiusY, radiusZ),
+      null);
+
+    List<KelpEntity<?>> kelpEntityList = Lists.newArrayList();
+    for (net.minecraft.server.v1_8_R3.Entity notchEntity : notchEntityList) {
+      KelpEntity<?> entity = entityTypeVersionTemplate.getKelpEntity(notchEntity.getBukkitEntity());
+      kelpEntityList.add(entity);
+    }
+
+    return kelpEntityList;
   }
 
   protected CraftEntity craftEntity() {
