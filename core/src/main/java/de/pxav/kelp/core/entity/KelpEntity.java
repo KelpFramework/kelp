@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.entity;
 
+import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
 import org.bukkit.Server;
@@ -12,6 +14,14 @@ import java.util.UUID;
 
 public interface KelpEntity<T extends KelpEntity<?>> {
 
+  static KelpEntity<?> create(KelpEntityType entityType, KelpLocation location) {
+    return KelpPlugin.getInjector().getInstance(EntityTypeVersionTemplate.class).newKelpEntity(entityType, location.getBukkitLocation());
+  }
+
+  static KelpEntity<?> from(Entity bukkitEntity) {
+    return KelpPlugin.getInjector().getInstance(EntityTypeVersionTemplate.class).getKelpEntity(bukkitEntity);
+  }
+
   /**
    * Gets the unique id of this entity in its world.
    *
@@ -19,7 +29,7 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    * which can be used to identify this entity when sending packets
    * for example.
    *
-   * Entity ids are not incremental but random in a range
+   * Entity ids are incremental in a range
    * from 0 to 2000, which usually is the maximum id used
    * by bukkit.
    *
@@ -109,7 +119,7 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    *
    * @return An instance of the current entity for fluent builder design.
    */
-  T setOnGround();
+  T setOnGround(boolean onGround);
 
   /**
    * Gets the current world of the entity.
