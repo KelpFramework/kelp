@@ -5,6 +5,7 @@ import de.pxav.kelp.core.entity.util.potion.minecraft.*;
 import de.pxav.kelp.core.inventory.metadata.Color;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.KelpVersion;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Represents an abstract potion effect a player can get by drinking a potion for example.
@@ -26,10 +27,6 @@ public abstract class KelpPotionEffect {
   public static Class<RegenerationPotionEffect> REGENERATION = RegenerationPotionEffect.class;
   public static Class<SlownessPotionEffect> SLOWNESS = SlownessPotionEffect.class;
   public static Class<SpeedPotionEffect> SPEED = SpeedPotionEffect.class;
-
-  static {
-
-  }
 
   /**
    * Gets the default name of the effect. Please note that the actual name displayed
@@ -89,6 +86,28 @@ public abstract class KelpPotionEffect {
 
   public boolean isBukkitEffectUnsafe(KelpVersion version) {
     return false;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof KelpPotionEffect)) {
+      return false;
+    }
+
+    KelpPotionEffect otherEffect = (KelpPotionEffect) other;
+
+    return otherEffect.getName().equals(getName())
+      && otherEffect.isInstant() == isInstant()
+      && otherEffect.getColor().equals(getColor());
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(37, 17)
+      .append(getName())
+      .append(getColor())
+      .append(getRating())
+      .toHashCode();
   }
 
 }
