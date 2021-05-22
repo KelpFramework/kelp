@@ -3,14 +3,20 @@ package de.pxav.kelp.implementation1_8.entity;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.util.CatType;
 import de.pxav.kelp.core.entity.util.potion.PotionVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityConstantsVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.inventory.metadata.ItemMetadataVersionTemplate;
 import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
+import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
+import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.implementation1_8.entity.type.*;
+import de.pxav.kelp.implementation1_8.player.BossBarLocationUpdater;
+import de.pxav.kelp.implementation1_8.player.VersionedKelpPlayer;
 import net.minecraft.server.v1_8_R3.*;
 import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Location;
@@ -21,6 +27,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftOcelot;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.minecart.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * A class description goes here.
@@ -35,18 +42,33 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
   private PotionVersionTemplate potionVersionTemplate;
   private FixedItemFrameListener fixedItemFrameListener;
   private ItemMetadataVersionTemplate itemMetadataVersionTemplate;
+  private BossBarLocationUpdater bossBarLocationUpdater;
+  private SoundRepository soundRepository;
+  private ParticleVersionTemplate particleVersionTemplate;
+  private JavaPlugin javaPlugin;
+  private KelpLogger logger;
 
   @Inject
   public VersionedEntityType(EntityConstantsVersionTemplate entityConstantsVersionTemplate,
                              InventoryVersionTemplate inventoryVersionTemplate,
                              PotionVersionTemplate potionVersionTemplate,
                              FixedItemFrameListener fixedItemFrameListener,
-                             ItemMetadataVersionTemplate itemMetadataVersionTemplate) {
+                             ItemMetadataVersionTemplate itemMetadataVersionTemplate,
+                             BossBarLocationUpdater bossBarLocationUpdater,
+                             SoundRepository soundRepository,
+                             ParticleVersionTemplate particleVersionTemplate,
+                             JavaPlugin javaPlugin,
+                             KelpLogger logger) {
     this.entityConstantsVersionTemplate = entityConstantsVersionTemplate;
     this.inventoryVersionTemplate = inventoryVersionTemplate;
     this.potionVersionTemplate = potionVersionTemplate;
     this.fixedItemFrameListener = fixedItemFrameListener;
     this.itemMetadataVersionTemplate = itemMetadataVersionTemplate;
+    this.bossBarLocationUpdater = bossBarLocationUpdater;
+    this.soundRepository = soundRepository;
+    this.particleVersionTemplate = particleVersionTemplate;
+    this.javaPlugin = javaPlugin;
+    this.logger = logger;
   }
 
   @Override
@@ -94,7 +116,9 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     CraftWorld craftWorld = (CraftWorld) location.getWorld();
     KelpEntity<?> output = null;
 
-    if (entityType == KelpEntityType.DROPPED_ITEM || entity instanceof EntityItem) {
+    if (entityType == KelpEntityType.PLAYER || entity instanceof EntityPlayer) {
+      output = new VersionedKelpPlayer(entity, entityType, location, this, logger, bossBarLocationUpdater, soundRepository, particleVersionTemplate, javaPlugin);
+    } else if (entityType == KelpEntityType.DROPPED_ITEM || entity instanceof EntityItem) {
       if (create) {
         entity = craftWorld.createEntity(location, Item.class);
       }
@@ -460,6 +484,11 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
       } else if (horse.getVariant() == Horse.Variant.HORSE) {
         output = new VersionedHorse(entity, entityType, location, this, inventoryVersionTemplate, entityConstantsVersionTemplate);
       }
+    }
+
+    if (output instanceof VersionedLivingEntity) {
+      System.out.println("is living entity");
+      ((VersionedLivingEntity<?>)output).setPotionVersionTemplate(potionVersionTemplate);
     }
 
     return output;

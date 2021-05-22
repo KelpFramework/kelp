@@ -40,28 +40,16 @@ public class PlayerCreationListener {
   private KelpPlayerRepository kelpPlayerRepository;
   private GlobalPacketListener globalPacketListener;
   private EntityTypeVersionTemplate entityTypeVersionTemplate;
-  private SoundRepository soundRepository;
-  private BossBarLocationUpdater bossBarLocationUpdater;
-  private JavaPlugin javaPlugin;
-  private ParticleVersionTemplate particleVersionTemplate;
   private KelpLogger logger;
 
   @Inject
   public PlayerCreationListener(KelpPlayerRepository kelpPlayerRepository,
                                 GlobalPacketListener globalPacketListener,
                                 KelpLogger logger,
-                                JavaPlugin javaPlugin,
-                                SoundRepository soundRepository,
-                                EntityTypeVersionTemplate entityTypeVersionTemplate,
-                                BossBarLocationUpdater bossBarLocationUpdater,
-                                ParticleVersionTemplate particleVersionTemplate) {
+                                EntityTypeVersionTemplate entityTypeVersionTemplate) {
     this.kelpPlayerRepository = kelpPlayerRepository;
     this.globalPacketListener = globalPacketListener;
     this.logger = logger;
-    this.javaPlugin = javaPlugin;
-    this.particleVersionTemplate = particleVersionTemplate;
-    this.bossBarLocationUpdater = bossBarLocationUpdater;
-    this.soundRepository = soundRepository;
     this.entityTypeVersionTemplate = entityTypeVersionTemplate;
   }
 
@@ -78,16 +66,8 @@ public class PlayerCreationListener {
   public void handlePlayerLogin(PlayerLoginEvent event) {
     Entity playerHandle = ((CraftPlayer)event.getPlayer()).getHandle();
     kelpPlayerRepository.playerEntityObject(event.getPlayer().getUniqueId(), playerHandle);
-    KelpPlayer kelpPlayer = new VersionedKelpPlayer(
-      playerHandle,
-      KelpEntityType.PLAYER,
-      event.getPlayer().getLocation(),
-      entityTypeVersionTemplate,
-      logger,
-      bossBarLocationUpdater,
-      soundRepository,
-      particleVersionTemplate,
-      javaPlugin);
+
+    KelpPlayer kelpPlayer = (KelpPlayer) entityTypeVersionTemplate.getKelpEntity(event.getPlayer());
     kelpPlayerRepository.addOrUpdatePlayer(kelpPlayer.getUUID(), kelpPlayer);
     Bukkit.getPluginManager().callEvent(new KelpPlayerLoginEvent(
       kelpPlayer,
@@ -122,16 +102,7 @@ public class PlayerCreationListener {
       // is removed from the cache again.
       try {
         Entity playerHandle = ((CraftPlayer)current).getHandle();
-        KelpPlayer kelpPlayer = new VersionedKelpPlayer(
-          playerHandle,
-          KelpEntityType.PLAYER,
-          current.getLocation(),
-          entityTypeVersionTemplate,
-          logger,
-          bossBarLocationUpdater,
-          soundRepository,
-          particleVersionTemplate,
-          javaPlugin);
+        KelpPlayer kelpPlayer = (KelpPlayer) entityTypeVersionTemplate.getKelpEntity(current);
         kelpPlayer.setClientViewDistanceInternally(Bukkit.getViewDistance());
         kelpPlayer.setClientLanguageInternally("en_US");
         kelpPlayer.setPlayerChatVisibilityInternally(PlayerChatVisibility.SHOW_ALL_MESSAGES);
