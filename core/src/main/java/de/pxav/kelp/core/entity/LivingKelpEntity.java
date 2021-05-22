@@ -1,10 +1,21 @@
 package de.pxav.kelp.core.entity;
 
 import de.pxav.kelp.core.entity.type.general.DamageableEntity;
+import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
+import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
 import de.pxav.kelp.core.inventory.type.SimpleEntityEquipment;
 import de.pxav.kelp.core.world.KelpLocation;
+import org.bukkit.entity.LivingEntity;
+
+import java.util.Collection;
 
 public interface LivingKelpEntity<T extends LivingKelpEntity<?>> extends KelpEntity<T>, DamageableEntity<T> {
+
+  T addPotionEffect(KelpPotionEffect potionEffect);
+
+  Collection<KelpPotionEffect> getActivePotionEffects();
+
+  T removePotionEffect(KelpPotionEffectType effectType);
 
   /**
    * Gets the location of the entity's eyes. When you get
