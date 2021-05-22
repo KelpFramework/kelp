@@ -20,14 +20,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public abstract class KelpPotionEffectType {
 
-  // default minecraft potion effects
-  public static KelpPotionEffectType ABSORPTION = new AbsorptionPotionEffect();
-  public static Class<HastePotionEffect> HASTE = HastePotionEffect.class;
-  public static Class<MiningFatiguePotionEffect> MINING_FATIGUE = MiningFatiguePotionEffect.class;
-  public static Class<RegenerationPotionEffect> REGENERATION = RegenerationPotionEffect.class;
-  public static Class<SlownessPotionEffect> SLOWNESS = SlownessPotionEffect.class;
-  public static Class<SpeedPotionEffect> SPEED = SpeedPotionEffect.class;
-
   /**
    * Gets the default name of the effect. Please note that the actual name displayed
    * to the player may vary as this is dependent on the player's client language.
