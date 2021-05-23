@@ -1,9 +1,10 @@
 package de.pxav.kelp.core.entity.util.potion.minecraft;
 
-import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
+import de.pxav.kelp.core.entity.util.potion.KelpEffectRating;
+import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
+import de.pxav.kelp.core.entity.util.potion.MinecraftPotion;
 import de.pxav.kelp.core.inventory.metadata.Color;
 import de.pxav.kelp.core.version.KelpVersion;
-import org.bukkit.potion.PotionEffectType;
 
 /**
  * Represents the absorption potion effect. Absorption is a status
@@ -15,7 +16,8 @@ import org.bukkit.potion.PotionEffectType;
  *
  * @author pxav
  */
-public class AbsorptionPotionEffect extends KelpPotionEffect {
+@MinecraftPotion(since = KelpVersion.MC_1_8_0)
+public class AbsorptionPotionEffect extends KelpPotionEffectType {
 
   @Override
   public String getName() {
@@ -57,6 +59,11 @@ public class AbsorptionPotionEffect extends KelpPotionEffect {
    */
   public int getHeartsForLevel(int level) {
     return level * 2;
+  }
+
+  @Override
+  public KelpEffectRating getRating() {
+    return KelpEffectRating.POSITIVE;
   }
 
 }
