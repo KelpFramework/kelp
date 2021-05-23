@@ -95,6 +95,16 @@ public abstract class KelpPotionEffectType {
   }
 
   /**
+   * Checks if the effect type can be removed from a player when
+   * they consume a bucket of milk.
+   *
+   * @return {@code true} if the effect can be removed with a bucket of milk.
+   */
+  public boolean isRemovableWithMilk() {
+    return true;
+  }
+
+  /**
    * Checks if this effect is a default potion effect offered by minecraft/bukkit.
    * As of now, every effect will return {@code true} on this as custom potion effects
    * are not yet possible in minecraft.
