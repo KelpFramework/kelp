@@ -85,22 +85,7 @@ public class SimpleInventory extends KelpInventory<SimpleInventory> {
   public Inventory render(KelpPlayer player) {
     Inventory inventory = inventoryVersionTemplate.createInventory(this.size, title.get());
 
-    for (SimpleWidget current : simpleWidgets) {
-      KelpItem item = current.render();
-      if (!item.hasTagKey("interactionAllowed")) {
-        item.cancelInteractions();
-      }
-      inventory.setItem(item.getSlot(), item.getItemStack());
-    }
-
-    for (GroupedWidget current : groupedWidgets) {
-      current.render(player).forEach(item -> {
-        if (!item.hasTagKey("interactionAllowed")) {
-          item.cancelInteractions();
-        }
-        inventory.setItem(item.getSlot(), item.getItemStack());
-      });
-    }
+    widgetsToInventory(inventory, player);
 
     return inventory;
   }

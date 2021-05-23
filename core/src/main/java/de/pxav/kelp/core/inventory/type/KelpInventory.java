@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.inventory.type;
 
 import com.google.common.collect.Lists;
+import de.pxav.kelp.core.inventory.InventoryConstants;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.version.InventoryVersionTemplate;
 import de.pxav.kelp.core.inventory.widget.GroupedWidget;
@@ -108,6 +109,66 @@ public abstract class KelpInventory<T extends KelpInventory<?>> {
    * @return The bukkit inventory instance containing the contents of this inventory.
    */
   public abstract Inventory render(KelpPlayer player);
+
+  protected void widgetsToInventory(Inventory inventory, KelpPlayer player) {
+    for (SimpleWidget current : simpleWidgets) {
+
+      // render stateless widgets only once.
+      if (!current.isStateful() && current.getCoveredSlot() == InventoryConstants.NOT_RENDERED_SIMPLE_WIDGET) {
+        KelpItem item = current.render();
+        if (!item.hasTagKey("interactionAllowed")) {
+          item.cancelInteractions();
+        }
+        inventory.setItem(item.getSlot(), item.getItemStack());
+        continue;
+      }
+
+      if (current.getCoveredSlot() != -1) {
+        inventory.clear(current.getCoveredSlot());
+      }
+
+      KelpItem item = current.render();
+
+      // if items are not explicitly stated as interactable
+      // cancel interactions by default
+      if (!item.hasTagKey("interactionAllowed")) {
+        item.cancelInteractions();
+      }
+
+      inventory.setItem(item.getSlot(), item.getItemStack());
+    }
+
+    for (GroupedWidget current : groupedWidgets) {
+      if (!current.isStateful() && InventoryConstants.NOT_RENDERED_GROUPED_WIDGET.test(current)) {
+        current.render(player).forEach(item -> {
+
+          // if items are not explicitly stated as interactable
+          // cancel interactions by default
+          if (!item.hasTagKey("interactionAllowed")) {
+            item.cancelInteractions();
+          }
+
+          inventory.setItem(item.getSlot(), item.getItemStack());
+        });
+        continue;
+      }
+
+      for (Integer slot : current.getCoveredSlots()) {
+        inventory.clear(slot);
+      }
+
+      current.render(player).forEach(item -> {
+
+        // if items are not explicitly stated as interactable
+        // cancel interactions by default
+        if (!item.hasTagKey("interactionAllowed")) {
+          item.cancelInteractions();
+        }
+
+        inventory.setItem(item.getSlot(), item.getItemStack());
+      });
+    }
+  }
 
   /**
    * Updates all widgets contained by this inventory by clearing
