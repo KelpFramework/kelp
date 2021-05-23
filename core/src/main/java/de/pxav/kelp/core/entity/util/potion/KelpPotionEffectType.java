@@ -1,9 +1,8 @@
 package de.pxav.kelp.core.entity.util.potion;
 
 import de.pxav.kelp.core.KelpServer;
-import de.pxav.kelp.core.entity.util.potion.minecraft.*;
+import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.inventory.metadata.Color;
-import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.KelpVersion;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -59,11 +58,25 @@ public abstract class KelpPotionEffectType {
 
   /**
    * If custom potion effects are ever added to minecraft, this method can be used to
-   * define what should happen with a player when the effect is applied to them.
+   * define what should happen with an entity when the effect is applied to them.
    *
-   * @param player The player who consumed the potion effect and to whom the effects should be applied.
+   * @param entity The entity who consumed the potion effect and to whom the effects should be applied.
+   * @param effectInfo Other information about the effect such as the duration or level. This also includes if
+   *                   particles should be displayed.
    */
-  public void onConsume(KelpPlayer player) {}
+  public void onConsume(LivingKelpEntity<?> entity, KelpPotionEffect effectInfo) {}
+
+  /**
+   * This method is triggered when the effect is removed from an entity.
+   * However, this only applies for effects that do not natively exist in the current
+   * server version and are therefore emulated by Kelp. This is therefore not triggered
+   * when the effect is removed via the official {@code /effect} command, but only
+   * when drinking milk or using the {@link LivingKelpEntity#removePotionEffect(KelpPotionEffectType)}
+   * method.
+   *
+   * @param entity The entity from which the effect has been removed.
+   */
+  public void onRemove(LivingKelpEntity<?> entity) {}
 
   /**
    * Checks if this effect is a default potion effect offered by minecraft/bukkit.
