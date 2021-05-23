@@ -34,6 +34,8 @@ public interface GroupedWidget extends Widget {
   /**
    * Gets all slots covered by this widget in the
    * target inventory.
+   * IMPORTANT: If your widget has not been rendered at least
+   * once, this must return either {@code null} or an empty set.
    *
    * @return A set of all slots covered by this widget in the target inventory.
    */
