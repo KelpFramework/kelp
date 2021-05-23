@@ -6,6 +6,7 @@ import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
+import de.pxav.kelp.core.entity.util.potion.PotionEffects;
 import de.pxav.kelp.core.entity.util.potion.PotionVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.inventory.type.SimpleEntityEquipment;
@@ -17,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collection;
 
@@ -76,9 +78,16 @@ public class VersionedLivingEntity<T extends LivingKelpEntity<T>>
   @Override
   public T removePotionEffect(KelpPotionEffectType effectType) {
     if (effectType.isBukkitEffect()) {
-      //TODO implement logic!
+      PotionEffectType bukkitEffect = potionVersionTemplate.getBukkitPotion(effectType);
+      craftLivingEntity.removePotionEffect(bukkitEffect);
+    } else {
+      for (KelpPotionEffect effect : potionEffects.getOrEmpty(this)) {
+        if (effect.getEffectType().equals(effectType)) {
+          effectType.onRemove(this);
+        }
+      }
     }
-    return null;
+    return (T) this;
   }
 
   @Override
