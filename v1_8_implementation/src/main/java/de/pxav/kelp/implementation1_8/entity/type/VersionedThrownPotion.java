@@ -3,7 +3,7 @@ package de.pxav.kelp.implementation1_8.entity.type;
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.ThrownPotionEntity;
-import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
+import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
 import de.pxav.kelp.core.entity.util.potion.PotionVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.inventory.item.KelpItem;
@@ -27,8 +27,8 @@ public class VersionedThrownPotion extends VersionedProjectile<ThrownPotionEntit
   }
 
   @Override
-  public Collection<Class<? extends KelpPotionEffect>> getPotionEffects() {
-    Collection<Class<? extends KelpPotionEffect>> output = Lists.newArrayList();
+  public Collection<KelpPotionEffectType> getPotionEffects() {
+    Collection<KelpPotionEffectType> output = Lists.newArrayList();
     for (PotionEffect effect : craftPotion.getEffects()) {
       output.add(potionVersionTemplate.getKelpPotion(effect.getType()));
     }
