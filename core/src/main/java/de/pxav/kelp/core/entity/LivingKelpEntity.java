@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.entity;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.pxav.kelp.core.entity.type.general.DamageableEntity;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
@@ -8,12 +10,21 @@ import de.pxav.kelp.core.world.KelpLocation;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.Collection;
+import java.util.Set;
 
 public interface LivingKelpEntity<T extends LivingKelpEntity<?>> extends KelpEntity<T>, DamageableEntity<T> {
 
   T addPotionEffect(KelpPotionEffect potionEffect);
 
   Collection<KelpPotionEffect> getActivePotionEffects();
+
+  default Collection<KelpPotionEffectType> getActivePotionEffectTypes() {
+    Set<KelpPotionEffectType> output = Sets.newHashSet();
+    for (KelpPotionEffect effect : getActivePotionEffects()) {
+      output.add(effect.getEffectType());
+    }
+    return output;
+  }
 
   T removePotionEffect(KelpPotionEffectType effectType);
 
