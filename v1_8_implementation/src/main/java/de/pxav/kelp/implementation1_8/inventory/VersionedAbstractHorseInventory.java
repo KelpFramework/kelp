@@ -17,7 +17,7 @@ public class VersionedAbstractHorseInventory<T extends AbstractHorseInventory<T>
 
   @Override
   public T setSaddle(KelpItem saddleItem) {
-    setItem(saddleItem.slot(1));
+    setItem(saddleItem.slot(0));
     return (T) this;
   }
 
