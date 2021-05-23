@@ -3,7 +3,7 @@ package de.pxav.kelp.implementation1_8.entity.type;
 import com.google.common.collect.ImmutableList;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.ArrowEntity;
-import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
+import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.inventory.metadata.Color;
 import de.pxav.kelp.implementation1_8.entity.type.general.VersionedAbstractArrow;
@@ -19,17 +19,17 @@ public class VersionedArrow extends VersionedAbstractArrow<ArrowEntity> implemen
   }
 
   @Override
-  public ArrowEntity addCustomEffect(Class<? extends KelpPotionEffect> effect, int tier) {
+  public ArrowEntity addCustomEffect(KelpPotionEffectType effect, int tier) {
     return this;
   }
 
   @Override
-  public boolean hasCustomEffect(Class<? extends KelpPotionEffect> effect) {
+  public boolean hasCustomEffect(KelpPotionEffectType effect) {
     return false;
   }
 
   @Override
-  public ArrowEntity removeCustomEffect(Class<? extends KelpPotionEffect> effect) {
+  public ArrowEntity removeCustomEffect(KelpPotionEffectType effect) {
     return this;
   }
 
@@ -44,7 +44,7 @@ public class VersionedArrow extends VersionedAbstractArrow<ArrowEntity> implemen
   }
 
   @Override
-  public List<Class<? extends KelpPotionEffect>> getCustomEffects() {
+  public List<KelpPotionEffectType> getCustomEffects() {
     return ImmutableList.of();
   }
 
@@ -54,7 +54,7 @@ public class VersionedArrow extends VersionedAbstractArrow<ArrowEntity> implemen
   }
 
   @Override
-  public int getCustomEffectTier(Class<? extends KelpPotionEffect> effect) {
+  public int getCustomEffectTier(KelpPotionEffectType effect) {
     return 0;
   }
 
