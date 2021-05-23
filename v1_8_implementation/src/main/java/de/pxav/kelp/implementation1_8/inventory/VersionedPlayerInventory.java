@@ -156,8 +156,8 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
    */
   @Override
   public PlayerInventory removeAllWidgets() {
-    simpleWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
-    groupedWidgets.getOrEmpty(player.getUUID()).forEach(this::removeWidget);
+    ConcurrentSetMultimap.create(simpleWidgets).getOrEmpty(player.getUUID()).forEach(this::removeWidget);
+    ConcurrentSetMultimap.create(groupedWidgets).getOrEmpty(player.getUUID()).forEach(this::removeWidget);
     return this;
   }
 
