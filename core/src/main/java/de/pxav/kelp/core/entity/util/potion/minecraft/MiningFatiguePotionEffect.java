@@ -48,4 +48,9 @@ public class MiningFatiguePotionEffect extends KelpPotionEffectType {
     return KelpEffectRating.NEGATIVE;
   }
 
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return true;
+  }
+
 }

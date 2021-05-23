@@ -38,4 +38,9 @@ public class SlowFallingPotionEffect extends KelpPotionEffectType {
     return KelpEffectRating.POSITIVE;
   }
 
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return version.isHigherThanOrEqualTo(KelpVersion.MC_1_13_0);
+  }
+
 }

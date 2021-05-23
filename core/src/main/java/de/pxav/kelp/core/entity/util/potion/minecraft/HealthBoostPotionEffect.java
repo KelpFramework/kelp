@@ -2,7 +2,9 @@ package de.pxav.kelp.core.entity.util.potion.minecraft;
 
 import de.pxav.kelp.core.entity.util.potion.KelpEffectRating;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
+import de.pxav.kelp.core.entity.util.potion.MinecraftPotion;
 import de.pxav.kelp.core.inventory.metadata.Color;
+import de.pxav.kelp.core.version.KelpVersion;
 
 /**
  * Health Boost is a status effect that increases a player's (or mob's) maximum health.
@@ -14,6 +16,7 @@ import de.pxav.kelp.core.inventory.metadata.Color;
  *
  * @author pxav
  */
+@MinecraftPotion(since = KelpVersion.MC_1_8_0)
 public class HealthBoostPotionEffect extends KelpPotionEffectType {
 
   @Override
@@ -34,6 +37,11 @@ public class HealthBoostPotionEffect extends KelpPotionEffectType {
   @Override
   public KelpEffectRating getRating() {
     return KelpEffectRating.POSITIVE;
+  }
+
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return true;
   }
 
 }

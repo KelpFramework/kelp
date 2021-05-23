@@ -2,7 +2,9 @@ package de.pxav.kelp.core.entity.util.potion.minecraft;
 
 import de.pxav.kelp.core.entity.util.potion.KelpEffectRating;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
+import de.pxav.kelp.core.entity.util.potion.MinecraftPotion;
 import de.pxav.kelp.core.inventory.metadata.Color;
+import de.pxav.kelp.core.version.KelpVersion;
 
 /**
  * Wither is a status effect that inflicts damage over time.
@@ -12,6 +14,7 @@ import de.pxav.kelp.core.inventory.metadata.Color;
  *
  * @author pxav
  */
+@MinecraftPotion(since = KelpVersion.MC_1_8_0)
 public class WitherPotionEffect extends KelpPotionEffectType {
 
   @Override
@@ -32,6 +35,11 @@ public class WitherPotionEffect extends KelpPotionEffectType {
   @Override
   public KelpEffectRating getRating() {
     return KelpEffectRating.NEGATIVE;
+  }
+
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return true;
   }
 
 }

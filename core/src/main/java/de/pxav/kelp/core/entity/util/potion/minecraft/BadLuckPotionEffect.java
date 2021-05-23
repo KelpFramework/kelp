@@ -35,4 +35,9 @@ public class BadLuckPotionEffect extends KelpPotionEffectType {
     return KelpEffectRating.NEGATIVE;
   }
 
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return version.isHigherThanOrEqualTo(KelpVersion.MC_1_9_0);
+  }
+
 }

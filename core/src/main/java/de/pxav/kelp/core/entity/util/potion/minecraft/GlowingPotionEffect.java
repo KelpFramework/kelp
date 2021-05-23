@@ -38,4 +38,9 @@ public class GlowingPotionEffect extends KelpPotionEffectType {
     return KelpEffectRating.MIXED;
   }
 
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return version.isHigherThanOrEqualTo(KelpVersion.MC_1_9_0);
+  }
+
 }

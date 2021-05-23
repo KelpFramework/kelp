@@ -49,4 +49,9 @@ public class SpeedPotionEffect extends KelpPotionEffectType {
     return KelpEffectRating.POSITIVE;
   }
 
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return true;
+  }
+
 }

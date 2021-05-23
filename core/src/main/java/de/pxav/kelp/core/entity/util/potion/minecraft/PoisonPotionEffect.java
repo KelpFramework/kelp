@@ -2,7 +2,9 @@ package de.pxav.kelp.core.entity.util.potion.minecraft;
 
 import de.pxav.kelp.core.entity.util.potion.KelpEffectRating;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
+import de.pxav.kelp.core.entity.util.potion.MinecraftPotion;
 import de.pxav.kelp.core.inventory.metadata.Color;
+import de.pxav.kelp.core.version.KelpVersion;
 
 /**
  * Poison inflicts damage over time, reducing the player's health to 1 HP, but cannot kill.
@@ -11,6 +13,7 @@ import de.pxav.kelp.core.inventory.metadata.Color;
  *
  * @author pxav
  */
+@MinecraftPotion(since = KelpVersion.MC_1_8_0)
 public class PoisonPotionEffect extends KelpPotionEffectType {
 
   @Override
@@ -31,6 +34,11 @@ public class PoisonPotionEffect extends KelpPotionEffectType {
   @Override
   public KelpEffectRating getRating() {
     return KelpEffectRating.NEGATIVE;
+  }
+
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return true;
   }
 
 }

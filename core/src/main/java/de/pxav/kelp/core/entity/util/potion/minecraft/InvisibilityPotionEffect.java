@@ -4,8 +4,10 @@ import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.util.potion.KelpEffectRating;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
 import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
+import de.pxav.kelp.core.entity.util.potion.MinecraftPotion;
 import de.pxav.kelp.core.inventory.metadata.Color;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.version.KelpVersion;
 
 /**
  * Invisibility is a status effect that turns entities invisible.
@@ -20,6 +22,7 @@ import de.pxav.kelp.core.player.KelpPlayer;
  *
  * @author pxav
  */
+@MinecraftPotion(since = KelpVersion.MC_1_8_0)
 public class InvisibilityPotionEffect extends KelpPotionEffectType {
 
   @Override
@@ -40,6 +43,11 @@ public class InvisibilityPotionEffect extends KelpPotionEffectType {
   @Override
   public KelpEffectRating getRating() {
     return KelpEffectRating.POSITIVE;
+  }
+
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return true;
   }
 
 }

@@ -35,4 +35,9 @@ public class BadOmenPotionEffect extends KelpPotionEffectType {
     return KelpEffectRating.MIXED;
   }
 
+  @Override
+  public boolean isBukkitEffectUnsafe(KelpVersion version) {
+    return version.isHigherThanOrEqualTo(KelpVersion.MC_1_14_0);
+  }
+
 }
