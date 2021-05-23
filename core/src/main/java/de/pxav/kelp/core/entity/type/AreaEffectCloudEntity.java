@@ -3,7 +3,7 @@ package de.pxav.kelp.core.entity.type;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
-import de.pxav.kelp.core.entity.util.potion.KelpPotionEffect;
+import de.pxav.kelp.core.entity.util.potion.KelpPotionEffectType;
 import de.pxav.kelp.core.inventory.metadata.Color;
 import de.pxav.kelp.core.particle.type.ParticleType;
 
@@ -48,19 +48,19 @@ public interface AreaEffectCloudEntity extends KelpEntity<AreaEffectCloudEntity>
 
   void setParticle(ParticleType particleType);
 
-  void setBasePotionEffect(Class<? extends KelpPotionEffect> potionEffect);
+  void setBasePotionEffect(KelpPotionEffectType potionEffect);
 
-  Class<? extends KelpPotionEffect> getBasePotionEffect();
+  KelpPotionEffectType getBasePotionEffect();
 
   boolean hasCustomEffects();
 
-  List<Class<? extends KelpPotionEffect>> getCustomEffects();
+  List<KelpPotionEffectType> getCustomEffects();
 
-  boolean addCustomEffect(Class<? extends KelpPotionEffect> effect, boolean var2);
+  boolean addCustomEffect(KelpPotionEffectType effect, boolean var2);
 
-  boolean removeCustomEffect(Class<? extends KelpPotionEffect> effect);
+  boolean removeCustomEffect(KelpPotionEffectType effect);
 
-  boolean hasCustomEffect(Class<? extends KelpPotionEffect> effect);
+  boolean hasCustomEffect(KelpPotionEffectType effect);
 
   void clearCustomEffects();
 
