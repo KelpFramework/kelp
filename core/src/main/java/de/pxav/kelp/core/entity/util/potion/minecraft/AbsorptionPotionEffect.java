@@ -19,6 +19,28 @@ import de.pxav.kelp.core.version.KelpVersion;
 @MinecraftPotion(since = KelpVersion.MC_1_8_0)
 public class AbsorptionPotionEffect extends KelpPotionEffectType {
 
+  /**
+   * Gets the amount of extra health points (HP) for the given level.
+   * Two health points are equal to 1 heart.
+   *
+   * @param level The absorption level to get the HP for.
+   * @return The HP given by this level
+   */
+  public static int getHealthPointsForLevel(int level) {
+    return level * 4;
+  }
+
+  /**
+   * Gets the amount of extra hearts a player receives when the given
+   * level of absorption is applied.
+   *
+   * @param level The level to get the amount of hearts for.
+   * @return The hearts given by this level.
+   */
+  public static int getHeartsForLevel(int level) {
+    return level * 2;
+  }
+
   @Override
   public String getName() {
     return "Absorption";
@@ -37,28 +59,6 @@ public class AbsorptionPotionEffect extends KelpPotionEffectType {
   @Override
   public boolean isBukkitEffectUnsafe(KelpVersion version) {
     return true;
-  }
-
-  /**
-   * Gets the amount of extra health points (HP) for the given level.
-   * Two health points are equal to 1 heart.
-   *
-   * @param level The absorption level to get the HP for.
-   * @return The HP given by this level
-   */
-  public int getHealthPointsForLevel(int level) {
-    return level * 4;
-  }
-
-  /**
-   * Gets the amount of extra hearts a player receives when the given
-   * level of absorption is applied.
-   *
-   * @param level The level to get the amount of hearts for.
-   * @return The hearts given by this level.
-   */
-  public int getHeartsForLevel(int level) {
-    return level * 2;
   }
 
   @Override
