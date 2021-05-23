@@ -2,6 +2,7 @@ package de.pxav.kelp.implementation1_8.inventory;
 
 import com.google.common.collect.Sets;
 import de.pxav.kelp.core.common.ConcurrentSetMultimap;
+import de.pxav.kelp.core.inventory.InventoryConstants;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.inventory.type.PlayerInventory;
@@ -173,11 +174,16 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
   @Override
   public PlayerInventory updateWidgets() {
     for (SimpleWidget current : simpleWidgets.getOrEmpty(player.getUUID())) {
-      if (!current.isStateful()) {
+
+      // render stateless widgets only once.
+      if (!current.isStateful() && current.getCoveredSlot() == InventoryConstants.NOT_RENDERED_SIMPLE_WIDGET) {
+        setItem(current.render());
         continue;
       }
 
-      remove(current.getCoveredSlot());
+      if (current.getCoveredSlot() != -1) {
+        remove(current.getCoveredSlot());
+      }
 
       KelpItem item = current.render();
 
@@ -191,7 +197,17 @@ public class VersionedPlayerInventory extends VersionedStorageInventory<PlayerIn
     }
 
     for (GroupedWidget current : groupedWidgets.getOrEmpty(player.getUUID())) {
-      if (!current.isStateful()) {
+      if (!current.isStateful() && InventoryConstants.NOT_RENDERED_GROUPED_WIDGET.test(current)) {
+        current.render(player).forEach(item -> {
+
+          // if items are not explicitly stated as interactable
+          // cancel interactions by default
+          if (!item.hasTagKey("interactionAllowed")) {
+            item.cancelInteractions();
+          }
+
+          setItem(item);
+        });
         continue;
       }
 
