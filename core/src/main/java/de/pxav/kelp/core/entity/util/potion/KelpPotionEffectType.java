@@ -4,6 +4,8 @@ import de.pxav.kelp.core.KelpServer;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.inventory.metadata.Color;
 import de.pxav.kelp.core.version.KelpVersion;
+import net.minecraft.server.v1_16_R3.CriterionTriggerLevitation;
+import net.minecraft.server.v1_16_R3.EntityShulkerBullet;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
@@ -77,6 +79,20 @@ public abstract class KelpPotionEffectType {
    * @param entity The entity from which the effect has been removed.
    */
   public void onRemove(LivingKelpEntity<?> entity) {}
+
+  /**
+   * Checks if this potion effect is emulated for the current server version.
+   * So all potions that exist natively for the current version, will return
+   * false. Only potions that can be emulated without modifying too much of
+   * the gameplay experience will return {@code true} on this. If this returns
+   * true, you can apply the potion effect even if it does not exist on your
+   * server version.
+   *
+   * @return {@code true} if the potion effect type is emulated by Kelp.
+   */
+  public boolean isEmulated() {
+    return false;
+  }
 
   /**
    * Checks if this effect is a default potion effect offered by minecraft/bukkit.
