@@ -28,7 +28,8 @@ public class VersionedSound extends SoundVersionTemplate {
 
     soundRepository.addSound(KelpSound.LEVEL_UP, Sound.LEVEL_UP.toString());
     soundRepository.addSound(KelpSound.ITEM_BREAK, Sound.ITEM_BREAK.toString());
-
+    soundRepository.addSound(KelpSound.ORB_PICKUP, Sound.ORB_PICKUP.toString());
+    
     long elapsed = System.currentTimeMillis() - started;
     System.out.println("[VERSION-1.8] Successfully defined sound names (took " + elapsed + "ms)");
   }

@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.github.pxav.kelp</groupId>
     <artifactId>parent</artifactId>
-    <version>0.3.3</version>
+    <version>0.3.4</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -86,21 +86,55 @@
         <artifactId>kotlin-maven-plugin</artifactId>
         <version>${kotlin.version}</version>
         <executions>
-          <execution>
-            <id>compile</id>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <sourceDirs>
-                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                <sourceDir>${project.basedir}/src/main/java</sourceDir>
-              </sourceDirs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>test-compile</id>
-            <goals> <goal>test-compile</goal> </goals>
+            <execution>
+                <id>kotlin-compile</id>
+                <phase>process-sources</phase>
+                <goals>
+                    <goal>compile</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>test-compile</id>
+                <phase>test-compile</phase>
+                <goals>
+                    <goal>test-compile</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+          <jvmTarget>1.8</jvmTarget>
+          <sourceDirs>
+            <sourceDir>${project.basedir}/src/main/java</sourceDir>
+          </sourceDirs>
+        </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+            <executions>
+                <execution>
+                    <id>java-compile</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>compile</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>testCompile</id>
+                    <phase>test-compile</phase>
+                    <goals>
+                        <goal>testCompile</goal>
+                    </goals>
+                </execution>
+              <execution>
+                <id>compile</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+            </executions>
             <configuration>
               <sourceDirs>
                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>

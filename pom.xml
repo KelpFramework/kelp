@@ -7,7 +7,7 @@
   <groupId>com.github.pxav.kelp</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.3</version>
+  <version>0.3.4</version>
 
   <name>Kelp</name>
   <description>A cross-version spigot framework to avoid boilerplate code and make your plugin compatible with multiple spigot versions easily</description>
@@ -16,7 +16,7 @@
   <licenses>
     <license>
       <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <url>https://www.opensource.org/licenses/mit-license.php</url>
     </license>
   </licenses>
 
@@ -51,7 +51,7 @@
   <scm>
     <connection>scm:git:git://github.com/KelpFramework/kelp.git</connection>
     <developerConnection>scm:git:ssh://github.com:KelpFramework/kelp.git</developerConnection>
-    <url>http://github.com/KelpFramework/kelp/tree/master</url>
+    <url>https://github.com/KelpFramework/kelp/tree/master</url>
   </scm>
 
   <modules>

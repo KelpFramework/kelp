@@ -14,9 +14,8 @@ import java.util.Collection;
 public enum KelpSound {
 
   LEVEL_UP(KelpVersion.MC_1_8_0),
-  ITEM_BREAK(KelpVersion.MC_1_8_0)
-
-  ;
+  ITEM_BREAK(KelpVersion.MC_1_8_0),
+  ORB_PICKUP(KelpVersion.MC_1_8_0);
 
   private KelpVersion since;
 
