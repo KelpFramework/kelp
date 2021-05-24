@@ -53,7 +53,15 @@ public enum KelpVersion {
     public boolean isFullVersion() { return true; }
   },
   MC_1_15_1(34, "1.15.1-R0.1-SNAPSHOT"),
-  MC_1_15_2(35, "1.15.2-R0.1-SNAPSHOT")
+  MC_1_15_2(35, "1.15.2-R0.1-SNAPSHOT"),
+  MC_1_16_0(36, "1.16-R0.1-SNAPSHOT")  {
+    public boolean isFullVersion() { return true; }
+  },
+  MC_1_16_1(37, "1.16.1-R0.1-SNAPSHOT"),
+  MC_1_16_2(38, "1.16.2-R0.1-SNAPSHOT"),
+  MC_1_16_3(39, "1.16.3-R0.1-SNAPSHOT"),
+  MC_1_16_4(40, "1.16.4-R0.1-SNAPSHOT"),
+  MC_1_16_5(41, "1.16.5-R0.1-SNAPSHOT"),
   ;
 
   private int id;
