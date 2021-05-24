@@ -1,12 +1,6 @@
 package de.pxav.kelp.core.player.prompt.chat;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
-import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.player.prompt.PromptTimeout;
-import de.pxav.kelp.core.player.prompt.SimplePromptResponseHandler;
-import org.bukkit.entity.Player;
-
-import java.util.Collection;
 
 /**
  * This version template is used for handling the simple chat prompt for players.

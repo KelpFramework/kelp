@@ -1,6 +1,5 @@
 package de.pxav.kelp.implementation1_8.sidebar;
 
-import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRenderEvent;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarUpdateEvent;
 import de.pxav.kelp.core.logger.KelpLogger;

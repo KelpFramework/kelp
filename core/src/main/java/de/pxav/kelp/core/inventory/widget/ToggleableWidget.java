@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.inventory.widget;
 
 import com.google.common.base.Preconditions;
+import de.pxav.kelp.core.inventory.InventoryConstants;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 
 import java.util.function.Supplier;
@@ -36,7 +37,7 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
   // The item which is displayed when the condition is false.
   private KelpItem whenFalse;
 
-  private int slot;
+  private int slot = InventoryConstants.NOT_RENDERED_SIMPLE_WIDGET;
 
   ToggleableWidget() {}
 
@@ -167,4 +168,5 @@ public class ToggleableWidget extends AbstractWidget<ToggleableWidget> implement
   public int getCoveredSlot() {
     return slot;
   }
+
 }

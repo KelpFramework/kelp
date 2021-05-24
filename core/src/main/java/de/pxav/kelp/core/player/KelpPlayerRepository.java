@@ -3,22 +3,16 @@ package de.pxav.kelp.core.player;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import de.pxav.kelp.core.entity.version.EntityVersionTemplate;
-import de.pxav.kelp.core.entity.version.LivingEntityVersionTemplate;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
 import de.pxav.kelp.core.player.prompt.chat.ChatPromptVersionTemplate;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -44,34 +38,24 @@ public class KelpPlayerRepository {
   // provided by this map.
   private ConcurrentMap<UUID, Object> playerEntities = Maps.newConcurrentMap();
 
-  private PlayerVersionTemplate playerVersionTemplate;
   private SidebarRepository sidebarRepository;
   private KelpInventoryRepository inventoryRepository;
   private KelpLogger logger;
-  private EntityVersionTemplate entityVersionTemplate;
-  private LivingEntityVersionTemplate livingEntityVersionTemplate;
   private ParticleVersionTemplate particleVersionTemplate;
   private SignPromptVersionTemplate signPromptVersionTemplate;
   private AnvilPromptVersionTemplate anvilPromptVersionTemplate;
   private ChatPromptVersionTemplate chatPromptVersionTemplate;
 
   @Inject
-  public KelpPlayerRepository(PlayerVersionTemplate playerVersionTemplate,
-                              //SidebarRepository sidebarRepository,
-                              KelpInventoryRepository inventoryRepository,
+  public KelpPlayerRepository(KelpInventoryRepository inventoryRepository,
                               KelpLogger logger,
-                              EntityVersionTemplate entityVersionTemplate,
-                              LivingEntityVersionTemplate livingEntityVersionTemplate,
                               ParticleVersionTemplate particleVersionTemplate,
                               SignPromptVersionTemplate signPromptVersionTemplate,
                               AnvilPromptVersionTemplate anvilPromptVersionTemplate,
                               ChatPromptVersionTemplate chatPromptVersionTemplate) {
-    this.playerVersionTemplate = playerVersionTemplate;
     //this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
     this.logger = logger;
-    this.entityVersionTemplate = entityVersionTemplate;
-    this.livingEntityVersionTemplate = livingEntityVersionTemplate;
     this.particleVersionTemplate = particleVersionTemplate;
     this.signPromptVersionTemplate = signPromptVersionTemplate;
     this.anvilPromptVersionTemplate = anvilPromptVersionTemplate;
@@ -144,64 +128,7 @@ public class KelpPlayerRepository {
    *                      {@code null} will be returned.
    */
   public KelpPlayer getKelpPlayer(Player bukkitPlayer) {
-    UUID uuid = playerVersionTemplate.getUniqueId(bukkitPlayer);
-    return getKelpPlayer(uuid);
-  }
-
-  /**
-   * Creates a new {@code KelpPlayer} instance based on the
-   * player's bukkit object.
-   *
-   * Generally it is not recommended to create new KelpPlayer
-   * instances as an application developer, because this is handled
-   * by the version templates. They intercept settings packets when
-   * a player sends them and put this information into a map.
-   *
-   * If you always create new instances it is not guaranteed that
-   * this information is accessible for you, because it has never
-   * been set. If you try to query it, exceptions might be thrown.
-   *
-   * If you do not know what you're doing, use {@code #getKelpPlayer}
-   * methods instead.
-   *
-   * @param bukkitPlayer  The bukkit player object of the player you
-   *                      want to create an instance of.
-   * @return  The final {@code KelpPlayer} object. If the player is not
-   *          online, {@code null} will be returned.
-   */
-  public KelpPlayer newKelpPlayer(Player bukkitPlayer) {
-    return this.newKelpPlayerFrom(bukkitPlayer);
-  }
-
-  /**
-   * Creates a new {@code KelpPlayer} instance based on the
-   * player's UUID.
-   *
-   * Generally it is not recommended to create new KelpPlayer
-   * instances as an application developer, because this is handled
-   * by the version templates. They intercept settings packets when
-   * a player sends them and put this information into a map.
-   *
-   * If you always create new instances it is not guaranteed that
-   * this information is accessible for you, because it has never
-   * been set. If you try to query it, exceptions might be thrown.
-   *
-   * If you do not know what you're doing, use {@code #getKelpPlayer}
-   * methods instead.
-   *
-   * @param uuid The UUID of the player you want to create an
-   *             instance of.
-   * @return  The final {@code KelpPlayer} object. If the player is not
-   *          online, {@code null} will be returned.
-   */
-  public KelpPlayer newKelpPlayer(UUID uuid) {
-    Player bukkitPlayer = Bukkit.getPlayer(uuid);
-    if (bukkitPlayer == null) {
-      logger.log(LogLevel.WARNING, "Given player UUID for getting a new KelpPlayer failed." +
-        "This player is not online, returning null!");
-      return null;
-    }
-    return this.newKelpPlayerFrom(bukkitPlayer);
+    return getKelpPlayer(bukkitPlayer.getUniqueId());
   }
 
   /**
@@ -213,32 +140,6 @@ public class KelpPlayerRepository {
   public void removeKelpPlayer(UUID uuid) {
     this.playerEntities.remove(uuid);
     this.kelpPlayers.remove(uuid);
-  }
-
-  /**
-   * Creates a new {@code KelpPlayer} instance and automatically
-   * injects all dependencies needed.
-   *
-   * @param bukkitPlayer The bukkit player object you want to create
-   *                     the {@code KelpPlayer} from.
-   * @return The final {@code KelpPlayer} object.
-   */
-  private KelpPlayer newKelpPlayerFrom(Player bukkitPlayer) {
-    return new KelpPlayer(bukkitPlayer,
-      playerVersionTemplate,
-      //sidebarRepository,
-      inventoryRepository,
-      this,
-      particleVersionTemplate,
-      signPromptVersionTemplate,
-      anvilPromptVersionTemplate,
-      chatPromptVersionTemplate,
-      entityVersionTemplate,
-      livingEntityVersionTemplate,
-      playerVersionTemplate.getUniqueId(bukkitPlayer),
-      entityVersionTemplate.getLocation(bukkitPlayer).getBukkitLocation(),
-      entityVersionTemplate.getEntityId(bukkitPlayer)
-    );
   }
 
 }

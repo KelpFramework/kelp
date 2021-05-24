@@ -1,7 +1,6 @@
 package de.pxav.kelp.core.inventory.listener;
 
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.player.KelpPlayer;
 
 import java.util.function.Consumer;

@@ -31,6 +31,8 @@ public interface SimpleWidget extends Widget {
 
   /**
    * Gets the slot covered by this widget in the target inventory.
+   * IMPORTANT: This number has to be {@link de.pxav.kelp.core.inventory.InventoryConstants#NOT_RENDERED_SIMPLE_WIDGET}
+   * if the widget has not been rendered yet.
    *
    * @return The slot covered in the target inventory.
    */

@@ -3,7 +3,6 @@ package de.pxav.kelp.core.npc.activity;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpLocation;
-import org.bukkit.Location;
 
 public class AutoSpawnActivity extends NpcActivity<AutoSpawnActivity> {
 

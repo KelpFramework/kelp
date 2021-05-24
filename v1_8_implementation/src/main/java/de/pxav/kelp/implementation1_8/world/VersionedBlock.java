@@ -212,7 +212,7 @@ public class VersionedBlock extends BlockVersionTemplate {
     // a real tree will grow
     if (kBlock.getBukkitBlock().getType() == Material.SAPLING) {
       byte data = kBlock.getBukkitBlock().getData();
-      boolean grow = MathUtils.perCentChance(45);
+      boolean grow = MathUtils.perCentChance(0.45);
 
       if (!grow) {
         return;
@@ -246,7 +246,7 @@ public class VersionedBlock extends BlockVersionTemplate {
           break;
         case 8:
           block.setType(Material.AIR);
-          TreeType type = MathUtils.perCentChance(10) ? TreeType.BIG_TREE : TreeType.TREE;
+          TreeType type = MathUtils.perCentChance(0.10) ? TreeType.BIG_TREE : TreeType.TREE;
           spawned = kBlock.getBukkitBlock().getWorld().generateTree(kBlock.getBukkitBlock().getLocation(), type);
           break;
         case 9:

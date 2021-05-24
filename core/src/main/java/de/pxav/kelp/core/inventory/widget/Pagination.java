@@ -34,6 +34,9 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
   // that would be returned by the supplier right now.
   private List<SimpleWidget> currentContentWidgets = ImmutableList.of();
 
+  // if the widget has at least been rendered once.
+  private boolean rendered = false;
+
   // navigation buttons
   private KelpItem nextButton;
   private KelpItem previousButton;
@@ -215,6 +218,8 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
       output.add(previousButton);
     }
 
+    rendered = true;
+
     return output;
   }
 
@@ -225,6 +230,9 @@ public class Pagination extends AbstractWidget<Pagination> implements GroupedWid
 
   @Override
   public Set<Integer> getCoveredSlots() {
+    if (!rendered) {
+      return Sets.newHashSet();
+    }
     Set<Integer> output = Sets.newHashSet(contentSlots);
     output.add(nextButton.getSlot());
     output.add(previousButton.getSlot());

@@ -38,13 +38,6 @@ import java.util.concurrent.ThreadLocalRandom;
 @Versioned
 public class VersionedNpc extends NpcVersionTemplate {
 
-  private ReflectionUtil reflectionUtil;
-
-  @Inject
-  public VersionedNpc(ReflectionUtil reflectionUtil) {
-    this.reflectionUtil = reflectionUtil;
-  }
-
   @Override
   public KelpNpcMeta spawnNpc(KelpNpc npc, Player player) {
     PlayerConnection playerConnection = ((CraftPlayer)player).getHandle().playerConnection;
@@ -85,22 +78,22 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     KelpNpcMeta npcMeta = new KelpNpcMeta(entityId, gameProfile, npc.getCustomName(), armorStandIds);
 
-    reflectionUtil.setValue(spawnPacket, "a", entityId);
-    reflectionUtil.setValue(spawnPacket, "b", gameProfile.getId());
-    reflectionUtil.setValue(spawnPacket, "c", MathHelper.floor(npc.getLocation().getX() * 32.0D));
-    reflectionUtil.setValue(spawnPacket, "d", MathHelper.floor(npc.getLocation().getY() * 32.0D));
-    reflectionUtil.setValue(spawnPacket, "e", MathHelper.floor(npc.getLocation().getZ() * 32.0D));
-    reflectionUtil.setValue(spawnPacket, "f", (byte) ((int) (npc.getLocation().getYaw() * 256.0F / 360.0F)));
-    reflectionUtil.setValue(spawnPacket, "g", (byte) ((int) (npc.getLocation().getPitch() * 256.0F / 360.0F)));
+    ReflectionUtil.setValue(spawnPacket, "a", entityId);
+    ReflectionUtil.setValue(spawnPacket, "b", gameProfile.getId());
+    ReflectionUtil.setValue(spawnPacket, "c", MathHelper.floor(npc.getLocation().getX() * 32.0D));
+    ReflectionUtil.setValue(spawnPacket, "d", MathHelper.floor(npc.getLocation().getY() * 32.0D));
+    ReflectionUtil.setValue(spawnPacket, "e", MathHelper.floor(npc.getLocation().getZ() * 32.0D));
+    ReflectionUtil.setValue(spawnPacket, "f", (byte) ((int) (npc.getLocation().getYaw() * 256.0F / 360.0F)));
+    ReflectionUtil.setValue(spawnPacket, "g", (byte) ((int) (npc.getLocation().getPitch() * 256.0F / 360.0F)));
 
     if (npc.getItemInHand() != null) {
-      reflectionUtil.setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
+      ReflectionUtil.setValue(spawnPacket, "h", npc.getItemInHand().getItemStack().getType().getId());
     }
 
     DataWatcher dataWatcher = new DataWatcher(null);
     this.applyToDataWatcher(dataWatcher, npc);
 
-    reflectionUtil.setValue(spawnPacket, "i", dataWatcher);
+    ReflectionUtil.setValue(spawnPacket, "i", dataWatcher);
 
     // add npc to tab
     if (!npc.shouldShowInTab()) {
@@ -177,16 +170,16 @@ public class VersionedNpc extends NpcVersionTemplate {
 
     PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport();
 
-    reflectionUtil.setValue(teleportPacket, "a", npc.getEntityId());
-    reflectionUtil.setValue(teleportPacket, "b", MathHelper.floor(location.getX() * 32.0D));
-    reflectionUtil.setValue(teleportPacket, "c", MathHelper.floor(location.getY() * 32.0D));
-    reflectionUtil.setValue(teleportPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
-    reflectionUtil.setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
-    reflectionUtil.setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
+    ReflectionUtil.setValue(teleportPacket, "a", npc.getEntityId());
+    ReflectionUtil.setValue(teleportPacket, "b", MathHelper.floor(location.getX() * 32.0D));
+    ReflectionUtil.setValue(teleportPacket, "c", MathHelper.floor(location.getY() * 32.0D));
+    ReflectionUtil.setValue(teleportPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
+    ReflectionUtil.setValue(teleportPacket, "e", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
+    ReflectionUtil.setValue(teleportPacket, "f", (byte) ((int) (location.getPitch() * 256.0F / 360.0F)));
 
     PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation();
-    reflectionUtil.setValue(headRotationPacket, "a", npc.getEntityId());
-    reflectionUtil.setValue(headRotationPacket, "b", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
+    ReflectionUtil.setValue(headRotationPacket, "a", npc.getEntityId());
+    ReflectionUtil.setValue(headRotationPacket, "b", (byte) ((int) (location.getYaw() * 256.0F / 360.0F)));
 
     playerConnection.sendPacket(teleportPacket);
     playerConnection.sendPacket(headRotationPacket);
@@ -195,14 +188,14 @@ public class VersionedNpc extends NpcVersionTemplate {
     for (Integer entityId : npc.getNpcMeta().getArmorStandEntityIds()) {
       double height = npc.getTitleHeights(index);
       PacketPlayOutEntityTeleport teleportArmorStandPacket = new PacketPlayOutEntityTeleport();
-      reflectionUtil.setValue(teleportArmorStandPacket, "a", entityId);
-      reflectionUtil.setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
+      ReflectionUtil.setValue(teleportArmorStandPacket, "a", entityId);
+      ReflectionUtil.setValue(teleportArmorStandPacket, "b", MathHelper.floor(location.getX() * 32.0D));
 
-      reflectionUtil.setValue(teleportArmorStandPacket, "c", MathHelper.floor((location.getY() + height) * 32.0D));
+      ReflectionUtil.setValue(teleportArmorStandPacket, "c", MathHelper.floor((location.getY() + height) * 32.0D));
 
-      reflectionUtil.setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
-      reflectionUtil.setValue(teleportArmorStandPacket, "e", (byte) 0);
-      reflectionUtil.setValue(teleportArmorStandPacket, "f", (byte) 0);
+      ReflectionUtil.setValue(teleportArmorStandPacket, "d", MathHelper.floor(location.getZ() * 32.0D));
+      ReflectionUtil.setValue(teleportArmorStandPacket, "e", (byte) 0);
+      ReflectionUtil.setValue(teleportArmorStandPacket, "f", (byte) 0);
       playerConnection.sendPacket(teleportArmorStandPacket);
       index++;
     }
@@ -273,49 +266,49 @@ public class VersionedNpc extends NpcVersionTemplate {
     PlayerConnection connection = player.getHandle().playerConnection;
 
     PacketPlayOutAnimation animationPacket = new PacketPlayOutAnimation();
-    reflectionUtil.setValue(animationPacket, "a", npc.getEntityId());
+    ReflectionUtil.setValue(animationPacket, "a", npc.getEntityId());
 
     PacketPlayOutEntityStatus statusPacket = new PacketPlayOutEntityStatus();
-    reflectionUtil.setValue(statusPacket, "a", npc.getEntityId());
+    ReflectionUtil.setValue(statusPacket, "a", npc.getEntityId());
 
     if (animation == NpcAnimation.TAKE_DAMAGE) {
-      reflectionUtil.setValue(animationPacket, "b", 1);
+      ReflectionUtil.setValue(animationPacket, "b", 1);
       connection.sendPacket(animationPacket);
       return;
     }
 
     if (animation == NpcAnimation.MAIN_HAND_SWING) {
-      reflectionUtil.setValue(animationPacket, "b", 0);
+      ReflectionUtil.setValue(animationPacket, "b", 0);
       connection.sendPacket(animationPacket);
       return;
     }
 
     if (animation == NpcAnimation.LEAVE_BED) {
-      reflectionUtil.setValue(animationPacket, "b", 2);
+      ReflectionUtil.setValue(animationPacket, "b", 2);
       connection.sendPacket(animationPacket);
       return;
     }
 
     if (animation == NpcAnimation.EAT) {
-      reflectionUtil.setValue(animationPacket, "b", 3);
+      ReflectionUtil.setValue(animationPacket, "b", 3);
       connection.sendPacket(animationPacket);
       return;
     }
 
     if (animation == NpcAnimation.CRITICAL_EFFECT) {
-      reflectionUtil.setValue(animationPacket, "b", 4);
+      ReflectionUtil.setValue(animationPacket, "b", 4);
       connection.sendPacket(animationPacket);
       return;
     }
 
     if (animation == NpcAnimation.MAGIC_CRITICAL_EFFECT) {
-      reflectionUtil.setValue(animationPacket, "b", 5);
+      ReflectionUtil.setValue(animationPacket, "b", 5);
       connection.sendPacket(animationPacket);
       return;
     }
 
     if (animation == NpcAnimation.ENTITY_DEATH) {
-      reflectionUtil.setValue(statusPacket, "b", (byte) 3);
+      ReflectionUtil.setValue(statusPacket, "b", (byte) 3);
       connection.sendPacket(statusPacket);
       return;
     }
@@ -340,8 +333,8 @@ public class VersionedNpc extends NpcVersionTemplate {
     player.sendBlockChange(bedLocation, Material.BED_BLOCK, (byte) 0);
 
     PacketPlayOutBed bedPacket = new PacketPlayOutBed();
-    reflectionUtil.setValue(bedPacket, "a", npc.getEntityId());
-    reflectionUtil.setValue(bedPacket, "b", blockPosition);
+    ReflectionUtil.setValue(bedPacket, "a", npc.getEntityId());
+    ReflectionUtil.setValue(bedPacket, "b", blockPosition);
 
     player.getHandle().playerConnection.sendPacket(bedPacket);
   }
@@ -356,8 +349,8 @@ public class VersionedNpc extends NpcVersionTemplate {
       bedLocation.getZ());
 
     PacketPlayOutBed bedPacket = new PacketPlayOutBed();
-    reflectionUtil.setValue(bedPacket, "a", npc.getEntityId());
-    reflectionUtil.setValue(bedPacket, "b", blockPosition);
+    ReflectionUtil.setValue(bedPacket, "a", npc.getEntityId());
+    ReflectionUtil.setValue(bedPacket, "b", blockPosition);
 
     player.getHandle().playerConnection.sendPacket(bedPacket);
   }
@@ -436,12 +429,12 @@ public class VersionedNpc extends NpcVersionTemplate {
     players.add(playerInfoData);
 
     if (npc.shouldShowInTab()) {
-      reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER);
+      ReflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER);
     } else {
-      reflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER);
+      ReflectionUtil.setValue(infoPacket, "a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER);
     }
 
-    reflectionUtil.setValue(infoPacket, "b", players);
+    ReflectionUtil.setValue(infoPacket, "b", players);
 
     player.getHandle().playerConnection.sendPacket(infoPacket);
   }

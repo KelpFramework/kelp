@@ -2,7 +2,6 @@ package de.pxav.kelp.core.command;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.command.version.KelpConsoleSenderVersionTemplate;
-import de.pxav.kelp.core.player.KelpPlayer;
 import org.bukkit.command.CommandSender;
 
 /**
