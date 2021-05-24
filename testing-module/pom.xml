@@ -5,7 +5,7 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>com.github.pxav.kelp</groupId>
-    <version>${revision}</version>
+    <version>0.4.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>com.github.pxav.kelp</groupId>
       <artifactId>core</artifactId>
-      <version>${revision}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
