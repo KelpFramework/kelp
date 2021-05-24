@@ -204,6 +204,15 @@ public enum  KelpEntityType {
   FISHING_HOOK(KelpVersion.MC_1_8_0, FishHookEntity.class),
   LIGHTNING(KelpVersion.MC_1_8_0, LightningEntity.class),
   PLAYER(KelpVersion.MC_1_8_0, KelpPlayer.class),
+
+  BEE(KelpVersion.MC_1_15_0, BeeEntity.class),
+  ZOGLIN(KelpVersion.MC_1_16_0, ZoglinEntity.class),
+  PIGLIN(KelpVersion.MC_1_16_0, PiglinEntity.class),
+  PIGLIN_BRUTE(KelpVersion.MC_1_16_0, PiglinBruteEntity.class),
+  LARGE_FIREBALL(KelpVersion.MC_1_8_0, LargeFireball.class),
+  HOGLIN(KelpVersion.MC_1_8_0, HoglinEntity.class),
+  STRIDER(KelpVersion.MC_1_16_0, StriderEntity.class),
+
   UNKNOWN(KelpVersion.MC_1_8_0, null);
 
   private KelpVersion since;
