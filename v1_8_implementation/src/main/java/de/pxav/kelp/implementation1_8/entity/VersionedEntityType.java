@@ -24,6 +24,7 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftHorse;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftOcelot;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftRabbit;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.minecart.*;
@@ -424,11 +425,17 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
         entity = craftWorld.createEntity(location, Horse.class);
       }
       output = new VersionedHorse(entity, entityType, location, this, inventoryVersionTemplate, entityConstantsVersionTemplate);
-    } else if (entityType == KelpEntityType.RABBIT || entity instanceof EntityRabbit) {
+    } else if (entityType == KelpEntityType.RABBIT
+      || (entity instanceof EntityRabbit && (((CraftRabbit) entity.getBukkitEntity()).getRabbitType() != Rabbit.Type.THE_KILLER_BUNNY))) {
       if (create) {
         entity = craftWorld.createEntity(location, Rabbit.class);
       }
       output = new VersionedRabbit(entity, entityType, location, this, entityConstantsVersionTemplate);
+    } else if (entityType == KelpEntityType.KILLER_BUNNY || entity instanceof EntityRabbit) {
+      if (create) {
+        entity = craftWorld.createEntity(location, Rabbit.class);
+      }
+      output = new VersionedKillerBunny(entity, entityType, location, this, entityConstantsVersionTemplate);
     } else if (entityType == KelpEntityType.VILLAGER || entity instanceof EntityVillager) {
       if (create) {
         entity = craftWorld.createEntity(location, Villager.class);
@@ -459,7 +466,7 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
       output = new VersionedZombie(entity, entityType, location, this);
     }
 
-    //todo make type fetching more efficient
+    //todo make type fetching more efficient, summarize if statements
 
     if (entity instanceof EntityOcelot) {
       CraftOcelot ocelot = (CraftOcelot) entity.getBukkitEntity();

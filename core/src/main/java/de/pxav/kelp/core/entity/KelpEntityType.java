@@ -157,6 +157,7 @@ public enum  KelpEntityType {
   IRON_GOLEM(KelpVersion.MC_1_8_0, IronGolemEntity.class),
   HORSE(KelpVersion.MC_1_8_0, HorseEntity.class),
   RABBIT(KelpVersion.MC_1_8_0, RabbitEntity.class),
+  KILLER_BUNNY(KelpVersion.MC_1_8_0, KillerBunnyEntity.class),
   POLAR_BEAR(KelpVersion.MC_1_10_0, PolarBear.class),
   LLAMA(KelpVersion.MC_1_11_0, LlamaEntity.class),
   LLAMA_SPIT(KelpVersion.MC_1_11_0, LlamaSpitEntity.class),
