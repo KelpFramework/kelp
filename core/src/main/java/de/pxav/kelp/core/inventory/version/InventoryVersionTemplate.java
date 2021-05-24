@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.inventory.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.inventory.type.StorageInventory;
 import org.bukkit.inventory.Inventory;
 
 /**
@@ -21,5 +22,7 @@ public abstract class InventoryVersionTemplate {
    * @return The bukkit inventory based on the passed size and title.
    */
   public abstract Inventory createInventory(int size, String title);
+
+  public abstract StorageInventory<?> getStorageInventory(Inventory bukkitInventory);
 
 }

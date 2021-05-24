@@ -10,12 +10,10 @@ import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 import de.pxav.kelp.core.inventory.listener.KelpListenerRepository;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.metadata.ItemMetadata;
-import de.pxav.kelp.core.inventory.metadata.ItemMetadataVersionTemplate;
 import de.pxav.kelp.core.inventory.metadata.LeatherArmorMetadata;
 import de.pxav.kelp.core.inventory.version.ItemVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 

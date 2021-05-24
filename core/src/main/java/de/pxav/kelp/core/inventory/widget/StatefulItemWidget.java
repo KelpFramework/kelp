@@ -1,16 +1,14 @@
 package de.pxav.kelp.core.inventory.widget;
 
-import com.google.common.collect.Sets;
+import de.pxav.kelp.core.inventory.InventoryConstants;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
 
-import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class StatefulItemWidget extends AbstractWidget<StatefulItemWidget> implements SimpleWidget {
 
   private Supplier<KelpItem> itemSupplier;
+  private int slot = InventoryConstants.NOT_RENDERED_SIMPLE_WIDGET;
 
   public static StatefulItemWidget create() {
     return new StatefulItemWidget();
@@ -29,12 +27,13 @@ public class StatefulItemWidget extends AbstractWidget<StatefulItemWidget> imple
   @Override
   public KelpItem render() {
     KelpItem item = itemSupplier.get();
+    slot = item.getSlot();
     return item;
   }
 
   @Override
   public int getCoveredSlot() {
-    return itemSupplier.get().getSlot();
+    return slot;
   }
 
 }

@@ -1,11 +1,7 @@
 package de.pxav.kelp.core.inventory.widget;
 
-import com.google.common.collect.Sets;
+import de.pxav.kelp.core.inventory.InventoryConstants;
 import de.pxav.kelp.core.inventory.item.KelpItem;
-import de.pxav.kelp.core.inventory.listener.KelpClickEvent;
-
-import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * This widget is used to create single items and put them into
@@ -18,6 +14,7 @@ public class StatelessItemWidget extends AbstractWidget<StatelessItemWidget> imp
 
   // the item to be set into the inventory.
   private KelpItem item;
+  private int slot = InventoryConstants.NOT_RENDERED_SIMPLE_WIDGET;
 
   public static StatelessItemWidget create() {
     return new StatelessItemWidget();
@@ -48,12 +45,13 @@ public class StatelessItemWidget extends AbstractWidget<StatelessItemWidget> imp
    */
   @Override
   public KelpItem render() {
+    slot = item.getSlot();
     return item;
   }
 
   @Override
   public int getCoveredSlot() {
-    return item.getSlot();
+    return slot;
   }
 
 }

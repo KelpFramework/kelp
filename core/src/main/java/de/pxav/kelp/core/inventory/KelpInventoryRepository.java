@@ -142,8 +142,7 @@ public class KelpInventoryRepository {
     KelpInventory<?> kelpInventory = playerInventories.get(player.getUUID());
 
     if (kelpInventory == null) {
-      PlayerInventory playerInventory = PlayerInventory.of(player);
-      playerInventory.updateWidgets();
+      player.getInventory().updateWidgets();
       return;
     }
 

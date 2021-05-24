@@ -2,9 +2,7 @@ package de.pxav.kelp.core.event.kelpevent;
 
 import de.pxav.kelp.core.inventory.type.KelpInventory;
 import de.pxav.kelp.core.player.KelpPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 
 /**
  * This event is called when a {@link KelpInventory} is updated. This does not

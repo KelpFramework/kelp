@@ -14,17 +14,16 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author pxav
  */
-@Singleton
 public class StringUtils {
 
   // an array containing all color codes in alphabetical order.
-  private char[] colorCodes = new char[] {
+  private static char[] colorCodes = new char[] {
           '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
           'a', 'b', 'c', 'd', 'e', 'f'
   };
 
   // an array containing all style codes in alphabetical order.
-  private char[] styleCodes = new char[] {
+  private static char[] styleCodes = new char[] {
           'k', 'l', 'm', 'n', 'o', 'r'
   };
 
@@ -34,7 +33,7 @@ public class StringUtils {
    * @param text The text you want to remove the char of.
    * @return The given text without the last char.
    */
-  public String removeLastChar(String text) {
+  public static String removeLastChar(String text) {
     // build a substring excluding the last char.
     return text.substring(0, text.length() - 1);
   }
@@ -47,7 +46,7 @@ public class StringUtils {
    * @param text The text you want to remove the color codes of.
    * @return The final string without color codes.
    */
-  public String removeFormattingCodes(String text) {
+  public static String removeFormattingCodes(String text) {
     List<String> codes = extractFormattingCodes(text);
     for (String current : codes) {
       text = text.replace(current, "");
@@ -62,10 +61,10 @@ public class StringUtils {
    * @param text The text you want to get the color codes of.
    * @return The color codes in chronological order.
    */
-  public List<String> extractColorCodes(String text) {
+  public static List<String> extractColorCodes(String text) {
     List<String> output = Lists.newArrayList();
     for (int i = 0; i < text.length(); i++) {
-      if (text.charAt(i) == '§' && this.isColorCode(text.charAt(i + 1))) {
+      if (text.charAt(i) == '§' && isColorCode(text.charAt(i + 1))) {
         output.add("§" + text.charAt(i + 1));
       }
     }
@@ -79,10 +78,10 @@ public class StringUtils {
    * @param text The text you want to get the style codes of.
    * @return The style codes in chronological order.
    */
-  public List<String> extractStyleCodes(String text) {
+  public static List<String> extractStyleCodes(String text) {
     List<String> output = Lists.newArrayList();
     for (int i = 0; i < text.length(); i++) {
-      if (text.charAt(i) == '§' && this.isStyleCode(text.charAt(i + 1))) {
+      if (text.charAt(i) == '§' && isStyleCode(text.charAt(i + 1))) {
         output.add("§" + text.charAt(i + 1));
       }
     }
@@ -96,7 +95,7 @@ public class StringUtils {
    * @param text The text you want to get the codes of.
    * @return The formatting codes in chronological order.
    */
-  public List<String> extractFormattingCodes(String text) {
+  public static List<String> extractFormattingCodes(String text) {
     List<String> output = Lists.newArrayList();
     for (int i = 0; i < text.length(); i++) {
       if (text.charAt(i) != '§') {
@@ -107,8 +106,8 @@ public class StringUtils {
         break;
       }
 
-      if (this.isStyleCode(text.charAt(i + 1))
-              || this.isColorCode(text.charAt(i + 1))) {
+      if (isStyleCode(text.charAt(i + 1))
+              || isColorCode(text.charAt(i + 1))) {
         output.add("§" + text.charAt(i + 1));
       }
     }
@@ -136,7 +135,7 @@ public class StringUtils {
    * @param text The text you want to check.
    * @return The last color and style codes.
    */
-  public String lastFormattingCodesOf(String text) {
+  public static String lastFormattingCodesOf(String text) {
     // get all formatting codes of the text and reverse their order.
     List<String> reversed = extractFormattingCodes(text);
     Collections.reverse(reversed);
@@ -193,13 +192,13 @@ public class StringUtils {
    * @param text The text you want to check.
    * @return The last color and style codes.
    */
-  public String lastFullFormattingCodesOf(String text) {
+  public static String lastFullFormattingCodesOf(String text) {
     // check if the color codes have a single '§' at the end.
     // this has to be removed as we only want to have full
     // color codes.
-    if (this.lastFormattingCodesOf(text).endsWith("§")) {
-      String colorCodes = this.lastFormattingCodesOf(text);
-      return this.removeLastChar(colorCodes);
+    if (lastFormattingCodesOf(text).endsWith("§")) {
+      String colorCodes = lastFormattingCodesOf(text);
+      return removeLastChar(colorCodes);
     }
     return lastFormattingCodesOf(text);
   }
@@ -215,7 +214,7 @@ public class StringUtils {
    *                  e. g. '1' for dark blue
    * @return {@code true} if the given indicator is
    */
-  public boolean isColorCode(char indicator) {
+  public static boolean isColorCode(char indicator) {
     for (char current : colorCodes) {
       if (current == indicator) {
         return true;
@@ -234,7 +233,7 @@ public class StringUtils {
    *                  e. g. 'l' for bold
    * @return {@code true} if the given indicator is a style code.
    */
-  public boolean isStyleCode(char indicator) {
+  public static boolean isStyleCode(char indicator) {
     for (char current : styleCodes) {
       if (current == indicator) {
         return true;
@@ -252,7 +251,7 @@ public class StringUtils {
    * @param formattingCode The formatting code to be converted.
    * @return The corresponding md_5 chat color.
    */
-  public ChatColor getChatColor(char formattingCode) {
+  public static ChatColor getChatColor(char formattingCode) {
     return isFormattingCode(formattingCode)
       ? ChatColor.getByChar(formattingCode)
       : ChatColor.WHITE;
@@ -267,7 +266,7 @@ public class StringUtils {
    * @param formattingCode The formatting code to be converted.
    * @return The corresponding bukkit chat color.
    */
-  public org.bukkit.ChatColor getBukkitChatColor(char formattingCode) {
+  public static org.bukkit.ChatColor getBukkitChatColor(char formattingCode) {
     return isFormattingCode(formattingCode)
       ? org.bukkit.ChatColor.getByChar(formattingCode)
       : org.bukkit.ChatColor.WHITE;
@@ -283,7 +282,7 @@ public class StringUtils {
    * @return  The final {@link ChatColor} to be returned. {@code null} if the
    *          color was not found.
    */
-  public ChatColor getChatColor(String formattingCode) {
+  public static ChatColor getChatColor(String formattingCode) {
     char code = formattingCode.charAt(1);
     return isFormattingCode(code) && formattingCode.charAt(0) == '§'
       ? ChatColor.getByChar(code)
@@ -299,7 +298,7 @@ public class StringUtils {
    * @param formattingCode The formatting code to be converted.
    * @return The final {@link org.bukkit.ChatColor} to be returned.
    */
-  public org.bukkit.ChatColor getBukkitChatColor(String formattingCode) {
+  public static org.bukkit.ChatColor getBukkitChatColor(String formattingCode) {
     char code = formattingCode.charAt(1);
     return isFormattingCode(code) && formattingCode.charAt(0) == '§'
       ? org.bukkit.ChatColor.getByChar(code)
@@ -314,7 +313,7 @@ public class StringUtils {
    * @return The last color code of the text. {@code null} if there
    *         was no color code to be detected.
    */
-  public String endsWithColorCode(String text) {
+  public static String endsWithColorCode(String text) {
     if (text.length() < 2) {
       return null;
     }
@@ -335,7 +334,7 @@ public class StringUtils {
    * @return The last formatting code of the text. {@code null} if there
    *         was no color code to be detected.
    */
-  public String endsWithFormattingCode(String text) {
+  public static String endsWithFormattingCode(String text) {
     // if the text is less than 2 chars long there can
     // be no formatting code, so return immediately.
     if (text.length() < 2) {
@@ -356,7 +355,7 @@ public class StringUtils {
    *
    * @return Any random bukkit color code.
    */
-  public char randomColorCode() {
+  public static char randomColorCode() {
     return colorCodes[ThreadLocalRandom.current().nextInt(colorCodes.length - 1)];
   }
 
@@ -366,7 +365,7 @@ public class StringUtils {
    *
    * @return
    */
-  public char randomStyleCode() {
+  public static char randomStyleCode() {
     return styleCodes[ThreadLocalRandom.current().nextInt(colorCodes.length - 1)];
   }
 
@@ -376,7 +375,7 @@ public class StringUtils {
    *
    * @return Any random foramtting code without {@code '§'} in front.
    */
-  public char randomFormattingCode() {
+  public static char randomFormattingCode() {
     return ThreadLocalRandom.current().nextBoolean() ? randomColorCode() : randomStyleCode();
   }
 
@@ -384,7 +383,7 @@ public class StringUtils {
    * @param indicator The indicator of the code you want to check.
    * @return {@code true} if the either a color code or a style code.
    */
-  public boolean isFormattingCode(char indicator) {
+  public static boolean isFormattingCode(char indicator) {
     return isColorCode(indicator) || isStyleCode(indicator);
   }
 
