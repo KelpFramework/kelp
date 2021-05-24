@@ -1,8 +1,9 @@
 package de.pxav.kelp.implementation1_8.world;
 
 import com.google.common.collect.Lists;
+import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.type.DroppedItemEntity;
-import de.pxav.kelp.core.entity.type.ItemDropType;
+import de.pxav.kelp.core.entity.util.ItemDropType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.version.Versioned;
@@ -10,6 +11,7 @@ import de.pxav.kelp.core.world.*;
 import de.pxav.kelp.core.world.util.ExplosionPower;
 import de.pxav.kelp.core.world.util.WorldType;
 import de.pxav.kelp.core.world.version.WorldVersionTemplate;
+import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import org.bukkit.Chunk;
 import org.bukkit.Difficulty;
@@ -320,6 +322,25 @@ public class VersionedWorld extends WorldVersionTemplate {
       if (bukkitEntity instanceof Player) {
         output.add(KelpPlayer.from((Player) bukkitEntity));
       }
+    }
+    return output;
+  }
+
+  /**
+   * Gets all entities that are currently on the given world.
+   * This includes players as well as normal entities. If you only
+   * want to iterate players, you can also use {@link #getPlayers(KelpWorld)}
+   * instead.
+   *
+   * @param world The world you want to get the players of.
+   * @return A collection of all entities that are currently on this world.
+   */
+  @Override
+  public Collection<KelpEntity<?>> getEntities(KelpWorld world) {
+    Collection<KelpEntity<?>> output = Lists.newArrayList();
+    for (Entity entity : craftWorld(world).getHandle().entityList) {
+      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
+      output.add(KelpEntity.from(bukkitEntity));
     }
     return output;
   }

@@ -99,22 +99,7 @@ public class AnimatedInventory extends KelpInventory<AnimatedInventory> {
 
     Inventory inventory = inventoryVersionTemplate.createInventory(this.size, title.states().get(0));
 
-    for (SimpleWidget current : simpleWidgets) {
-      KelpItem item = current.render();
-      if (!item.hasTagKey("interactionAllowed")) {
-        item.cancelInteractions();
-      }
-      inventory.setItem(item.getSlot(), item.getItemStack());
-    }
-
-    for (GroupedWidget current : groupedWidgets) {
-      current.render(player).forEach(item -> {
-        if (!item.hasTagKey("interactionAllowed")) {
-          item.cancelInteractions();
-        }
-        inventory.setItem(item.getSlot(), item.getItemStack());
-      });
-    }
+    widgetsToInventory(inventory, player);
 
     return inventory;
   }

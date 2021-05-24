@@ -9,11 +9,11 @@ import java.util.Set;
  * This class is used to easily represent a collection of slots
  * inside a {@link de.pxav.kelp.core.inventory.type.KelpInventory}.
  *
- * If you want to create a {@link de.pxav.kelp.core.inventory.widget.Pagination pagination}
+ * If you want to create a {@link SimplePagination pagination}
  * for example, where you want to use the entire inventory space as pagination area, it would be a pain
  * to pass all slots individually. It would be more convenient to just calculate
  * a rectangular area and pass all slots of this area in the
- * {@link de.pxav.kelp.core.inventory.widget.Pagination#contentSlots(int...)} method,
+ * {@link SimplePagination#contentSlots(int...)} method,
  * which can be achieved using {@link #rectangle(int, int)}.
  *
  * Other use cases would be if you want to create a line separator inside a GUI.

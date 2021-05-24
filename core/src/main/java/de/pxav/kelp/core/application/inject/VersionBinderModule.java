@@ -1,12 +1,15 @@
 package de.pxav.kelp.core.application.inject;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.KelpApplicationRepository;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.entity.util.potion.MinecraftPotion;
 import de.pxav.kelp.core.version.KelpVersion;
 import de.pxav.kelp.core.version.VersionImplementation;
 import de.pxav.kelp.core.version.Versioned;
@@ -14,6 +17,7 @@ import io.github.classgraph.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.*;
+import org.bukkit.Bukkit;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -125,7 +129,9 @@ public final class VersionBinderModule extends AbstractModule {
    * @see KelpVersionTemplate
    */
   private Collection<Class> detectVersionTemplates(String... packages) {
+    KelpVersion serverVersion = KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
     Collection<Class> output = Lists.newArrayList();
+
     try (ScanResult scanResult =
                  new ClassGraph()
                          .enableAnnotationInfo()
@@ -140,6 +146,27 @@ public final class VersionBinderModule extends AbstractModule {
           if (annotationInfo.getName().equalsIgnoreCase(KelpVersionTemplate.class.getName())) {
             output.add(current.loadClass());
           }
+
+          // next to normal version templates, search for potion templates that - unlike general
+          // version templates - don't have to be implemented in every server version. On an 1.8
+          // server, the Levitation effect has to be implemented, while on an 1.14 server not.
+          if (annotationInfo.getName().equalsIgnoreCase(MinecraftPotion.class.getName())) {
+
+            // the annotation only has a single parameter: The version since when it existed.
+            for (AnnotationParameterValue parameter : annotationInfo.getParameterValues()) {
+              // fetch the version since when the potion exists in the game
+              AnnotationEnumValue enumValue = (AnnotationEnumValue) parameter.getValue();
+              KelpVersion potionVersion = KelpVersion.valueOf(enumValue.getValueName());
+
+              // check if the current server version is lower than the version since when the
+              // potion existed, because in that case it has to be implemented and therefore
+              // be added to the template list.
+              if (potionVersion.isHigherThan(serverVersion)) {
+                output.add(current.loadClass());
+              }
+            }
+          }
+
         }
       }
 

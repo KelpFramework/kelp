@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class MathUtils {
 
-  private static final int[] values = {           1000, 900,  500, 400,  100, 90,   50,  40,   10,  9,    5,   4,    1 };
+  private static final int[] values =           { 1000, 900,  500, 400,  100, 90,   50,  40,   10,  9,    5,   4,     1 };
   private static final String[] romanLiterals = { "M",  "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
 
   /**
@@ -37,23 +37,27 @@ public class MathUtils {
 
   /**
    * Randomly calculates whether a certain chance has been
-   * fulfilled. If your {@code chance} is set to {@code 50},
+   * fulfilled. If your {@code chance} is set to {@code 0.5},
    * there will be a 50% chance that this method will return
-   * {@code true}. If it is {@code 5}, then there will be a
+   * {@code true}. If it is {@code 0.05}, then there will be a
    * {@code 5} per cent chance that this method will return
    * {@code true}.
    *
    * @param chance The chance to use for random calculation.
+   *               This number may range from 0.0 (always false, 0% change)
+   *               and 1.0 (always true, 100% chance), where 0.01 is equal to
+   *               1%.
    * @return Either true or false depending on your luck and the provided chance.
    */
-  public static boolean perCentChance(int chance) {
-    if (chance == 100) {
+  public static boolean perCentChance(double chance) {
+    if (chance >= 1.0d) {
       return true;
     }
-    if (chance == 0) {
+    if (chance <= 0.0d) {
       return false;
     }
-    return ThreadLocalRandom.current().nextInt(0, 101) < chance;
+
+    return Math.random() < chance;
   }
 
   public static String getRomanNumber(int number) {

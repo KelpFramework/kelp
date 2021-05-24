@@ -3,7 +3,6 @@ package de.pxav.kelp.core.particle.effect;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpLocation;
-import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
@@ -65,7 +64,7 @@ public class ParticleLineEffect extends ParticleEffect {
       firstPointBackup.add(x * d, y * d, z * d);
 
       for (KelpPlayer kelpPlayer : player) {
-        kelpPlayer.spawnParticle(particleType, true, firstPointBackup, 0, 0, 0, 1, 0, null);
+        kelpPlayer.spawnParticle(particleType, firstPointBackup, 1, 0);
       }
 
       firstPointBackup.subtract(x * d, y * d, z * d);

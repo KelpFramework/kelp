@@ -30,6 +30,8 @@ public abstract class ItemMetadataVersionTemplate {
    */
   public abstract ItemStack applyMetadata(ItemStack itemStack, ItemMetadata metadata);
 
+  public abstract ItemMetadata getMetadata(ItemMeta itemMeta);
+
   /**
    * Retrieves the ItemMeta of the given bukkit item stack and converts
    * it to a kelp {@link ItemMetadata}. This is used by {@link KelpItem#from(ItemStack)}
