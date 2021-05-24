@@ -16,6 +16,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <revision>0.3.3</revision>
+    <kotlin.version>1.4.32</kotlin.version>
   </properties>
 
   <licenses>
@@ -66,11 +67,6 @@
     <module>v_1_14_implementation</module>
     <module>kelp-sql</module>
   </modules>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <kotlin.version>1.4.32</kotlin.version>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
