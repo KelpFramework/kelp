@@ -118,7 +118,20 @@ public class KelpCommandRepository {
         + current.getName());
     });
 
+    typeFinder.filter(packages, TypeCriterion.annotatedWith(CreateDeclarativeCommand.class))
+      .forEach(current -> {
+        DeclarativeKelpCommand<?> commandClass = injector.getInstance(current.asSubclass(current));
+        CreateDeclarativeCommand commandAnnotation = current.getAnnotation(CreateDeclarativeCommand.class);
+        registryVersionTemplate.registerCommand(commandClass, commandAnnotation);
+        logger.log(LogLevel.DEBUG, "[COMMAND] Registered declarative command "
+          + commandClass.getCommandNode().getName()
+          + " in class "
+          + current.getName());
+      });
+
     logger.log("[COMMAND] Successfully loaded all commands for " + Arrays.toString(packages));
+
+
   }
 
 

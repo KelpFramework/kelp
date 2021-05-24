@@ -21,7 +21,7 @@
   <licenses>
     <license>
       <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <url>https://www.opensource.org/licenses/mit-license.php</url>
     </license>
   </licenses>
 
@@ -46,12 +46,17 @@
       <organization>com.github.shatuxy</organization>
       <organizationUrl>https://www.github.com/Shatuxy</organizationUrl>
     </developer>
+    <developer>
+      <name>DSeeLP</name>
+      <organization>com.github.dseelp</organization>
+      <organizationUrl>https://www.github.com/DSeeLP</organizationUrl>
+    </developer>
   </developers>
 
   <scm>
     <connection>scm:git:git://github.com/KelpFramework/kelp.git</connection>
     <developerConnection>scm:git:ssh://github.com:KelpFramework/kelp.git</developerConnection>
-    <url>http://github.com/KelpFramework/kelp/tree/master</url>
+    <url>https://github.com/KelpFramework/kelp/tree/master</url>
   </scm>
 
   <modules>
@@ -61,6 +66,11 @@
     <module>v_1_14_implementation</module>
     <module>kelp-sql</module>
   </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <kotlin.version>1.4.32</kotlin.version>
+  </properties>
 
   <dependencyManagement>
     <dependencies>

@@ -18,7 +18,7 @@ Version implementations work a lot with packets and the Minecraft protocol. Here
 
 ## Conventions 
 
-- To make development easier for other developers, ever contributor should follow the same conventions.
+- To make development easier for other developers, every contributor should follow the same conventions.
 - **Do not use Lombok!** It is a forbidden dependency in this project!
 - Try to maintain the standards of the [Google Style Guide](https://google.github.io/styleguide/javaguide.html) for Java.
 

@@ -16,7 +16,7 @@ import org.bukkit.command.CommandSender;
  *
  * @author pxav
  */
-public class KelpConsoleSender {
+public class KelpConsoleSender implements KelpCommandSender<KelpConsoleSender> {
 
   // the name of the console sender. CONSOLE if it is a console
   // and the player's name if the sender is a player.
@@ -43,10 +43,10 @@ public class KelpConsoleSender {
    * Sends a message to the console sender.
    * @param message The message you want to send (may contain color codes using §)
    */
-  public void sendMessage(String message) {
+  public KelpConsoleSender sendMessage(String message) {
     versionTemplate.sendMessage(this, message);
+    return this;
   }
-
   /**
    * Sets the name of the sender.
    *
@@ -72,6 +72,7 @@ public class KelpConsoleSender {
   /**
    * @return The name of the sender.
    */
+  @Override
   public String getName() {
     return name;
   }
