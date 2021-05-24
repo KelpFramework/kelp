@@ -1,9 +1,10 @@
 package de.pxav.kelp.implementation1_8.player;
 
-import com.google.common.collect.Sets;
 import de.pxav.kelp.core.common.StringUtils;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.type.*;
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
+import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.inventory.type.PlayerInventory;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -18,10 +19,7 @@ import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.player.message.MessageClickAction;
 import de.pxav.kelp.core.player.message.MessageComponent;
 import de.pxav.kelp.core.player.message.MessageHoverAction;
-import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
-import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.scheduler.synchronize.ServerMainThread;
-import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.sound.SoundRepository;
@@ -34,12 +32,11 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -95,8 +92,25 @@ public class VersionedKelpPlayer
   }
 
   @Override
-  public <E extends KelpProjectile<?>> E launchProjectile(Class<? extends KelpProjectile<?>> projectileType) {
-    return null;
+  public KelpPlayer launchProjectile(KelpProjectile<?> projectile) {
+
+    if (projectile instanceof ArrowEntity) {
+      // in 1.8, an arrow cannot have special data, so we can simply launch
+      // a normal arrow here (ignoring metadata such as potion effects)
+      // in newer versions, this should launch an arrow with the given
+      // metadata
+      player.launchProjectile(Arrow.class);
+    } else if (projectile instanceof ThrownPotionEntity) {
+      // todo: interpret potion metadata here and write custom launch algorithm
+      player.launchProjectile(ThrownPotion.class);
+    } else {
+      Projectile bukkitProjectile = (Projectile) projectile.getBukkitEntity();
+      Class<? extends Projectile> projectileClass = bukkitProjectile.getClass();
+
+      player.launchProjectile(projectileClass);
+    }
+
+    return this;
   }
 
   @Override
