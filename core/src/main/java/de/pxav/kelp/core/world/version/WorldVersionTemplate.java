@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.world.version;
 
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.type.DroppedItemEntity;
 import de.pxav.kelp.core.entity.util.ItemDropType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
@@ -216,6 +217,17 @@ public abstract class WorldVersionTemplate {
    * @return A collection of all players that are currently on this world.
    */
   public abstract Collection<KelpPlayer> getPlayers(KelpWorld world);
+
+  /**
+   * Gets all entities that are currently on the given world.
+   * This includes players as well as normal entities. If you only
+   * want to iterate players, you can also use {@link #getPlayers(KelpWorld)}
+   * instead.
+   *
+   * @param world The world you want to get the players of.
+   * @return A collection of all entities that are currently on this world.
+   */
+  public abstract Collection<KelpEntity<?>> getEntities(KelpWorld world);
 
   /**
    * Gets the current pvp mode of the world. If players are allowed to

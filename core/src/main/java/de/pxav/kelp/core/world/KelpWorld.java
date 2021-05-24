@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.type.DroppedItemEntity;
 import de.pxav.kelp.core.entity.util.ItemDropType;
 import de.pxav.kelp.core.inventory.item.KelpItem;
@@ -373,6 +374,18 @@ public class KelpWorld {
    */
   public Collection<KelpPlayer> getPlayers() {
     return versionTemplate.getPlayers(this);
+  }
+
+  /**
+   * Gets all entities that are currently on the given world.
+   * This includes players as well as normal entities. If you only
+   * want to iterate players, you can also use {@link #getPlayers()}
+   * instead.
+   *
+   * @return A collection of all entities that are currently on this world.
+   */
+  public Collection<KelpEntity<?>> getAllEntities() {
+    return versionTemplate.getEntities(this);
   }
 
   /**
