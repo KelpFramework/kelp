@@ -28,12 +28,12 @@ class CommandDispatcher<S : Any> {
     }
 
     fun getNode(name: String, useAliases: Boolean = false): CommandNode<S>? {
-        val lowercaseName = name.lowercase(Locale.getDefault())
+        val lowercaseName = name.toLowerCase(Locale.getDefault())
         for (node in nodes) {
-            if (node.name!!.lowercase(Locale.getDefault()) == lowercaseName) return node
+            if (node.name!!.toString().toLowerCase(Locale.getDefault()) == lowercaseName) return node
             if (useAliases) {
                 for (alias in node.aliases) {
-                    if (alias.lowercase(Locale.getDefault()) == lowercaseName) return node
+                    if (alias.toLowerCase(Locale.getDefault()) == lowercaseName) return node
                 }
             }
         }
