@@ -1,4 +1,6 @@
-package de.pxav.kelp.core.event.kelpevent.npc;
+package de.pxav.kelp.core.event.kelpevent;
+
+import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
 
 /**
  * Represents the action type of an interaction with an entity.
