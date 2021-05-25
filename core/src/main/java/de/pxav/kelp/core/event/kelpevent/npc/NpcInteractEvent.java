@@ -14,9 +14,9 @@ public class NpcInteractEvent extends NpcEvent {
   private static final HandlerList handlers = new HandlerList();
 
   // the action performed on the NPC.
-  private NpcInteractAction action;
+  private EntityInteractAction action;
 
-  public NpcInteractEvent(KelpNpc npc, NpcInteractAction action) {
+  public NpcInteractEvent(KelpNpc npc, EntityInteractAction action) {
     super(npc);
     this.action = action;
   }
@@ -28,7 +28,7 @@ public class NpcInteractEvent extends NpcEvent {
    *
    * @return The type/action of the interaction.
    */
-  public NpcInteractAction getAction() {
+  public EntityInteractAction getAction() {
     return action;
   }
 
