@@ -7,7 +7,6 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerEvent;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.reflect.MethodCriterion;

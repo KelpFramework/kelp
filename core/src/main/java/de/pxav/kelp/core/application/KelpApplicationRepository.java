@@ -8,7 +8,6 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.common.KelpFileUtils;
 import de.pxav.kelp.core.event.listener.EventHandlerRegistration;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;

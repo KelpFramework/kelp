@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.command.version.CommandRegistryVersionTemplate;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.TypeCriterion;
 import de.pxav.kelp.core.reflect.TypeFinder;
 
