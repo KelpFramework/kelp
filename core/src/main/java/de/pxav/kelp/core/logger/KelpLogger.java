@@ -19,7 +19,6 @@ import java.util.logging.*;
  */
 public class KelpLogger extends Logger {
 
-  private static final String KELP_LOGGER_NAME = "KELP";
   private static Map<Class<? extends KelpApplication>, Logger> loggers = Maps.newHashMap();
 
   public static Logger of(Class<? extends KelpApplication> pluginClass) {
@@ -32,15 +31,11 @@ public class KelpLogger extends Logger {
 
   public static void registerLogger(Class<? extends KelpApplication> pluginClass, String loggerName) {
     if (pluginClass.getName().equalsIgnoreCase(KelpApplication.class.getName())) {
-      loggers.put(pluginClass, new KelpLogger(KELP_LOGGER_NAME));
+      loggers.put(pluginClass, new KelpLogger("KELP"));
       return;
     }
 
     loggers.put(pluginClass, new KelpLogger(loggerName));
-  }
-
-  public KelpLogger() {
-    super("NAME", null);
   }
 
   protected KelpLogger(String name) {
@@ -55,32 +50,6 @@ public class KelpLogger extends Logger {
   public void log(LogRecord record) {
     record.setMessage("[" + record.getLoggerName() + "] " + record.getMessage());
     super.log(record);
-  }
-
-  public void log(Level level, String... message) {
-    for (String s : message) {
-      log(level, s);
-    }
-  }
-
-  public void log(LogLevel level, String message) {
-    log(level.toJavaLogLevel(), message);
-  }
-
-  public void log(String message) {
-    log(Level.INFO, message);
-  }
-
-  public void log(LogLevel level, String... message) {
-    for (String s : message) {
-      log(level.toJavaLogLevel(), s);
-    }
-  }
-
-  public void log(String... message) {
-    for (String s : message) {
-      log(Level.INFO, s);
-    }
   }
 
 }

@@ -3,6 +3,7 @@ package de.pxav.kelp.core.configuration;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.reflect.TypeCriterion;
 import de.pxav.kelp.core.reflect.TypeFinder;
@@ -23,13 +24,11 @@ public class ConfigurationRepository {
 
   private Injector injector;
   private TypeFinder typeFinder;
-  private KelpLogger logger;
 
   @Inject
-  public ConfigurationRepository(Injector injector, TypeFinder typeFinder, KelpLogger logger) {
+  public ConfigurationRepository(Injector injector, TypeFinder typeFinder) {
     this.injector = injector;
     this.typeFinder = typeFinder;
-    this.logger = logger;
   }
 
   /**
@@ -59,7 +58,7 @@ public class ConfigurationRepository {
    * @see Configuration
    */
   public void loadAll(String... packages) {
-    logger.log("[CONFIG] Loading all configuration files in " + Arrays.toString(packages));
+    KelpLogger.of(KelpApplication.class).info("[CONFIG] Loading all configuration files in " + Arrays.toString(packages));
     this.typeFinder
             .filter(
                     packages,
@@ -72,7 +71,7 @@ public class ConfigurationRepository {
                       KelpConfiguration config = (KelpConfiguration) injector.getInstance(configurationClass);
 
                       type.loadAttributes(config.getClass());
-                      logger.log("[CONFIG] Successfully loaded configuration '" + annotation.name() + type.fileExtension() + "'.");
+                      KelpLogger.of(KelpApplication.class).fine("[CONFIG] Successfully loaded configuration '" + annotation.name() + type.fileExtension() + "'.");
                     });
   }
 

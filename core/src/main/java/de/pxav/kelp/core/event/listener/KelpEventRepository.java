@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerEvent;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
@@ -39,19 +40,17 @@ public class KelpEventRepository {
   private MethodFinder methodFinder;
   private JavaPlugin javaPlugin;
   private Injector injector;
-  private KelpLogger logger;
   private KelpPlayerRepository playerRepository;
 
   private Map<UUID, KelpListener<?>> kelpListeners;
   private Map<UUID, Integer> timesCalled;
 
   @Inject
-  public KelpEventRepository(KelpPlayerRepository playerRepository, MethodFinder methodFinder, JavaPlugin javaPlugin, Injector injector, KelpLogger logger) {
+  public KelpEventRepository(KelpPlayerRepository playerRepository, MethodFinder methodFinder, JavaPlugin javaPlugin, Injector injector) {
     this.playerRepository = playerRepository;
     this.methodFinder = methodFinder;
     this.javaPlugin = javaPlugin;
     this.injector = injector;
-    this.logger = logger;
 
     this.kelpListeners = Maps.newHashMap();
     this.timesCalled = Maps.newHashMap();
@@ -102,7 +101,7 @@ public class KelpEventRepository {
             false);
       }
 
-      logger.log(LogLevel.DEBUG, "Successfully registered event @subscription for '" + current.getName() + "'");
+      KelpLogger.of(KelpApplication.class).fine("Successfully registered event @subscription for '" + current.getName() + "'");
     });
   }
 
@@ -204,7 +203,7 @@ public class KelpEventRepository {
   public void removeListener(UUID listenerId) {
     // check if there is anything to rremove.
     if (!this.kelpListeners.containsKey(listenerId)) {
-      logger.log(LogLevel.ERROR, "Cannot remove non-existing listener (id: " + listenerId + ")");
+      KelpLogger.of(KelpApplication.class).warning("Cannot remove non-existing listener (id: " + listenerId + ")");
       return;
     }
 

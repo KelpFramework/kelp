@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.MethodCriterion;
@@ -35,17 +36,14 @@ public class EventHandlerRegistration {
   private final MethodFinder methodSearcher;
   private final JavaPlugin javaPlugin;
   private final Injector injector;
-  private final KelpLogger logger;
 
   @Inject
   public EventHandlerRegistration(MethodFinder methodSearcher,
                                   JavaPlugin javaPlugin,
-                                  Injector injector,
-                                  KelpLogger logger) {
+                                  Injector injector) {
     this.methodSearcher = methodSearcher;
     this.javaPlugin = javaPlugin;
     this.injector = injector;
-    this.logger = logger;
   }
 
   /**
@@ -62,13 +60,13 @@ public class EventHandlerRegistration {
    * @see org.bukkit.plugin.PluginManager
    */
   public void initialize(String... packageNames) {
-    logger.log("[EVENT] Registering event handlers in " + Arrays.toString(packageNames));
+    KelpLogger.of(KelpApplication.class).info("[EVENT] Registering event handlers in " + Arrays.toString(packageNames));
     Preconditions.checkNotNull(packageNames);
     this.methodSearcher
             .filter(packageNames, MethodCriterion.annotatedWith(EventHandler.class))
             .forEach(
                     method -> {
-                      logger.log(LogLevel.DEBUG, "EventHandler '" + method.getName() + "' successfully registered.");
+                      KelpLogger.of(KelpApplication.class).fine("EventHandler '" + method.getName() + "' successfully registered.");
 
                       // fetch annotation metadata if an annotation was found.
                       EventHandler handler = method.getAnnotation(EventHandler.class);
@@ -92,7 +90,7 @@ public class EventHandlerRegistration {
                                       javaPlugin,
                                       handler.ignoreCancelled());
                     });
-    logger.log("[EVENT] Registration of event handlers complete.");
+    KelpLogger.of(KelpApplication.class).info("[EVENT] Registration of event handlers complete.");
   }
 
 }
