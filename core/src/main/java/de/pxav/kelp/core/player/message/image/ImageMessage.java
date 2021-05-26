@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.player.message.image;
 
+import de.pxav.kelp.core.KelpServer;
+import de.pxav.kelp.core.version.KelpVersion;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
@@ -32,9 +34,10 @@ public class ImageMessage {
 
   private String[] renderedLines;
 
-  private int chatHeight;
-  private BufferedImage bufferedImage;
-  private char imageChar;
+  private int chatHeight = 8;
+  private BufferedImage bufferedImage = null;
+  private char imageChar = ImageChar.BLOCK.getChar();
+  private boolean allowRGB = KelpServer.getVersion().isHigherThanOrEqualTo(KelpVersion.MC_1_16_0);
 
   public ImageMessage(BufferedImage image, int height, char imgChar) {
 
@@ -47,6 +50,7 @@ public class ImageMessage {
   public ImageMessage(String... imgLines) {
     renderedLines = imgLines;
   }
+
 
   public ImageMessage appendText(String... text) {
     for (int y = 0; y < renderedLines.length; y++) {
@@ -81,14 +85,18 @@ public class ImageMessage {
       width = 10;
     }
 
-    BufferedImage resized = resizeImage(image, (int) (height / ratio), height);
+    BufferedImage resized = resizeImage(image, width, height);
 
     ChatColor[][] chatImg = new ChatColor[resized.getWidth()][resized.getHeight()];
     for (int x = 0; x < resized.getWidth(); x++) {
       for (int y = 0; y < resized.getHeight(); y++) {
         int rgb = resized.getRGB(x, y);
-        ChatColor closest = getClosestChatColor(new Color(rgb, true));
-        chatImg[x][y] = closest;
+        if (!allowRGB) {
+          ChatColor closest = getClosestChatColor(new Color(rgb, true));
+          chatImg[x][y] = closest;
+          continue;
+        }
+        chatImg[x][y] = ChatColor.of(new Color(rgb, true));
       }
     }
     return chatImg;
@@ -132,7 +140,6 @@ public class ImageMessage {
     return Math.abs(c1.getRed() - c2.getRed()) <= 5 &&
       Math.abs(c1.getGreen() - c2.getGreen()) <= 5 &&
       Math.abs(c1.getBlue() - c2.getBlue()) <= 5;
-
   }
 
   private ChatColor getClosestChatColor(Color color) {
@@ -155,7 +162,6 @@ public class ImageMessage {
       }
     }
 
-    // Minecraft has 15 colors
     return ChatColor.values()[index];
   }
 
