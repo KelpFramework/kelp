@@ -1,56 +1,76 @@
 package de.pxav.kelp.core.player.message.image;
 
 import de.pxav.kelp.core.KelpServer;
+import de.pxav.kelp.core.inventory.metadata.Color;
+import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.player.prompt.chat.DefaultFont;
 import de.pxav.kelp.core.version.KelpVersion;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 public class ImageMessage {
 
-  private final Color[] chatColors = {
-    new Color(0, 0, 0),
-    new Color(0, 0, 170),
-    new Color(0, 170, 0),
-    new Color(0, 170, 170),
-    new Color(170, 0, 0),
-    new Color(170, 0, 170),
-    new Color(255, 170, 0),
-    new Color(170, 170, 170),
-    new Color(85, 85, 85),
-    new Color(85, 85, 255),
-    new Color(85, 255, 85),
-    new Color(85, 255, 255),
-    new Color(255, 85, 85),
-    new Color(255, 85, 255),
-    new Color(255, 255, 85),
-    new Color(255, 255, 255),
-  };
-
   private String[] renderedLines;
 
+  // if the source image has an alpha channel, transparent pixels
+  // should be represented by this color. null if they should be
+  // replaced with spaces.
+  private ChatColor replaceTransparency = ChatColor.GRAY;
+
+  // Whether Kelp should search for transparent pixels and replace them with
+  // the above color. If false, transparent pixels are likely to become black
+  private boolean detectTransparency = true;
+
+  // The amount of lines the image should cover in the chat. The width is calculated
+  // accordingly.
   private int chatHeight = 8;
+
+  // the image to display in the chat.
   private BufferedImage bufferedImage = null;
-  private char imageChar = ImageChar.BLOCK.getChar();
-  private boolean allowRGB = KelpServer.getVersion().isHigherThanOrEqualTo(KelpVersion.MC_1_16_0);
 
-  public ImageMessage(BufferedImage image, int height, char imgChar) {
+  // the char to use to represent a pixel.
+  private char imageChar = DefaultFont.BLOCK_SOLID.getCharacter();
 
+  // whether RGB chat colors shall be used. This means Kelp
+  // won't search the closest chat color, but display the exact
+  // color in the chat. This is a 1.16+ feature.
+  private boolean allowRGB = canUseRGB();
+
+  public static ImageMessage create() {
+    return new ImageMessage();
   }
 
-  public ImageMessage(ChatColor[][] chatColors, char imgChar) {
-    renderedLines = toImgMessage(chatColors, imgChar);
+  public ImageMessage image(BufferedImage image) {
+    this.bufferedImage = image;
+    return this;
   }
 
-  public ImageMessage(String... imgLines) {
-    renderedLines = imgLines;
+  public ImageMessage character(char imageChar) {
+    this.imageChar = imageChar;
+    return this;
   }
 
+  public ImageMessage character(DefaultFont imageChar) {
+    this.imageChar = imageChar.getCharacter();
+    return this;
+  }
+
+  public ImageMessage allowRGB(boolean allowRGB) {
+    if (!canUseRGB()) {
+      allowRGB = false;
+    }
+    this.allowRGB = allowRGB;
+    return this;
+  }
+
+  public ImageMessage height(int height) {
+    this.chatHeight = height;
+    return this;
+  }
 
   public ImageMessage appendText(String... text) {
     for (int y = 0; y < renderedLines.length; y++) {
@@ -59,11 +79,6 @@ public class ImageMessage {
       }
     }
     return this;
-  }
-
-  public void render() {
-    ChatColor[][] chatColors = toChatColorArray(this.bufferedImage, this.chatHeight);
-    renderedLines = toImgMessage(chatColors, this.imageChar);
   }
 
   public ImageMessage appendCenteredText(String... text) {
@@ -78,41 +93,76 @@ public class ImageMessage {
     return this;
   }
 
-  private ChatColor[][] toChatColorArray(BufferedImage image, int height) {
-    double ratio = (double) image.getHeight() / image.getWidth();
-    int width = (int) (height / ratio);
-    if (width > 10) {
-      width = 10;
-    }
-
-    BufferedImage resized = resizeImage(image, width, height);
-
-    ChatColor[][] chatImg = new ChatColor[resized.getWidth()][resized.getHeight()];
-    for (int x = 0; x < resized.getWidth(); x++) {
-      for (int y = 0; y < resized.getHeight(); y++) {
-        int rgb = resized.getRGB(x, y);
-        if (!allowRGB) {
-          ChatColor closest = getClosestChatColor(new Color(rgb, true));
-          chatImg[x][y] = closest;
-          continue;
-        }
-        chatImg[x][y] = ChatColor.of(new Color(rgb, true));
-      }
-    }
-    return chatImg;
+  public ImageMessage render() {
+    ChatColor[][] chatColors = toChatColorArray(this.bufferedImage, this.chatHeight);
+    renderedLines = toImgMessage(chatColors, this.imageChar);
+    return this;
   }
 
-  private String[] toImgMessage(ChatColor[][] colors, char imgchar) {
+  private String[] toImgMessage(ChatColor[][] colors, char imageChar) {
     String[] lines = new String[colors[0].length];
     for (int y = 0; y < colors[0].length; y++) {
       StringBuilder line = new StringBuilder();
       for (ChatColor[] value : colors) {
         ChatColor color = value[y];
-        line.append((color != null) ? value[y].toString() + imgchar : ImageChar.TRANSPARENT.getChar());
+        line.append((color != null) ? value[y].toString() + imageChar : "  ");
       }
       lines[y] = line.toString() + ChatColor.RESET;
     }
     return lines;
+  }
+
+  public String[] getRenderedLines() {
+    return renderedLines;
+  }
+
+  public ImageMessage sendToPlayer(KelpPlayer player) {
+    for (String line : renderedLines) {
+      player.sendMessage(line);
+    }
+    return this;
+  }
+
+  private static boolean canUseRGB() {
+    return KelpServer.getVersion().isHigherThanOrEqualTo(KelpVersion.MC_1_16_0);
+  }
+
+  private ChatColor[][] toChatColorArray(BufferedImage image, int height) {
+    double ratio = (double) image.getHeight() / image.getWidth();
+    int width = (int) (height / ratio);
+    if (width > 16) {
+      width = 16;
+    }
+
+    BufferedImage resized = resizeImage(image, width, height);
+
+    // whether the image has at least one transparent pixel
+    boolean hasTransparency = resized.getColorModel().hasAlpha();
+
+    ChatColor[][] chatImg = new ChatColor[resized.getWidth()][resized.getHeight()];
+    for (int x = 0; x < resized.getWidth(); x++) {
+      for (int y = 0; y < resized.getHeight(); y++) {
+        if (detectTransparency && hasTransparency && isTransparentPixel(resized, x, y)) {
+          chatImg[x][y] = replaceTransparency == null ? null : replaceTransparency;
+          continue;
+        }
+
+        int rgb = resized.getRGB(x, y);
+        Color color = Color.fromRGB(rgb);
+        if (!allowRGB) {
+          ChatColor closest = color.getClosestChatColor();
+          chatImg[x][y] = closest;
+          continue;
+        }
+        chatImg[x][y] = ChatColor.of(color);
+      }
+    }
+    return chatImg;
+  }
+
+  private boolean isTransparentPixel(BufferedImage image, int x, int y) {
+    int pixel = image.getRGB(x,y);
+    return (pixel >> 24) == 0x00;
   }
 
   private BufferedImage resizeImage(BufferedImage originalImage, int width, int height) {
@@ -123,46 +173,6 @@ public class ImageMessage {
 
     AffineTransformOp operation = new AffineTransformOp(af, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
     return operation.filter(originalImage, null);
-  }
-
-  private double getDistance(Color c1, Color c2) {
-    double rmean = (c1.getRed() + c2.getRed()) / 2.0;
-    double r = c1.getRed() - c2.getRed();
-    double g = c1.getGreen() - c2.getGreen();
-    int b = c1.getBlue() - c2.getBlue();
-    double weightR = 2 + rmean / 256.0;
-    double weightG = 4.0;
-    double weightB = 2 + (255 - rmean) / 256.0;
-    return weightR * r * r + weightG * g * g + weightB * b * b;
-  }
-
-  private boolean areIdentical(Color c1, Color c2) {
-    return Math.abs(c1.getRed() - c2.getRed()) <= 5 &&
-      Math.abs(c1.getGreen() - c2.getGreen()) <= 5 &&
-      Math.abs(c1.getBlue() - c2.getBlue()) <= 5;
-  }
-
-  private ChatColor getClosestChatColor(Color color) {
-    if (color.getAlpha() < 128) return null;
-
-    int index = 0;
-    double best = -1;
-
-    for (int i = 0; i < chatColors.length; i++) {
-      if (areIdentical(chatColors[i], color)) {
-        return ChatColor.values()[i];
-      }
-    }
-
-    for (int i = 0; i < chatColors.length; i++) {
-      double distance = getDistance(color, chatColors[i]);
-      if (distance < best || best == -1) {
-        best = distance;
-        index = i;
-      }
-    }
-
-    return ChatColor.values()[index];
   }
 
   private String center(String s, int length) {
@@ -177,16 +187,6 @@ public class ImageMessage {
         leftBuilder.append(" ");
       }
       return leftBuilder + s;
-    }
-  }
-
-  public String[] getRenderedLines() {
-    return renderedLines;
-  }
-
-  public void sendToPlayer(Player player) {
-    for (String line : renderedLines) {
-      player.sendMessage(line);
     }
   }
   
