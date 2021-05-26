@@ -3,7 +3,6 @@ package de.pxav.kelp.core.player;
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.command.KelpCommandSender;
-import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.type.general.HumanEntity;
 import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
@@ -20,7 +19,7 @@ import de.pxav.kelp.core.player.message.InteractiveMessage;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPrompt;
 import de.pxav.kelp.core.player.prompt.anvil.AnvilPromptVersionTemplate;
 import de.pxav.kelp.core.player.prompt.chat.ChatPromptVersionTemplate;
-import de.pxav.kelp.core.player.prompt.chat.DefaultFontSize;
+import de.pxav.kelp.core.player.prompt.chat.DefaultFont;
 import de.pxav.kelp.core.player.prompt.chat.SimpleChatPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPrompt;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptVersionTemplate;
@@ -1173,7 +1172,7 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
         previousCode = false;
         isBold = c == 'l' || c == 'L';
       } else {
-        DefaultFontSize dFI = DefaultFontSize.getDefaultFontInfo(c);
+        DefaultFont dFI = DefaultFont.getDefaultFontInfo(c);
         messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
         messagePxSize++;
       }
@@ -1181,7 +1180,7 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
 
     int halvedMessageSize = messagePxSize / 2;
     int toCompensate = CENTER_PX - halvedMessageSize;
-    int spaceLength = DefaultFontSize.SPACE.getLength() + 1;
+    int spaceLength = DefaultFont.SPACE.getLength() + 1;
     int compensated = 0;
     StringBuilder sb = new StringBuilder();
     while(compensated < toCompensate){

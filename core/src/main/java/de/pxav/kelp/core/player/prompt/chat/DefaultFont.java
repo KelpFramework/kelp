@@ -15,7 +15,7 @@ package de.pxav.kelp.core.player.prompt.chat;
  * @author SirSpoodles
  * @author pxav
  */
-public enum DefaultFontSize {
+public enum DefaultFont {
 
   A('A', 5),
   a('a', 5),
@@ -121,7 +121,7 @@ public enum DefaultFontSize {
   private char character;
   private int length;
 
-  DefaultFontSize(char character, int length) {
+  DefaultFont(char character, int length) {
     this.character = character;
     this.length = length;
   }
@@ -135,17 +135,17 @@ public enum DefaultFontSize {
   }
 
   public int getBoldLength(){
-    if(this == DefaultFontSize.SPACE || this.toString().contains("BLOCK")) {
+    if(this == DefaultFont.SPACE || this.toString().contains("BLOCK")) {
       return this.getLength();
     }
     return this.length + 1;
   }
 
-  public static DefaultFontSize getDefaultFontInfo(char c){
-    for(DefaultFontSize dFI : DefaultFontSize.values()){
+  public static DefaultFont getDefaultFontInfo(char c){
+    for(DefaultFont dFI : DefaultFont.values()){
       if(dFI.getCharacter() == c) return dFI;
     }
-    return DefaultFontSize.DEFAULT;
+    return DefaultFont.DEFAULT;
   }
 
 }
