@@ -1,8 +1,14 @@
 package de.pxav.kelp.core.inventory.metadata;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.hash.HashCode;
+import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import java.security.KeyStore;
+import java.util.Map;
 
 /**
  * Represents a color that can be used for dyeing items such
@@ -18,7 +24,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  *
  * @author pxav
  */
-public class Color implements Cloneable {
+public class Color extends java.awt.Color implements Cloneable {
+
+  private static final BiMap<Color, ChatColor> chatColors = HashBiMap.create();
+  private static final BiMap<Color, ChatColor> grayScale = HashBiMap.create();
 
   // all minecraft default chat colors in rgb notation
   public static final Color CHAT_DARK_RED = fromRGB(170, 0, 0);
@@ -75,6 +84,26 @@ public class Color implements Cloneable {
   public static final Color DYE_CYAN = fromRGB(22, 156, 156);
   public static final Color DYE_BLACK = fromRGB(29, 29, 33);
 
+  static {
+    chatColors.put(CHAT_DARK_RED, ChatColor.DARK_RED);
+    chatColors.put(CHAT_DARK_BLUE, ChatColor.DARK_BLUE);
+    chatColors.put(CHAT_DARK_GREEN, ChatColor.DARK_GREEN);
+    chatColors.put(CHAT_DARK_AQUA, ChatColor.DARK_AQUA);
+    chatColors.put(CHAT_DARK_PURPLE, ChatColor.DARK_PURPLE);
+    chatColors.put(CHAT_GOLD, ChatColor.GOLD);
+    chatColors.put(CHAT_BLUE, ChatColor.BLUE);
+    chatColors.put(CHAT_GREEN, ChatColor.GREEN);
+    chatColors.put(CHAT_RED, ChatColor.RED);
+    chatColors.put(CHAT_LIGHT_PURPLE, ChatColor.LIGHT_PURPLE);
+    chatColors.put(CHAT_YELLOW, ChatColor.YELLOW);
+    chatColors.put(CHAT_AQUA, ChatColor.AQUA);
+
+    grayScale.put(CHAT_BLACK, ChatColor.BLACK);
+    grayScale.put(CHAT_GRAY, ChatColor.GRAY);
+    grayScale.put(CHAT_DARK_GRAY, ChatColor.DARK_GRAY);
+    grayScale.put(CHAT_WHITE, ChatColor.WHITE);
+  }
+
   /**
    * Creates a new color instance based on the given red, green and blue value.
    *
@@ -84,7 +113,29 @@ public class Color implements Cloneable {
    * @return The new color instance based on the given values.
    */
   public static Color fromRGB(int red, int green, int blue) {
-    return new Color(red, green, blue);
+    return new Color(red, green, blue, 255);
+  }
+
+  /**
+   * Creates a new color instance based on the given red, green and blue value.
+   *
+   * @param red     The amount of red in the desired color (from 0-255)
+   * @param green   The amount of green in the desired color (from 0-255)
+   * @param blue    The amount of blue in the desired color (from 0-255)
+   * @return The new color instance based on the given values.
+   */
+  public static Color fromRGBA(int red, int green, int blue, int alpha) {
+    return new Color(red, green, blue, alpha);
+  }
+
+  public static Color fromRGB(int rgb) {
+    java.awt.Color color = new java.awt.Color(rgb, false);
+    return Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue());
+  }
+
+  public static Color fromRGBA(int rgba) {
+    java.awt.Color color = new java.awt.Color(rgba, true);
+    return Color.fromRGBA(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
   }
 
   /**
@@ -102,7 +153,7 @@ public class Color implements Cloneable {
     if (hexValue == null
       || ((hexValue.length() != 7 && hexValue.charAt(0) != '#')
         && hexValue.length() != 6)) {
-          return new Color(0, 0, 0);
+          return new Color(0, 0, 0, 0);
     }
 
     if (hexValue.length() == 7) {
@@ -122,7 +173,23 @@ public class Color implements Cloneable {
    * @return The kelp color instance equivalent to the bukkit color.
    */
   public static Color fromBukkit(org.bukkit.Color color) {
-    return new Color(color.getRed(), color.getGreen(), color.getBlue());
+    return new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
+  }
+
+  /**
+   * Takes a chat color and converts it to a Kelp color.
+   * This works with either normal chat colors as well as RGB
+   * chat colors (1.16+ only).
+   *
+   * @param chatColor The chat color to convert.
+   * @return The color object equivalent to the given chat color.
+   */
+  public static Color fromChatColor(ChatColor chatColor) {
+    return Color.fromRGB(
+      chatColor.getColor().getRed(),
+      chatColor.getColor().getGreen(),
+      chatColor.getColor().getBlue()
+    );
   }
 
   /**
@@ -193,11 +260,19 @@ public class Color implements Cloneable {
   private int red;
   private int green;
   private int blue;
+  private int alpha;
 
-  private Color(int red, int green, int blue) {
+  private Color(int red, int green, int blue, int alpha) {
+    super(red, green, blue, alpha);
     this.red = red;
     this.green = green;
     this.blue = blue;
+    this.alpha = alpha;
+  }
+
+  public Color setAlpha(int alpha) {
+    this.alpha = alpha;
+    return this;
   }
 
   /**
@@ -276,6 +351,64 @@ public class Color implements Cloneable {
     return (StringUtils.leftPad(Integer.toHexString(red), 2, '0') +
       StringUtils.leftPad(Integer.toHexString(green), 2, '0') +
       StringUtils.leftPad(Integer.toHexString(blue), 2, '0')).toUpperCase();
+  }
+
+  public ChatColor getClosestChatColor() {
+    if (getAlpha() < 60) {
+      return ChatColor.DARK_GRAY;
+    }
+
+    for (Map.Entry<Color, ChatColor> entry : chatColors.entrySet()) {
+      if (roughlyIdentical(entry.getKey())) {
+        return entry.getValue();
+      }
+    }
+
+    ChatColor output = ChatColor.GRAY;
+    ChatColor grayMatch = ChatColor.GRAY;
+    double bestMatch = -1;
+    double bestGrayMatch = -1;
+
+    for (Map.Entry<Color, ChatColor> entry : grayScale.entrySet()) {
+      double distance = getDistance(entry.getKey());
+
+      if (distance < bestGrayMatch || bestGrayMatch == -1) {
+        bestGrayMatch = distance;
+        grayMatch = entry.getValue();
+      }
+    }
+
+    if (bestGrayMatch < 17500) {
+      return grayMatch;
+    }
+
+    for (Map.Entry<Color, ChatColor> entry : chatColors.entrySet()) {
+      double distance = getDistance(entry.getKey());
+
+      if (distance < bestMatch || bestMatch == -1) {
+        bestMatch = distance;
+        output = entry.getValue();
+      }
+    }
+
+    return output;
+  }
+
+  public boolean roughlyIdentical(Color with) {
+    return Math.abs(getRed() - with.getRed()) <= 20 &&
+      Math.abs(getGreen() - with.getGreen()) <= 20 &&
+      Math.abs(getBlue() - with.getBlue()) <= 20;
+  }
+
+  public double getDistance(Color to) {
+    double rmean = (getRed() + to.getRed()) / 2.0;
+    double r = getRed() - to.getRed();
+    double g = getGreen() - to.getGreen();
+    int b = getBlue() - to.getBlue();
+    double weightR = 2 + rmean / 256.0;
+    double weightG = 4.0;
+    double weightB = 2 + (255 - rmean) / 256.0;
+    return weightR * r * r + weightG * g * g + weightB * b * b;
   }
 
   /**
