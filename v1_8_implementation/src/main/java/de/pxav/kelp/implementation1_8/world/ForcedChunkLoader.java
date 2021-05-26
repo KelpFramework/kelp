@@ -3,9 +3,9 @@ package de.pxav.kelp.implementation1_8.world;
 import com.google.common.collect.Sets;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.scheduler.synchronize.ServerMainThread;
 import de.pxav.kelp.core.world.KelpChunk;
+import de.pxav.kelp.implementation1_8.KelpVersionImplementation;
 import org.bukkit.Chunk;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -33,13 +33,6 @@ import java.util.concurrent.ConcurrentMap;
 public class ForcedChunkLoader {
 
   private ConcurrentMap<Chunk, Set<Class<? extends KelpApplication>>> forceLoadedChunks = new ConcurrentHashMap<>();
-
-  private KelpLogger logger;
-
-  @Inject
-  public ForcedChunkLoader(KelpLogger logger) {
-    this.logger = logger;
-  }
 
   /**
    * Adds a chunk to the force load list. This will automatically load the
@@ -145,7 +138,7 @@ public class ForcedChunkLoader {
     for (Chunk current : forceLoadedChunks.keySet()) {
       if (current.getX() == chunk.getX() && current.getZ() == chunk.getZ()) {
         event.setCancelled(true);
-        logger.log(LogLevel.DEBUG, "Chunk " + chunk.getX() + ":" + chunk.getZ() + " has been prevented from unloading.");
+        KelpLogger.of(KelpVersionImplementation.class).fine("Chunk " + chunk.getX() + ":" + chunk.getZ() + " has been prevented from unloading.");
       }
     }
 

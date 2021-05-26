@@ -3,7 +3,6 @@ package de.pxav.kelp.implementation1_8.sidebar;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarRenderEvent;
 import de.pxav.kelp.core.event.kelpevent.sidebar.KelpSidebarUpdateEvent;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.sidebar.SidebarRepository;
 import de.pxav.kelp.core.sidebar.SidebarUtils;
@@ -13,6 +12,7 @@ import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sidebar.type.SimpleSidebar;
 import de.pxav.kelp.core.sidebar.version.SidebarVersionTemplate;
 import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.implementation1_8.KelpVersionImplementation;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
@@ -28,13 +28,11 @@ import javax.inject.Inject;
 public class VersionedSidebar extends SidebarVersionTemplate {
 
   private SidebarUtils sidebarUtils;
-  private KelpLogger logger;
   private SidebarRepository sidebarRepository;
 
   @Inject
-  public VersionedSidebar(SidebarUtils sidebarUtils, KelpLogger logger, SidebarRepository sidebarRepository) {
+  public VersionedSidebar(SidebarUtils sidebarUtils, SidebarRepository sidebarRepository) {
     this.sidebarUtils = sidebarUtils;
-    this.logger = logger;
     this.sidebarRepository = sidebarRepository;
   }
 
@@ -116,7 +114,7 @@ public class VersionedSidebar extends SidebarVersionTemplate {
         Team team = scoreboard.getTeam(teamName);
 
         if (team == null) {
-          logger.log(LogLevel.ERROR, "Cannot update component at score " + line + ", "
+          KelpLogger.of(KelpVersionImplementation.class).severe("Cannot update component at score " + line + ", "
             + "because there is no entry assigned to this score. Are you sure 'lazyUpdate' " +
             "is the appropriate updating method for your case?");
           return;

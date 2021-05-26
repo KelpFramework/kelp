@@ -4,11 +4,9 @@ import de.pxav.kelp.core.common.StringUtils;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.*;
 import de.pxav.kelp.core.entity.type.general.KelpProjectile;
-import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.inventory.type.PlayerInventory;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -24,6 +22,7 @@ import de.pxav.kelp.core.sidebar.type.KelpSidebar;
 import de.pxav.kelp.core.sound.KelpSound;
 import de.pxav.kelp.core.sound.SoundRepository;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.implementation1_8.KelpVersionImplementation;
 import de.pxav.kelp.implementation1_8.entity.type.general.VersionedHumanEntity;
 import de.pxav.kelp.implementation1_8.inventory.VersionedPlayerInventory;
 import net.md_5.bungee.api.ChatColor;
@@ -61,7 +60,6 @@ public class VersionedKelpPlayer
   private String tabListHeader;
   private String tabListFooter;
 
-  private KelpLogger logger;
   private BossBarLocationUpdater bossBarLocationUpdater;
   private JavaPlugin javaPlugin;
   private SoundRepository soundRepository;
@@ -71,7 +69,6 @@ public class VersionedKelpPlayer
                              KelpEntityType entityType,
                              Location initialLocation,
                              EntityTypeVersionTemplate entityTypeVersionTemplate,
-                             KelpLogger logger,
                              BossBarLocationUpdater bossBarLocationUpdater,
                              SoundRepository soundRepository,
                              ParticleVersionTemplate particleVersionTemplate,
@@ -79,7 +76,6 @@ public class VersionedKelpPlayer
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
     playerHandle = (EntityPlayer) entityHandle;
     player = (CraftPlayer) entityHandle.getBukkitEntity();
-    this.logger = logger;
     this.javaPlugin = javaPlugin;
     this.bossBarLocationUpdater = bossBarLocationUpdater;
     this.soundRepository = soundRepository;
@@ -863,7 +859,8 @@ public class VersionedKelpPlayer
         // as a parameter.
         builder.event(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(Integer.parseInt(component.getClickValue().toString()))));
       } catch (NumberFormatException e) {
-        logger.log(LogLevel.ERROR, "Error converting click value to type INTEGER. If you selected click action CHANGE_PAGE, the click value has to be an integer.");
+        KelpLogger.of(KelpVersionImplementation.class).severe("Error converting click value to type INTEGER. " +
+          "If you selected click action CHANGE_PAGE, the click value has to be an integer.");
       }
     }
 

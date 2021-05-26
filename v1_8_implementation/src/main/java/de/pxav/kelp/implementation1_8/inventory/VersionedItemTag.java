@@ -5,9 +5,9 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.inventory.item.ItemTagVersionTemplate;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.implementation1_8.KelpVersionImplementation;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -23,15 +23,6 @@ import java.util.Set;
  */
 @Versioned
 public class VersionedItemTag extends ItemTagVersionTemplate {
-
-  private KelpLogger logger;
-  private ReflectionUtil reflectionUtil;
-
-  @Inject
-  public VersionedItemTag(KelpLogger logger, ReflectionUtil reflectionUtil) {
-    this.logger = logger;
-    this.reflectionUtil = reflectionUtil;
-  }
 
   @Override
   public ItemStack tagItem(ItemStack itemStack, String key, Object value) {
@@ -190,7 +181,7 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
     }
 
     NBTTagCompound nbtTagCompound = nmsItemStack.getTag();
-    Map<String, NBTBase> tags = (Map<String, NBTBase>) reflectionUtil.getValue(nbtTagCompound, "map");
+    Map<String, NBTBase> tags = (Map<String, NBTBase>) ReflectionUtil.getValue(nbtTagCompound, "map");
     return tags.keySet();
   }
 
@@ -222,7 +213,7 @@ public class VersionedItemTag extends ItemTagVersionTemplate {
   private boolean isItemValid(ItemStack itemStack) {
     Preconditions.checkNotNull(itemStack);
     if (itemStack.getType() == Material.AIR) {
-      logger.log(LogLevel.DEBUG, "Cannot get item tags of items with type AIR.");
+      KelpLogger.of(KelpVersionImplementation.class).fine("Cannot get item tags of items with type AIR.");
       return false;
     }
     return true;
