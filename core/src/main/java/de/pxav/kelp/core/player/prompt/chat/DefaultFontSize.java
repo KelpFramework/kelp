@@ -112,6 +112,10 @@ public enum DefaultFontSize {
   PERIOD('.', 1),
   COMMA(',', 1),
   SPACE(' ', 3),
+  BLOCK_SOLID('\u2588', 8),
+  BLOCK_DARK_SHADE('\u2593', 8),
+  BLOCK_MEDIUM_SHADE('\u2592', 8),
+  BLOCK_LIGHT_SHADE('\u2591', 8),
   DEFAULT('a', 4);
 
   private char character;
@@ -131,7 +135,9 @@ public enum DefaultFontSize {
   }
 
   public int getBoldLength(){
-    if(this == DefaultFontSize.SPACE) return this.getLength();
+    if(this == DefaultFontSize.SPACE || this.toString().contains("BLOCK")) {
+      return this.getLength();
+    }
     return this.length + 1;
   }
 
