@@ -1,9 +1,7 @@
 package de.pxav.kelp.core.application;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -41,8 +39,8 @@ public final class KelpApplicationRepository {
   private final Map<String, KelpApplication> appsToEnable = Maps.newHashMap();
   private final Map<String, KelpApplication> enabledApps = Maps.newHashMap();
   private final Map<String, KelpApplicationMeta> appMeta = Maps.newHashMap();
-  private final Map<KelpApplicationMeta, Class<? extends KelpApplication>>
-          classPathApps = Maps.newHashMap();
+  private final BiMap<KelpApplicationMeta, Class<? extends KelpApplication>>
+          classPathApps = HashBiMap.create();
 
   private final Injector injector;
   private final KelpFileUtils kelpFileUtils;
@@ -256,6 +254,7 @@ public final class KelpApplicationRepository {
         Class<? extends KelpApplication> main =
                 (Class<? extends KelpApplication>) loader.loadClass(module.getMain());
         this.classPathApps.put(module, main);
+        KelpLogger.registerLogger(main, module.getApplicationName());
       } catch (Throwable t) {
         logger.log(LogLevel.ERROR,"[APP] Cannot load module " + module.getApplicationName() + ". Check stack trace for more information:");
         t.printStackTrace();
@@ -383,6 +382,10 @@ public final class KelpApplicationRepository {
     Set<String> set = new HashSet<>();
     Collections.addAll(set, depends);
     return set;
+  }
+
+  public BiMap<KelpApplicationMeta, Class<? extends KelpApplication>> getClassPathApps() {
+    return classPathApps;
   }
 
   /**

@@ -15,6 +15,7 @@ import de.pxav.kelp.testing.packet.DefaultPacketOperator;
 import de.pxav.kelp.testing.packet.PingPacket;
 
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
 
 /**
  * This represents the main class for the testing application.
@@ -42,6 +43,8 @@ public class KelpTesting extends KelpApplication {
 
   @Override
   public void onEnable() {
+    KelpLogger.of(KelpTesting.class).info("THIS IS A TEST INFO MESSAGE!!!!!!!!!!!!");
+    KelpLogger.of(KelpTesting.class).severe("THIS IS A TEST INFO MESSAGE!!!!!!!!!!!!");
     getInstance(ConfigurationRepository.class).loadAll("de.pxav.kelp.testing");
     getInstance(KelpCommandRepository.class).loadCommands("de.pxav.kelp.testing");
     setupConnect();
