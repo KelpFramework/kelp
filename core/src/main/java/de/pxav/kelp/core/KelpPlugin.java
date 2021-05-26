@@ -109,7 +109,7 @@ public class KelpPlugin extends JavaPlugin {
     injector.getInstance(KelpApplicationRepository.class).enableApplications();
 
     logger().log(Level.INFO,"[VERSION] Initializing and enabling version implementation module.");
-    KelpLogger.registerLogger(VersionBinderModule.getMainClass(), "[KELP] [VERSION]");
+    KelpLogger.registerLogger(VersionBinderModule.getMainClass(), "KELP] [VERSION");
     injector.getInstance(VersionBinderModule.getMainClass()).init(null, injector);
     injector.getInstance(VersionBinderModule.getMainClass()).onEnable();
     logger().log(Level.INFO,"[VERSION] Enabled Version implementation!");
