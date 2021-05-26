@@ -19,6 +19,7 @@ import java.util.logging.*;
  */
 public class KelpLogger extends Logger {
 
+  private static boolean debugMode = true;
   private static Map<Class<? extends KelpApplication>, Logger> loggers = Maps.newHashMap();
 
   public static Logger of(Class<? extends KelpApplication> pluginClass) {
@@ -38,11 +39,19 @@ public class KelpLogger extends Logger {
     loggers.put(pluginClass, new KelpLogger(loggerName));
   }
 
+  public static void setDebugMode(boolean debugModeEnabled) {
+    debugMode = debugModeEnabled;
+  }
+
   protected KelpLogger(String name) {
     super(name, null);
 
-    // todo only log all if debug mode is enabled!
-    setLevel(Level.ALL);
+    if (debugMode) {
+      setLevel(Level.ALL);
+    } else {
+      setLevel(Level.INFO);
+    }
+
     setParent(KelpPlugin.getPlugin(KelpPlugin.class).getServer().getLogger());
   }
 

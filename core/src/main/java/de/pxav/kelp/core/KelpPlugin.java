@@ -60,6 +60,12 @@ public class KelpPlugin extends JavaPlugin {
 
     injector.getInstance(ConfigurationRepository.class).loadAll(this.getClass().getPackage().getName());
 
+    if (injector.getInstance(KelpDefaultConfiguration.class).getBooleanValue("development-mode")) {
+      logger().log(Level.INFO,"[GENERAL] Kelp is running in development mode. This allows you to access developer features.",
+        "[GENERAL] Messages with LogLevel.DEBUG are logged. If you do not want that, enable production mode in the config file.");
+      KelpLogger.setDebugMode(true);
+    }
+
     logger().log(Level.INFO,"[CONFIG] Successfully loaded logger files.");
     logger().log(Level.INFO,"[APP] Detecting KelpApplications.");
 
@@ -75,11 +81,6 @@ public class KelpPlugin extends JavaPlugin {
   public void onEnable() {
     this.logKelpLogo("Enabling KelpFramework, running version " + this.getDescription().getVersion(),
       "Developed & maintained by pxav and the open-source community with love <3", "");
-
-    if (injector.getInstance(KelpDefaultConfiguration.class).getBooleanValue("development-mode")) {
-      logger().log(Level.INFO,"[GENERAL] Kelp is running in development mode. This allows you to access developer features.",
-        "[GENERAL] Messages with LogLevel.DEBUG are logged. If you do not want that, enable production mode in the config file.");
-    }
 
     KelpVersion kelpVersion = KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
     logger().log(Level.INFO,"[VERSION] Checking server environment:");
