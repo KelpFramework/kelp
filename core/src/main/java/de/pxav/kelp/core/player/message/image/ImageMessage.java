@@ -3,6 +3,8 @@ package de.pxav.kelp.core.player.message.image;
 import de.pxav.kelp.core.KelpServer;
 import de.pxav.kelp.core.inventory.metadata.Color;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.player.message.InteractiveMessage;
+import de.pxav.kelp.core.player.message.MessageComponent;
 import de.pxav.kelp.core.player.prompt.chat.DefaultFont;
 import de.pxav.kelp.core.version.KelpVersion;
 import net.md_5.bungee.api.ChatColor;
@@ -15,6 +17,9 @@ import java.awt.image.BufferedImage;
 public class ImageMessage {
 
   private String[] renderedLines;
+  private Object[] appendMessages;
+
+  private boolean centerAppendix = false;
 
   // if the source image has an alpha channel, transparent pixels
   // should be represented by this color. null if they should be
@@ -73,23 +78,26 @@ public class ImageMessage {
   }
 
   public ImageMessage appendText(String... text) {
-    for (int y = 0; y < renderedLines.length; y++) {
-      if (text.length > y) {
-        renderedLines[y] += " " + text[y];
-      }
-    }
+    this.appendMessages = text;
+    this.centerAppendix = false;
+    return this;
+  }
+
+  public ImageMessage appendText(Object... text) {
+    this.appendMessages = text;
+    this.centerAppendix = false;
     return this;
   }
 
   public ImageMessage appendCenteredText(String... text) {
-    for (int y = 0; y < renderedLines.length; y++) {
-      if (text.length > y) {
-        int len = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - renderedLines[y].length();
-        renderedLines[y] = renderedLines[y] + center(text[y], len);
-      } else {
-        return this;
-      }
-    }
+    this.appendMessages = text;
+    this.centerAppendix = true;
+    return this;
+  }
+
+  public ImageMessage appendCenteredText(Object... text) {
+    this.appendMessages = text;
+    this.centerAppendix = true;
     return this;
   }
 
@@ -117,14 +125,57 @@ public class ImageMessage {
   }
 
   public ImageMessage sendToPlayer(KelpPlayer player) {
-    for (String line : renderedLines) {
-      player.sendMessage(line);
+    for (int line = 0; line < renderedLines.length; line++) {
+      if (appendMessages.length <= line) {
+        player.sendMessage(renderedLines[line]);
+        continue;
+      }
+
+      // total length left on the line (length from the end of the image
+      // to the end of the chat line)
+      int totalLength = ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - renderedLines[line].length();
+
+      if (appendMessages[line] instanceof InteractiveMessage) {
+        InteractiveMessage interactiveMessage = (InteractiveMessage) appendMessages[line];
+        if (centerAppendix) {
+          String textWithoutColorCodes = interactiveMessage.getRawText();
+          interactiveMessage.insertComponentAt(0, MessageComponent.create()
+            .text(renderedLines[line] + center(textWithoutColorCodes.length(), totalLength)));
+        } else {
+          interactiveMessage.insertComponentAt(0, MessageComponent.create()
+            .text(renderedLines[line]));
+        }
+
+        player.sendInteractiveMessage(interactiveMessage);
+        continue;
+      }
+
+      String textLine = String.valueOf(appendMessages[line]);
+      String toSend;
+
+      if (centerAppendix) {
+        toSend = renderedLines[line] + center(textLine.length(), totalLength) + textLine;
+      } else {
+        toSend = renderedLines[line] + textLine;
+      }
+
+      player.sendMessage(toSend);
+
     }
     return this;
   }
 
   private static boolean canUseRGB() {
     return KelpServer.getVersion().isHigherThanOrEqualTo(KelpVersion.MC_1_16_0);
+  }
+
+  private String center(int textLength, int totalLength) {
+    int leftPadding = (totalLength - textLength) / 2;
+    StringBuilder leftBuilder = new StringBuilder();
+    for (int i = 0; i < leftPadding; i++) {
+      leftBuilder.append(" ");
+    }
+    return leftBuilder.toString();
   }
 
   private ChatColor[][] toChatColorArray(BufferedImage image, int height) {
@@ -173,21 +224,6 @@ public class ImageMessage {
 
     AffineTransformOp operation = new AffineTransformOp(af, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
     return operation.filter(originalImage, null);
-  }
-
-  private String center(String s, int length) {
-    if (s.length() > length) {
-      return s.substring(0, length);
-    } else if (s.length() == length) {
-      return s;
-    } else {
-      int leftPadding = (length - s.length()) / 2;
-      StringBuilder leftBuilder = new StringBuilder();
-      for (int i = 0; i < leftPadding; i++) {
-        leftBuilder.append(" ");
-      }
-      return leftBuilder + s;
-    }
   }
   
 }
