@@ -1,5 +1,7 @@
 package de.pxav.kelp.core.player.message;
 
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -72,6 +74,40 @@ public class InteractiveMessage {
    */
   public List<MessageComponent> getComponents() {
     return components;
+  }
+
+  /**
+   * Takes all components of this messages and appends their
+   * text, resulting in a string that shows the message visible
+   * for the player. This method returns the string with color
+   * codes, if you don't want that, use {@link #getRawText()}
+   * instead.
+   *
+   * @return The text shown by this interactive message.
+   */
+  public String getText() {
+    StringBuilder rawText = new StringBuilder();
+    for (MessageComponent component : components) {
+      rawText.append(component.getText());
+    }
+    return rawText.toString();
+  }
+
+  /**
+   * Takes all components of this messages and appends their
+   * text, resulting in a string that shows the message visible
+   * for the player. This method returns the string without color
+   * codes, if you want to have coloring, use {@link #getText()} ()}
+   * instead.
+   *
+   * @return The text shown by this interactive message.
+   */
+  public String getRawText() {
+    StringBuilder rawText = new StringBuilder();
+    for (MessageComponent component : components) {
+      rawText.append(component.getText());
+    }
+    return ChatColor.stripColor(rawText.toString());
   }
 
 }
