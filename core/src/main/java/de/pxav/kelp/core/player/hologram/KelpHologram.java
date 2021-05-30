@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class KelpHologram {
 
+  private double lineSpaceModifier = 1;
   private KelpLocation location;
   private List<HologramComponent<?>> components = Lists.newArrayList();
   private Collection<Integer> entityIds = Lists.newArrayList();
@@ -46,6 +47,11 @@ public class KelpHologram {
 
   public KelpHologram removeComponent(int index) {
     this.components.remove(index);
+    return this;
+  }
+
+  public KelpHologram lineSpacingModifier(double lineSpaceModifier) {
+    this.lineSpaceModifier = lineSpaceModifier;
     return this;
   }
 
@@ -83,6 +89,10 @@ public class KelpHologram {
 
   public void setEntityIds(Collection<Integer> entityIds) {
     this.entityIds = entityIds;
+  }
+
+  public double getLineSpaceModifier() {
+    return lineSpaceModifier;
   }
 
 }

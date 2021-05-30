@@ -83,9 +83,9 @@ public class VersionedHologram extends HologramVersionTemplate {
       if (entity == null) {
         if (previousItem) {
           previousItem = false;
-          previousHeight += TITLE_LINE_HEIGHT * 3.5;
+          previousHeight += TITLE_LINE_HEIGHT * 3.5 * hologram.getLineSpaceModifier();
         } else {
-          previousHeight += TITLE_LINE_HEIGHT;
+          previousHeight += TITLE_LINE_HEIGHT * hologram.getLineSpaceModifier();
         }
         continue;
       }
@@ -93,9 +93,9 @@ public class VersionedHologram extends HologramVersionTemplate {
       if (entity instanceof EntityArmorStand) {
         if (previousItem) {
           previousItem = false;
-          previousHeight += TITLE_LINE_HEIGHT * 3.5;
+          previousHeight += TITLE_LINE_HEIGHT * 3.5 * hologram.getLineSpaceModifier();
         } else {
-          previousHeight += TITLE_LINE_HEIGHT;
+          previousHeight += TITLE_LINE_HEIGHT * hologram.getLineSpaceModifier();
         }
         EntityArmorStand holoBase = (EntityArmorStand) entity;
         entity.setLocation(hologram.getLocation().getX(), previousHeight, hologram.getLocation().getZ(), 0, 0);
@@ -103,9 +103,9 @@ public class VersionedHologram extends HologramVersionTemplate {
         craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
       } else if (entity instanceof EntityItem) {
         if (previousItem) {
-          previousHeight += .50;
+          previousHeight += .50 * hologram.getLineSpaceModifier();
         } else {
-          previousHeight += 0.04;
+          previousHeight += 0.04 * hologram.getLineSpaceModifier();
         }
         previousItem = true;
         EntityItem itemEntity = (EntityItem) entity;
