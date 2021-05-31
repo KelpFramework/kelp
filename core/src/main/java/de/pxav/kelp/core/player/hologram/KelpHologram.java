@@ -1,6 +1,7 @@
 package de.pxav.kelp.core.player.hologram;
 
 import com.google.common.collect.Lists;
+import com.google.common.hash.HashCode;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.logger.KelpLogger;
@@ -9,12 +10,17 @@ import de.pxav.kelp.core.player.hologram.component.HoloItemComponent;
 import de.pxav.kelp.core.player.hologram.component.HoloTextComponent;
 import de.pxav.kelp.core.player.hologram.component.HologramComponent;
 import de.pxav.kelp.core.world.KelpLocation;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class KelpHologram {
+
+  // unique identifier for the hologram. Do not change.
+  private UUID hologramId = UUID.randomUUID();
 
   private KelpPlayer player;
   private double lineSpaceModifier = 1;
@@ -80,7 +86,11 @@ public class KelpHologram {
   }
 
   public KelpHologram update() {
-    hologramVersionTemplate.updateHologram(this);
+    if (activelyHidden || !spawned) {
+      return this;
+    }
+    hologramVersionTemplate.despawnHologram(this);
+    hologramVersionTemplate.spawnHologram(this);
     return this;
   }
 
@@ -136,6 +146,21 @@ public class KelpHologram {
 
   public KelpPlayer getPlayer() {
     return player;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof KelpHologram)) {
+      return false;
+    }
+
+    KelpHologram hologram = (KelpHologram) other;
+    return hologram.hologramId.equals(this.hologramId);
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(37, 17).append(hologramId).toHashCode();
   }
 
 }
