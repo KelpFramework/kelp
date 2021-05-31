@@ -2,6 +2,8 @@ package de.pxav.kelp.implementation1_8.player;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.pxav.kelp.core.common.ConcurrentMultimap;
+import de.pxav.kelp.core.common.ConcurrentSetMultimap;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.hologram.HologramVersionTemplate;
 import de.pxav.kelp.core.player.hologram.KelpHologram;
@@ -24,12 +26,13 @@ import java.util.Map;
 public class VersionedHologram extends HologramVersionTemplate {
 
   private static double TITLE_LINE_HEIGHT = 0.25;
+  private static ConcurrentMultimap<KelpHologram, Integer> entityIds = ConcurrentSetMultimap.create();
 
   @Override
-  public void spawnHologram(KelpPlayer player, KelpHologram hologram) {
+  public void spawnHologram(KelpHologram hologram) {
     List<Entity> entities = Lists.newArrayList();
     Map<EntityItem, EntityArmorStand> itemBases = Maps.newHashMap();
-    CraftPlayer craftPlayer = (CraftPlayer) player.getBukkitPlayer();
+    CraftPlayer craftPlayer = (CraftPlayer) hologram.getPlayer().getBukkitPlayer();
     WorldServer worldServer = ((CraftWorld) (craftPlayer.getWorld())).getHandle();
 
     for (HologramComponent<?> component : hologram.getComponents()) {
@@ -127,18 +130,26 @@ public class VersionedHologram extends HologramVersionTemplate {
 
         holoBase.setInvisible(true);
         craftPlayer.getHandle().playerConnection.sendPacket(armorStandMetadataPacket);
+        entityIds.put(hologram, holoBase.getId());
       }
+
+      entityIds.put(hologram, entity.getId());
     }
 
   }
 
   @Override
-  public void despawnHologram(KelpPlayer player, KelpHologram hologram) {
-
+  public void despawnHologram(KelpHologram hologram) {
+    CraftPlayer player = (CraftPlayer) hologram.getPlayer().getBukkitPlayer();
+    for (Integer entityId : entityIds.get(hologram)) {
+      Packet<?> destroyPacket = new PacketPlayOutEntityDestroy(entityId);
+      player.getHandle().playerConnection.sendPacket(destroyPacket);
+    }
+    entityIds.removeAll(hologram);
   }
 
   @Override
-  public void updateHologram(KelpPlayer player, KelpHologram hologram) {
+  public void updateHologram(KelpHologram hologram) {
 
   }
 
