@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class KelpHologram {
 
+  private KelpPlayer player;
   private double lineSpaceModifier = 1;
   private KelpLocation location;
   private List<HologramComponent<?>> components = Lists.newArrayList();
@@ -29,6 +30,11 @@ public class KelpHologram {
 
   private KelpHologram(HologramVersionTemplate hologramVersionTemplate) {
     this.hologramVersionTemplate = hologramVersionTemplate;
+  }
+
+  public KelpHologram player(KelpPlayer player) {
+    this.player = player;
+    return this;
   }
 
   public KelpHologram location(KelpLocation location) {
@@ -93,6 +99,10 @@ public class KelpHologram {
 
   public double getLineSpaceModifier() {
     return lineSpaceModifier;
+  }
+
+  public KelpPlayer getPlayer() {
+    return player;
   }
 
 }

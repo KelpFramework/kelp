@@ -6,10 +6,10 @@ import de.pxav.kelp.core.player.KelpPlayer;
 @KelpVersionTemplate
 public abstract class HologramVersionTemplate {
 
-  public abstract void spawnHologram(KelpPlayer player, KelpHologram hologram);
+  public abstract void spawnHologram(KelpHologram hologram);
 
-  public abstract void despawnHologram(KelpPlayer player, KelpHologram hologram);
+  public abstract void despawnHologram(KelpHologram hologram);
 
-  public abstract void updateHologram(KelpPlayer player, KelpHologram hologram);
+  public abstract void updateHologram(KelpHologram hologram);
 
 }
