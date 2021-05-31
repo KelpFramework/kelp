@@ -21,15 +21,20 @@ public class KelpHologram {
   private KelpLocation location;
   private List<HologramComponent<?>> components = Lists.newArrayList();
   private Collection<Integer> entityIds = Lists.newArrayList();
+  private boolean spawned;
+  private boolean activelyHidden;
 
   private HologramVersionTemplate hologramVersionTemplate;
+  private HologramRepository hologramRepository;
 
   public static KelpHologram create() {
-    return new KelpHologram(KelpPlugin.getInjector().getInstance(HologramVersionTemplate.class));
+    return new KelpHologram(KelpPlugin.getInjector().getInstance(HologramVersionTemplate.class),
+      KelpPlugin.getInjector().getInstance(HologramRepository.class));
   }
 
-  private KelpHologram(HologramVersionTemplate hologramVersionTemplate) {
+  private KelpHologram(HologramVersionTemplate hologramVersionTemplate, HologramRepository hologramRepository) {
     this.hologramVersionTemplate = hologramVersionTemplate;
+    this.hologramRepository = hologramRepository;
   }
 
   public KelpHologram player(KelpPlayer player) {
@@ -61,24 +66,52 @@ public class KelpHologram {
     return this;
   }
 
-  public KelpHologram show(KelpPlayer player) {
+  public KelpHologram show() {
     if (location == null) {
       KelpLogger.of(KelpApplication.class).warning("Cannot spawn hologram without location! " +
         "Please check that you pass a location that is not null.");
       return this;
     }
-    hologramVersionTemplate.spawnHologram(player, this);
+    hologramVersionTemplate.spawnHologram(this);
+    this.hologramRepository.addHologram(this);
+    this.activelyHidden = false;
+    this.spawned = true;
     return this;
   }
 
-  public KelpHologram update(KelpPlayer player) {
-    hologramVersionTemplate.updateHologram(player, this);
+  public KelpHologram update() {
+    hologramVersionTemplate.updateHologram(this);
     return this;
   }
 
-  public KelpHologram hide(KelpPlayer player) {
-    hologramVersionTemplate.despawnHologram(player, this);
+  public KelpHologram hide() {
+    this.spawned = false;
+    this.activelyHidden = true;
+    hologramVersionTemplate.despawnHologram(this);
     return this;
+  }
+
+  public KelpHologram despawn() {
+    this.spawned = false;
+    hologramVersionTemplate.despawnHologram(this);
+    return this;
+  }
+
+  public KelpHologram remove() {
+    spawned = false;
+    hologramVersionTemplate.despawnHologram(this);
+    this.hologramRepository.removeHologram(this);
+    return this;
+  }
+
+  public void doTick() {
+
+    if (player.getLocation().distanceSquared(location) < 40 * 40 && !spawned && !activelyHidden) {
+      show();
+    } else if (player.getLocation().distanceSquared(location) > 40 * 40 && spawned) {
+      despawn();
+    }
+
   }
 
   public KelpLocation getLocation() {
