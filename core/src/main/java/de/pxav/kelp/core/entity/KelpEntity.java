@@ -498,4 +498,29 @@ public interface KelpEntity<T extends KelpEntity<?>> {
     return getNearbyEntities(radius, radius, radius);
   }
 
+  /**
+   * Checks whether the entity obeys the laws of gravity.
+   * If this is {@code true}, an entity can fall down when
+   * it is in the air, if {@code false} it can not.
+   *
+   * This can be used if you want to spawn an entity that
+   * sticks to its position no matter if spawned in the sky
+   * or on the ground.
+   *
+   * @return {@code true} if the entity has gravity.
+   */
+  boolean hasGravity();
+
+  /**
+   * Enables or disables gravity based on the given parameter.
+   * If gravity is disabled, an entity won't fall down if it is
+   * spawned in the sky. If you enable it, the entity will behave
+   * normally, which is the default setting.
+   *
+   * @param gravity {@code true} if you want to enable gravity,
+   *                {@code false} to disable.
+   * @return An instance of the current entity for fluent builder design.
+   */
+  T setGravity(boolean gravity);
+
 }

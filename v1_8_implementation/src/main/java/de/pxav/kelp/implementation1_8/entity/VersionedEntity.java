@@ -3,6 +3,7 @@ package de.pxav.kelp.implementation1_8.entity;
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.type.ArmorStandEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
@@ -30,6 +31,7 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
   protected EntityTypeVersionTemplate entityTypeVersionTemplate;
   private final Location location;
   private final KelpEntityType entityType;
+  private boolean gravityFlag = true;
 
   public VersionedEntity(net.minecraft.server.v1_8_R3.Entity entityHandle,
                          KelpEntityType entityType,
@@ -359,6 +361,33 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
     }
 
     return kelpEntityList;
+  }
+
+  @Override
+  public boolean hasGravity() {
+    return this.gravityFlag;
+  }
+
+  @Override
+  public T setGravity(boolean gravity) {
+    if (gravity && !this.gravityFlag) {
+      this.gravityFlag = true;
+      KelpLocation locationBackup = getLocation();
+      KelpEntity<?> armorStand = getVehicle();
+      armorStand.ejectPassengers();
+      teleport(locationBackup);
+      armorStand.remove();
+    } else if (!gravity && this.gravityFlag) {
+      this.gravityFlag = false;
+      KelpLocation armorStandLocation = getLocation().subtractY(getEntityHeight());
+      ArmorStandEntity.create(armorStandLocation)
+        .setVisible(false)
+        .setGravity(false)
+        .setBasePlate(false)
+        .spawn()
+        .addPassenger(this);
+    }
+    return (T) this;
   }
 
   protected CraftEntity craftEntity() {
