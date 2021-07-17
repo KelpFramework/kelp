@@ -21,6 +21,18 @@
     </repository>
   </repositories>
 
+  <profiles>
+    <profile>
+      <id>test-locally</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <directory>F:\Spigot Servers\1.8.8\kelp_versions</directory>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>

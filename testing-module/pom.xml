@@ -14,6 +14,18 @@
   <name>Kelp Testing Module</name>
   <description>A plugin written with Kelp in order to simplify testing and demonstrate features.</description>
 
+  <profiles>
+    <profile>
+      <id>test-locally</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <directory>F:\Spigot Servers\1.8.8\kelp_plugins</directory>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
