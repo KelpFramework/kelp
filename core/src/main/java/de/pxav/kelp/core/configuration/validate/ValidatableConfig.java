@@ -11,6 +11,11 @@ public abstract class ValidatableConfig extends KelpConfiguration {
   public abstract void setValidators();
 
   protected void addValidator(String key, IntegerValidator... integerValidators) {
+    if (!configValues.containsKey(key)) {
+      //todo use logger here
+      System.out.println("Cannot add validator for non-existing key " + key);
+      return;
+    }
     ConfigurationValue configurationValue = configValues.get(key);
     ValidatableValue validatableValue = ValidatableValue.from(configurationValue, integerValidators);
 
