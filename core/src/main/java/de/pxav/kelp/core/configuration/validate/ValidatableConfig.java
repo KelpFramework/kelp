@@ -28,7 +28,7 @@ public abstract class ValidatableConfig extends KelpConfiguration {
       ConfigurationValue configValue = entry.getValue();
 
       if (!(configValue instanceof ValidatableValue)) {
-        return;
+        continue;
       }
 
       ValidatableValue validatableValue = (ValidatableValue) configValue;
