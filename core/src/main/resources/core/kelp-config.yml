@@ -1,0 +1,10 @@
+# Kelp Default Configuration
+
+general:
+
+  debug-mode: false
+
+npc:
+
+  tick-length: 100
+
