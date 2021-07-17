@@ -2,6 +2,7 @@ package de.pxav.kelp.core.configuration;
 
 import com.google.common.collect.Maps;
 import de.pxav.kelp.core.common.KelpFileUtils;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
@@ -24,34 +25,27 @@ public abstract class KelpConfiguration {
       configFolder.mkdirs();
     }
 
+    YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
+
     // copy template file from resources folder if no config has existed before.
     if (configFile.exists()) {
-      System.out.println("Config file already exists, checking for updates...");
-      YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
-
-      InputStream resource = KelpFileUtils.getResource(resourceTemplatePath());
-      if (resource == null) {
-        System.out.println("config template does not exist, skipping..");
-        return;
-      }
-
-      InputStreamReader inputStreamReader = new InputStreamReader(resource);
-      YamlConfiguration templateConfig = YamlConfiguration.loadConfiguration(inputStreamReader);
-
-      ConfigurationPatcher patcher = ConfigurationPatcher.create(templateConfig, existingConfig);
-
-      if (!patcher.patchNecessary()) {
-        System.out.println("no patch necessary");
-        return;
-      }
-
-      patcher.backupValues();
-      patcher.patch(resourceTemplatePath(), configFile);
-
+      checkPatcher(configFile, existingConfig);
     } else {
       System.out.println("config file does not exist, creating new one...");
       KelpFileUtils.saveResource(resourceTemplatePath(), configFile);
     }
+
+    YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+
+    yamlConfiguration.getValues(true).forEach((key, value) -> {
+      // keys that introduce a new section are represented
+      // as 'MemorySection', but they don't contain any relevant
+      // values so we don't have to save them
+      if (!(value instanceof MemorySection)) {
+        this.configValues.put(key, () -> value);
+      }
+    });
+
   }
 
   public Object getValue(String key) {
@@ -64,6 +58,30 @@ public abstract class KelpConfiguration {
 
   public int getIntValue(String key) {
     return Integer.parseInt(getStringValue(key));
+  }
+
+  private void checkPatcher(File configFile, YamlConfiguration existingConfig) {
+    System.out.println("Config file already exists, checking for updates...");
+
+
+    InputStream resource = KelpFileUtils.getResource(resourceTemplatePath());
+    if (resource == null) {
+      System.out.println("config template does not exist, skipping..");
+      return;
+    }
+
+    InputStreamReader inputStreamReader = new InputStreamReader(resource);
+    YamlConfiguration templateConfig = YamlConfiguration.loadConfiguration(inputStreamReader);
+
+    ConfigurationPatcher patcher = ConfigurationPatcher.create(templateConfig, existingConfig);
+
+    if (!patcher.patchNecessary()) {
+      System.out.println("no patch necessary");
+      return;
+    }
+
+    patcher.backupValues();
+    patcher.patch(resourceTemplatePath(), configFile);
   }
 
 }
