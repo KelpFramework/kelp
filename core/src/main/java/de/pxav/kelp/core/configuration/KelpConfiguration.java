@@ -1,186 +1,69 @@
 package de.pxav.kelp.core.configuration;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import de.pxav.kelp.core.configuration.type.ConfigurationType;
-import org.bukkit.ChatColor;
+import com.google.common.collect.Maps;
+import de.pxav.kelp.core.common.KelpFileUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.Collection;
+import java.io.*;
+import java.util.Map;
 
-/**
- * <p>
- *    This is the template class for all configuration classes.
- *    If you want to create a new configuration your class has to
- *    extend this class which provides methods to query or update
- *    your config entries.
- * </p>
- *
- * @author pxav
- */
 public abstract class KelpConfiguration {
 
-  // google guice injector to fetch instances of classes
-  @Inject private Injector injector;
+  protected Map<String, ConfigurationValue> configValues = Maps.newConcurrentMap();
 
-  // this list contains all your configuration attributes
-  public Collection<ConfigurationAttribute> defaultValues = Lists.newArrayList();
+  protected abstract File configFile();
 
-  /**
-   * Define the default values for your configuration attributes.
-   * In this method you can simply add entries to the {@code defaultValues}
-   * collection to define which keys and values should be written to the file
-   * when it's created for the first time.
-   *
-   * You also define which keys you want to have at all. You cannot
-   * add/remove keys later.
-   */
-  public abstract void defineDefaults();
+  protected abstract String resourceTemplatePath();
 
-  public void add(String key, Object value, String... replacements) {
-    if (value instanceof String && replacements.length != 0) {
-      defaultValues.add(new ConfigurationAttribute(key, value, replacements));
-      return;
+  public void load() {
+    System.out.println("loading config file template " + resourceTemplatePath());
+    File configFile = configFile();
+    File configFolder = configFile.getParentFile();
+
+    if (!configFolder.exists()) {
+      configFolder.mkdirs();
     }
-    defaultValues.add(new ConfigurationAttribute(key, value));
+
+    // copy template file from resources folder if no config has existed before.
+    if (configFile.exists()) {
+      System.out.println("Config file already exists, checking for updates...");
+      YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
+
+      InputStream resource = KelpFileUtils.getResource(resourceTemplatePath());
+      if (resource == null) {
+        System.out.println("config template does not exist, skipping..");
+        return;
+      }
+
+      InputStreamReader inputStreamReader = new InputStreamReader(resource);
+      YamlConfiguration templateConfig = YamlConfiguration.loadConfiguration(inputStreamReader);
+
+      ConfigurationPatcher patcher = ConfigurationPatcher.create(templateConfig, existingConfig);
+
+      if (!patcher.patchNecessary()) {
+        System.out.println("no patch necessary");
+        return;
+      }
+
+      patcher.backupValues();
+      patcher.patch(resourceTemplatePath(), configFile);
+
+    } else {
+      System.out.println("config file does not exist, creating new one...");
+      KelpFileUtils.saveResource(resourceTemplatePath(), configFile);
+    }
   }
 
-  /**
-   * Save the changes. If you have modified the {@code defaultValues} collection
-   * using the {@code #update} method for example you might want to save your
-   * changes and write them to the corresponding file to be available after
-   * a server restart as well.
-   */
-  public void save() {
-    Configuration annotation = this.getClass().getAnnotation(Configuration.class);
-    ConfigurationType configurationType = injector.getInstance(annotation.type());
-    configurationType.saveAttributes(defaultValues, this.getClass());
+  public Object getValue(String key) {
+    return configValues.get(key);
   }
 
-  /**
-   * Iterates the {@code defaultValues} collection and searches for
-   * an attribute that has the desired key.
-   *
-   * @param key The key you want to search for.
-   * @return Returns the {@code ConfigurationAttribute} with the given key.
-   *         If this does not exist {@code null} will be returned.
-   * @see ConfigurationAttribute
-   */
-  public ConfigurationAttribute getByKey(String key) {
-    return defaultValues
-            .stream()
-            .filter(attribute -> attribute.getKey().equalsIgnoreCase(key))
-            .findFirst()
-            .orElse(null);
-  }
-
-  /**
-   * Get the value which is assigned to the given key
-   * from the cache. This method only works if the
-   * value really is an integer.
-   *
-   * @param key The key of the value you want to get.
-   * @return The value object converted to an integer.
-   */
-  public int getIntValue(String key) {
-    ConfigurationAttribute attribute = this.getByKey(key);
-    return (int) attribute.getValue();
-  }
-
-  /**
-   * Get the value which is assigned to the given key
-   * from the cache. This method only works if the
-   * value really is a string.
-   *
-   * @param key The key of the value you want to get.
-   * @return The value object converted to a string.
-   */
   public String getStringValue(String key) {
-    ConfigurationAttribute attribute = this.getByKey(key);
-    return ChatColor.translateAlternateColorCodes('&', (String) attribute.getValue());
+    return String.valueOf(configValues.get(key).value());
   }
 
-  /**
-   * Get the value which is assigned to the given key
-   * from the cache. This method only works if the
-   * value really is a boolean.
-   *
-   * @param key The key of the value you want to get.
-   * @return The value object converted to a boolean.
-   */
-  public boolean getBooleanValue(String key) {
-    ConfigurationAttribute attribute = this.getByKey(key);
-    return (boolean) attribute.getValue();
-  }
-
-  /**
-   * Get the value which is assigned to the given key
-   * from the cache. This method only works if the
-   * value really is a float.
-   *
-   * @param key The key of the value you want to get.
-   * @return The value object converted to a float.
-   */
-  public float getFloatValue(String key) {
-    ConfigurationAttribute attribute = this.getByKey(key);
-    return (float) attribute.getValue();
-  }
-
-  /**
-   * Get the value which is assigned to the given key
-   * from the cache. This method only works if the
-   * value really is a double.
-   *
-   * @param key The key of the value you want to get.
-   * @return The value object converted to a double.
-   */
-  public double getDoubleValue(String key) {
-    ConfigurationAttribute attribute = this.getByKey(key);
-    return (double) attribute.getValue();
-  }
-
-  /**
-   * Get the value which is assigned to the given key
-   * from the cache. This method only works if the
-   * value really is a long.
-   *
-   * @param key The key of the value you want to get.
-   * @return The value object converted to a long.
-   */
-  public long getLongValue(String key) {
-    ConfigurationAttribute attribute = this.getByKey(key);
-    return (long) attribute.getValue();
-  }
-
-  /**
-   * Updates the attribute value of the given key.
-   * This method only updates the value within the cache.
-   * If you want to save your changes to the file you
-   * have to execute {@code #save()} afterwards or directly
-   * use {@code #updateAndSave(key, value)}
-   *
-   * @param key The key of the attribute you want to update.
-   * @param value The new value for the given key.
-   */
-  public void update(String key, Object value) {
-    Preconditions.checkNotNull(getByKey(key));
-    defaultValues.remove(getByKey(key));
-    defaultValues.add(new ConfigurationAttribute(key, value));
-  }
-
-  /**
-   * Updates the attribute value of the given key.
-   * This method also saves the changes to the corresponding file.
-   * If you don't want this to happen, but only update within
-   * the cache you might want to use {@code #update(key, value)}.
-   *
-   * @param key The key of the attribute you want to update.
-   * @param value The new value for the given key.
-   */
-  public void updateAndSave(String key, Object value) {
-    update(key, value);
-    save();
+  public int getIntValue(String key) {
+    return Integer.parseInt(getStringValue(key));
   }
 
 }
