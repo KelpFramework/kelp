@@ -28,6 +28,7 @@ public class KelpConfigurationRepository {
     if (configInstance instanceof ValidatableConfig) {
       ValidatableConfig validatableConfig = (ValidatableConfig) configInstance;
       try {
+        validatableConfig.setValidators();
         validatableConfig.validate();
       } catch (ConfigValidationException e) {
         e.logValidationError();
