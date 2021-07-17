@@ -1,11 +1,12 @@
 package de.pxav.kelp.testing.config;
 
-import de.pxav.kelp.core.configuration.KelpConfiguration;
 import de.pxav.kelp.core.configuration.validate.IntegerValidator;
 import de.pxav.kelp.core.configuration.validate.ValidatableConfig;
 
+import javax.inject.Singleton;
 import java.io.File;
 
+@Singleton
 public class TestingModuleConfig extends ValidatableConfig {
 
   @Override
@@ -20,6 +21,7 @@ public class TestingModuleConfig extends ValidatableConfig {
 
   @Override
   public void setValidators() {
+    System.out.println("setting validators...");
     addValidator("attr", IntegerValidator.nonNegative());
   }
 
