@@ -3,13 +3,14 @@ package de.pxav.kelp.testing;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.NewKelpApplication;
 import de.pxav.kelp.core.command.KelpCommandRepository;
-import de.pxav.kelp.core.configuration.ConfigurationRepository;
+import de.pxav.kelp.core.configuration.KelpConfigurationRepository;
 import de.pxav.kelp.core.connect.KelpConnect;
 import de.pxav.kelp.core.connect.connection.Connection;
 import de.pxav.kelp.core.connect.connection.ConnectionProperties;
 import de.pxav.kelp.core.connect.server.Server;
 import de.pxav.kelp.core.connect.server.ServerProperties;
 import de.pxav.kelp.core.logger.KelpLogger;
+import de.pxav.kelp.testing.config.TestingModuleConfig;
 import de.pxav.kelp.testing.packet.DefaultConnectionPropertiesFactory;
 import de.pxav.kelp.testing.packet.DefaultPacketOperator;
 import de.pxav.kelp.testing.packet.PingPacket;
@@ -42,13 +43,15 @@ public class KelpTesting extends KelpApplication {
 
   @Override
   public void onEnable() {
-    getInstance(ConfigurationRepository.class).loadAll("de.pxav.kelp.testing");
+
     getInstance(KelpCommandRepository.class).loadCommands("de.pxav.kelp.testing");
     setupConnect();
   }
 
   private void setupConnect() {
     DefaultPacketOperator packetOperator = getInstance(DefaultPacketOperator.class);
+
+    getInstance(KelpConfigurationRepository.class).registerConfig(TestingModuleConfig.class);
 
     this.server = getInstance(KelpConnect.class).createServer(new ServerProperties(25576, packetOperator,
       new DefaultConnectionPropertiesFactory(packetOperator)).useNativeEventLoopGroup().useNativeTransport()); // create a server instance

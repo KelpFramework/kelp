@@ -1,0 +1,25 @@
+# Testing module config
+attribute: 1
+
+# another comment
+secondAttribute: 2
+
+# third comment
+attr: 245
+
+# parent comment
+# second comment line of parent
+parent1:
+
+  # this is a child of parent 1
+  # with multiple lines of comments
+  child1: 4
+
+  child2:
+    child3: 'soos'
+    child4: 'saas'
+
+  list1:
+    - '1'
+    - '2'
+    - '3'
