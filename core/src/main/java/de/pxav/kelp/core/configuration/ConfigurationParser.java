@@ -80,7 +80,7 @@ public class ConfigurationParser {
             // the key of a list.
             if (character == '-') {
               if (copiedList) {
-                continue;
+                continue whileLabel;
               }
 
               if (valuePool.containsKey(currentKey) && valuePool.get(currentKey) instanceof List) {
@@ -94,7 +94,7 @@ public class ConfigurationParser {
               }
 
               continue whileLabel;
-            } else {
+            } else if (character != ' ') {
               copiedList = false;
             }
 
