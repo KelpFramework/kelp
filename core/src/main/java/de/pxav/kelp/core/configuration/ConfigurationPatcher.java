@@ -49,8 +49,8 @@ public class ConfigurationPatcher {
     KelpFileUtils.saveResource(resourcePath, outputFile);
 
     List<String> patchedContents = ConfigurationParser
-      .create(outputFile)
-      .parseContents(this.valueBackup);
+      .create(outputFile, this.valueBackup)
+      .parseContents();
 
     ConfigurationDumper.create(outputFile).dump(patchedContents);
 
