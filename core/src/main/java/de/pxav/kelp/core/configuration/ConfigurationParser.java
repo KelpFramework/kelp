@@ -11,20 +11,29 @@ import java.util.Map;
 
 public class ConfigurationParser {
 
+  private static final int WORDS_PER_FOLDED_SCALAR_LINE = 4;
+
   private File file;
+  private Map<String, Object> valuePool;
 
-  public static ConfigurationParser create(File file) {
-    return new ConfigurationParser(file);
+  public static ConfigurationParser create(File file, Map<String, Object> valuePool) {
+    return new ConfigurationParser(file, valuePool);
   }
 
-  private ConfigurationParser(File file) {
+  private ConfigurationParser(File file, Map<String, Object> valuePool) {
     this.file = file;
+    this.valuePool = valuePool;
   }
 
-  public List<String> parseContents(Map<String, Object> valueBackup) {
+  public List<String> parseContents() {
 
     FileReader fileReader = null;
     BufferedReader bufferedReader = null;
+
+    System.out.println("Existing value pool: ");
+    valuePool.forEach((key, val) -> {
+      System.out.println(key + ": " +val);
+    });
 
     try {
 
@@ -33,6 +42,9 @@ public class ConfigurationParser {
       // the current key path the parser points to
       String currentKey = "";
       boolean copiedList = false;
+      boolean foldedScalar = false;
+      boolean scalarBlock = false;
+      boolean copiedScalar = false;
 
       // the line that is currently read
       String line = "";
@@ -74,13 +86,8 @@ public class ConfigurationParser {
               if (valuePool.containsKey(currentKey) && valuePool.get(currentKey) instanceof List) {
                 copiedList = true;
                 for (Object element : ((List<?>) valuePool.get(currentKey))) {
-                  StringBuilder lineBuilder = new StringBuilder();
-                  for (int i = 0; i < indent; i++) {
-                    lineBuilder.append(" ");
-                  }
-                  lineBuilder.append("- ");
-                  lineBuilder.append(element);
-                  dumpLines.add(lineBuilder.toString());
+                  String lineToDump = generateIndent(indent) + "- " + element;
+                  dumpLines.add(lineToDump);
                 }
               } else {
                 dumpLines.add(line);
@@ -102,9 +109,58 @@ public class ConfigurationParser {
             }
           }
 
-          // new key on same layer
+          if (scalarBlock && indent < lastIndent) {
+            scalarBlock = false;
+            foldedScalar = false;
+            copiedScalar = false;
+          } else if (scalarBlock) {
+            if (copiedScalar) {
+              continue;
+            }
+
+            if (valuePool.containsKey(currentKey)) {
+              String scalarContent = valuePool.get(currentKey).toString();
+              copiedScalar = true;
+
+              if (foldedScalar) {
+                String[] scalarLines = scalarContent.split(" ");
+                if (scalarLines.length <= 4) {
+                  dumpLines.add(generateIndent(indent) + scalarContent);
+                } else {
+                  for (int lines = 0; lines < scalarLines.length / WORDS_PER_FOLDED_SCALAR_LINE; lines++) {
+                    StringBuilder lineBuilder = new StringBuilder(generateIndent(indent));
+                    for (int word = lines * 4; word < (lines + 1) * 4; word++) {
+                      lineBuilder.append(scalarLines[word]).append(" ");
+                    }
+                    dumpLines.add(lineBuilder.toString());
+                  }
+
+                  int missingWords = scalarLines.length % WORDS_PER_FOLDED_SCALAR_LINE;
+                  if (missingWords != 0) {
+                    StringBuilder lineBuilder = new StringBuilder(generateIndent(indent));
+                    for (int i = scalarLines.length - missingWords; i < scalarLines.length; i++) {
+                      lineBuilder.append(scalarLines[i]).append(" ");
+                    }
+                    dumpLines.add(lineBuilder.toString());
+                  }
+
+                }
+              } else {
+                String[] scalarLines = scalarContent.split("\n");
+                for (String scalarLine : scalarLines) {
+                  dumpLines.add(generateIndent(indent) + scalarLine);
+                }
+              }
+            }
+
+            dumpLines.add(line);
+
+            continue;
+          }
+
+          // When the current indentation is equal to the previous
+          // one, we know the keys are both on the same layer.
           if (indent == lastIndent) {
-            System.out.println("new key on same layer");
             String[] keyPath = currentKey.split("\\.");
             String[] keyValuePair = line.replace(" ", "").split(":");
             String newKeyName = keyValuePair[0];
@@ -117,11 +173,21 @@ public class ConfigurationParser {
               }
             }
             currentKey = newKeyBuilder.toString();
-            System.out.println("current key: " + currentKey);
 
             // if the key has a value
             if (keyValuePair.length == 2) {
-              dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent, valueBackup));
+
+              // characters introducing a folded (>) or block (|) scalar
+              if (keyValuePair[1].startsWith(">") || keyValuePair[1].startsWith("|")) {
+                if (keyValuePair[1].startsWith(">")) {
+                  foldedScalar = true;
+                }
+                scalarBlock = true;
+                dumpLines.add(line);
+              } else {
+                dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+              }
+
             }
 
             // the key has no value, so it introduces a new paragraph
@@ -132,18 +198,18 @@ public class ConfigurationParser {
             continue;
           }
 
-          // new key on sub layer
+          // If the indent count of this line is higher than the one
+          // of the previous line, this line has to be a sub-layer/key
+          // of the previous line.
           if (indent > lastIndent) {
             lastIndent = indent;
-            System.out.println("new key on sub layer");
 
             String[] keyValuePair = line.replace(" ", "").split(":");
             String newKeyName = keyValuePair[0];
             currentKey = currentKey + "." + newKeyName;
-            System.out.println("current key: " + currentKey);
 
             if (keyValuePair.length == 2) {
-              dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent, valueBackup));
+              dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
             }
 
             // the key has no value, so it introduces a new paragraph
@@ -155,52 +221,55 @@ public class ConfigurationParser {
           }
 
           // new upper level section
-          if (indent < lastIndent) {
-            lastIndent = indent;
-            System.out.println("new key on upper section");
+          // as condition "indent < lastIndent" always is true here
+          // based on the prior checks.
 
-            String[] keyPath = currentKey.split("\\.");
-            StringBuilder newKeyBuilder = new StringBuilder();
-            for (int i = 0; i < keyPath.length - 2; i++) {
-              newKeyBuilder.append(keyPath[i]);
-              if (i < keyPath.length - 3) {
-                newKeyBuilder.append(".");
-              }
+          lastIndent = indent;
+
+          String[] keyPath = currentKey.split("\\.");
+          StringBuilder newKeyBuilder = new StringBuilder();
+          for (int i = 0; i < keyPath.length - 2; i++) {
+            newKeyBuilder.append(keyPath[i]);
+            if (i < keyPath.length - 3) {
+              newKeyBuilder.append(".");
             }
-
-            String[] keyValuePair = line.replace(" ", "").split(":");
-            String newKeyName = keyValuePair[0];
-
-            currentKey = newKeyBuilder + "." + newKeyName;
-            System.out.println("current key: " + currentKey);
-
-            if (keyValuePair.length == 2) {
-              dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent, valueBackup));
-            } else {
-              dumpLines.add(line);
-            }
-
-            continue;
           }
 
-        } else if (line.startsWith("#")) {
-          System.out.println("top level comment");
-          dumpLines.add(line);
-        } else if (!line.isEmpty()) {
-          System.out.println("top level key");
+          String[] keyValuePair = line.replace(" ", "").split(":");
+          String newKeyName = keyValuePair[0];
 
+          currentKey = newKeyBuilder + "." + newKeyName;
+
+          if (keyValuePair.length == 2) {
+            dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+          } else {
+            dumpLines.add(line);
+          }
+
+          continue;
+
+        // when a line is not indented and starts with a '#',
+        // we know this line represents a top-level comment that
+        // can have no values attached later within the same line.
+        } else if (line.startsWith("#")) {
+          dumpLines.add(line);
+
+        // when this statement is reached, the parser already knows that this
+        // line is not indented, nor it is a comment, so we know it must be a
+        // top level key. This can mean that either a value is directly assigned
+        // in this line or a new paragraph is introduced.
+        } else if (!line.isEmpty()) {
           String[] keyValuePair = line.replace(" ", "").split(":");
           currentKey = keyValuePair[0];
 
           if (keyValuePair.length == 2) {
-            dumpLines.add(fetchValueLine(line, currentKey, currentKey, 0, valueBackup));
+            dumpLines.add(fetchValueLine(line, currentKey, currentKey, 0));
           }
 
           // the key has no value, so it introduces a new paragraph
           else {
             dumpLines.add(line);
           }
-
         }
 
       }
@@ -235,20 +304,38 @@ public class ConfigurationParser {
     return Lists.newArrayList();
   }
 
-  private String fetchValueLine(String line, String fullKey, String singleKey, int indent, Map<String, Object> valuePool) {
-    if (!valuePool.containsKey(fullKey)) {
+  private int handleList() {
+    return 0;
+  }
+
+  private int handleScalar() {
+    return 0;
+  }
+
+  private String generateIndent(int indent) {
+    StringBuilder indentBuilder = new StringBuilder();
+    for (int i = 0; i < indent; i++) {
+      indentBuilder.append(" ");
+    }
+    return indentBuilder.toString();
+  }
+
+  private String fetchValueLine(String line,
+                                String fullKey,
+                                String singleKey,
+                                int indent) {
+    if (!this.valuePool.containsKey(fullKey)) {
       return line;
     }
 
-    Object oldValue = valuePool.get(fullKey);
-    StringBuilder lineBuilder = new StringBuilder();
-    for (int i = 0; i < indent; i++) {
-      lineBuilder.append(" ");
-    }
-    lineBuilder.append(singleKey).append(": ");
-    //todo support lists
-    lineBuilder.append(oldValue.toString());
+    Object oldValue = this.valuePool.get(fullKey);
+    StringBuilder lineBuilder = new StringBuilder(generateIndent(indent));
+    lineBuilder.append(singleKey).append(": ").append(oldValue.toString());
     return lineBuilder.toString();
+
+  }
+
+  private static interface YamlValueParser {
 
   }
 
