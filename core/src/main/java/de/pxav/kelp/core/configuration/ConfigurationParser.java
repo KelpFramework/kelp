@@ -32,17 +32,18 @@ public class ConfigurationParser {
 
       // the current key path the parser points to
       String currentKey = "";
+      boolean copiedList = false;
 
       // the line that is currently read
       String line = "";
 
+      // indentation of the previous line
       int lastIndent = 0;
 
       fileReader = new FileReader(this.file);
       bufferedReader = new BufferedReader(fileReader);
 
       whileLabel: while ((line = bufferedReader.readLine()) != null) {
-        System.out.println("'"+ line +"'");
 
         if (line.isEmpty()) {
           dumpLines.add("");
@@ -54,13 +55,46 @@ public class ConfigurationParser {
           int indent = 0;
           for (char character : line.toCharArray()) {
 
-            // indented comment
+            // If there is an indented comment before any key
+            // has been introduced, we know that this line won't
+            // contain a key, so we can skip it and continue with the
+            // next line.
             if (character == '#') {
               dumpLines.add(line);
-              System.out.println("indented comment");
               continue whileLabel;
             }
 
+            // We have found a list element, so the current key has to be
+            // the key of a list.
+            if (character == '-') {
+              if (copiedList) {
+                continue;
+              }
+
+              if (valuePool.containsKey(currentKey) && valuePool.get(currentKey) instanceof List) {
+                copiedList = true;
+                for (Object element : ((List<?>) valuePool.get(currentKey))) {
+                  StringBuilder lineBuilder = new StringBuilder();
+                  for (int i = 0; i < indent; i++) {
+                    lineBuilder.append(" ");
+                  }
+                  lineBuilder.append("- ");
+                  lineBuilder.append(element);
+                  dumpLines.add(lineBuilder.toString());
+                }
+              } else {
+                dumpLines.add(line);
+              }
+
+              continue whileLabel;
+            } else {
+              copiedList = false;
+            }
+
+            // count amount of indents, which is used to
+            // determine the layer structure of the YAML file
+            // as well as keeping the indentation in the output
+            // file.
             if (character == ' ') {
               indent++;
             } else {
