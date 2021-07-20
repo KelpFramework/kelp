@@ -56,7 +56,6 @@ public class ConfigurationParser {
       bufferedReader = new BufferedReader(fileReader);
 
       whileLabel: while ((line = bufferedReader.readLine()) != null) {
-        System.out.println("'"+line+"'");
 
         if (line.isEmpty()) {
           dumpLines.add("");
@@ -110,22 +109,18 @@ public class ConfigurationParser {
             }
           }
 
-          System.out.println("line indent: " + indent + " vs. last indent: " + lastIndent);
-
           if (scalarBlock && indent < lastIndent) {
-            System.out.println("escaping scalar.");
             scalarBlock = false;
             foldedScalar = false;
             copiedScalar = false;
           } else if (scalarBlock) {
             lastIndent = indent;
-            System.out.println("handling scalar line: " + line);
+
             if (copiedScalar) {
               continue;
             }
 
             if (valuePool.containsKey(currentKey)) {
-              System.out.println("found default values for scalar => " + currentKey);
               String scalarContent = valuePool.get(currentKey).toString();
               copiedScalar = true;
 
@@ -299,11 +294,6 @@ public class ConfigurationParser {
 
       }
 
-      System.out.println("dump lines: ");
-      dumpLines.forEach(current -> {
-        System.out.println(current);
-      });
-
       return dumpLines;
     }
 
@@ -327,14 +317,6 @@ public class ConfigurationParser {
     return Lists.newArrayList();
   }
 
-  private int handleList() {
-    return 0;
-  }
-
-  private int handleScalar() {
-    return 0;
-  }
-
   private String generateIndent(int indent) {
     StringBuilder indentBuilder = new StringBuilder();
     for (int i = 0; i < indent; i++) {
@@ -355,10 +337,6 @@ public class ConfigurationParser {
     StringBuilder lineBuilder = new StringBuilder(generateIndent(indent));
     lineBuilder.append(singleKey).append(": ").append(oldValue.toString());
     return lineBuilder.toString();
-
-  }
-
-  private static interface YamlValueParser {
 
   }
 
