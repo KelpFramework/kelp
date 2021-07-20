@@ -56,6 +56,7 @@ public class ConfigurationParser {
       bufferedReader = new BufferedReader(fileReader);
 
       whileLabel: while ((line = bufferedReader.readLine()) != null) {
+        System.out.println("'"+line+"'");
 
         if (line.isEmpty()) {
           dumpLines.add("");
@@ -109,16 +110,22 @@ public class ConfigurationParser {
             }
           }
 
+          System.out.println("line indent: " + indent + " vs. last indent: " + lastIndent);
+
           if (scalarBlock && indent < lastIndent) {
+            System.out.println("escaping scalar.");
             scalarBlock = false;
             foldedScalar = false;
             copiedScalar = false;
           } else if (scalarBlock) {
+            lastIndent = indent;
+            System.out.println("handling scalar line: " + line);
             if (copiedScalar) {
               continue;
             }
 
             if (valuePool.containsKey(currentKey)) {
+              System.out.println("found default values for scalar => " + currentKey);
               String scalarContent = valuePool.get(currentKey).toString();
               copiedScalar = true;
 
@@ -151,9 +158,9 @@ public class ConfigurationParser {
                   dumpLines.add(generateIndent(indent) + scalarLine);
                 }
               }
+            } else {
+              dumpLines.add(line);
             }
-
-            dumpLines.add(line);
 
             continue;
           }
@@ -209,7 +216,16 @@ public class ConfigurationParser {
             currentKey = currentKey + "." + newKeyName;
 
             if (keyValuePair.length == 2) {
-              dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+              // characters introducing a folded (>) or block (|) scalar
+              if (keyValuePair[1].startsWith(">") || keyValuePair[1].startsWith("|")) {
+                if (keyValuePair[1].startsWith(">")) {
+                  foldedScalar = true;
+                }
+                scalarBlock = true;
+                dumpLines.add(line);
+              } else {
+                dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+              }
             }
 
             // the key has no value, so it introduces a new paragraph
@@ -241,7 +257,16 @@ public class ConfigurationParser {
           currentKey = newKeyBuilder + "." + newKeyName;
 
           if (keyValuePair.length == 2) {
-            dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+            // characters introducing a folded (>) or block (|) scalar
+            if (keyValuePair[1].startsWith(">") || keyValuePair[1].startsWith("|")) {
+              if (keyValuePair[1].startsWith(">")) {
+                foldedScalar = true;
+              }
+              scalarBlock = true;
+              dumpLines.add(line);
+            } else {
+              dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+            }
           } else {
             dumpLines.add(line);
           }
@@ -273,8 +298,6 @@ public class ConfigurationParser {
         }
 
       }
-
-      // todo add support for block scalars
 
       System.out.println("dump lines: ");
       dumpLines.forEach(current -> {
