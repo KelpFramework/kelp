@@ -13,8 +13,8 @@ public class ConfigurationParser {
 
   private static final int WORDS_PER_FOLDED_SCALAR_LINE = 4;
 
-  private File file;
-  private Map<String, Object> valuePool;
+  private final File file;
+  private final Map<String, Object> valuePool;
 
   public static ConfigurationParser create(File file, Map<String, Object> valuePool) {
     return new ConfigurationParser(file, valuePool);
@@ -29,11 +29,6 @@ public class ConfigurationParser {
 
     FileReader fileReader = null;
     BufferedReader bufferedReader = null;
-
-    System.out.println("Existing value pool: ");
-    valuePool.forEach((key, val) -> {
-      System.out.println(key + ": " +val);
-    });
 
     try {
 
@@ -317,6 +312,81 @@ public class ConfigurationParser {
     return Lists.newArrayList();
   }
 
+  /**
+   * Fetches the inline comment from a given line of a YAML-configuration.
+   * An inline comment is a comment made in the same line as a value declaration,
+   * for example: {@code someKey: 'A value' # this is an inline comment}.
+   * Hence, a comment that covers a dedicated line is not considered an inline comment.
+   *
+   * Please note that a # does not always introduce a new comment. If used in
+   * key names for example, #s are completely legal as well:
+   * {@code key#1: 'Key #1's value'}. As you can see they can also be used in
+   * values. This method automatically checks for such purposes and
+   * returns an empty string in such cases.
+   *
+   * However, inline comments can not exist inside scalar blocks as any chars
+   * are considered as part of the scalar. It is therefore impossible to reliably
+   * detect whether we are in a scalar line without any context given. So don't
+   * use this method if you know the given line is part of a scalar block.
+   *
+   * @param line The configuration line to fetch the inline comment from.
+   * @return The extracted inline comment of the given line including the {@code #} char.
+   *         The rest of the line will be removed.
+   */
+  private String fetchInlineComment(String line) {
+    String noSpaces = line.replace(" ", "");
+    // no inline comment if the '#' is located as the first char of a line
+    // or if the line does not contain a '#' at all.
+    if (!line.contains("#") || noSpaces.startsWith("#")) {
+      return "";
+    }
+
+    // if the current line is a list item
+    if (noSpaces.startsWith("-")) {
+      for (int i = 0; i < line.length(); i++) {
+        char c = line.charAt(i);
+        if (c == '#') {
+          char before = line.charAt(i - 1);
+          if (before == ' ') {
+            return line.substring(i);
+          }
+        }
+      }
+    }
+
+    // whether a ':' has been found in the string
+    boolean keyMarkFound = false;
+
+    boolean enclosedValue = false;
+
+    for (int i = 0; i < line.length(); i++) {
+      char c = line.charAt(i);
+
+      if (c == ':') {
+        keyMarkFound = true;
+      }
+
+      if ((c == '\'' || c == '"') && keyMarkFound) {
+        if (enclosedValue) {
+          enclosedValue = false;
+          continue;
+        }
+
+        enclosedValue = true;
+      }
+
+      if (c == '#' && !enclosedValue) {
+        char before = line.charAt(i - 1);
+        if (before == ' ') {
+          return line.substring(i);
+        }
+      }
+
+    }
+
+    return "";
+  }
+
   private String generateIndent(int indent) {
     StringBuilder indentBuilder = new StringBuilder();
     for (int i = 0; i < indent; i++) {
@@ -334,9 +404,7 @@ public class ConfigurationParser {
     }
 
     Object oldValue = this.valuePool.get(fullKey);
-    StringBuilder lineBuilder = new StringBuilder(generateIndent(indent));
-    lineBuilder.append(singleKey).append(": ").append(oldValue.toString());
-    return lineBuilder.toString();
+    return generateIndent(indent) + singleKey + ": " + oldValue.toString() + " " + fetchInlineComment(line);
 
   }
 
