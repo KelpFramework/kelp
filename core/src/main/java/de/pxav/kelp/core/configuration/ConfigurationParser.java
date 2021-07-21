@@ -51,8 +51,9 @@ public class ConfigurationParser {
       bufferedReader = new BufferedReader(fileReader);
 
       whileLabel: while ((line = bufferedReader.readLine()) != null) {
+        System.out.println("line: '"+line+"'");
 
-        if (line.isEmpty()) {
+        if (line.replace(" ", "").isEmpty()) {
           dumpLines.add("");
         }
 
@@ -108,6 +109,7 @@ public class ConfigurationParser {
             scalarBlock = false;
             foldedScalar = false;
             copiedScalar = false;
+            lastIndent = indent;
           } else if (scalarBlock) {
             lastIndent = indent;
 
@@ -120,6 +122,7 @@ public class ConfigurationParser {
               copiedScalar = true;
 
               if (foldedScalar) {
+                foldedScalar = false;
                 String[] scalarLines = scalarContent.split(" ");
                 if (scalarLines.length <= 4) {
                   dumpLines.add(generateIndent(indent) + scalarContent);
@@ -143,7 +146,10 @@ public class ConfigurationParser {
 
                 }
               } else {
+                System.out.println(valuePool.get(currentKey).toString());
+
                 String[] scalarLines = scalarContent.split("\n");
+
                 for (String scalarLine : scalarLines) {
                   dumpLines.add(generateIndent(indent) + scalarLine);
                 }
