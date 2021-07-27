@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -188,7 +189,7 @@ public class ConfigurationParser {
                 scalarBlock = true;
                 dumpLines.add(line);
               } else {
-                dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+                dumpLines.addAll(fetchValueLine(line, currentKey, newKeyName, indent));
               }
 
             }
@@ -220,7 +221,7 @@ public class ConfigurationParser {
                 scalarBlock = true;
                 dumpLines.add(line);
               } else {
-                dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+                dumpLines.addAll(fetchValueLine(line, currentKey, newKeyName, indent));
               }
             }
 
@@ -261,7 +262,7 @@ public class ConfigurationParser {
               scalarBlock = true;
               dumpLines.add(line);
             } else {
-              dumpLines.add(fetchValueLine(line, currentKey, newKeyName, indent));
+              dumpLines.addAll(fetchValueLine(line, currentKey, newKeyName, indent));
             }
           } else {
             dumpLines.add(line);
@@ -284,7 +285,7 @@ public class ConfigurationParser {
           currentKey = keyValuePair[0];
 
           if (keyValuePair.length == 2) {
-            dumpLines.add(fetchValueLine(line, currentKey, currentKey, 0));
+            dumpLines.addAll(fetchValueLine(line, currentKey, currentKey, 0));
           }
 
           // the key has no value, so it introduces a new paragraph
@@ -401,16 +402,38 @@ public class ConfigurationParser {
     return indentBuilder.toString();
   }
 
-  private String fetchValueLine(String line,
+  private List<String> fetchValueLine(String line,
                                 String fullKey,
                                 String singleKey,
                                 int indent) {
     if (!this.valuePool.containsKey(fullKey)) {
-      return line;
+      return Collections.singletonList(line);
     }
 
     Object oldValue = this.valuePool.get(fullKey);
-    return generateIndent(indent) + singleKey + ": " + oldValue.toString() + " " + fetchInlineComment(line);
+
+    // check if the old value is a multiline string represented by a block scalar
+    if (oldValue instanceof String) {
+      String value = oldValue.toString();
+
+      if (value.contains("\n") || value.contains("\\n") || value.contains("\r")) {
+        List<String> output = Lists.newArrayList();
+        output.add(generateIndent(indent) + singleKey + ": | " + fetchInlineComment(line));
+
+        // since Java 8 you can use \R to detect line breaks on all platforms
+        // instead of using something like /\n|\r|\\n/, which was used before.
+        String[] scalarLines = value.split("\\R");
+
+        for (String scalarLine : scalarLines) {
+          output.add(generateIndent(indent + 2) + scalarLine);
+        }
+
+        return output;
+      }
+
+    }
+
+    return Collections.singletonList(generateIndent(indent) + singleKey + ": " + oldValue.toString() + " " + fetchInlineComment(line));
 
   }
 
