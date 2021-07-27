@@ -1,4 +1,4 @@
-package de.pxav.kelp.core.configuration;
+package de.pxav.kelp.core.configuration.parse;
 
 import java.io.BufferedWriter;
 import java.io.File;

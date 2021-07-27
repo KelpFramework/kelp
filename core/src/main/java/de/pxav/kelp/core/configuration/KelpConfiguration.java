@@ -2,6 +2,7 @@ package de.pxav.kelp.core.configuration;
 
 import com.google.common.collect.Maps;
 import de.pxav.kelp.core.common.KelpFileUtils;
+import de.pxav.kelp.core.configuration.parse.ConfigurationPatcher;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
