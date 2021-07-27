@@ -6,6 +6,7 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 
 public abstract class KelpConfiguration {
@@ -58,6 +59,38 @@ public abstract class KelpConfiguration {
 
   public int getIntValue(String key) {
     return Integer.parseInt(getStringValue(key));
+  }
+
+  public double getDoubleValue(String key) {
+    return Double.parseDouble(getStringValue(key));
+  }
+
+  public float getFloatValue(String key) {
+    return Float.parseFloat(getStringValue(key));
+  }
+
+  public long getLongValue(String key) {
+    return Long.parseLong(getStringValue(key));
+  }
+
+  public char getCharValue(String key) {
+    return getStringValue(key).charAt(0);
+  }
+
+  public byte getByteValue(String key) {
+    return Byte.parseByte(getStringValue(key));
+  }
+
+  public List<String> getStringList(String key) {
+    return (List<String>) this.configValues.get(key);
+  }
+
+  public List<?> getList(String key) {
+    return (List<?>) this.configValues.get(key);
+  }
+
+  public List<Integer> getIntList(String key) {
+    return (List<Integer>) this.configValues.get(key);
   }
 
   private void checkPatcher(File configFile, YamlConfiguration existingConfig) {
