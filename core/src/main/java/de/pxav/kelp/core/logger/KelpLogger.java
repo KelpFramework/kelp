@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.common.KelpFileUtils;
-import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedWriter;
@@ -40,7 +39,6 @@ public final class KelpLogger {
   private final KelpPlugin kelpPlugin;
   private final Injector injector;
   private final KelpFileUtils kelpFileUtils;
-  private final KelpDefaultConfiguration defaultConfig;
   private final Date DATE;
   private final String sessionBegin;
   private final File LATEST_FILE;
@@ -50,12 +48,10 @@ public final class KelpLogger {
 
   @Inject
   public KelpLogger(Injector injector,
-                    KelpFileUtils kelpFileUtils,
-                    KelpDefaultConfiguration defaultConfig) {
+                    KelpFileUtils kelpFileUtils) {
     this.kelpPlugin = KelpPlugin.getPlugin(KelpPlugin.class);
     this.injector = injector;
     this.kelpFileUtils = kelpFileUtils;
-    this.defaultConfig = defaultConfig;
 
     this.DATE = new Date();
     this.LOG_LOCATION = new File("./kelp_logs");
@@ -162,10 +158,6 @@ public final class KelpLogger {
    */
   public void consoleLog(Class<? extends KelpApplication> pluginMainClass,
                          LogLevel logLevel, String... messages) {
-    if (logLevel == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
-      return;
-    }
 
     KelpApplication kelpApplication = injector.getInstance(pluginMainClass);
     for (String message : messages) {
@@ -210,10 +202,7 @@ public final class KelpLogger {
    * @param messages The actual message you want to log.
    */
   public void consoleLog(LogLevel logLevel, String... messages) {
-    if (logLevel == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
-      return;
-    }
+
 
     for (String message : messages)
     kelpPlugin.getLogger().log(logLevel.toJavaLogLevel(), message);
@@ -275,10 +264,7 @@ public final class KelpLogger {
    * @param messages The actual message you want to log.
    */
   public void writeLog(LogLevel logLevel, String... messages) {
-    if (logLevel == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
-      return;
-    }
+
 
     for (String message : messages) {
       writeToLatestLog(logLevel, message);
@@ -325,10 +311,7 @@ public final class KelpLogger {
    */
   public void writeLog(Class<? extends KelpApplication> pluginMainClass,
                        LogLevel level, String... messages) {
-    if (level == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
-      return;
-    }
+
 
     KelpApplication kelpApplication = injector.getInstance(pluginMainClass);
     for (String message : messages) {

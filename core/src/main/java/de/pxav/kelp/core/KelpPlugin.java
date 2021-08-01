@@ -6,8 +6,6 @@ import com.google.inject.Singleton;
 import de.pxav.kelp.core.application.KelpApplicationRepository;
 import de.pxav.kelp.core.application.inject.VersionBinderModule;
 import de.pxav.kelp.core.command.KelpCommandRepository;
-import de.pxav.kelp.core.configuration.ConfigurationRepository;
-import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
 import de.pxav.kelp.core.inventory.KelpInventoryRepository;
 import de.pxav.kelp.core.event.listener.EventHandlerRegistration;
 import de.pxav.kelp.core.event.listener.KelpEventRepository;
@@ -24,9 +22,6 @@ import de.pxav.kelp.core.sound.SoundVersionTemplate;
 import de.pxav.kelp.core.version.KelpVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.annotation.plugin.Description;
-import org.bukkit.plugin.java.annotation.plugin.Plugin;
-import org.bukkit.plugin.java.annotation.plugin.author.Author;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -54,7 +49,6 @@ public class KelpPlugin extends JavaPlugin {
     logger().log("[BINDER] Successfully injected all version implementations and members. ");
     logger().log("[BINDER] Using normal Kelp-Logger now.");
 
-    injector.getInstance(ConfigurationRepository.class).loadAll(this.getClass().getPackage().getName());
     injector.getInstance(KelpLogger.class).loadLoggerFiles();
 
     logger().log("[CONFIG] Successfully loaded logger files.");
@@ -73,10 +67,10 @@ public class KelpPlugin extends JavaPlugin {
     this.logKelpLogo("Enabling KelpFramework, running version " + this.getDescription().getVersion(),
       "Developed & maintained by pxav and the open-source community with love <3", "");
 
-    if (injector.getInstance(KelpDefaultConfiguration.class).getBooleanValue("development-mode")) {
-      logger().log("[GENERAL] Kelp is running in development mode. This allows you to access developer features.",
-        "[GENERAL] Messages with LogLevel.DEBUG are logged. If you do not want that, enable production mode in the config file.");
-    }
+//    if (injector.getInstance(KelpDefaultConfiguration.class).getBooleanValue("development-mode")) {
+//      logger().log("[GENERAL] Kelp is running in development mode. This allows you to access developer features.",
+//        "[GENERAL] Messages with LogLevel.DEBUG are logged. If you do not want that, enable production mode in the config file.");
+//    }
 
     KelpVersion kelpVersion = KelpVersion.withBukkitVersion(Bukkit.getBukkitVersion());
     logger().log("[VERSION] Checking server environment:");

@@ -5,7 +5,7 @@ attribute: 1
 secondAttribute: 2
 
 # third comment
-attr: 245
+attr: 245 # inline comment 245
 
 # parent comment
 # second comment line of parent
@@ -13,9 +13,9 @@ parent1:
 
   # this is a child of parent 1
   # with multiple lines of comments
-  child1: 4
+  child1: 4 # another inline comment
 
-  child2:
+  child''2:
     child3: 'soos'
     child4: 'saas'
 
@@ -23,3 +23,15 @@ parent1:
     - '1'
     - '2'
     - '3'
+
+  scalar: > # scalar inline comment
+    First line
+    appended with space?
+    I hope so!
+
+  scalar2: | # another scalar comment
+    First line / header
+    second line
+    hopefully in a new line!
+
+  post-scalar1: 'A string!' # inline comment???

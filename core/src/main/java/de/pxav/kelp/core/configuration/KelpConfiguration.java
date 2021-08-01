@@ -2,9 +2,10 @@ package de.pxav.kelp.core.configuration;
 
 import com.google.common.collect.Maps;
 import de.pxav.kelp.core.common.KelpFileUtils;
-import de.pxav.kelp.core.configuration.parse.ConfigurationPatcher;
+import de.pxav.kelp.core.configuration.parse.ConfigurationDumper;
+import de.pxav.kelp.core.configuration.parse.ConfigurationParser;
+import org.apache.commons.io.FilenameUtils;
 import org.bukkit.configuration.MemorySection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 public abstract class KelpConfiguration {
 
   protected Map<String, ConfigurationValue> configValues = Maps.newConcurrentMap();
+  private ConfigurationParser parser;
 
   protected abstract File configFile();
 
@@ -27,19 +29,17 @@ public abstract class KelpConfiguration {
       configFolder.mkdirs();
     }
 
-    YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
+    this.parser = ConfigurationParser.getParserFor(configFile);
 
     // copy template file from resources folder if no config has existed before.
     if (configFile.exists()) {
-      checkPatcher(configFile, existingConfig);
+      checkPatcher(configFile);
     } else {
       System.out.println("config file does not exist, creating new one...");
       KelpFileUtils.saveResource(resourceTemplatePath(), configFile);
     }
 
-    YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
-
-    yamlConfiguration.getValues(true).forEach((key, value) -> {
+    this.parser.readValues().forEach((key, value) -> {
       // keys that introduce a new section are represented
       // as 'MemorySection', but they don't contain any relevant
       // values so we don't have to save them
@@ -94,9 +94,8 @@ public abstract class KelpConfiguration {
     return (List<Integer>) this.configValues.get(key);
   }
 
-  private void checkPatcher(File configFile, YamlConfiguration existingConfig) {
+  private void checkPatcher(File configFile) {
     System.out.println("Config file already exists, checking for updates...");
-
 
     InputStream resource = KelpFileUtils.getResource(resourceTemplatePath());
     if (resource == null) {
@@ -105,17 +104,23 @@ public abstract class KelpConfiguration {
     }
 
     InputStreamReader inputStreamReader = new InputStreamReader(resource);
-    YamlConfiguration templateConfig = YamlConfiguration.loadConfiguration(inputStreamReader);
 
-    ConfigurationPatcher patcher = ConfigurationPatcher.create(templateConfig, existingConfig);
 
-    if (!patcher.patchNecessary()) {
+    if (!parser.patchNecessary(resourceTemplatePath(), inputStreamReader)) {
       System.out.println("no patch necessary");
       return;
     }
 
-    patcher.backupValues();
-    patcher.patch(resourceTemplatePath(), configFile);
+    Map<String, Object> valueBackup = this.parser.readValues();
+    KelpFileUtils.saveResource(resourceTemplatePath(), configFile);
+
+    if (this.parser == null) {
+      System.out.println("The file format '" + FilenameUtils.getExtension(configFile.getName()) + "' is currently unsupported.");
+      return;
+    }
+
+    List<String> patchedContents = parser.parseContents(valueBackup);
+    ConfigurationDumper.create(configFile).dump(patchedContents);
   }
 
 }
