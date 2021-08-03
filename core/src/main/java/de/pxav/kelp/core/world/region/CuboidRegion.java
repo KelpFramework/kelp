@@ -116,21 +116,9 @@ public class CuboidRegion extends KelpRegion {
    */
   @Override
   public boolean contains(double x, double y, double z) {
-    // X
-    double maxX = Math.max(this.minPos.getX(), this.maxPos.getX());
-    double minX = Math.min(this.minPos.getX(), this.maxPos.getX());
-
-    // Y
-    double maxY = Math.max(this.minPos.getY(), this.maxPos.getY());
-    double minY = Math.min(this.minPos.getY(), this.maxPos.getY());
-
-    // Z
-    double maxZ = Math.max(this.minPos.getZ(), this.maxPos.getZ());
-    double minZ = Math.min(this.minPos.getZ(), this.maxPos.getZ());
-
-    if(x <= maxX && x >= minX) {
-      if(y <= maxY && y >= minY) {
-        return z <= maxZ && z >= minZ;
+    if(x <= maxPos.getX() && x >= minPos.getX()) {
+      if(y <= maxPos.getY() && y >= minPos.getY()) {
+        return z <= maxPos.getZ() && z >= minPos.getZ();
       }
     }
     return false;
