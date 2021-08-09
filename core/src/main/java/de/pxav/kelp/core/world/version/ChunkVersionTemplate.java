@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world.version;
 
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.application.KelpVersionTemplate;
+import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
@@ -168,4 +169,5 @@ public abstract class ChunkVersionTemplate {
    */
   public abstract boolean isSlimeChunk(KelpChunk chunk);
 
+  public abstract Collection<KelpEntity<?>> getEntities(KelpChunk kelpChunk);
 }

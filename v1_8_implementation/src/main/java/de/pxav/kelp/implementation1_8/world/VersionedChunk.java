@@ -2,16 +2,19 @@ package de.pxav.kelp.implementation1_8.world;
 
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.application.KelpApplication;
+import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.player.KelpPlayer;
+import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.*;
 import de.pxav.kelp.core.world.version.ChunkVersionTemplate;
-import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -82,7 +85,12 @@ public class VersionedChunk extends ChunkVersionTemplate {
     Collection<KelpPlayer> output = Lists.newArrayList();
     net.minecraft.server.v1_8_R3.Chunk nmsChunk = craftChunk(chunk).getHandle();
 
-    Arrays.stream(nmsChunk.entitySlices).forEach(entitySlice -> {
+    List<Entity>[] entitySlices = (List<Entity>[]) ReflectionUtil.getValue(nmsChunk, "entitySlices");
+    if (entitySlices == null) {
+      return output;
+    }
+
+    Arrays.stream(entitySlices).forEach(entitySlice -> {
       Object[] entityArray = entitySlice.toArray();
 
       for (Object entityObject : entityArray) {
@@ -253,6 +261,33 @@ public class VersionedChunk extends ChunkVersionTemplate {
         + ((long) x * x * 4987142) + (x * 5947611L)
         + (long) y * y * 4392871L + (y * 389711L) ^ 987234911L)
     ).nextInt(10) == 0;
+  }
+
+  @Override
+  public Collection<KelpEntity<?>> getEntities(KelpChunk kelpChunk) {
+    Collection<KelpEntity<?>> output = Lists.newArrayList();
+    net.minecraft.server.v1_8_R3.Chunk nmsChunk = craftChunk(kelpChunk).getHandle();
+
+    List<Entity>[] entitySlices = (List<Entity>[]) ReflectionUtil.getValue(nmsChunk, "entitySlices");
+    if (entitySlices == null) {
+      return output;
+    }
+
+    for(int i = 0; i < 16; ++i) {
+      Object[] var6;
+      int var7 = (var6 = entitySlices[i].toArray()).length;
+
+
+      for(int var8 = 0; var8 < var7; ++var8) {
+        Object obj = var6[var8];
+        if (obj instanceof net.minecraft.server.v1_8_R3.Entity) {
+          KelpEntity<?> kelpEntity = KelpEntity.from(((net.minecraft.server.v1_8_R3.Entity)obj).getBukkitEntity());
+          output.add(kelpEntity);
+        }
+      }
+    }
+
+    return output;
   }
 
   private CraftChunk craftChunk(KelpChunk chunk) {
