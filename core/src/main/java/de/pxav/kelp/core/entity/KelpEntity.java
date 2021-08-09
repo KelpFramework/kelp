@@ -4,6 +4,8 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
+import de.pxav.kelp.core.world.region.CuboidRegion;
+import de.pxav.kelp.core.world.region.KelpRegion;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -522,5 +524,7 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    * @return An instance of the current entity for fluent builder design.
    */
   T setGravity(boolean gravity);
+
+  KelpRegion getBoundingBox();
 
 }

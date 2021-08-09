@@ -7,6 +7,9 @@ import de.pxav.kelp.core.entity.type.ArmorStandEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
+import de.pxav.kelp.core.world.region.CuboidRegion;
+import de.pxav.kelp.core.world.region.KelpRegion;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -388,6 +391,17 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
         .addPassenger(this);
     }
     return (T) this;
+  }
+
+  @Override
+  public KelpRegion getBoundingBox() {
+    net.minecraft.server.v1_8_R3.Entity nmsEntity = craftEntity().getHandle();
+    AxisAlignedBB boundingBox = nmsEntity.getBoundingBox();
+
+    return CuboidRegion.create(
+      KelpLocation.from(getLocation().getWorldName(), boundingBox.a, boundingBox.b, boundingBox.c),
+      KelpLocation.from(getLocation().getWorldName(), boundingBox.d, boundingBox.e, boundingBox.f)
+    );
   }
 
   protected CraftEntity craftEntity() {
