@@ -489,7 +489,6 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     }
 
     if (output instanceof VersionedLivingEntity) {
-      System.out.println("is living entity");
       ((VersionedLivingEntity<?>)output).setPotionVersionTemplate(potionVersionTemplate);
     }
 
