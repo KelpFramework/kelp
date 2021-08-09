@@ -1,6 +1,10 @@
 package de.pxav.kelp.core.world.region;
 
 import com.google.common.collect.Sets;
+import de.pxav.kelp.core.particle.effect.ParticleLineEffect;
+import de.pxav.kelp.core.particle.type.ParticleType;
+import de.pxav.kelp.core.particle.visualize.ParticleVisualizerProfile;
+import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
@@ -425,6 +429,76 @@ public class CuboidRegion extends KelpRegion {
 
     this.minPos = KelpLocation.from(pos1.getWorldName(), minX, minY, minZ);
     this.maxPos = KelpLocation.from(pos1.getWorldName(), maxX, maxY, maxZ);
+  }
+
+  @Override
+  public void visualize(KelpPlayer player, ParticleVisualizerProfile visualizerProfile) {
+    ParticleType particleType = visualizerProfile.primary();
+
+    ParticleLineEffect lineEffect = ParticleLineEffect.create();
+    lineEffect.particleType(particleType);
+    lineEffect.particleDensity(0.2d);
+
+    lineEffect.clone()
+      .firstPoint(minPos)
+      .secondPoint(minPos.clone().setY(maxPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos.clone().setX(minPos.getX()))
+      .secondPoint(minPos.clone().setY(maxPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos.clone().setZ(minPos.getZ()))
+      .secondPoint(minPos.clone().setY(maxPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos)
+      .secondPoint(minPos.clone().setZ(maxPos.getZ()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos.clone().setX(minPos.getX()))
+      .secondPoint(minPos.clone().setZ(maxPos.getZ()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos)
+      .secondPoint(minPos.clone().setX(maxPos.getX()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos)
+      .secondPoint(maxPos.clone().setY(minPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos.clone().setX(maxPos.getX()))
+      .secondPoint(maxPos.clone().setY(minPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos.clone().setX(maxPos.getX()))
+      .secondPoint(maxPos.clone().setZ(minPos.getZ()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos.clone().setZ(maxPos.getZ()))
+      .secondPoint(maxPos.clone().setY(minPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos)
+      .secondPoint(maxPos.clone().setX(minPos.getX()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos)
+      .secondPoint(maxPos.clone().setZ(minPos.getZ()))
+      .play(player);
+
   }
 
 }

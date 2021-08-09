@@ -1,6 +1,8 @@
 package de.pxav.kelp.core.world.region;
 
 import com.google.common.collect.Sets;
+import de.pxav.kelp.core.particle.visualize.ParticleVisualizerProfile;
+import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
@@ -776,4 +778,10 @@ public class EllipsoidRegion extends KelpRegion {
       .append(center.hashCode())
       .toHashCode();
   }
+
+  @Override
+  public void visualize(KelpPlayer player, ParticleVisualizerProfile visualizerProfile) {
+    throw new UnsupportedOperationException("It is not yet supported to visualize Ellipsoid Spheres. This feature will follow in the future.");
+  }
+
 }

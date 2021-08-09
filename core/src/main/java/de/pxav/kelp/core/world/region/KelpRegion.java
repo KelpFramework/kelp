@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world.region;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.event.kelpevent.region.PlayerEnterRegionEvent;
+import de.pxav.kelp.core.particle.visualize.ParticleVisualizable;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
@@ -34,7 +35,7 @@ import java.util.UUID;
  * @author pxav
  */
 @Singleton
-public abstract class KelpRegion implements Cloneable {
+public abstract class KelpRegion implements Cloneable, ParticleVisualizable {
 
   protected KelpRegionRepository regionRepository;
 
@@ -336,7 +337,7 @@ public abstract class KelpRegion implements Cloneable {
    *
    * @return An array containing all outer cubic corners of this region.
    */
-  public KelpLocation[] getOuterCorners() {
+  public KelpLocation[] getCuboidOuterCorners() {
     return new KelpLocation[] {
       minPos,
       maxPos,
