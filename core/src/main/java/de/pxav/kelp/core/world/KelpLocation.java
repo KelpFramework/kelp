@@ -110,6 +110,16 @@ public class KelpLocation implements Serializable, Cloneable {
   }
 
   /**
+   * Gets an instance of the world this location is located in.
+   * This is based on {@link #getWorldName()}.
+   *
+   * @return An instance of the {@link KelpWorld} this location is currently in.
+   */
+  public KelpWorld getWorld() {
+    return KelpWorld.from(getWorldName());
+  }
+
+  /**
    * Sets the name of the world of this location.
    * Note that changing a location's world while keeping
    * the same coordinates, might lead to unintended world generation
