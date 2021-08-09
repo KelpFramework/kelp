@@ -34,7 +34,13 @@ import java.awt.image.ColorModel;
  * in a loop, only call the send method in the loop and move the rest out
  * of it if possible.
  *
+ * Credits for this library go to __, who published some useful classes on
+ * <a href="https://github.com/arxenix/ImageMessage">GitHub</a>. I customized
+ * and optimized lots of methods for better integration into Kelp, but the
+ * base for this class comes from him.
+ *
  * @author pxav
+ * @author arxenix
  */
 public class ImageMessage {
 
