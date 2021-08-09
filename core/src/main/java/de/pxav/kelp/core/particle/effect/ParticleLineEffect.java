@@ -16,8 +16,8 @@ import java.util.Collection;
 public class ParticleLineEffect extends ParticleEffect implements Cloneable {
 
   private ParticleType particleType = ParticleType.FLAME;
-  private KelpLocation firstPoint;
-  private KelpLocation secondPoint;
+  private KelpLocation firstPoint = null;
+  private KelpLocation secondPoint = null;
   private double particleDensity = 0.1d;
 
   public static ParticleLineEffect create() {
@@ -69,6 +69,15 @@ public class ParticleLineEffect extends ParticleEffect implements Cloneable {
 
       firstPointBackup.subtract(x * d, y * d, z * d);
     }
+  }
+
+  @Override
+  public ParticleLineEffect clone() {
+    return ParticleLineEffect.create()
+      .firstPoint(firstPoint)
+      .secondPoint(secondPoint)
+      .particleType(particleType)
+      .particleDensity(particleDensity);
   }
 
 }
