@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.particle.effect;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpLocation;
@@ -12,12 +13,16 @@ import java.util.Collection;
  *
  * @author pxav
  */
-public class ParticleLineEffect extends ParticleEffect {
+public class ParticleLineEffect extends ParticleEffect implements Cloneable {
 
-  private ParticleType particleType;
+  private ParticleType particleType = ParticleType.FLAME;
   private KelpLocation firstPoint;
   private KelpLocation secondPoint;
-  private double particleDensity;
+  private double particleDensity = 0.1d;
+
+  public static ParticleLineEffect create() {
+    return new ParticleLineEffect(KelpPlugin.getInjector().getInstance(ParticleEffectRepository.class));
+  }
 
   ParticleLineEffect(ParticleEffectRepository particleEffectRepository) {
     super(particleEffectRepository);
@@ -43,11 +48,6 @@ public class ParticleLineEffect extends ParticleEffect {
     return this;
   }
 
-  public ParticleLineEffect changeLocationBy(double x, double y, double z) {
-
-    return this;
-  }
-
   @Override
   protected void playAnimationOnce(Collection<KelpPlayer> player) {
     KelpLocation firstPointBackup = firstPoint.clone();
@@ -64,7 +64,7 @@ public class ParticleLineEffect extends ParticleEffect {
       firstPointBackup.add(x * d, y * d, z * d);
 
       for (KelpPlayer kelpPlayer : player) {
-        kelpPlayer.spawnParticle(particleType, firstPointBackup, 1, 0);
+        kelpPlayer.spawnParticle(particleType, firstPointBackup);
       }
 
       firstPointBackup.subtract(x * d, y * d, z * d);
