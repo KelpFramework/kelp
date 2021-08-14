@@ -11,7 +11,7 @@ import org.bukkit.entity.Entity;
 public interface SilverfishEntity extends MonsterEntity<SilverfishEntity> {
 
   /**
-   * Creates a new entity of this type at the given location.
+   * Creates a new entity of this type at the given location.g
    *
    * While this creates a new instance, it won't actually spawn the entity.
    * You can first do some modifications on it and then call the
@@ -48,7 +48,7 @@ public interface SilverfishEntity extends MonsterEntity<SilverfishEntity> {
   }
 
   static KelpEntityType getEntityType() {
-    return KelpEntityType.ZOGLIN;
+    return KelpEntityType.SILVERFISH;
   }
 
   @Override
