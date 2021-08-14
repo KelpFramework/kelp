@@ -9,6 +9,7 @@ import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.bukkit.util.Vector;
 
 import javax.inject.Singleton;
@@ -62,7 +63,7 @@ public abstract class KelpRegion implements Cloneable, ParticleVisualizable {
    * @param vector The vector providing the direction and
    *               power of the movement.
    */
-  public void move(Vector vector) {
+  public void move(Vector3 vector) {
     this.disableListeners();
     this.moveIgnoreListeners(vector);
     this.enableListeners();
@@ -75,7 +76,7 @@ public abstract class KelpRegion implements Cloneable, ParticleVisualizable {
    * @param vector The vector providing the direction and
    *               power of the movement.
    */
-  protected abstract void moveIgnoreListeners(Vector vector);
+  protected abstract void moveIgnoreListeners(Vector3 vector);
 
   /**
    * Moves the region into a certain direction defined by

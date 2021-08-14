@@ -4,6 +4,7 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
@@ -52,7 +53,7 @@ public class ParticleLineEffect extends ParticleEffect implements Cloneable {
   protected void playAnimationOnce(Collection<KelpPlayer> player) {
     KelpLocation firstPointBackup = firstPoint.clone();
 
-    Vector line = secondPoint.clone().toVector().subtract(firstPointBackup.toVector());
+    Vector3 line = secondPoint.clone().toVector().subtract(firstPointBackup.toVector());
     double length = line.length();
     line.normalize();
 

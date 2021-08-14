@@ -3,6 +3,7 @@ package de.pxav.kelp.implementation1_8.entity.type.general;
 import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.type.general.VehicleEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
+import de.pxav.kelp.core.world.util.Vector3;
 import de.pxav.kelp.implementation1_8.entity.VersionedEntity;
 import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Location;
@@ -15,12 +16,12 @@ public class VersionedVehicle<T extends VehicleEntity<T>> extends VersionedEntit
   }
 
   @Override
-  public Vector getVehicleVelocity() {
+  public Vector3 getVehicleVelocity() {
     return getVelocity();
   }
 
   @Override
-  public T setVehicleVelocity(Vector vehicleVelocity) {
+  public T setVehicleVelocity(Vector3 vehicleVelocity) {
     return setVelocity(vehicleVelocity);
   }
 

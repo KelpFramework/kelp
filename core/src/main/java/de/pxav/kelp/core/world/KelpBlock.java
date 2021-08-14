@@ -5,6 +5,7 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.util.CardinalDirection;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.block.Block;
@@ -242,7 +243,7 @@ public class KelpBlock {
    *                 to determine which block is actually in front.
    * @return The block in front of this block.
    */
-  public KelpBlock getFrontBlock(Vector direction) {
+  public KelpBlock getFrontBlock(Vector3 direction) {
     KelpLocation location = getLocation();
     location.setDirection(direction);
 
@@ -256,7 +257,7 @@ public class KelpBlock {
    *                 to determine which block is actually behind.
    * @return The block behind this block.
    */
-  public KelpBlock getBackBlock(Vector direction) {
+  public KelpBlock getBackBlock(Vector3 direction) {
     KelpLocation location = getLocation();
     location.setDirection(direction.multiply(-1));
 

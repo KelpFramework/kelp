@@ -6,6 +6,7 @@ import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
 import de.pxav.kelp.core.world.region.CuboidRegion;
 import de.pxav.kelp.core.world.region.KelpRegion;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -53,7 +54,7 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    * @param velocity The vector of the velocity you want to set.
    * @see Vector
    */
-  T setVelocity(Vector velocity);
+  T setVelocity(Vector3 velocity);
 
   /**
    * Gets the velocity of the desired entity.
@@ -61,7 +62,7 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    * @return The velocity of the given entity.
    * @see Vector
    */
-  Vector getVelocity();
+  Vector3 getVelocity();
 
   /**
    * Gets the height of an entity's model. In older versions

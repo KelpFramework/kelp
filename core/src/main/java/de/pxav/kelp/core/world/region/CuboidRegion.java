@@ -9,6 +9,7 @@ import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.util.Vector;
 
@@ -62,7 +63,7 @@ public class CuboidRegion extends KelpRegion {
    */
   @Override
   protected void moveIgnoreListeners(double dx, double dy, double dz) {
-    move(new Vector(dx, dy, dz));
+    move(Vector3.create(dx, dy, dz));
   }
 
   /**
@@ -73,7 +74,7 @@ public class CuboidRegion extends KelpRegion {
    *               power of the movement.
    */
   @Override
-  protected void moveIgnoreListeners(Vector vector) {
+  protected void moveIgnoreListeners(Vector3 vector) {
     this.minPos.add(vector);
     this.maxPos.add(vector);
   }
@@ -348,7 +349,7 @@ public class CuboidRegion extends KelpRegion {
    */
   @Override
   protected void expandIgnoreListeners(KelpBlockFace direction, double amount) {
-    Vector vector = direction.getDirection();
+    Vector3 vector = direction.getDirection();
     if (vector.getX() + vector.getY() + vector.getZ() > 0) {
       vector = vector.multiply(amount);
       maxPos.add(vector);

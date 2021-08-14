@@ -7,6 +7,7 @@ import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.Location;
 import org.bukkit.util.NumberConversions;
@@ -199,7 +200,7 @@ public class EllipsoidRegion extends KelpRegion {
    *               power of the movement.
    */
   @Override
-  protected void moveIgnoreListeners(Vector vector) {
+  protected void moveIgnoreListeners(Vector3 vector) {
     center.add(vector);
     minPos.add(vector);
     maxPos.add(vector);
@@ -215,7 +216,7 @@ public class EllipsoidRegion extends KelpRegion {
    */
   @Override
   protected void moveIgnoreListeners(double dx, double dy, double dz) {
-    Vector vector = new Vector(dx, dy, dz);
+    Vector3 vector = Vector3.create(dx, dy, dz);
     center.add(vector);
     minPos.add(vector);
     maxPos.add(vector);

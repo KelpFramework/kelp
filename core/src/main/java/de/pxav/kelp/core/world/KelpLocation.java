@@ -1,7 +1,8 @@
 package de.pxav.kelp.core.world;
 
 import com.google.common.base.Preconditions;
-import de.pxav.kelp.core.world.util.CardinalDirection;
+import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -513,8 +514,8 @@ public class KelpLocation implements Serializable, Cloneable {
    *
    * @return A vector pointing in this location's facing.
    */
-  public Vector getDirection() {
-    Vector vector = new Vector();
+  public Vector3 getDirection() {
+    Vector3 vector = Vector3.create();
 
     double rotY = this.getPitch();
     vector.setY(-Math.sin(Math.toRadians(rotY)));
@@ -677,7 +678,7 @@ public class KelpLocation implements Serializable, Cloneable {
    * @param vector The vector to calculate the yaw and pitch value of.
    * @return The current location object with the new yaw and pitch.
    */
-  public KelpLocation setDirection(Vector vector) {
+  public KelpLocation setDirection(Vector3 vector) {
     double _2PI = 6.283185307179586D;
     double x = vector.getX();
     double z = vector.getZ();
@@ -699,8 +700,8 @@ public class KelpLocation implements Serializable, Cloneable {
    *
    * @return A new vectors containing the coordinates of this location.
    */
-  public Vector toVector() {
-    return new Vector(this.x, this.y, this.z);
+  public Vector3 toVector() {
+    return Vector3.create(this.x, this.y, this.z);
   }
 
   /**
@@ -749,7 +750,7 @@ public class KelpLocation implements Serializable, Cloneable {
    * @param vector Vector to add the axis of.
    * @return The new location with the added values.
    */
-  public KelpLocation add(Vector vector) {
+  public KelpLocation add(Vector3 vector) {
     this.x += vector.getX();
     this.y += vector.getY();
     this.z += vector.getZ();
@@ -762,7 +763,7 @@ public class KelpLocation implements Serializable, Cloneable {
    * @param vector Vector to subtract the axis from.
    * @return The new location with the subtracted values.
    */
-  public KelpLocation subtract(Vector vector) {
+  public KelpLocation subtract(Vector3 vector) {
     this.x -= vector.getX();
     this.y -= vector.getY();
     this.z -= vector.getZ();
@@ -879,7 +880,7 @@ public class KelpLocation implements Serializable, Cloneable {
    * @param multiplier The vector to multiply with.
    * @return The current location with the updated values.
    */
-  public KelpLocation multiply(Vector multiplier) {
+  public KelpLocation multiply(Vector3 multiplier) {
     this.x *= multiplier.getX();
     this.y *= multiplier.getY();
     this.z *= multiplier.getZ();

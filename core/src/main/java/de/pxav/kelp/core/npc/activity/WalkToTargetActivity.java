@@ -3,12 +3,13 @@ package de.pxav.kelp.core.npc.activity;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.MovementSpeed;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class WalkToTargetActivity extends NpcActivity<WalkToTargetActivity> {
 
-  private Vector direction;
+  private Vector3 direction;
   private double index = .01;
   private KelpLocation startLocation;
   private KelpLocation target;

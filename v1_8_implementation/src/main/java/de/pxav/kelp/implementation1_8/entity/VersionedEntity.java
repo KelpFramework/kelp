@@ -9,6 +9,7 @@ import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
 import de.pxav.kelp.core.world.region.CuboidRegion;
 import de.pxav.kelp.core.world.region.KelpRegion;
+import de.pxav.kelp.core.world.util.Vector3;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -78,14 +79,14 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
   }
 
   @Override
-  public T setVelocity(Vector velocity) {
-    craftEntity().setVelocity(velocity);
+  public T setVelocity(Vector3 velocity) {
+    craftEntity().setVelocity(velocity.toBukkitVector());
     return (T) this;
   }
 
   @Override
-  public Vector getVelocity() {
-    return craftEntity().getVelocity();
+  public Vector3 getVelocity() {
+    return Vector3.from(craftEntity().getVelocity());
   }
 
   @Override
