@@ -237,6 +237,17 @@ public class Vector3 implements Cloneable, ParticleVisualizable {
     return this.setX(xPrime).setY(yPrime).setZ(zPrime);
   }
 
+  // current vector instance used as origin
+  public Vector3 getPosition(Vector3 direction, double blocksAway) {
+    return this.clone().add(direction.clone().multiply(blocksAway));
+  }
+
+  // current vector instance used as origin
+  public boolean isOnLine(Vector3 direction, Vector position) {
+    double t = (position.getX() - this.getX()) / direction.getX();
+    return position.getBlockY() == this.getY() + (t * direction.getY()) && position.getBlockZ() == this.getZ() + (t * direction.getZ());
+  }
+
   public Vector3 setX(double x) {
     this.x = x;
     return this;
