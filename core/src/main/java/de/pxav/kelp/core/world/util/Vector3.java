@@ -66,11 +66,11 @@ public class Vector3 implements Cloneable, ParticleVisualizable {
     return this;
   }
 
-  public double length() {
+  public double magnitude() {
     return Math.sqrt(NumberConversions.square(this.x) + NumberConversions.square(this.y) + NumberConversions.square(this.z));
   }
 
-  public double lengthSquared() {
+  public double magnitudeSquared() {
     return NumberConversions.square(this.x) + NumberConversions.square(this.y) + NumberConversions.square(this.z);
   }
 
@@ -89,7 +89,7 @@ public class Vector3 implements Cloneable, ParticleVisualizable {
   }
 
   public float angle(Vector3 to) {
-    double dot = Doubles.constrainToRange(this.dot(to) / (this.length() * to.length()), -1.0D, 1.0D);
+    double dot = Doubles.constrainToRange(this.dot(to) / (this.magnitude() * to.magnitude()), -1.0D, 1.0D);
     return (float)Math.acos(dot);
   }
 
@@ -148,7 +148,7 @@ public class Vector3 implements Cloneable, ParticleVisualizable {
   }
 
   public Vector3 normalize() {
-    double length = this.length();
+    double length = this.magnitude();
     this.x /= length;
     this.y /= length;
     this.z /= length;
@@ -188,7 +188,7 @@ public class Vector3 implements Cloneable, ParticleVisualizable {
   }
 
   public boolean isNormalized() {
-    return Math.abs(this.lengthSquared() - 1.0D) < EPSILON;
+    return Math.abs(this.magnitudeSquared() - 1.0D) < EPSILON;
   }
 
   public Vector3 rotateAroundX(double angle) {
