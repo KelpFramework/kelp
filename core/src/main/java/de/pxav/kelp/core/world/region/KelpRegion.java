@@ -274,7 +274,7 @@ public abstract class KelpRegion implements Cloneable, ParticleVisualizable {
     if (!worldName.equalsIgnoreCase(location.getWorldName())) {
       return false;
     }
-    return contains(location.getX(), location.getZ(), location.getZ());
+    return contains(location.getX(), location.getY(), location.getZ());
   }
 
   /**
