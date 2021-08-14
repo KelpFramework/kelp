@@ -631,13 +631,13 @@ public class KelpLocation implements Serializable, Cloneable {
   }
 
   /**
-   * Gets the {@link CardinalDirection} of this location's facing. For this, only the location's
+   * Gets the {@link KelpBlockFace cardinal direction} of this location's facing. For this, only the location's
    * yaw will be used. For more information about carinal direction, check out the documentation
-   * of {@link CardinalDirection}
+   * of {@link KelpBlockFace (used as cardinal direction here)}
    *
    * @return The cardinal direction based on this location's facing.
    */
-  public CardinalDirection getCardinalDirection() {
+  public KelpBlockFace getCardinalDirection() {
     double rotation = (getYaw() - 180) % 360;
 
     if (rotation < 0) {
@@ -645,23 +645,23 @@ public class KelpLocation implements Serializable, Cloneable {
     }
 
     if (0 <= rotation && rotation < 22.5) {
-      return CardinalDirection.NORTH;
+      return KelpBlockFace.NORTH;
     } else if (22.5 <= rotation && rotation < 67.5) {
-      return CardinalDirection.NORTH_EAST;
+      return KelpBlockFace.NORTH_EAST;
     } else if (67.5 <= rotation && rotation < 112.5) {
-      return CardinalDirection.EAST;
+      return KelpBlockFace.EAST;
     } else if (112.5 <= rotation && rotation < 157.5) {
-      return CardinalDirection.SOUTH_EAST;
+      return KelpBlockFace.SOUTH_EAST;
     } else if (157.5 <= rotation && rotation < 202.5) {
-      return CardinalDirection.SOUTH;
+      return KelpBlockFace.SOUTH;
     } else if (202.5 <= rotation && rotation < 247.5) {
-      return CardinalDirection.SOUTH_WEST;
+      return KelpBlockFace.SOUTH_WEST;
     } else if (247.5 <= rotation && rotation < 292.5) {
-      return CardinalDirection.WEST;
+      return KelpBlockFace.WEST;
     } else if (292.5 <= rotation && rotation < 337.5) {
-      return CardinalDirection.NORTH_WEST;
+      return KelpBlockFace.NORTH_WEST;
     } else if (337.5 <= rotation && rotation < 360.0) {
-      return CardinalDirection.NORTH;
+      return KelpBlockFace.NORTH;
     } else {
       return null;
     }
@@ -1041,4 +1041,15 @@ public class KelpLocation implements Serializable, Cloneable {
       .toHashCode();
   }
 
+  @Override
+  public String toString() {
+    return "KelpLocation{" +
+      "worldName='" + worldName + '\'' +
+      ", x=" + x +
+      ", y=" + y +
+      ", z=" + z +
+      ", yaw=" + yaw +
+      ", pitch=" + pitch +
+      '}';
+  }
 }
