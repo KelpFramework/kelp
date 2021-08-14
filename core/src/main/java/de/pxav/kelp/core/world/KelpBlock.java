@@ -1,15 +1,13 @@
 package de.pxav.kelp.core.world;
 
-import com.google.common.base.Objects;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
-import de.pxav.kelp.core.world.util.CardinalDirection;
+import de.pxav.kelp.core.world.region.CuboidRegion;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
 import de.pxav.kelp.core.world.util.Vector3;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.util.Vector;
 
 /**
@@ -316,6 +314,10 @@ public class KelpBlock {
    */
   public boolean canApplyBoneMeal() {
     return versionTemplate.canApplyBoneMeal(this);
+  }
+
+  public CuboidRegion getBoundingBox() {
+    return versionTemplate.getBoundingBox(this);
   }
 
   /**
