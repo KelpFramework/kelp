@@ -38,7 +38,7 @@ public class KelpTesting extends KelpApplication {
 
   @Override
   public void onLoad() {
-    getInstance(KelpLogger.class).log("Loading test application...");
+    KelpLogger.of(KelpTesting.class).info("Loading test application...");
   }
 
   @Override
@@ -59,7 +59,7 @@ public class KelpTesting extends KelpApplication {
     try {
       server.bind().sync(); // bind the server
 
-      getInstance(KelpLogger.class).log("[KelpConnect] Server bound");
+      KelpLogger.of(KelpTesting.class).fine("[KelpConnect] Server bound");
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -70,7 +70,7 @@ public class KelpTesting extends KelpApplication {
     try {
       client.connect().sync(); // connect client
 
-      getInstance(KelpLogger.class).log("[KelpConnect] Client connected");
+      KelpLogger.of(KelpTesting.class).fine("[KelpConnect] Client connected");
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
