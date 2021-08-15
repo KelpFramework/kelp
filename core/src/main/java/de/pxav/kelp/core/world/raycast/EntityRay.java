@@ -63,6 +63,11 @@ public class EntityRay extends Ray<EntityRay> {
 
           hits.add(new RaycastHit() {
             @Override
+            public Ray<?> getCollidingRay() {
+              return EntityRay.this;
+            }
+
+            @Override
             public Object getCollider() {
               return entity;
             }
