@@ -58,6 +58,9 @@ public class EntityRay extends Ray<EntityRay> {
               kelpPlayer.spawnParticle(visualizerProfile.secondary(), currentLocation);
             }
           }
+
+          double hitDistance = startLocation.distance(currentLocation);
+
           hits.add(new RaycastHit() {
             @Override
             public Object getCollider() {
@@ -66,7 +69,7 @@ public class EntityRay extends Ray<EntityRay> {
 
             @Override
             public double getHitDistance() {
-              return startLocation.distance(currentLocation);
+              return hitDistance;
             }
 
             @Override
