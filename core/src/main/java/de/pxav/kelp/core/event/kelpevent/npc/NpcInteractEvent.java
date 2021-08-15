@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.event.kelpevent.npc;
 
+import de.pxav.kelp.core.event.kelpevent.EntityInteractAction;
 import de.pxav.kelp.core.npc.KelpNpc;
 import org.bukkit.event.HandlerList;
 
