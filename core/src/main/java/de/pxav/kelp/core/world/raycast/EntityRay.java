@@ -3,7 +3,6 @@ package de.pxav.kelp.core.world.raycast;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.pxav.kelp.core.entity.KelpEntity;
-import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
@@ -11,12 +10,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class EntityRay extends Ray {
+// todo explain whitelists and ignore, etc. in class header
+public class EntityRay extends Ray<EntityRay> {
 
-  private Collection<KelpEntityType> ignoredTypes = Sets.newHashSet();
-  private Collection<KelpEntityType> whitelistedTypes = Sets.newHashSet();
-  private Collection<KelpEntity<?>> ignoredEntities = Sets.newHashSet();
+  private Collection<Predicate<KelpEntity<?>>> scanCriteria = Sets.newHashSet();
+
+  public EntityRay addScanCriterion(Predicate<KelpEntity<?>> scanCriterion) {
+    this.scanCriteria.add(scanCriterion);
+    return this;
+  }
 
   @Override
   @NotNull
@@ -34,7 +38,18 @@ public class EntityRay extends Ray {
       currentLocation.add(x, y, z);
 
       boolean anyHit = false;
-      for (KelpEntity<?> entity : world.getChunkAt(currentLocation).getEntities()) {
+      if (!world.isChunkLoaded(currentLocation)) {
+        //todo optimize and skip entire chunk
+        continue distanceIncrement;
+      }
+      entityIterator: for (KelpEntity<?> entity : world.getChunkAt(currentLocation).getEntities()) {
+
+        // if whitelist is enabled and does not contain the current entity type, skip it.
+        for (Predicate<KelpEntity<?>> scanCriterion : this.scanCriteria) {
+          if (!scanCriterion.test(entity)) {
+            continue entityIterator;
+          }
+        }
 
         if (entity.getBoundingBox().contains(currentLocation)) {
           anyHit = true;
@@ -68,7 +83,7 @@ public class EntityRay extends Ray {
 
       if (visualize && !anyHit) {
         for (KelpPlayer kelpPlayer : visualizeTo) {
-          kelpPlayer.spawnParticle(visualizerProfile.primary(), startLocation);
+          kelpPlayer.spawnParticle(visualizerProfile.primary(), currentLocation);
         }
       }
     }
