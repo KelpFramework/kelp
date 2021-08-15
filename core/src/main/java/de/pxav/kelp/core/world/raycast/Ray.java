@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class Ray implements ParticleVisualizable {
+public abstract class Ray<T extends Ray<?>> implements ParticleVisualizable {
 
   protected KelpLocation startLocation;
   protected Vector3 direction;
@@ -21,24 +21,24 @@ public abstract class Ray implements ParticleVisualizable {
   protected boolean visualize;
   protected ParticleVisualizerProfile visualizerProfile;
 
-  public Ray maxLength(double maxLength) {
+  public T maxLength(double maxLength) {
     this.maxLength = maxLength;
-    return this;
+    return (T) this;
   }
 
-  public Ray startLocation(KelpLocation startLocation) {
+  public T startLocation(KelpLocation startLocation) {
     this.startLocation = startLocation;
-    return this;
+    return (T) this;
   }
 
-  public Ray direction(Vector3 direction) {
+  public T direction(Vector3 direction) {
     this.direction = direction;
-    return this;
+    return (T) this;
   }
 
-  public Ray maxCollisions(int maxCollisions) {
+  public T maxCollisions(int maxCollisions) {
     this.maxCollisions = maxCollisions;
-    return this;
+    return (T) this;
   }
 
   @NotNull

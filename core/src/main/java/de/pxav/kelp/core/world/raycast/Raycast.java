@@ -9,19 +9,19 @@ import java.util.function.Consumer;
 
 public class Raycast {
 
-  private Collection<Ray> rays = Lists.newArrayList();
+  private Collection<Ray<?>> rays = Lists.newArrayList();
   private ExecutorService executorService;
 
   public static Raycast create() {
     return new Raycast();
   }
 
-  public Raycast addRay(Ray ray) {
+  public Raycast addRay(Ray<?> ray) {
     this.rays.add(ray);
     return this;
   }
 
-  public Raycast setRays(Collection<Ray> rays) {
+  public Raycast setRays(Collection<Ray<?>> rays) {
     this.rays = rays;
     return this;
   }
@@ -31,7 +31,7 @@ public class Raycast {
     executorService.execute(() -> {
       Future<List<RaycastHit>> future = executorService.submit(() -> {
         List<RaycastHit> actualHits = Lists.newArrayList();
-        for (Ray ray : this.rays) {
+        for (Ray<?> ray : this.rays) {
           actualHits.addAll(ray.compute());
         }
         return actualHits;
@@ -40,7 +40,9 @@ public class Raycast {
       try {
         hits.accept(future.get());
       } catch (InterruptedException | ExecutionException e) {
+        //todo: print logger warning and say that soft exception is printed
         hits.accept(Lists.newArrayList());
+        e.printStackTrace();
       }
     });
 
