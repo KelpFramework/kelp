@@ -1,31 +1,27 @@
 package de.pxav.kelp.core.player.hologram;
 
 import com.google.common.collect.Lists;
-import com.google.common.hash.HashCode;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.player.KelpPlayer;
-import de.pxav.kelp.core.player.hologram.component.HoloItemComponent;
-import de.pxav.kelp.core.player.hologram.component.HoloTextComponent;
-import de.pxav.kelp.core.player.hologram.component.HologramComponent;
+import de.pxav.kelp.core.player.hologram.line.HologramLine;
 import de.pxav.kelp.core.world.KelpLocation;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class KelpHologram {
 
-  // unique identifier for the hologram. Do not change.
+  // unique identifier for the hologram. Do not change once created.
   private UUID hologramId = UUID.randomUUID();
 
   private KelpPlayer player;
   private double lineSpaceModifier = 1;
   private KelpLocation location;
-  private List<HologramComponent<?>> components = Lists.newArrayList();
+  private List<HologramLine<?>> lines = Lists.newArrayList();
+  private List<HologramLine<?>> spawnedLines = Lists.newArrayList();
   private Collection<Integer> entityIds = Lists.newArrayList();
   private boolean spawned;
   private boolean activelyHidden;
@@ -53,17 +49,18 @@ public class KelpHologram {
     return this;
   }
 
-  public KelpHologram addComponent(HologramComponent<?> component) {
-    if (component.getIndex() == -1) {
-      this.components.add(component);
-    } else {
-      this.components.add(component.getIndex(), component);
-    }
+  public KelpHologram insertLine(HologramLine<?> line) {
+    this.lines.add(line);
     return this;
   }
 
-  public KelpHologram removeComponent(int index) {
-    this.components.remove(index);
+  public KelpHologram insertLineAt(HologramLine<?> line, int at) {
+    this.lines.add(at, line);
+    return this;
+  }
+
+  public KelpHologram removeLineAt(int index) {
+    this.lines.remove(index);
     return this;
   }
 
@@ -124,20 +121,36 @@ public class KelpHologram {
 
   }
 
+  public void setEntityIds(Collection<Integer> entityIds) {
+    this.entityIds = entityIds;
+  }
+
+  public void addEntityIds(Collection<Integer> entityIds) {
+    this.entityIds.addAll(entityIds);
+  }
+
+  public void addEntityId(int entityId) {
+    this.entityIds.add(entityId);
+  }
+
   public KelpLocation getLocation() {
     return location;
   }
 
-  public Collection<HologramComponent<?>> getComponents() {
-    return components;
+  public List<HologramLine<?>> getLines() {
+    return lines;
+  }
+
+  public List<HologramLine<?>> getSpawnedLines() {
+    return spawnedLines;
   }
 
   public Collection<Integer> getEntityIds() {
     return entityIds;
   }
 
-  public void setEntityIds(Collection<Integer> entityIds) {
-    this.entityIds = entityIds;
+  public void setSpawnedLines(List<HologramLine<?>> spawnedLines) {
+    this.spawnedLines = spawnedLines;
   }
 
   public double getLineSpaceModifier() {
@@ -160,7 +173,7 @@ public class KelpHologram {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(37, 17).append(hologramId).toHashCode();
+    return hologramId.hashCode();
   }
 
 }
