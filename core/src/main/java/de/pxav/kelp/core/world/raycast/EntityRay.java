@@ -16,9 +16,15 @@ import java.util.function.Predicate;
 public class EntityRay extends Ray<EntityRay> {
 
   private Collection<Predicate<KelpEntity<?>>> scanCriteria = Sets.newHashSet();
+  private double accuracy = 0.1d;
 
   public EntityRay addScanCriterion(Predicate<KelpEntity<?>> scanCriterion) {
     this.scanCriteria.add(scanCriterion);
+    return this;
+  }
+
+  public EntityRay accuracy(double accuracy) {
+    this.accuracy = accuracy;
     return this;
   }
 
@@ -31,7 +37,7 @@ public class EntityRay extends Ray<EntityRay> {
 
     this.direction.normalize();
 
-    distanceIncrement: for (double d = 1.0; d < maxLength; d += 0.1d) {
+    distanceIncrement: for (double d = 1.0; d < maxLength; d += accuracy) {
       double x = direction.getX() * d;
       double y = direction.getY() * d;
       double z = direction.getZ() * d;
