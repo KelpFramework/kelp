@@ -3,6 +3,7 @@ package de.pxav.kelp.core.player;
 import com.google.common.base.Preconditions;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.command.KelpCommandSender;
+import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.LivingKelpEntity;
 import de.pxav.kelp.core.entity.type.general.HumanEntity;
 import de.pxav.kelp.core.entity.type.general.ProjectileLauncher;
@@ -89,6 +90,11 @@ public interface KelpPlayer extends HumanEntity<KelpPlayer>, ProjectileLauncher<
 
   default SimpleChatPrompt openSimpleChatPrompt() {
     return new SimpleChatPrompt(this.getBukkitPlayer(), Dependencies.getChatPromptVersionTemplate());
+  }
+
+  @Override
+  default KelpEntityType getType() {
+    return KelpEntityType.PLAYER;
   }
 
   /**
