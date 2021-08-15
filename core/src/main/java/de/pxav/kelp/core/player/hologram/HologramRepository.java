@@ -1,7 +1,7 @@
 package de.pxav.kelp.core.player.hologram;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import de.pxav.kelp.core.common.ConcurrentMultimap;
+import de.pxav.kelp.core.common.ConcurrentSetMultimap;
 import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
 import de.pxav.kelp.core.scheduler.type.RepeatingScheduler;
 import org.bukkit.entity.Player;
@@ -10,15 +10,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 
 @Singleton
 public class HologramRepository {
 
-  private ConcurrentMap<UUID, Set<KelpHologram>> playerHolograms = Maps.newConcurrentMap();
+  private ConcurrentMultimap<UUID, KelpHologram> playerHolograms = ConcurrentSetMultimap.create();
   private UUID taskId;
 
   private KelpSchedulerRepository schedulerRepository;
@@ -29,26 +28,22 @@ public class HologramRepository {
   }
 
   public void addHologram(KelpHologram hologram) {
-    Set<KelpHologram> holograms = playerHolograms.getOrDefault(hologram.getPlayer().getUUID(), Sets.newHashSet());
-    holograms.add(hologram);
-    this.playerHolograms.put(hologram.getPlayer().getUUID(), holograms);
+    this.playerHolograms.put(hologram.getPlayer().getUUID(), hologram);
     this.startScheduler();
   }
 
   public void removeHologram(KelpHologram hologram) {
-    Set<KelpHologram> holograms = playerHolograms.getOrDefault(hologram.getPlayer().getUUID(), Sets.newHashSet());
-    holograms.remove(hologram);
-    if (holograms.isEmpty()) {
-      this.playerHolograms.remove(hologram.getPlayer().getUUID());
-    } else {
-      this.playerHolograms.put(hologram.getPlayer().getUUID(), holograms);
-    }
+    this.playerHolograms.remove(hologram.getPlayer().getUUID(), hologram);
+  }
+
+  public boolean playerHasHologram(UUID playerUUID) {
+    return playerHolograms.containsKey(playerUUID);
   }
 
   @EventHandler
   public void handleHologramQuit(PlayerQuitEvent event) {
     Player player = event.getPlayer();
-    playerHolograms.remove(player.getUniqueId());
+    playerHolograms.removeAll(player.getUniqueId());
   }
 
   private void startScheduler() {
@@ -70,7 +65,7 @@ public class HologramRepository {
           this.taskId = null;
         }
 
-        for (Map.Entry<UUID, Set<KelpHologram>> entry : playerHolograms.entrySet()) {
+        for (Map.Entry<UUID, Collection<KelpHologram>> entry : playerHolograms.asMap().entrySet()) {
 
           for (KelpHologram hologram : entry.getValue()) {
             hologram.doTick();
@@ -79,6 +74,10 @@ public class HologramRepository {
         }
 
       });
+  }
+
+  public ConcurrentMultimap<UUID, KelpHologram> getPlayerHolograms() {
+    return playerHolograms;
   }
 
 }
