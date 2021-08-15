@@ -49,6 +49,11 @@ public class ReflectionUtil {
   /**
    * Sets the value of the given field to the given value.
    *
+   * This method should only be used of the given object class contains
+   * the desired field <strong>directly</strong>. If the field is declared by
+   * any parent class, use {@link #setValue(Class, Object, String, Object)}
+   * instead.
+   *
    * @param object      The object containing the field you want to manipulate.
    * @param fieldName   The name of the field you want to manipulate.
    * @param value       The value you want to set the field to.
@@ -56,6 +61,32 @@ public class ReflectionUtil {
   public static void setValue(Object object, String fieldName, Object value) {
     try {
       Field field = object.getClass().getDeclaredField(fieldName);
+      field.setAccessible(true);
+      field.set(object, value);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Sets the value of the given field to the given value.
+   *
+   * In contrast to {@link #setValue(Object, String, Object)}, this method
+   * should be used when the field stored by the object is not located in
+   * the object class itself, but any parent class of that object. So if you
+   * want to get the id of an entity for example and you have an {@code EntityCow}
+   * object, you'd pass {@code Entity.class} as parentClass here.
+   *
+   * @param parentClass The parent class contain
+   * @param object      The object holding the field you want to manipulate.
+   *                    The object does not have to necessarily contain the field
+   *                    codewise, but it should be a subtype of the given parent class.
+   * @param fieldName   The name of the field you want to manipulate.
+   * @param value       The value you want to set the field to.
+   */
+  public static void setValue(Class<?> parentClass, Object object, String fieldName, Object value) {
+    try {
+      Field field = parentClass.getDeclaredField(fieldName);
       field.setAccessible(true);
       field.set(object, value);
     } catch (NoSuchFieldException | IllegalAccessException e) {
