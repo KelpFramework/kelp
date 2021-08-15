@@ -426,4 +426,6 @@ public abstract class WorldVersionTemplate {
    */
   public abstract void strikeLightning(KelpWorld world, KelpLocation location, boolean effect);
 
+  public abstract boolean isChunkLoaded(KelpWorld world, KelpLocation location);
+
 }

@@ -13,6 +13,7 @@ import de.pxav.kelp.core.world.util.WorldType;
 import de.pxav.kelp.core.world.version.WorldVersionTemplate;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.Chunk;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
@@ -58,6 +59,12 @@ public class VersionedWorld extends WorldVersionTemplate {
   @Override
   public KelpChunk getChunkAt(KelpWorld world, KelpLocation location) {
     return KelpChunk.from(world.getBukkitWorld().getChunkAt(location.getBukkitLocation()));
+  }
+
+  @Override
+  public boolean isChunkLoaded(KelpWorld world, KelpLocation location) {
+    WorldServer nmsWorld = craftWorld(world).getHandle();
+    return nmsWorld.chunkProviderServer.isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4);
   }
 
   /**

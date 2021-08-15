@@ -108,11 +108,16 @@ public class KelpWorld {
    * cuboid region minecraft uses to generate and handle the world. More information
    * can be found in {@link KelpChunk}.
    *
+   *
    * @param location  The location where the chunk is located.
    * @return The chunk at the given location.
    */
   public KelpChunk getChunkAt(KelpLocation location) {
     return versionTemplate.getChunkAt(this, location);
+  }
+
+  public boolean isChunkLoaded(KelpLocation location) {
+    return versionTemplate.isChunkLoaded(this, location);
   }
 
   /**
