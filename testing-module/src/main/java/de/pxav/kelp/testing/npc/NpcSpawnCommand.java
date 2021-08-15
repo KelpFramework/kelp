@@ -5,7 +5,7 @@ package de.pxav.kelp.testing.npc;
 import de.pxav.kelp.core.command.CreateSubCommand;
 import de.pxav.kelp.core.command.ExecutorType;
 import de.pxav.kelp.core.command.KelpCommand;
-import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractAction;
+import de.pxav.kelp.core.event.kelpevent.EntityInteractAction;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.scheduler.type.DelayedScheduler;
@@ -35,7 +35,7 @@ public class NpcSpawnCommand extends KelpCommand {
     npc.customName("§2Kelp Demo NPC");
     npc.showCustomName();
     npc.onInteract(event -> {
-      if (event.getAction() == NpcInteractAction.RIGHT_CLICK) {
+      if (event.getAction() == EntityInteractAction.RIGHT_CLICK) {
         DelayedScheduler.create().withDelayOf(50).milliseconds().run(taskId -> {
           gui.open(npc);
         });
