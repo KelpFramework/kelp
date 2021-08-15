@@ -528,4 +528,18 @@ public interface KelpEntity<T extends KelpEntity<?>> {
 
   KelpRegion getBoundingBox();
 
+  default boolean sameEntity(Object other) {
+    if (!(other instanceof KelpEntity<?>)) {
+      return false;
+    }
+
+    KelpEntity<?> otherEntity = (KelpEntity<?>) other;
+
+    if (getType() != otherEntity.getType()) {
+      return false;
+    }
+
+    return getUUID() == otherEntity.getUUID();
+  }
+
 }
