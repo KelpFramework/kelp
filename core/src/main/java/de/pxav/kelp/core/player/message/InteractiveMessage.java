@@ -1,7 +1,10 @@
 package de.pxav.kelp.core.player.message;
 
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * An interactive message is a chat message on which
@@ -12,7 +15,7 @@ import java.util.Collection;
 public class InteractiveMessage {
 
   // all components (different interactions) of the message.
-  private Collection<MessageComponent> components;
+  private List<MessageComponent> components;
 
   private InteractiveMessage() {
     // initialize the component list
@@ -48,12 +51,63 @@ public class InteractiveMessage {
   }
 
   /**
+   * Inserts a new component at the given index. If this index is not the last
+   * index, all existing elements are shifted to the right by one element,
+   * making the list size increase by 1. If you insert an element at {@code 0}
+   * for example, it will be inserted at the beginning of the list and the former
+   * first component is shifted to index {@code 1}, and so on.
+   *
+   * @param index               The index to insert the component at.
+   * @param messageComponent    The component to insert at the given index.
+   * @return The current message object (used for fluent builder structure).
+   * @see List#add(int, Object)
+   */
+  public InteractiveMessage insertComponentAt(int index, MessageComponent messageComponent) {
+    this.components.add(index, messageComponent);
+    return this;
+  }
+
+  /**
    * Returns a full {@link Collection} of all components of the interactive message.
    *
    * @return All components of the message.
    */
-  public Collection<MessageComponent> getComponents() {
+  public List<MessageComponent> getComponents() {
     return components;
+  }
+
+  /**
+   * Takes all components of this messages and appends their
+   * text, resulting in a string that shows the message visible
+   * for the player. This method returns the string with color
+   * codes, if you don't want that, use {@link #getRawText()}
+   * instead.
+   *
+   * @return The text shown by this interactive message.
+   */
+  public String getText() {
+    StringBuilder rawText = new StringBuilder();
+    for (MessageComponent component : components) {
+      rawText.append(component.getText());
+    }
+    return rawText.toString();
+  }
+
+  /**
+   * Takes all components of this messages and appends their
+   * text, resulting in a string that shows the message visible
+   * for the player. This method returns the string without color
+   * codes, if you want to have coloring, use {@link #getText()} ()}
+   * instead.
+   *
+   * @return The text shown by this interactive message.
+   */
+  public String getRawText() {
+    StringBuilder rawText = new StringBuilder();
+    for (MessageComponent component : components) {
+      rawText.append(component.getText());
+    }
+    return ChatColor.stripColor(rawText.toString());
   }
 
 }

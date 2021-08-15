@@ -1,9 +1,10 @@
 package de.pxav.kelp.core.particle.effect;
 
+import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpLocation;
-import org.bukkit.util.Vector;
+import de.pxav.kelp.core.world.util.Vector3;
 
 import java.util.Collection;
 
@@ -12,12 +13,16 @@ import java.util.Collection;
  *
  * @author pxav
  */
-public class ParticleLineEffect extends ParticleEffect {
+public class ParticleLineEffect extends ParticleEffect implements Cloneable {
 
-  private ParticleType particleType;
-  private KelpLocation firstPoint;
-  private KelpLocation secondPoint;
-  private double particleDensity;
+  private ParticleType particleType = ParticleType.FLAME;
+  private KelpLocation firstPoint = null;
+  private KelpLocation secondPoint = null;
+  private double particleDensity = 0.1d;
+
+  public static ParticleLineEffect create() {
+    return new ParticleLineEffect(KelpPlugin.getInjector().getInstance(ParticleEffectRepository.class));
+  }
 
   ParticleLineEffect(ParticleEffectRepository particleEffectRepository) {
     super(particleEffectRepository);
@@ -43,17 +48,12 @@ public class ParticleLineEffect extends ParticleEffect {
     return this;
   }
 
-  public ParticleLineEffect changeLocationBy(double x, double y, double z) {
-
-    return this;
-  }
-
   @Override
   protected void playAnimationOnce(Collection<KelpPlayer> player) {
     KelpLocation firstPointBackup = firstPoint.clone();
 
-    Vector line = secondPoint.clone().toVector().subtract(firstPointBackup.toVector());
-    double length = line.length();
+    Vector3 line = secondPoint.clone().toVector().subtract(firstPointBackup.toVector());
+    double length = line.magnitude();
     line.normalize();
 
     double x = line.getX();
@@ -64,11 +64,20 @@ public class ParticleLineEffect extends ParticleEffect {
       firstPointBackup.add(x * d, y * d, z * d);
 
       for (KelpPlayer kelpPlayer : player) {
-        kelpPlayer.spawnParticle(particleType, firstPointBackup, 1, 0);
+        kelpPlayer.spawnParticle(particleType, firstPointBackup);
       }
 
       firstPointBackup.subtract(x * d, y * d, z * d);
     }
+  }
+
+  @Override
+  public ParticleLineEffect clone() {
+    return ParticleLineEffect.create()
+      .firstPoint(firstPoint)
+      .secondPoint(secondPoint)
+      .particleType(particleType)
+      .particleDensity(particleDensity);
   }
 
 }

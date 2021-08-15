@@ -3,6 +3,7 @@ package de.pxav.kelp.core.npc;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.logger.KelpLogger;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
@@ -31,13 +32,11 @@ public class KelpNpcRepository {
   private ConcurrentHashMap<UUID, Set<KelpNpc>> spawnedNpcs;
 
   private KelpPlayerRepository playerRepository;
-  private KelpLogger logger;
 
   @Inject
-  public KelpNpcRepository(KelpPlayerRepository playerRepository, KelpLogger logger) {
+  public KelpNpcRepository(KelpPlayerRepository playerRepository) {
     this.spawnedNpcs = new ConcurrentHashMap<>();
     this.playerRepository = playerRepository;
-    this.logger = logger;
   }
 
   /**
@@ -82,7 +81,7 @@ public class KelpNpcRepository {
    * sneak state of the NPC.
    */
   public void startScheduler() {
-    logger.log("[NPC] Starting NPC heartbeat schedulers.");
+    KelpLogger.of(KelpApplication.class).info("[NPC] Starting NPC heartbeat schedulers.");
     RepeatingScheduler.create()
       .async()
       .every(100)
@@ -116,4 +115,5 @@ public class KelpNpcRepository {
   public Set<KelpNpc> getSpawnedNpcsFor(UUID player) {
     return spawnedNpcs.get(player);
   }
+
 }

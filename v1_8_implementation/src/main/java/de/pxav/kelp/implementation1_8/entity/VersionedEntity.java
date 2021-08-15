@@ -3,9 +3,14 @@ package de.pxav.kelp.implementation1_8.entity;
 import com.google.common.collect.Lists;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
+import de.pxav.kelp.core.entity.type.ArmorStandEntity;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
+import de.pxav.kelp.core.world.region.CuboidRegion;
+import de.pxav.kelp.core.world.region.KelpRegion;
+import de.pxav.kelp.core.world.util.Vector3;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -30,6 +35,7 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
   protected EntityTypeVersionTemplate entityTypeVersionTemplate;
   private final Location location;
   private final KelpEntityType entityType;
+  private boolean gravityFlag = true;
 
   public VersionedEntity(net.minecraft.server.v1_8_R3.Entity entityHandle,
                          KelpEntityType entityType,
@@ -73,14 +79,14 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
   }
 
   @Override
-  public T setVelocity(Vector velocity) {
-    craftEntity().setVelocity(velocity);
+  public T setVelocity(Vector3 velocity) {
+    craftEntity().setVelocity(velocity.toBukkitVector());
     return (T) this;
   }
 
   @Override
-  public Vector getVelocity() {
-    return craftEntity().getVelocity();
+  public Vector3 getVelocity() {
+    return Vector3.from(craftEntity().getVelocity());
   }
 
   @Override
@@ -359,6 +365,44 @@ public class VersionedEntity<T extends KelpEntity<T>> implements KelpEntity<T> {
     }
 
     return kelpEntityList;
+  }
+
+  @Override
+  public boolean hasGravity() {
+    return this.gravityFlag;
+  }
+
+  @Override
+  public T setGravity(boolean gravity) {
+    if (gravity && !this.gravityFlag) {
+      this.gravityFlag = true;
+      KelpLocation locationBackup = getLocation();
+      KelpEntity<?> armorStand = getVehicle();
+      armorStand.ejectPassengers();
+      teleport(locationBackup);
+      armorStand.remove();
+    } else if (!gravity && this.gravityFlag) {
+      this.gravityFlag = false;
+      KelpLocation armorStandLocation = getLocation().subtractY(getEntityHeight());
+      ArmorStandEntity.create(armorStandLocation)
+        .setVisible(false)
+        .setGravity(false)
+        .setBasePlate(false)
+        .spawn()
+        .addPassenger(this);
+    }
+    return (T) this;
+  }
+
+  @Override
+  public KelpRegion getBoundingBox() {
+    net.minecraft.server.v1_8_R3.Entity nmsEntity = craftEntity().getHandle();
+    AxisAlignedBB boundingBox = nmsEntity.getBoundingBox();
+
+    return CuboidRegion.create(
+      KelpLocation.from(getLocation().getWorldName(), boundingBox.a, boundingBox.b, boundingBox.c),
+      KelpLocation.from(getLocation().getWorldName(), boundingBox.d, boundingBox.e, boundingBox.f)
+    );
   }
 
   protected CraftEntity craftEntity() {

@@ -5,26 +5,33 @@ import com.google.inject.Inject;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerUpdateSettingsEvent;
 import de.pxav.kelp.core.event.kelpevent.SettingsUpdateStage;
-import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractAction;
+import de.pxav.kelp.core.event.kelpevent.EntityInteractAction;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
 import de.pxav.kelp.core.npc.KelpNpc;
 import de.pxav.kelp.core.npc.KelpNpcRepository;
+import de.pxav.kelp.core.particle.type.ParticleType;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
+import de.pxav.kelp.core.player.hologram.HologramRepository;
 import de.pxav.kelp.core.player.prompt.sign.SignPromptResponseHandler;
 import de.pxav.kelp.core.player.prompt.PromptResponseType;
 import de.pxav.kelp.core.reflect.ReflectionUtil;
 import de.pxav.kelp.core.scheduler.KelpSchedulerRepository;
+import de.pxav.kelp.implementation1_8.player.VersionedHologram;
 import de.pxav.kelp.implementation1_8.player.VersionedSignPrompt;
 import io.netty.channel.*;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,16 +48,22 @@ public class GlobalPacketListener {
   private final VersionedSignPrompt signPrompt;
   private final KelpSchedulerRepository schedulerRepository;
   private final KelpNpcRepository npcRepository;
+  private final HologramRepository hologramRepository;
+  private final VersionedHologram hologramImplementation;
 
   @Inject
   public GlobalPacketListener(KelpPlayerRepository playerRepository,
                               VersionedSignPrompt signPrompt,
                               KelpSchedulerRepository schedulerRepository,
-                              KelpNpcRepository npcRepository) {
+                              KelpNpcRepository npcRepository,
+                              HologramRepository hologramRepository,
+                              VersionedHologram hologramImplementation) {
     this.playerRepository = playerRepository;
     this.signPrompt = signPrompt;
     this.schedulerRepository = schedulerRepository;
     this.npcRepository = npcRepository;
+    this.hologramRepository = hologramRepository;
+    this.hologramImplementation = hologramImplementation;
   }
 
   @EventHandler
@@ -63,6 +76,7 @@ public class GlobalPacketListener {
     removePacketListener(event.getPlayer());
   }
 
+  // todo distribute packet handlers to separate classes
   private void handleIncomingPacket(Player player, ChannelHandlerContext channelHandlerContext, Object packet) {
     if (packet instanceof PacketPlayInSettings) {
 
@@ -132,12 +146,7 @@ public class GlobalPacketListener {
     }
 
     if (packet instanceof PacketPlayInUseEntity) {
-      if (!npcRepository.playerHasNpc(player.getUniqueId())) {
-        return;
-      }
-
       PacketPlayInUseEntity usePacket = (PacketPlayInUseEntity) packet;
-      int rawEntityId = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(usePacket, "a")));
       PacketPlayInUseEntity.EnumEntityUseAction packetAction = PacketPlayInUseEntity.EnumEntityUseAction.valueOf(
         String.valueOf(ReflectionUtil.getValue(usePacket, "action"))
       );
@@ -146,25 +155,32 @@ public class GlobalPacketListener {
         return;
       }
 
-      Optional<KelpNpc> rawNpc = npcRepository.getSpawnedNpcsFor(player.getUniqueId())
-        .stream()
-        .filter(npc -> npc.getEntityId() == rawEntityId)
-        .findAny();
+      int rawEntityId = Integer.parseInt(String.valueOf(ReflectionUtil.getValue(usePacket, "a")));
+      EntityInteractAction action = packetAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK
+        ? EntityInteractAction.LEFT_CLICK
+        : EntityInteractAction.RIGHT_CLICK;
 
-      if (!rawNpc.isPresent()) {
-        return;
+      // handle the case that the player might interact with an NPC
+      if (npcRepository.playerHasNpc(player.getUniqueId())) {
+        Optional<KelpNpc> rawNpc = npcRepository.getSpawnedNpcsFor(player.getUniqueId())
+          .stream()
+          .filter(npc -> npc.getEntityId() == rawEntityId)
+          .findAny();
+
+        if (!rawNpc.isPresent()) {
+          return;
+        }
+
+        KelpNpc npc = rawNpc.get();
+
+        NpcInteractEvent event = new NpcInteractEvent(npc, action);
+        npc.triggerInteraction(event);
+
+        Bukkit.getPluginManager().callEvent(event);
       }
+      // ---- end NPC handler
 
-      KelpNpc npc = rawNpc.get();
 
-      NpcInteractAction action = packetAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK
-        ? NpcInteractAction.LEFT_CLICK
-        : NpcInteractAction.RIGHT_CLICK;
-
-      NpcInteractEvent event = new NpcInteractEvent(npc, action);
-      npc.triggerInteraction(event);
-
-      Bukkit.getPluginManager().callEvent(event);
 
     }
   }

@@ -1,16 +1,13 @@
 package de.pxav.kelp.core.application;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.pxav.kelp.core.common.KelpFileUtils;
 import de.pxav.kelp.core.event.listener.EventHandlerRegistration;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
@@ -41,20 +38,17 @@ public final class KelpApplicationRepository {
   private final Map<String, KelpApplication> appsToEnable = Maps.newHashMap();
   private final Map<String, KelpApplication> enabledApps = Maps.newHashMap();
   private final Map<String, KelpApplicationMeta> appMeta = Maps.newHashMap();
-  private final Map<KelpApplicationMeta, Class<? extends KelpApplication>>
-          classPathApps = Maps.newHashMap();
+  private final BiMap<KelpApplicationMeta, Class<? extends KelpApplication>>
+          classPathApps = HashBiMap.create();
 
   private final Injector injector;
   private final KelpFileUtils kelpFileUtils;
-  private final KelpLogger logger;
 
   @Inject
   public KelpApplicationRepository(Injector injector,
-                                   KelpFileUtils kelpFileUtils,
-                                   KelpLogger logger) {
+                                   KelpFileUtils kelpFileUtils) {
     this.injector = injector;
     this.kelpFileUtils = kelpFileUtils;
-    this.logger = logger;
   }
 
   /**
@@ -82,7 +76,7 @@ public final class KelpApplicationRepository {
                       try {
                         return new TemporaryApplicationInfo(file, new JarFile(file));
                       } catch (IOException e) {
-                        logger.log(LogLevel.ERROR, "Cannot load application from file " + file.getName());
+                        KelpLogger.of(KelpApplication.class).severe("Cannot load application from file " + file.getName());
                         return null;
                       }
                     })
@@ -92,7 +86,7 @@ public final class KelpApplicationRepository {
                       KelpApplicationMeta applicationMeta = validateApplication(moduleInfo.getJarFile());
                       appMeta.put(applicationMeta.getApplicationName(), applicationMeta);
                       if (applicationMeta == null) {
-                        logger.log(LogLevel.ERROR, "Cannot load application from file " + moduleInfo.getFile().getName());
+                        KelpLogger.of(KelpApplication.class).severe("Cannot load application from file " + moduleInfo.getFile().getName());
                         return;
                       }
 
@@ -114,11 +108,11 @@ public final class KelpApplicationRepository {
       KelpApplicationMeta module = entry.getValue();
 
       if (!bindToClassPath(moduleStatuses2, new Stack<>(), module)) {
-        logger.log(LogLevel.ERROR, "[APP] Failed to enable " + entry.getKey());
+        KelpLogger.of(KelpApplication.class).severe("[APP] Failed to enable " + entry.getKey());
         continue;
       }
 
-      logger.log(LogLevel.INFO, "[APP] Successfully loaded " + entry.getKey());
+      KelpLogger.of(KelpApplication.class).info("[APP] Successfully loaded " + entry.getKey());
     }
     return this;
   }
@@ -226,7 +220,7 @@ public final class KelpApplicationRepository {
           }
 
           dependencyGraph.append(module.getApplicationName()).append(" -> ").append(dependName);
-          logger.log(LogLevel.ERROR, "[APP] Circular dependency detected for "
+          KelpLogger.of(KelpApplication.class).severe("[APP] Circular dependency detected for "
                   + module.getApplicationName()
                   + ": " + dependencyGraph);
           status = false;
@@ -238,7 +232,7 @@ public final class KelpApplicationRepository {
       }
 
       if (!Boolean.FALSE.equals(dependStatus) && !module.getSoftDependencies().contains(dependName)) {
-        logger.log(LogLevel.WARNING, "[APP] Dependency " + dependName + " (required by " + module.getApplicationName() + ") is unavailable");
+        KelpLogger.of(KelpApplication.class).warning("[APP] Dependency " + dependName + " (required by " + module.getApplicationName() + ") is unavailable");
         status = false;
       }
 
@@ -256,8 +250,9 @@ public final class KelpApplicationRepository {
         Class<? extends KelpApplication> main =
                 (Class<? extends KelpApplication>) loader.loadClass(module.getMain());
         this.classPathApps.put(module, main);
+        KelpLogger.registerLogger(main, module.getApplicationName());
       } catch (Throwable t) {
-        logger.log(LogLevel.ERROR,"[APP] Cannot load module " + module.getApplicationName() + ". Check stack trace for more information:");
+        KelpLogger.of(KelpApplication.class).severe("[APP] Cannot load module " + module.getApplicationName() + ". Check stack trace for more information:");
         t.printStackTrace();
       }
     }
@@ -273,7 +268,7 @@ public final class KelpApplicationRepository {
               moduleInstance.init(description, injector);
 
               appsToEnable.put(description.getApplicationName(), moduleInstance);
-              logger.log("[APP] Loading application "
+              KelpLogger.of(KelpApplication.class).info("[APP] Loading application "
                               + description.getApplicationName()
                               + " with version "
                               + description.getVersion());
@@ -282,10 +277,10 @@ public final class KelpApplicationRepository {
   }
 
   public void enableApplications() {
-    logger.log("[APP] Enabling all registered KelpApplications...");
+    KelpLogger.of(KelpApplication.class).info("[APP] Enabling all registered KelpApplications...");
     for (Map.Entry<String, KelpApplication> namePluginEntry : appsToEnable.entrySet()) {
       try {
-        logger.log(
+        KelpLogger.of(KelpApplication.class).info(
                 "[APP] Enabling application "
                         + namePluginEntry.getValue().getInformation().getApplicationName()
                         + " with version "
@@ -297,7 +292,7 @@ public final class KelpApplicationRepository {
 
         enabledApps.put(namePluginEntry.getKey(), namePluginEntry.getValue());
       } catch (Throwable t) {
-        logger.log(LogLevel.ERROR,
+        KelpLogger.of(KelpApplication.class).severe(
                 "[APP] Exception encountered while loading application "
                         + namePluginEntry.getValue().getInformation().getApplicationName()
                         + ":");
@@ -332,12 +327,12 @@ public final class KelpApplicationRepository {
       && kelpApplication.getInformation().getHardDependencies().contains(application.getInformation()
       .getApplicationName())).forEach(this::disableApplication);
 
-    logger.log("[APP] Disabling application " + application.getInformation().getApplicationName());
+    KelpLogger.of(KelpApplication.class).info("[APP] Disabling application " + application.getInformation().getApplicationName());
 
     try {
       application.onDisable();
     } catch (Exception e) {
-      logger.log(LogLevel.ERROR, "[APP] Error while disabling " + application.getInformation().getApplicationName());
+      KelpLogger.of(KelpApplication.class).severe("[APP] Error while disabling " + application.getInformation().getApplicationName());
       e.printStackTrace();
     }
 
@@ -345,9 +340,9 @@ public final class KelpApplicationRepository {
   }
 
   public void disableApplications() {
-    logger.log("[APP] Disabling all KelpApplications...");
+    KelpLogger.of(KelpApplication.class).info("[APP] Disabling all KelpApplications...");
     getEnabledApps().forEach(this::disableApplication);
-    logger.log("[APP] All KelpApplications have been successfully disabled.");
+    KelpLogger.of(KelpApplication.class).info("[APP] All KelpApplications have been successfully disabled.");
   }
 
   public Collection<KelpApplication> getEnabledApps() {
@@ -383,6 +378,10 @@ public final class KelpApplicationRepository {
     Set<String> set = new HashSet<>();
     Collections.addAll(set, depends);
     return set;
+  }
+
+  public BiMap<KelpApplicationMeta, Class<? extends KelpApplication>> getClassPathApps() {
+    return classPathApps;
   }
 
   /**

@@ -2,12 +2,14 @@ package de.pxav.kelp.core.world.region;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.event.kelpevent.region.PlayerEnterRegionEvent;
+import de.pxav.kelp.core.particle.visualize.ParticleVisualizable;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.bukkit.util.Vector;
 
 import javax.inject.Singleton;
@@ -34,7 +36,7 @@ import java.util.UUID;
  * @author pxav
  */
 @Singleton
-public abstract class KelpRegion implements Cloneable {
+public abstract class KelpRegion implements Cloneable, ParticleVisualizable {
 
   protected KelpRegionRepository regionRepository;
 
@@ -61,7 +63,7 @@ public abstract class KelpRegion implements Cloneable {
    * @param vector The vector providing the direction and
    *               power of the movement.
    */
-  public void move(Vector vector) {
+  public void move(Vector3 vector) {
     this.disableListeners();
     this.moveIgnoreListeners(vector);
     this.enableListeners();
@@ -74,7 +76,7 @@ public abstract class KelpRegion implements Cloneable {
    * @param vector The vector providing the direction and
    *               power of the movement.
    */
-  protected abstract void moveIgnoreListeners(Vector vector);
+  protected abstract void moveIgnoreListeners(Vector3 vector);
 
   /**
    * Moves the region into a certain direction defined by
@@ -272,7 +274,7 @@ public abstract class KelpRegion implements Cloneable {
     if (!worldName.equalsIgnoreCase(location.getWorldName())) {
       return false;
     }
-    return contains(location.getX(), location.getZ(), location.getZ());
+    return contains(location.getX(), location.getY(), location.getZ());
   }
 
   /**
@@ -336,7 +338,7 @@ public abstract class KelpRegion implements Cloneable {
    *
    * @return An array containing all outer cubic corners of this region.
    */
-  public KelpLocation[] getOuterCorners() {
+  public KelpLocation[] getCuboidOuterCorners() {
     return new KelpLocation[] {
       minPos,
       maxPos,

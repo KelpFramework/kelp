@@ -1,10 +1,15 @@
 package de.pxav.kelp.core.world.region;
 
 import com.google.common.collect.Sets;
+import de.pxav.kelp.core.particle.effect.ParticleLineEffect;
+import de.pxav.kelp.core.particle.type.ParticleType;
+import de.pxav.kelp.core.particle.visualize.ParticleVisualizerProfile;
+import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.util.Vector;
 
@@ -58,7 +63,7 @@ public class CuboidRegion extends KelpRegion {
    */
   @Override
   protected void moveIgnoreListeners(double dx, double dy, double dz) {
-    move(new Vector(dx, dy, dz));
+    move(Vector3.create(dx, dy, dz));
   }
 
   /**
@@ -69,7 +74,7 @@ public class CuboidRegion extends KelpRegion {
    *               power of the movement.
    */
   @Override
-  protected void moveIgnoreListeners(Vector vector) {
+  protected void moveIgnoreListeners(Vector3 vector) {
     this.minPos.add(vector);
     this.maxPos.add(vector);
   }
@@ -116,21 +121,9 @@ public class CuboidRegion extends KelpRegion {
    */
   @Override
   public boolean contains(double x, double y, double z) {
-    // X
-    double maxX = Math.max(this.minPos.getX(), this.maxPos.getX());
-    double minX = Math.min(this.minPos.getX(), this.maxPos.getX());
-
-    // Y
-    double maxY = Math.max(this.minPos.getY(), this.maxPos.getY());
-    double minY = Math.min(this.minPos.getY(), this.maxPos.getY());
-
-    // Z
-    double maxZ = Math.max(this.minPos.getZ(), this.maxPos.getZ());
-    double minZ = Math.min(this.minPos.getZ(), this.maxPos.getZ());
-
-    if(x <= maxX && x >= minX) {
-      if(y <= maxY && y >= minY) {
-        return z <= maxZ && z >= minZ;
+    if(x <= maxPos.getX() && x >= minPos.getX()) {
+      if(y <= maxPos.getY() && y >= minPos.getY()) {
+        return z <= maxPos.getZ() && z >= minPos.getZ();
       }
     }
     return false;
@@ -356,7 +349,7 @@ public class CuboidRegion extends KelpRegion {
    */
   @Override
   protected void expandIgnoreListeners(KelpBlockFace direction, double amount) {
-    Vector vector = direction.getDirection();
+    Vector3 vector = direction.getDirection();
     if (vector.getX() + vector.getY() + vector.getZ() > 0) {
       vector = vector.multiply(amount);
       maxPos.add(vector);
@@ -437,6 +430,76 @@ public class CuboidRegion extends KelpRegion {
 
     this.minPos = KelpLocation.from(pos1.getWorldName(), minX, minY, minZ);
     this.maxPos = KelpLocation.from(pos1.getWorldName(), maxX, maxY, maxZ);
+  }
+
+  @Override
+  public void visualize(KelpPlayer player, ParticleVisualizerProfile visualizerProfile) {
+    ParticleType particleType = visualizerProfile.primary();
+
+    ParticleLineEffect lineEffect = ParticleLineEffect.create();
+    lineEffect.particleType(particleType);
+    lineEffect.particleDensity(0.2d);
+
+    lineEffect.clone()
+      .firstPoint(minPos)
+      .secondPoint(minPos.clone().setY(maxPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos.clone().setX(minPos.getX()))
+      .secondPoint(minPos.clone().setY(maxPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos.clone().setZ(minPos.getZ()))
+      .secondPoint(minPos.clone().setY(maxPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos)
+      .secondPoint(minPos.clone().setZ(maxPos.getZ()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos.clone().setX(minPos.getX()))
+      .secondPoint(minPos.clone().setZ(maxPos.getZ()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos)
+      .secondPoint(minPos.clone().setX(maxPos.getX()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos)
+      .secondPoint(maxPos.clone().setY(minPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos.clone().setX(maxPos.getX()))
+      .secondPoint(maxPos.clone().setY(minPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos.clone().setX(maxPos.getX()))
+      .secondPoint(maxPos.clone().setZ(minPos.getZ()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(minPos.clone().setZ(maxPos.getZ()))
+      .secondPoint(maxPos.clone().setY(minPos.getY()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos)
+      .secondPoint(maxPos.clone().setX(minPos.getX()))
+      .play(player);
+
+    lineEffect.clone()
+      .firstPoint(maxPos)
+      .secondPoint(maxPos.clone().setZ(minPos.getZ()))
+      .play(player);
+
   }
 
 }

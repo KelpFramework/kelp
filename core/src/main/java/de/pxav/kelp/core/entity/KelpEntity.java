@@ -4,6 +4,9 @@ import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.core.world.KelpWorld;
+import de.pxav.kelp.core.world.region.CuboidRegion;
+import de.pxav.kelp.core.world.region.KelpRegion;
+import de.pxav.kelp.core.world.util.Vector3;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -51,7 +54,7 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    * @param velocity The vector of the velocity you want to set.
    * @see Vector
    */
-  T setVelocity(Vector velocity);
+  T setVelocity(Vector3 velocity);
 
   /**
    * Gets the velocity of the desired entity.
@@ -59,7 +62,7 @@ public interface KelpEntity<T extends KelpEntity<?>> {
    * @return The velocity of the given entity.
    * @see Vector
    */
-  Vector getVelocity();
+  Vector3 getVelocity();
 
   /**
    * Gets the height of an entity's model. In older versions
@@ -496,6 +499,47 @@ public interface KelpEntity<T extends KelpEntity<?>> {
 
   default List<KelpEntity<?>> getNearbyEntities(double radius) {
     return getNearbyEntities(radius, radius, radius);
+  }
+
+  /**
+   * Checks whether the entity obeys the laws of gravity.
+   * If this is {@code true}, an entity can fall down when
+   * it is in the air, if {@code false} it can not.
+   *
+   * This can be used if you want to spawn an entity that
+   * sticks to its position no matter if spawned in the sky
+   * or on the ground.
+   *
+   * @return {@code true} if the entity has gravity.
+   */
+  boolean hasGravity();
+
+  /**
+   * Enables or disables gravity based on the given parameter.
+   * If gravity is disabled, an entity won't fall down if it is
+   * spawned in the sky. If you enable it, the entity will behave
+   * normally, which is the default setting.
+   *
+   * @param gravity {@code true} if you want to enable gravity,
+   *                {@code false} to disable.
+   * @return An instance of the current entity for fluent builder design.
+   */
+  T setGravity(boolean gravity);
+
+  KelpRegion getBoundingBox();
+
+  default boolean sameEntity(Object other) {
+    if (!(other instanceof KelpEntity<?>)) {
+      return false;
+    }
+
+    KelpEntity<?> otherEntity = (KelpEntity<?>) other;
+
+    if (getType() != otherEntity.getType()) {
+      return false;
+    }
+
+    return getUUID() == otherEntity.getUUID();
   }
 
 }

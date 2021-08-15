@@ -5,6 +5,7 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.region.CuboidRegion;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
 import org.bukkit.block.BlockFace;
 
@@ -74,5 +75,7 @@ public abstract class BlockVersionTemplate {
    * @param blockFace The face of the block to apply the bone meal to.
    */
   public abstract void applyBoneMeal(KelpBlock block, KelpBlockFace blockFace);
+
+  public abstract CuboidRegion getBoundingBox(KelpBlock block);
 
 }

@@ -38,9 +38,7 @@ public class KelpPlayerRepository {
   // provided by this map.
   private ConcurrentMap<UUID, Object> playerEntities = Maps.newConcurrentMap();
 
-  private SidebarRepository sidebarRepository;
   private KelpInventoryRepository inventoryRepository;
-  private KelpLogger logger;
   private ParticleVersionTemplate particleVersionTemplate;
   private SignPromptVersionTemplate signPromptVersionTemplate;
   private AnvilPromptVersionTemplate anvilPromptVersionTemplate;
@@ -48,14 +46,11 @@ public class KelpPlayerRepository {
 
   @Inject
   public KelpPlayerRepository(KelpInventoryRepository inventoryRepository,
-                              KelpLogger logger,
                               ParticleVersionTemplate particleVersionTemplate,
                               SignPromptVersionTemplate signPromptVersionTemplate,
                               AnvilPromptVersionTemplate anvilPromptVersionTemplate,
                               ChatPromptVersionTemplate chatPromptVersionTemplate) {
-    //this.sidebarRepository = sidebarRepository;
     this.inventoryRepository = inventoryRepository;
-    this.logger = logger;
     this.particleVersionTemplate = particleVersionTemplate;
     this.signPromptVersionTemplate = signPromptVersionTemplate;
     this.anvilPromptVersionTemplate = anvilPromptVersionTemplate;

@@ -3,9 +3,9 @@ package de.pxav.kelp.core.command;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.command.version.CommandRegistryVersionTemplate;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.reflect.TypeCriterion;
 import de.pxav.kelp.core.reflect.TypeFinder;
 
@@ -31,17 +31,14 @@ public class KelpCommandRepository {
   private TypeFinder typeFinder;
   private CommandRegistryVersionTemplate registryVersionTemplate;
   private Injector injector;
-  private KelpLogger logger;
 
   @Inject
   public KelpCommandRepository(TypeFinder typeFinder,
                                CommandRegistryVersionTemplate registryVersionTemplate,
-                               Injector injector,
-                               KelpLogger logger) {
+                               Injector injector) {
     this.typeFinder = typeFinder;
     this.registryVersionTemplate = registryVersionTemplate;
     this.injector = injector;
-    this.logger = logger;
   }
 
   /**
@@ -72,7 +69,7 @@ public class KelpCommandRepository {
 
       subCommandClass.onCommandRegister();
       parentCommandClass.subCommands(subCommands);
-      logger.log(LogLevel.DEBUG, "[COMMAND] Registered sub command "
+      KelpLogger.of(KelpApplication.class).fine("[COMMAND] Registered sub command "
         + subCommandAnnotation.name()
         + " for class "
         + subCommandAnnotation.parentCommand().getName());
@@ -112,7 +109,7 @@ public class KelpCommandRepository {
 
       // add command to bukkit registry
       registryVersionTemplate.registerCommand(commandClass, commandAnnotation);
-      logger.log(LogLevel.DEBUG, "[COMMAND] Registered main command "
+      KelpLogger.of(KelpApplication.class).fine("[COMMAND] Registered main command "
         + commandAnnotation.name()
         + " in class "
         + current.getName());
@@ -123,14 +120,13 @@ public class KelpCommandRepository {
         DeclarativeKelpCommand<?> commandClass = injector.getInstance(current.asSubclass(current));
         CreateDeclarativeCommand commandAnnotation = current.getAnnotation(CreateDeclarativeCommand.class);
         registryVersionTemplate.registerCommand(commandClass, commandAnnotation);
-        logger.log(LogLevel.DEBUG, "[COMMAND] Registered declarative command "
+        KelpLogger.of(KelpApplication.class).fine("[COMMAND] Registered declarative command "
           + commandClass.getCommandNode().getName()
           + " in class "
           + current.getName());
       });
 
-    logger.log("[COMMAND] Successfully loaded all commands for " + Arrays.toString(packages));
-
+    KelpLogger.of(KelpApplication.class).info("[COMMAND] Successfully loaded all commands for " + Arrays.toString(packages));
 
   }
 

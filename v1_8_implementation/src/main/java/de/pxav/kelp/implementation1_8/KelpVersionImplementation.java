@@ -34,7 +34,7 @@ public class KelpVersionImplementation extends KelpApplication {
 
   @Override
   public void onEnable() {
-    getInstance(KelpLogger.class).log("Enabling v1.8 version module...");
+    KelpLogger.of(getClass()).info("Enabling v1.8 version module...");
 
     // registers all event handlers, which are relevant for handling prompts or boss bars, etc.
     getInstance(EventHandlerRegistration.class).initialize("de.pxav.kelp.implementation1_8");

@@ -6,14 +6,12 @@ import de.pxav.kelp.core.inventory.material.KelpMaterial;
 import de.pxav.kelp.core.inventory.material.MaterialContainer;
 import de.pxav.kelp.core.version.Versioned;
 import de.pxav.kelp.core.world.KelpLocation;
+import de.pxav.kelp.core.world.region.CuboidRegion;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import de.pxav.kelp.core.world.KelpBlock;
 import de.pxav.kelp.core.world.KelpChunk;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.BlockSapling;
-import net.minecraft.server.v1_8_R3.ItemDye;
-import net.minecraft.server.v1_8_R3.ItemStack;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
@@ -22,6 +20,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -296,6 +295,33 @@ public class VersionedBlock extends BlockVersionTemplate {
       )
     );
 
+  }
+
+  @Override
+  public CuboidRegion getBoundingBox(KelpBlock block) {
+    CraftBlock craftBlock = craftBlock(block);
+    net.minecraft.server.v1_8_R3.Block nmsBlock = CraftMagicNumbers.getBlock(craftBlock);
+
+    CraftWorld craftWorld = (CraftWorld) craftBlock.getWorld();
+    World world = craftWorld.getHandle();
+    BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
+
+    // this gets the collision bounding box first
+    AxisAlignedBB axisAlignedBB = nmsBlock.a(world, position, (IBlockData) null);
+
+    // if the block has no collision (e. g. vines, sugar cane, etc.)
+    // calculate the bounding box according to the selection bounding box
+    if (axisAlignedBB == null) {
+      axisAlignedBB = new AxisAlignedBB(
+        (double)position.getX() + nmsBlock.B(), (double)position.getY() + nmsBlock.D(),
+        (double)position.getZ() + nmsBlock.F(), (double)position.getX() + nmsBlock.C(),
+        (double)position.getY() + nmsBlock.E(), (double)position.getZ() + nmsBlock.G());
+    }
+
+    return CuboidRegion.create(
+      KelpLocation.from(block.getWorldName(), axisAlignedBB.a, axisAlignedBB.b, axisAlignedBB.c),
+      KelpLocation.from(block.getWorldName(), axisAlignedBB.d, axisAlignedBB.e, axisAlignedBB.f)
+    );
   }
 
   /**

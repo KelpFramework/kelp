@@ -3,8 +3,6 @@ package de.pxav.kelp.implementation1_8.entity;
 import com.google.inject.Inject;
 import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.entity.KelpEntityType;
-import de.pxav.kelp.core.entity.LivingKelpEntity;
-import de.pxav.kelp.core.entity.util.CatType;
 import de.pxav.kelp.core.entity.util.potion.PotionVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityConstantsVersionTemplate;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
@@ -47,7 +45,6 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
   private SoundRepository soundRepository;
   private ParticleVersionTemplate particleVersionTemplate;
   private JavaPlugin javaPlugin;
-  private KelpLogger logger;
 
   @Inject
   public VersionedEntityType(EntityConstantsVersionTemplate entityConstantsVersionTemplate,
@@ -58,8 +55,7 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
                              BossBarLocationUpdater bossBarLocationUpdater,
                              SoundRepository soundRepository,
                              ParticleVersionTemplate particleVersionTemplate,
-                             JavaPlugin javaPlugin,
-                             KelpLogger logger) {
+                             JavaPlugin javaPlugin) {
     this.entityConstantsVersionTemplate = entityConstantsVersionTemplate;
     this.inventoryVersionTemplate = inventoryVersionTemplate;
     this.potionVersionTemplate = potionVersionTemplate;
@@ -69,7 +65,6 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     this.soundRepository = soundRepository;
     this.particleVersionTemplate = particleVersionTemplate;
     this.javaPlugin = javaPlugin;
-    this.logger = logger;
   }
 
   @Override
@@ -118,7 +113,7 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     KelpEntity<?> output = null;
 
     if (entityType == KelpEntityType.PLAYER || entity instanceof EntityPlayer) {
-      output = new VersionedKelpPlayer(entity, entityType, location, this, logger, bossBarLocationUpdater, soundRepository, particleVersionTemplate, javaPlugin);
+      output = new VersionedKelpPlayer(entity, entityType, location, this, bossBarLocationUpdater, soundRepository, particleVersionTemplate, javaPlugin);
     } else if (entityType == KelpEntityType.DROPPED_ITEM || entity instanceof EntityItem) {
       if (create) {
         entity = craftWorld.createEntity(location, Item.class);
@@ -494,7 +489,6 @@ public class VersionedEntityType extends EntityTypeVersionTemplate {
     }
 
     if (output instanceof VersionedLivingEntity) {
-      System.out.println("is living entity");
       ((VersionedLivingEntity<?>)output).setPotionVersionTemplate(potionVersionTemplate);
     }
 

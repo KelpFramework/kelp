@@ -3,12 +3,12 @@ package de.pxav.kelp.core.npc;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import de.pxav.kelp.core.KelpPlugin;
+import de.pxav.kelp.core.application.KelpApplication;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcDespawnEvent;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcInteractEvent;
 import de.pxav.kelp.core.event.kelpevent.npc.NpcToggleSneakEvent;
 import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.npc.activity.NpcActivity;
 import de.pxav.kelp.core.npc.version.NpcVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 /**
  * This is the most important class for developers
@@ -500,7 +501,7 @@ public class KelpNpc {
     }
 
     if (this.currentLocation == null) {
-      logger.log(LogLevel.ERROR, "To spawn an NPC, you have to define a location before." +
+      KelpLogger.of(KelpApplication.class).log(Level.INFO, "To spawn an NPC, you have to define a location before." +
               " But there was no location found. Please check your code again.");
       return null;
     }

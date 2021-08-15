@@ -1,28 +1,22 @@
 package de.pxav.kelp.implementation1_8.player;
 
 import com.google.inject.Inject;
-import de.pxav.kelp.core.entity.KelpEntityType;
 import de.pxav.kelp.core.entity.version.EntityTypeVersionTemplate;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerLoginEvent;
 import de.pxav.kelp.core.event.kelpevent.KelpPlayerUpdateSettingsEvent;
 import de.pxav.kelp.core.event.kelpevent.SettingsUpdateStage;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
-import de.pxav.kelp.core.particle.version.ParticleVersionTemplate;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.player.KelpPlayerRepository;
 import de.pxav.kelp.core.player.PlayerChatVisibility;
-import de.pxav.kelp.core.reflect.ReflectionUtil;
-import de.pxav.kelp.core.sound.SoundRepository;
+import de.pxav.kelp.implementation1_8.KelpVersionImplementation;
 import de.pxav.kelp.implementation1_8.packet.GlobalPacketListener;
 import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.NoSuchElementException;
 
@@ -40,16 +34,13 @@ public class PlayerCreationListener {
   private KelpPlayerRepository kelpPlayerRepository;
   private GlobalPacketListener globalPacketListener;
   private EntityTypeVersionTemplate entityTypeVersionTemplate;
-  private KelpLogger logger;
 
   @Inject
   public PlayerCreationListener(KelpPlayerRepository kelpPlayerRepository,
                                 GlobalPacketListener globalPacketListener,
-                                KelpLogger logger,
                                 EntityTypeVersionTemplate entityTypeVersionTemplate) {
     this.kelpPlayerRepository = kelpPlayerRepository;
     this.globalPacketListener = globalPacketListener;
-    this.logger = logger;
     this.entityTypeVersionTemplate = entityTypeVersionTemplate;
   }
 
@@ -94,7 +85,7 @@ public class PlayerCreationListener {
    * would lead to {@code null pointers}.
    */
   public void createOnStartup() {
-    logger.log(LogLevel.DEBUG, "[VERSION-1.8] Restoring player instances...");
+    KelpLogger.of(KelpVersionImplementation.class).fine("[VERSION-1.8] Restoring player instances...");
     Bukkit.getOnlinePlayers().forEach(current -> {
       // catches NoSuchElementException which occurs when a player quits
       // the server during a reload, because the server does not recognize
@@ -121,7 +112,7 @@ public class PlayerCreationListener {
         kelpPlayerRepository.removeKelpPlayer(current.getUniqueId());
       }
     });
-    logger.log(LogLevel.DEBUG, "[VERSION-1.8] All players have been successfully created internally.");
+    KelpLogger.of(KelpVersionImplementation.class).fine("[VERSION-1.8] All players have been successfully created internally.");
   }
 
 }

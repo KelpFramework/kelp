@@ -15,6 +15,7 @@ import de.pxav.kelp.testing.packet.DefaultPacketOperator;
 import de.pxav.kelp.testing.packet.PingPacket;
 
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
 
 /**
  * This represents the main class for the testing application.
@@ -37,11 +38,13 @@ public class KelpTesting extends KelpApplication {
 
   @Override
   public void onLoad() {
-    getInstance(KelpLogger.class).log("Loading test application...");
+    KelpLogger.of(KelpTesting.class).info("Loading test application...");
   }
 
   @Override
   public void onEnable() {
+    KelpLogger.of(KelpTesting.class).info("THIS IS A TEST INFO MESSAGE!!!!!!!!!!!!");
+    KelpLogger.of(KelpTesting.class).severe("THIS IS A TEST INFO MESSAGE!!!!!!!!!!!!");
     getInstance(ConfigurationRepository.class).loadAll("de.pxav.kelp.testing");
     getInstance(KelpCommandRepository.class).loadCommands("de.pxav.kelp.testing");
     setupConnect();
@@ -56,7 +59,7 @@ public class KelpTesting extends KelpApplication {
     try {
       server.bind().sync(); // bind the server
 
-      getInstance(KelpLogger.class).log("[KelpConnect] Server bound");
+      KelpLogger.of(KelpTesting.class).fine("[KelpConnect] Server bound");
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -67,7 +70,7 @@ public class KelpTesting extends KelpApplication {
     try {
       client.connect().sync(); // connect client
 
-      getInstance(KelpLogger.class).log("[KelpConnect] Client connected");
+      KelpLogger.of(KelpTesting.class).fine("[KelpConnect] Client connected");
     } catch (InterruptedException e) {
       e.printStackTrace();
     }

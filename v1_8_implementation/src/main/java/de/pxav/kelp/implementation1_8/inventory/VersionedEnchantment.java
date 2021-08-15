@@ -3,7 +3,6 @@ package de.pxav.kelp.implementation1_8.inventory;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.common.MathUtils;
 import de.pxav.kelp.core.inventory.enchant.EnchantmentVersionTemplate;
@@ -11,12 +10,10 @@ import de.pxav.kelp.core.inventory.enchant.KelpEnchantment;
 import de.pxav.kelp.core.inventory.enchant.minecraft.EfficiencyEnchantment;
 import de.pxav.kelp.core.inventory.enchant.minecraft.InfinityEnchantment;
 import de.pxav.kelp.core.inventory.enchant.minecraft.UnbreakingEnchantment;
-import de.pxav.kelp.core.inventory.item.KelpItem;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
-import de.pxav.kelp.core.inventory.metadata.ItemMetadata;
 import de.pxav.kelp.core.logger.KelpLogger;
-import de.pxav.kelp.core.logger.LogLevel;
 import de.pxav.kelp.core.version.Versioned;
+import de.pxav.kelp.implementation1_8.KelpVersionImplementation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
@@ -27,20 +24,12 @@ import javax.inject.Singleton;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Versioned
 @Singleton
 public class VersionedEnchantment extends EnchantmentVersionTemplate {
 
   private BiMap<Class<? extends KelpEnchantment>, Enchantment> enchantments = HashBiMap.create();
-
-  private KelpLogger logger;
-
-  @Inject
-  public VersionedEnchantment(KelpLogger logger) {
-    this.logger = logger;
-  }
 
   @Override
   public void openRegistry() {
@@ -93,7 +82,7 @@ public class VersionedEnchantment extends EnchantmentVersionTemplate {
 
     int id = enchantments.size() + 63;
     if (id >= 255) {
-      logger.log(LogLevel.ERROR, "Cannot register more than 256 enchantments!");
+      KelpLogger.of(KelpVersionImplementation.class).severe("Cannot register more than 256 enchantments!");
       return;
     }
 
@@ -149,7 +138,7 @@ public class VersionedEnchantment extends EnchantmentVersionTemplate {
       }
 
       else {
-        logger.log(LogLevel.ERROR, "No implementation available for enchantment " + kelpEnchantment.getName() + ". Please report this to the Kelp developers!");
+        KelpLogger.of(KelpVersionImplementation.class).severe("No implementation available for enchantment " + kelpEnchantment.getName() + ". Please report this to the Kelp developers!");
       }
 
       return to;

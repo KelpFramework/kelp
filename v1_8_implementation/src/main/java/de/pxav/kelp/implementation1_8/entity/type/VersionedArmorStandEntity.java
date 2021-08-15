@@ -24,6 +24,17 @@ public class VersionedArmorStandEntity extends VersionedEntity<ArmorStandEntity>
   }
 
   @Override
+  public ArmorStandEntity setGravity(boolean gravity) {
+    craftArmorStand.setGravity(gravity);
+    return this;
+  }
+
+  @Override
+  public boolean hasGravity() {
+    return craftArmorStand.hasGravity();
+  }
+
+  @Override
   public EulerAngle getBodyPose() {
     return craftArmorStand.getBodyPose();
   }

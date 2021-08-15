@@ -72,6 +72,7 @@ public class KBossBarCommand extends KelpCommand {
 
       if (percentage < 0 || percentage > 1) {
         player.sendMessage("§8[§2Kelp§8] §cValue out of range. Please choose a value between 0 and 1.");
+        return;
       }
 
       player.setBossBarProgress(percentage);

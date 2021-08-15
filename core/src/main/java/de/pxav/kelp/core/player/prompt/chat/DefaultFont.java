@@ -15,7 +15,7 @@ package de.pxav.kelp.core.player.prompt.chat;
  * @author SirSpoodles
  * @author pxav
  */
-public enum DefaultFontSize {
+public enum DefaultFont {
 
   A('A', 5),
   a('a', 5),
@@ -112,12 +112,16 @@ public enum DefaultFontSize {
   PERIOD('.', 1),
   COMMA(',', 1),
   SPACE(' ', 3),
+  BLOCK_SOLID('\u2588', 8),
+  BLOCK_DARK_SHADE('\u2593', 8),
+  BLOCK_MEDIUM_SHADE('\u2592', 8),
+  BLOCK_LIGHT_SHADE('\u2591', 8),
   DEFAULT('a', 4);
 
   private char character;
   private int length;
 
-  DefaultFontSize(char character, int length) {
+  DefaultFont(char character, int length) {
     this.character = character;
     this.length = length;
   }
@@ -131,15 +135,17 @@ public enum DefaultFontSize {
   }
 
   public int getBoldLength(){
-    if(this == DefaultFontSize.SPACE) return this.getLength();
+    if(this == DefaultFont.SPACE || this.toString().contains("BLOCK")) {
+      return this.getLength();
+    }
     return this.length + 1;
   }
 
-  public static DefaultFontSize getDefaultFontInfo(char c){
-    for(DefaultFontSize dFI : DefaultFontSize.values()){
+  public static DefaultFont getDefaultFontInfo(char c){
+    for(DefaultFont dFI : DefaultFont.values()){
       if(dFI.getCharacter() == c) return dFI;
     }
-    return DefaultFontSize.DEFAULT;
+    return DefaultFont.DEFAULT;
   }
 
 }

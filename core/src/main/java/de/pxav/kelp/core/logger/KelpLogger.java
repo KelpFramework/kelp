@@ -1,418 +1,130 @@
 package de.pxav.kelp.core.logger;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
+import com.google.common.collect.Maps;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
-import de.pxav.kelp.core.common.KelpFileUtils;
-import de.pxav.kelp.core.configuration.internal.KelpDefaultConfiguration;
-import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Map;
+import java.util.logging.*;
 
 /**
- * This logger class can be used to log and save information
- * which is created during the runtime of a Kelp plugin.
+ * A utility class to log messages from plugins. This uses the
+ * java logging library in the background and therefore aligns
+ * seamlessly with bukkit's logging framework. The logs sent
+ * via this class are displayed in the console and written to
+ * the server logs just as normal bukkit messages.
  *
- * The logger system can send normal console logs and also
- * use an own file system. This file system uses the latest log
- * file to save information created in the current session and
- * copies this information into a file archive when the session
- * is ended.
+ * You can retrieve a logger instance for your plugin using
+ * {@code KelpLogger.of(YourPluginMainClass.class)} and then
+ * use all normal logging methods provided by the {@link Logger}
+ * class.
  *
- * A session is the period in which the plugin is running,
- * so the time period between the enable and disable of the plugin/server.
+ * When sending logs, please consider which levels you assign
+ * to your messages. Not every message might be logged depending
+ * on whether debug mode is enabled in the config.
+ * {@link Level#INFO}, {@link Level#WARNING}, {@link Level#SEVERE}
+ * are always logged, while {@link Level#CONFIG}, {@link Level#FINE},
+ * {@link Level#FINER}, and {@link Level#FINEST} are only logged
+ * if developer mode is enabled.
  *
  * @author pxav
  */
-@Singleton
-public final class KelpLogger {
+public class KelpLogger extends Logger {
 
-  private final KelpPlugin kelpPlugin;
-  private final Injector injector;
-  private final KelpFileUtils kelpFileUtils;
-  private final KelpDefaultConfiguration defaultConfig;
-  private final Date DATE;
-  private final String sessionBegin;
-  private final File LATEST_FILE;
-  private final File LOG_LOCATION;
+  // whether development mode is enabled in the kelp configuration
+  private static boolean debugMode = true;
 
-  private File currentFile;
-
-  @Inject
-  public KelpLogger(Injector injector,
-                    KelpFileUtils kelpFileUtils,
-                    KelpDefaultConfiguration defaultConfig) {
-    this.kelpPlugin = KelpPlugin.getPlugin(KelpPlugin.class);
-    this.injector = injector;
-    this.kelpFileUtils = kelpFileUtils;
-    this.defaultConfig = defaultConfig;
-
-    this.DATE = new Date();
-    this.LOG_LOCATION = new File("./kelp_logs");
-    this.LATEST_FILE = new File("./kelp_logs/latest.log");
-    this.sessionBegin = new SimpleDateFormat("HH-mm-ss_dd-MM-yyyy").format(DATE);
-  }
+  // saves the logger instances for the individual plugin classes
+  private static Map<Class<? extends KelpApplication>, Logger> loggers = Maps.newHashMap();
 
   /**
-   * This method loads the file for the latest log
-   * and prepares it for use. This means that its
-   * contents are cleared and can only be found in the
-   * file of the last session.
+   * Gets the logger instance of the given {@link KelpApplication application}.
+   *
+   *
+   * @param pluginClass The main class of the plugin/application you want to get
+   *                    the logger of. If you want to get the logger of the {@code core module},
+   *                    pass {@code KelpApplication.class} here. If you want to
+   * @return The instance of the requested logger.
    */
-  public void loadLoggerFiles() {
-    try {
-      kelpFileUtils.createFolderIfNotExists(LOG_LOCATION);
-      FileChannel.open(Paths.get(LATEST_FILE.getPath()), StandardOpenOption.WRITE).truncate(0).close();
-    } catch (IOException e) {
-      e.printStackTrace();
+  public static Logger of(Class<? extends KelpApplication> pluginClass) {
+    if (pluginClass.getName().equalsIgnoreCase(KelpApplication.class.getName())) {
+      return loggers.get(KelpApplication.class);
     }
+
+    return loggers.get(pluginClass);
   }
 
   /**
-   * Logs a message of a certain plugin.
-   * This method prints your message to the console and writes it to a file.
+   * Registers a new logger for the given {@code KelpApplication}. This method is called
+   * for all applications before they are loaded, so that you can also use the logger in
+   * the {@link KelpApplication#onLoad() load method} of your plugin.
    *
-   * @param pluginMainClass The main class of your Kelp-Plugin.
-   *                        Needs to extend from {@code KelpApplication}
-   * @param logLevel The level of your log message.
-   *                 -> Which significance does it have
-   *                 for the operations of your plugin.?
-   * @param message The actual messages you want to log.
-   * @see KelpApplication
+   * This method should only be used internally by Kelp and not by application developers.
+   *
+   * @param pluginClass   The main class of the plugin/application you want to register the logger for.
+   * @param loggerName    The name of this logger. It is displayed in front of every message
+   *                      sent by this logger. By convention this should be the name of the plugin
+   *                      contained by the {@link de.pxav.kelp.core.application.NewKelpApplication plugin annotation}.
    */
-  public void log(Class<? extends KelpApplication> pluginMainClass,
-                  LogLevel logLevel, String... message) {
-    this.consoleLog(pluginMainClass, logLevel, message);
-    this.writeLog(pluginMainClass, logLevel, message);
-  }
-
-  /**
-   * Logs a message of a certain plugin.
-   * You can use this method if your message does not express
-   * a critical or special state. The default level is set to {@code INFO}.
-   *
-   * This method prints your message to the console and writes it to a file.
-   *
-   * @param pluginMainClass The main class of your Kelp-Plugin.
-   *                        Needs to extend from {@code KelpApplication}
-   * @param message The actual messages you want to log.
-   * @see KelpApplication
-   */
-  public void log(Class<? extends KelpApplication> pluginMainClass,
-                  String... message) {
-    this.consoleLog(pluginMainClass, message);
-    this.writeLog(pluginMainClass, message);
-  }
-
-  /**
-   * Logs a general message of Kelp which is independent
-   * from any other plugin. So {@code 'Kelp'} will displayed in
-   * front of your message instead of your plugin name.
-   *
-   * Use this method if you don't want to express a special state.
-   * {@code INFO} level is taken as default.
-   *
-   * This method prints your message to the console and writes it to a file.
-   *
-   * @param message The actual message you want to log.
-   */
-  public void log(String... message) {
-    this.consoleLog(message);
-    this.writeLog(message);
-  }
-
-  /**
-   * Logs a general message of Kelp which is independent
-   * from any other plugin. So {@code 'Kelp'} will displayed in
-   * front of your message instead of your plugin name.
-   *
-   * This method prints your message to the console and writes it to a file.
-   *
-   * @param level The level of your log message.
-   *              -> Which significance does it have for the operations of kelp?
-   * @param message The actual message you want to log.
-   */
-  public void log(LogLevel level, String... message) {
-    this.consoleLog(level, message);
-    this.writeLog(level, message);
-  }
-
-  /**
-   * Logs a message of a certain plugin.
-   * This method prints your message to the
-   * console and does not write it to a file.
-   *
-   * @param pluginMainClass The main class of your Kelp-Plugin.
-   *                        Needs to extend from {@code KelpApplication}
-   * @param logLevel The level of your log message.
-   *                 -> Which significance does it have
-   *                 for the operations of your plugin?
-   * @param messages The actual messages you want to log.
-   * @see KelpApplication
-   */
-  public void consoleLog(Class<? extends KelpApplication> pluginMainClass,
-                         LogLevel logLevel, String... messages) {
-    if (logLevel == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
+  public static void registerLogger(Class<? extends KelpApplication> pluginClass, String loggerName) {
+    if (pluginClass.getName().equalsIgnoreCase(KelpApplication.class.getName())) {
+      loggers.put(pluginClass, new KelpLogger("KELP"));
       return;
     }
 
-    KelpApplication kelpApplication = injector.getInstance(pluginMainClass);
-    for (String message : messages) {
-      kelpPlugin.getLogger().log(logLevel.toJavaLogLevel(),
-              "[" + kelpApplication.getInformation().getApplicationName() + "]" + message);
-    }
+    loggers.put(pluginClass, new KelpLogger(loggerName));
   }
 
   /**
-   * Logs a message of a certain plugin.
-   * This method prints your message to the
-   * console and does not write it to a file.
+   * Enables or disables the debug mode. The debug mode is usually configured
+   * in the default configuration of Kelp and determines if log messages with
+   * a debug level shall be logged. For more information on debug levels, check
+   * the class documentation.
    *
-   * Use this method for messages that do not have
-   * special content, because {@code INFO} is taken as
-   * default log level.
-   *
-   * @param pluginMainClass The main class of your Kelp-Plugin.
-   *                        Needs to extend from {@code KelpApplication}
-   * @param messages The actual messages you want to log.
-   * @see KelpApplication
+   * @param debugModeEnabled {@code true} if debug mode should be enabled.
    */
-  public void consoleLog(Class<? extends KelpApplication> pluginMainClass,
-                         String... messages) {
-    KelpApplication kelpApplication = injector.getInstance(pluginMainClass);
-    for (String message : messages) {
-      kelpPlugin.getLogger().log(LogLevel.INFO.toJavaLogLevel(),
-              "[" + kelpApplication.getInformation().getApplicationName() + "]" + message);
-    }
+  public static void setDebugMode(boolean debugModeEnabled) {
+    debugMode = debugModeEnabled;
   }
 
   /**
-   * Logs a general message of Kelp which is independent
-   * from any other plugin. So {@code 'Kelp'} will displayed in
-   * front of your message instead of your plugin name.
+   * Constructs a new {@code KelpLogger} instance with the given name.
    *
-   * This method only prints your message to the console
-   * and does not log it to a file.
+   * When creating a logger with this constructor, the level is automatically
+   * configured based on the value provided by {@link #setDebugMode(boolean)},
+   * so make sure to set this value before registering any loggers.
    *
-   * @param logLevel The level of your log message.
-   *              -> Which significance does it have for the operations of kelp?
-   * @param messages The actual message you want to log.
+   * @param name The name of the new logger. By Kelp-convention, this should
+   *             be the name of the application this logger is used for or
+   *             'Kelp' if it is the logger for the core module. If the logger
+   *             is used for a
    */
-  public void consoleLog(LogLevel logLevel, String... messages) {
-    if (logLevel == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
-      return;
+  protected KelpLogger(String name) {
+    super(name, null);
+
+    if (debugMode) {
+      setLevel(Level.ALL);
+    } else {
+      setLevel(Level.INFO);
     }
 
-    for (String message : messages)
-    kelpPlugin.getLogger().log(logLevel.toJavaLogLevel(), message);
+    setParent(KelpPlugin.getPlugin(KelpPlugin.class).getServer().getLogger());
   }
 
   /**
-   * Logs a general message of Kelp which is independent
-   * from any other plugin. So {@code 'Kelp'} will displayed in
-   * front of your message instead of your plugin name.
+   * This method overwrites the default log method of java's
+   * logger to be able to influence the logger format without
+   * having to inject a separate formatting handler. It inserts
+   * the prefix of the plugin, which sends the log message and then
+   * executes the {@link Logger#log(LogRecord)} just as normal, so
+   * that Java can check for the level, etc.
    *
-   * Don't use this method if you have special messages that
-   * should express warnings, etc. The default log level
-   * is set to {@code INFO}.
-   *
-   * This method only prints your message to the console
-   * and does not log it to a file.
-   *
-   * @param messages The actual message you want to log.
+   * @param record The record to log.
    */
-  public void consoleLog(String... messages) {
-    for (String message : messages) {
-      kelpPlugin.getLogger().log(LogLevel.INFO.toJavaLogLevel(), message);
-    }
-  }
-
-  /**
-   * Logs a general message of Kelp which is independent
-   * from any other plugin. So {@code 'Kelp'} will displayed in
-   * front of your message instead of your plugin name.
-   *
-   * Use this method if you don't want to express a special state.
-   * {@code INFO} level is taken as default.
-   *
-   * This method only writes your messages in a file
-   * and does not print it to the console.
-   *
-   * @param messages The actual message you want to log.
-   */
-  public void writeLog(String... messages) {
-    for (String message : messages) {
-      writeToLatestLog(LogLevel.INFO, message);
-    }
-  }
-
-  /**
-   * Logs a general message of Kelp which is independent
-   * from any other plugin. So {@code 'Kelp'} will displayed in
-   * front of your message instead of your plugin name.
-   *
-   * Use this method if you don't want to express a special state.
-   * {@code INFO} level is taken as default.
-   *
-   * This method only writes your messages in a file
-   * and does not print it to the console.
-   *
-   * @param logLevel The level of your log message.
-   *                 -> Which significance does it have
-   *                 for the operations of your plugin?
-   * @param messages The actual message you want to log.
-   */
-  public void writeLog(LogLevel logLevel, String... messages) {
-    if (logLevel == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
-      return;
-    }
-
-    for (String message : messages) {
-      writeToLatestLog(logLevel, message);
-    }
-  }
-
-  /**
-   * Logs a message of a certain plugin.
-   * This method only writes your message to
-   * a file but does not print it to the console.
-   *
-   * Use this method for messages that do not have
-   * special content, because {@code INFO} is taken as
-   * default log level.
-   *
-   * @param pluginMainClass The main class of your Kelp-Plugin.
-   *                        Needs to extend from {@code KelpApplication}
-   * @param messages The actual messages you want to log.
-   * @see KelpApplication
-   */
-  public void writeLog(Class<? extends KelpApplication> pluginMainClass,
-                       String... messages) {
-    KelpApplication kelpApplication = injector.getInstance(pluginMainClass);
-    for (String message : messages) {
-      writeToLatestLog(LogLevel.INFO, "["
-                      + kelpApplication.getInformation().getApplicationName()
-                      + "]"
-                      + message);
-    }
-  }
-
-  /**
-   * Logs a message of a certain plugin.
-   * This method only writes your message to
-   * a file but does not print it to the console.
-   *
-   * @param pluginMainClass The main class of your Kelp-Plugin.
-   *                        Needs to extend from {@code KelpApplication}
-   * @param level The level of your log message.
-   *                 -> Which significance does it have
-   *                 for the operations of your plugin?
-   * @param messages The actual messages you want to log.
-   * @see KelpApplication
-   */
-  public void writeLog(Class<? extends KelpApplication> pluginMainClass,
-                       LogLevel level, String... messages) {
-    if (level == LogLevel.DEBUG
-            && !defaultConfig.getBooleanValue(defaultConfig.developmentMode())) {
-      return;
-    }
-
-    KelpApplication kelpApplication = injector.getInstance(pluginMainClass);
-    for (String message : messages) {
-      writeToLatestLog(level,"["
-                      + kelpApplication.getInformation().getApplicationName()
-                      + "]"
-                      + message);
-    }
-  }
-
-  /**
-   * Copies the content of the latest log file
-   * into the file of the current session.
-   * If this file does not exist it will be created automatically.
-   */
-  public void archiveLog() {
-    try {
-      String fileName = "log_" + sessionBegin;
-      currentFile = new File("kelp_logs", fileName + ".log");
-      kelpFileUtils.createIfNotExists(currentFile);
-      FileUtils.copyFile(LATEST_FILE, currentFile);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Writes the given lines into the given file
-   * and automatically puts a prefix in front of every message.
-   *
-   * @param file The file you want to save the messages to.
-   * @param level The level of your log message.
-   *              -> Which significance does it have
-   *              for the operations of your plugin.?
-   *    * @param messages The actual messages you want to insert into the file.
-   * @param messages The actual messages you want to insert into the file.
-   */
-  private void writeToLogFile(File file, LogLevel level, String... messages) {
-    try {
-
-      // load the file in append mode which means that
-      // the content will not be cleared when it's opened.
-      FileWriter fileWriter = new FileWriter(file, true);
-      BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-      // iterate all messages and write them into the file line by line.
-      for (String message : messages) {
-        bufferedWriter.write(this.generatePrefix() + " [" + level + "]: " + message);
-
-        // move the cursor to a new line
-        bufferedWriter.newLine();
-      }
-
-      // close the writers and save the file
-      bufferedWriter.close();
-      fileWriter.close();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Writes the given messages into the latest log file.
-   *
-   * @param level The level of your log message.
-   *              -> Which significance does it have
-   *              for the operations of your plugin.?
-   * @param messages The actual messages you want to insert into the file.
-   */
-  private void writeToLatestLog(LogLevel level, String... messages) {
-    // TODO: maybe add an asynchronous type here...
-    this.writeToLogFile(LATEST_FILE, level, messages);
-  }
-
-  /**
-   * Generates a prefix which can be sent in front of every written log message.
-   * This prefix contains the time format so that you know when the action occurred.
-   *
-   * @return The final prefix including symbols and formatting
-   */
-  private String generatePrefix() {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-    return "[" + simpleDateFormat.format(DATE) + "]";
+  @Override
+  public void log(LogRecord record) {
+    record.setMessage("[" + record.getLoggerName() + "] " + record.getMessage());
+    super.log(record);
   }
 
 }

@@ -1,14 +1,13 @@
 package de.pxav.kelp.core.world;
 
-import com.google.common.base.Objects;
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.inventory.material.KelpMaterial;
-import de.pxav.kelp.core.world.util.CardinalDirection;
+import de.pxav.kelp.core.world.region.CuboidRegion;
 import de.pxav.kelp.core.world.util.KelpBlockFace;
+import de.pxav.kelp.core.world.util.Vector3;
 import de.pxav.kelp.core.world.version.BlockVersionTemplate;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.util.Vector;
 
 /**
@@ -168,41 +167,9 @@ public class KelpBlock {
   }
 
   /**
-   * Gets the block relative to this block in a specific
-   * {@link CardinalDirection}.
-   *
-   * @param direction The direction of the block you want to get.
-   * @return The block relative to this block in the given direction.
-   */
-  public KelpBlock getRelative(CardinalDirection direction) {
-    switch (direction) {
-      case NORTH:
-        return getNorthernBlock();
-      case NORTH_EAST:
-        return getNorthEasternBlock();
-      case EAST:
-        return getEasternBlock();
-      case SOUTH_EAST:
-        return getSouthEasternBlock();
-      case SOUTH:
-        return getSouthernBlock();
-      case SOUTH_WEST:
-        return getSouthWesternBlock();
-      case WEST:
-        return getWesternBlock();
-      case NORTH_WEST:
-        return getNorthWesternBlock();
-    }
-    return null;
-  }
-
-  /**
    * Gets the block that is directly attached to this block
    * to the given face. If you pass {@link KelpBlockFace#UP} for example, then
    * the block above this block will be returned, and so on.
-   * This is similar to {@link #getRelative(CardinalDirection)} with the main
-   * difference that you can get the block above and below the current block
-   * as you are independent from cardinal directions.
    *
    * @param face The face of the block you want to get.
    * @return The block relative to this block in the given direction.
@@ -242,7 +209,7 @@ public class KelpBlock {
    *                 to determine which block is actually in front.
    * @return The block in front of this block.
    */
-  public KelpBlock getFrontBlock(Vector direction) {
+  public KelpBlock getFrontBlock(Vector3 direction) {
     KelpLocation location = getLocation();
     location.setDirection(direction);
 
@@ -256,7 +223,7 @@ public class KelpBlock {
    *                 to determine which block is actually behind.
    * @return The block behind this block.
    */
-  public KelpBlock getBackBlock(Vector direction) {
+  public KelpBlock getBackBlock(Vector3 direction) {
     KelpLocation location = getLocation();
     location.setDirection(direction.multiply(-1));
 
@@ -347,6 +314,10 @@ public class KelpBlock {
    */
   public boolean canApplyBoneMeal() {
     return versionTemplate.canApplyBoneMeal(this);
+  }
+
+  public CuboidRegion getBoundingBox() {
+    return versionTemplate.getBoundingBox(this);
   }
 
   /**

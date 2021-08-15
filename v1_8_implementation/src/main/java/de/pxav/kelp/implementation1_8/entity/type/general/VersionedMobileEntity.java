@@ -8,10 +8,14 @@ import de.pxav.kelp.core.world.KelpLocation;
 import de.pxav.kelp.implementation1_8.entity.VersionedLivingEntity;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityCreature;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 /**
  * There is currently no implementation of a {@code Mob} in craftbukkit, so
@@ -24,31 +28,30 @@ public class VersionedMobileEntity<T extends MobileEntity<T>>
   extends VersionedLivingEntity<T>
   implements MobileEntity<T> {
 
-  private EntityCreature creatureHandle;
-  private CraftCreature craftCreature;
+  private EntityInsentient entityInsentient;
 
   public VersionedMobileEntity(Entity entityHandle,
                                KelpEntityType entityType,
                                Location initialLocation, EntityTypeVersionTemplate entityTypeVersionTemplate) {
     super(entityHandle, entityType, initialLocation, entityTypeVersionTemplate);
-    this.craftCreature = (CraftCreature) entityHandle.getBukkitEntity();
-    this.creatureHandle = (EntityCreature) entityHandle;
+    this.entityInsentient = (EntityInsentient) entityHandle;
   }
 
   @Override
   public T setTarget(LivingKelpEntity<?> target) {
-    craftCreature.setTarget((LivingEntity) target.getBukkitEntity());
+    EntityLiving entityLiving = ((CraftLivingEntity)target.getBukkitEntity()).getHandle();
+    entityInsentient.setGoalTarget(entityLiving, EntityTargetEvent.TargetReason.UNKNOWN, true);
     return (T) this;
   }
 
   @Override
   public LivingKelpEntity<?> getTarget() {
-    return (LivingKelpEntity<?>) entityTypeVersionTemplate.getKelpEntity(craftCreature.getTarget());
+    return (LivingKelpEntity<?>) entityTypeVersionTemplate.getKelpEntity(entityInsentient.getGoalTarget().getBukkitEntity());
   }
 
   @Override
   public boolean isAware() {
-    return craftCreature.getTarget() != null;
+    return entityInsentient != null;
   }
 
   @Override

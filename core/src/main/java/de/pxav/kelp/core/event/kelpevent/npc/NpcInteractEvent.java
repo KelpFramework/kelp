@@ -1,5 +1,6 @@
 package de.pxav.kelp.core.event.kelpevent.npc;
 
+import de.pxav.kelp.core.event.kelpevent.EntityInteractAction;
 import de.pxav.kelp.core.npc.KelpNpc;
 import org.bukkit.event.HandlerList;
 
@@ -14,9 +15,9 @@ public class NpcInteractEvent extends NpcEvent {
   private static final HandlerList handlers = new HandlerList();
 
   // the action performed on the NPC.
-  private NpcInteractAction action;
+  private EntityInteractAction action;
 
-  public NpcInteractEvent(KelpNpc npc, NpcInteractAction action) {
+  public NpcInteractEvent(KelpNpc npc, EntityInteractAction action) {
     super(npc);
     this.action = action;
   }
@@ -28,7 +29,7 @@ public class NpcInteractEvent extends NpcEvent {
    *
    * @return The type/action of the interaction.
    */
-  public NpcInteractAction getAction() {
+  public EntityInteractAction getAction() {
     return action;
   }
 

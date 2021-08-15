@@ -206,8 +206,8 @@ public enum KelpBlockFace {
    *
    * @return A vector pointing in the direction of the current block face.
    */
-  public Vector getDirection() {
-    Vector direction = new Vector(this.deltaX, this.deltaY, this.deltaZ);
+  public Vector3 getDirection() {
+    Vector3 direction = Vector3.create(this.deltaX, this.deltaY, this.deltaZ);
     if (this.deltaX != 0 || this.deltaY != 0 || this.deltaZ != 0) {
       direction.normalize();
     }

@@ -2,6 +2,7 @@ package de.pxav.kelp.core.world;
 
 import de.pxav.kelp.core.KelpPlugin;
 import de.pxav.kelp.core.application.KelpApplication;
+import de.pxav.kelp.core.entity.KelpEntity;
 import de.pxav.kelp.core.player.KelpPlayer;
 import de.pxav.kelp.core.world.version.ChunkVersionTemplate;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -130,6 +131,15 @@ public class KelpChunk {
    */
   public Collection<KelpPlayer> getPlayers() {
     return versionTemplate.getPlayers(this);
+  }
+
+  /**
+   * Gets a collection of all players that are currently inside the chunk.
+   *
+   * @return A collection of all players that are currently inside the chunk.
+   */
+  public Collection<KelpEntity<?>> getEntities() {
+    return versionTemplate.getEntities(this);
   }
 
   /**
