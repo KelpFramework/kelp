@@ -95,7 +95,7 @@ playerConnection.sendPacket(spawnPacket);
 - **Particle engine:** Easily create custom and prebuilt particle effects
 - **Schedulers**: Create sync and async schedulers and make use of powerful thread synchronization tools
 - **Events**: Custom events for NPCs, Inventories and more as well as new listener techniques 
-- **Prompts**: Interact with your player by prompting input from chat, anvils ans signs.
+- **Prompts**: Interact with your player by prompting input from chat, anvils and signs.
 - **and more** to discover in the [Wiki](https://github.com/PXAV/kelp/wiki)
 
 
